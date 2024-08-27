@@ -16,7 +16,9 @@ import type {Dependency} from '../DeltaBundler/types.flow';
 import CountingSet from './CountingSet';
 
 const getInlineSourceMappingURL = require('../DeltaBundler/Serializers/helpers/getInlineSourceMappingURL');
-const sourceMapString = require('../DeltaBundler/Serializers/sourceMapString');
+const {
+  sourceMapString,
+} = require('../DeltaBundler/Serializers/sourceMapString');
 const countLines = require('./countLines');
 const nullthrows = require('nullthrows');
 
@@ -30,6 +32,7 @@ type Options<T: number | string> = $ReadOnly<{
   shouldAddToIgnoreList: (Module<>) => boolean,
   sourceMapUrl: ?string,
   sourceUrl: ?string,
+  getSourceUrl: ?(Module<>) => string,
   ...
 }>;
 
@@ -75,6 +78,7 @@ function getAppendScripts<T: number | string>(
             processModuleFilter: (): boolean => true,
             excludeSource: false,
             shouldAddToIgnoreList: options.shouldAddToIgnoreList,
+            getSourceUrl: options.getSourceUrl,
           }),
         )
       : nullthrows(options.sourceMapUrl);

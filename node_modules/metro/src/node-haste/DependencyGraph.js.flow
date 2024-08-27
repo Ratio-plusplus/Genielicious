@@ -152,8 +152,10 @@ class DependencyGraph extends EventEmitter {
     return self;
   }
 
-  _getClosestPackage(filePath: string): ?string {
-    const parsedPath = path.parse(filePath);
+  _getClosestPackage(
+    absoluteModulePath: string,
+  ): ?{packageJsonPath: string, packageRelativePath: string} {
+    const parsedPath = path.parse(absoluteModulePath);
     const root = parsedPath.root;
     let dir = path.join(parsedPath.dir, parsedPath.base);
 
@@ -165,7 +167,12 @@ class DependencyGraph extends EventEmitter {
       }
       const candidate = path.join(dir, 'package.json');
       if (this._fileSystem.exists(candidate)) {
-        return candidate;
+        return {
+          packageJsonPath: candidate,
+          // Note that by construction, dir is a prefix of absoluteModulePath,
+          // so this relative path has no indirections.
+          packageRelativePath: path.relative(dir, absoluteModulePath),
+        };
       }
       dir = path.dirname(dir);
     } while (dir !== '.' && dir !== root);
@@ -242,7 +249,8 @@ class DependencyGraph extends EventEmitter {
 
   _createModuleCache(): ModuleCache {
     return new ModuleCache({
-      getClosestPackage: filePath => this._getClosestPackage(filePath),
+      getClosestPackage: absoluteModulePath =>
+        this._getClosestPackage(absoluteModulePath),
     });
   }
 

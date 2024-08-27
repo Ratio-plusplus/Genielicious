@@ -9,7 +9,8 @@
  */
 
 /**
- * This transform strips Flow types that are not supported past Babel 7.
+ * This transforms component syntax (https://flow.org/en/docs/react/component-syntax/)
+ * and hook syntax (https://flow.org/en/docs/react/hook-syntax/).
  *
  * It is expected that all transforms create valid ESTree AST output. If
  * the transform requires outputting Babel specific AST nodes then it
@@ -173,6 +174,7 @@ function createPropsTypeAnnotation(
 
 function mapComponentParameters(
   params: $ReadOnlyArray<ComponentParameter | RestElement>,
+  options: ParserOptions,
 ): $ReadOnly<{
   props: ?(ObjectPattern | Identifier),
   ref: ?(BindingName | AssignmentPattern),
@@ -194,19 +196,22 @@ function mapComponentParameters(
     };
   }
 
-  // Filter out any ref param and capture it's details.
+  // Filter out any ref param and capture it's details when targeting React 18.
+  // React 19+ treats ref as a regular prop for function components.
   let refParam = null;
-  const paramsWithoutRef = params.filter(param => {
-    if (
-      param.type === 'ComponentParameter' &&
-      getComponentParameterName(param.name) === 'ref'
-    ) {
-      refParam = param;
-      return false;
-    }
-
-    return true;
-  });
+  const paramsWithoutRef =
+    (options.reactRuntimeTarget ?? '18') === '18'
+      ? params.filter(param => {
+          if (
+            param.type === 'ComponentParameter' &&
+            getComponentParameterName(param.name) === 'ref'
+          ) {
+            refParam = param;
+            return false;
+          }
+          return true;
+        })
+      : params;
 
   const [propTypes, spread] = paramsWithoutRef.reduce<
     [Array<ObjectTypePropertySignature>, ?ObjectTypeSpreadProperty],
@@ -521,7 +526,10 @@ function createForwardRefWrapper(
   };
 }
 
-function mapComponentDeclaration(node: ComponentDeclaration): {
+function mapComponentDeclaration(
+  node: ComponentDeclaration,
+  options: ParserOptions,
+): {
   comp: FunctionDeclaration,
   forwardRefDetails: ?ForwardRefDetails,
 } {
@@ -562,7 +570,7 @@ function mapComponentDeclaration(node: ComponentDeclaration): {
     ...createRendersTypeLoc(),
   };
 
-  const {props, ref} = mapComponentParameters(node.params);
+  const {props, ref} = mapComponentParameters(node.params, options);
 
   let forwardRefDetails: ?ForwardRefDetails = null;
 
@@ -684,9 +692,10 @@ function scanForFirstComponentReference(
 function mapComponentDeclarationIntoList(
   node: ComponentDeclaration,
   newBody: Array<Statement | ModuleDeclaration>,
+  options: ParserOptions,
   insertExport?: (Identifier | FunctionDeclaration) => ModuleDeclaration,
 ) {
-  const {comp, forwardRefDetails} = mapComponentDeclaration(node);
+  const {comp, forwardRefDetails} = mapComponentDeclaration(node, options);
   if (forwardRefDetails != null) {
     // Scan for references to our component.
     const referencePos = scanForFirstComponentReference(
@@ -714,12 +723,13 @@ function mapComponentDeclarationIntoList(
 
 function mapStatementList(
   stmts: $ReadOnlyArray<Statement | ModuleDeclaration>,
+  options: ParserOptions,
 ) {
   const newBody: Array<Statement | ModuleDeclaration> = [];
   for (const node of stmts) {
     switch (node.type) {
       case 'ComponentDeclaration': {
-        mapComponentDeclarationIntoList(node, newBody);
+        mapComponentDeclarationIntoList(node, newBody, options);
         break;
       }
       case 'HookDeclaration': {
@@ -732,6 +742,7 @@ function mapStatementList(
           mapComponentDeclarationIntoList(
             node.declaration,
             newBody,
+            options,
             componentOrRef => {
               switch (componentOrRef.type) {
                 case 'FunctionDeclaration': {
@@ -780,6 +791,7 @@ function mapStatementList(
           mapComponentDeclarationIntoList(
             node.declaration,
             newBody,
+            options,
             componentOrRef => nodeWith(node, {declaration: componentOrRef}),
           );
           break;
@@ -805,7 +817,7 @@ function mapStatementList(
 
 export function transformProgram(
   program: Program,
-  _options: ParserOptions,
+  options: ParserOptions,
 ): Program {
   return SimpleTransform.transformProgram(program, {
     transform(node: ESNode) {
@@ -818,13 +830,14 @@ export function transformProgram(
         }
         case 'Program':
         case 'BlockStatement': {
-          return nodeWith(node, {body: mapStatementList(node.body)});
+          return nodeWith(node, {body: mapStatementList(node.body, options)});
         }
         case 'SwitchCase': {
+          const consequent = mapStatementList(node.consequent, options);
           return nodeWith(node, {
             /* $FlowExpectedError[incompatible-call] We know `mapStatementList` will
                not return `ModuleDeclaration` nodes if it is not passed any */
-            consequent: mapStatementList(node.consequent),
+            consequent,
           });
         }
         case 'ComponentDeclaration': {
