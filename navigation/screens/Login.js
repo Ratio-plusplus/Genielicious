@@ -2,12 +2,32 @@ import { StatusBar } from "expo-status-bar";
 import { Feather } from "@expo/vector-icons";
 import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
 import * as React from "react";
+import auth from '@react-native-firebase/auth';
+import db from '@react-native-firebase/database';
 
 export default function Login({navigation}) {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-
   const [passwordIsVisible, setPasswordIsVisible] = React.useState(false);
+
+    const createProfile = async (response: FirebaseAuthTypes.UserCredential) => {
+        db().ref('/users/${response.user.uid}').set({ name });
+        //db().ref('/users/${response.user.uid}').set({})
+    };
+    const handleLogin = async () => {
+        if (email && password) {
+            try {
+                const response = await auth().createUserWithEmailAndPassword(email, password);
+
+                if (response.user) {
+                    await createProfile(response);
+                    nav.replace("Home");
+                }
+            } catch (e) {
+                Alert.alert("Oops", "Please try again.");
+            }
+        }
+    };
 
   return (
     <SafeAreaView style={styles.container}>

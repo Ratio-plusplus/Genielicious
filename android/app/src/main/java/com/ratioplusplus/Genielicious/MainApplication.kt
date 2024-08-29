@@ -1,4 +1,4 @@
-package com.navigationtab
+package com.ratioplusplus.Genielicious
 
 import android.app.Application
 import android.content.res.Configuration
