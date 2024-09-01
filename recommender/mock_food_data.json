@@ -1,0 +1,104 @@
+{
+  "food_items": [
+    {
+      "name": "Spaghetti Carbonara",
+      "flavors": ["savory", "creamy", "salty"],
+      "ingredients": ["spaghetti", "eggs", "parmesan cheese", "pancetta", "black pepper"]
+    },
+    {
+      "name": "Mango Salsa",
+      "flavors": ["sweet", "spicy", "tangy"],
+      "ingredients": ["mango", "red onion", "cilantro", "lime juice", "jalapeño"]
+    },
+    {
+      "name": "Chocolate Lava Cake",
+      "flavors": ["sweet", "rich", "bitter"],
+      "ingredients": ["dark chocolate", "butter", "eggs", "sugar", "flour"]
+    },
+    {
+      "name": "Caesar Salad",
+      "flavors": ["savory", "tangy", "umami"],
+      "ingredients": ["romaine lettuce", "parmesan cheese", "croutons", "Caesar dressing", "anchovies"]
+    },
+    {
+      "name": "Pad Thai",
+      "flavors": ["sweet", "salty", "sour", "spicy"],
+      "ingredients": ["rice noodles", "shrimp", "tofu", "peanuts", "tamarind sauce", "bean sprouts"]
+    },
+    {
+      "name": "Green Smoothie",
+      "flavors": ["fresh", "earthy", "sweet"],
+      "ingredients": ["spinach", "banana", "apple", "cucumber", "ginger", "almond milk"]
+    },
+    {
+      "name": "Margherita Pizza",
+      "flavors": ["savory", "cheesy", "herby"],
+      "ingredients": ["pizza dough", "tomato sauce", "mozzarella cheese", "basil", "olive oil"]
+    },
+    {
+      "name": "Lemon Tart",
+      "flavors": ["tart", "sweet", "buttery"],
+      "ingredients": ["lemon juice", "eggs", "butter", "sugar", "flour", "cream"]
+    },
+    {
+      "name": "Beef Tacos",
+      "flavors": ["spicy", "savory", "smoky"],
+      "ingredients": ["ground beef", "taco seasoning", "corn tortillas", "lettuce", "cheese", "salsa"]
+    },
+    {
+      "name": "Avocado Toast",
+      "flavors": ["creamy", "savory", "fresh"],
+      "ingredients": ["avocado", "sourdough bread", "olive oil", "sea salt", "red pepper flakes"]
+    },
+    {
+      "name": "Pumpkin Spice Ramen",
+      "flavors": ["spicy", "earthy", "sweet"],
+      "ingredients": ["ramen noodles", "pumpkin puree", "coconut milk", "ginger", "chili oil", "scallions"]
+    },
+    {
+      "name": "Pistachio Crusted Salmon",
+      "flavors": ["nutty", "savory", "fresh"],
+      "ingredients": ["salmon fillet", "pistachios", "lemon zest", "garlic", "parsley"]
+    },
+    {
+      "name": "Rosemary and Lavender Shortbread",
+      "flavors": ["buttery", "herbaceous", "floral"],
+      "ingredients": ["butter", "flour", "sugar", "rosemary", "lavender buds"]
+    },
+    {
+      "name": "Coconut Curry Risotto",
+      "flavors": ["creamy", "spicy", "fragrant"],
+      "ingredients": ["arborio rice", "coconut milk", "curry powder", "lime", "cilantro"]
+    },
+    {
+      "name": "Watermelon Feta Salad",
+      "flavors": ["sweet", "salty", "refreshing"],
+      "ingredients": ["watermelon", "feta cheese", "mint leaves", "red onion", "balsamic reduction"]
+    },
+    {
+      "name": "Saffron and Cardamom Ice Cream",
+      "flavors": ["sweet", "exotic", "fragrant"],
+      "ingredients": ["milk", "sugar", "saffron", "cardamom", "cream"]
+    },
+    {
+      "name": "Kimchi Grilled Cheese",
+      "flavors": ["tangy", "spicy", "cheesy"],
+      "ingredients": ["sourdough bread", "cheddar cheese", "kimchi", "butter"]
+    },
+    {
+      "name": "Miso Caramel Brownies",
+      "flavors": ["sweet", "salty", "umami"],
+      "ingredients": ["dark chocolate", "flour", "eggs", "sugar", "miso paste", "caramel"]
+    },
+    {
+      "name": "Ginger Pear Galette",
+      "flavors": ["spicy", "sweet", "buttery"],
+      "ingredients": ["pears", "ginger", "sugar", "butter", "pastry dough"]
+    },
+    {
+      "name": "Tandoori Cauliflower Tacos",
+      "flavors": ["spicy", "smoky", "herbaceous"],
+      "ingredients": ["cauliflower", "tandoori spices", "corn tortillas", "cilantro chutney", "pickled onions"]
+    }
+  ]
+}
