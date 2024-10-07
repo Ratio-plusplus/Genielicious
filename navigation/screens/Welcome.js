@@ -2,6 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import { Feather } from "@expo/vector-icons";
 import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
 import * as React from "react";
+import myColors from "./Colors.js";
 
 export default function Welcome({navigation}) {
   return (
@@ -39,7 +40,7 @@ export default function Welcome({navigation}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: myColors.blue,
   },
   content: {
     paddingHorizontal: 30,
@@ -48,15 +49,16 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "bold",
     marginBottom: 40,
+    color: "#272725" 
   },
   loginButton: {
-    backgroundColor: "#3662AA",
+    backgroundColor: "#007074",
     padding: 14,
     borderRadius: 10,
     marginTop: 20,
   },
   loginButtonText: {
-    color: "#fff",
+    color: "#eee7d5",
     textAlign: "center",
     fontWeight: "bold",
     fontSize: 16,
@@ -73,13 +75,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   orText: {
-    color: "#7C808D",
+    color: "#341C02",
     marginRight: 10,
     marginLeft: 10,
     fontSize: 14,
   },
   googleButton: {
-    backgroundColor: "#F2F6F2",
+    backgroundColor: "#b45c62",
     padding: 14,
     borderRadius: 10,
     flexDirection: "row",
@@ -88,7 +90,7 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   googleButtonText: {
-    color: "#4E5867",
+    color: "#272725",
     fontSize: 16,
     fontWeight: "500",
     textAlign: "center",
