@@ -8,6 +8,7 @@ import { Colors } from "./Colors";
 export default function Signup({navigation}) {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [confirmPassword, setConfirmPassword] = React.useState("");
   const [username, setUsername] = React.useState("");
 
   const [passwordIsVisible, setPasswordIsVisible] = React.useState(false);
@@ -85,8 +86,8 @@ export default function Signup({navigation}) {
               secureTextEntry={!passwordIsVisible}
               placeholderTextColor="#7C808D"
               //selectionColor="#3662AA"
-              onChangeText={setPassword}
-              value={password}
+              onChangeText={setConfirmPassword}
+              value={confirmPassword}
             />
             <TouchableOpacity
               style={styles.passwordVisibleButton}

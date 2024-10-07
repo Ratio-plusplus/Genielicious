@@ -6,7 +6,6 @@ import * as React from "react";
 export default function Login({navigation}) {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-
   const [passwordIsVisible, setPasswordIsVisible] = React.useState(false);
 
   return (
