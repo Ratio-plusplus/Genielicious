@@ -1,3 +1,5 @@
+# The point of this file is to explore and compile yelp api capabilities/database
+
 import requests
 import json
 
@@ -16,9 +18,10 @@ with open(key_path, 'r') as file:
     API_Key = file.readline()
 
 CSULB_coordinates = (33.78336745904146, -118.1101659429386) # test location (lat,long)
-default_radius = 24140 # ~15 miles in meters
+default_radius = 12000 # ~15 miles in meters
 default_category = "restaurants"
 
+# func to get results
 def get_store(coordinates, term = None, categories = default_category, radius=default_radius, sort_by = "rating", checkOpen = False, price = None):
     url = "https://api.yelp.com/v3/businesses/search"
 
@@ -44,22 +47,26 @@ def get_store(coordinates, term = None, categories = default_category, radius=de
     )
     return response.json()
 
-def categoryDetails(alias):
-    url = f"https://api.yelp.com/v3/categories/{alias}"
+def categoryDetails(locale=None):
+    url = f"https://api.yelp.com/v3/categories"
+
+    query = dict()
+    if locale:
+        query["local"] = locale
 
     headers = {
         "Authorization": f"Bearer {API_Key}"
     }
 
     response = requests.request(
-        "GET", url, headers=headers
+        "GET", url, headers=headers, params=query
     )
     return response.json()
 
-res = get_store(CSULB_coordinates, term = "savory", categories="acaibowls")
-# res = categoryDetails("restaurants")
+res = get_store(CSULB_coordinates, categories="raw_food")
+# res = categoryDetails("en_US") # gets all businesses within en_US locale
 
-# Write to results file to avoid making too many calls
+# Cache results
 with open('results.json', 'w') as file:
     json.dump(res, file, indent=4)
 print("Dictionary written to file in JSON format.")

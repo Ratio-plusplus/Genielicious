@@ -1,3 +1,7 @@
+# Main algorithm to decide which food item the user wants
+# initially created in accordance with mock_food_data.json (DEPRECATED); before we committed to yelp api
+# TODO: remake file with use of yelp api data
+
 import json
 from pprint import pprint
 

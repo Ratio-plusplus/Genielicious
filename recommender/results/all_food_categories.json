@@ -37,6 +37,10 @@
             "title": "Austrian"
         },
         {
+            "alias": "bagels",
+            "title": "Bagels"
+        },
+        {
             "alias": "bakeries",
             "title": "Bakeries"
         },
@@ -45,12 +49,28 @@
             "title": "Bangladeshi"
         },
         {
+            "alias": "basque",
+            "title": "Basque"
+        },
+        {
             "alias": "bbq",
             "title": "Barbeque"
         },
         {
+            "alias": "beer_and_wine",
+            "title": "Beer, Wine & Spirits"
+        },
+        {
             "alias": "belgian",
             "title": "Belgian"
+        },
+        {
+            "alias": "beverage_stores",
+            "title": "Beverage Store"
+        },
+        {
+            "alias": "brasseries",
+            "title": "Brasseries"
         },
         {
             "alias": "brazilian",
@@ -61,24 +81,60 @@
             "title": "Breakfast & Brunch"
         },
         {
+            "alias": "breweries",
+            "title": "Breweries"
+        },
+        {
+            "alias": "british",
+            "title": "British"
+        },
+        {
+            "alias": "bubbletea",
+            "title": "Bubble Tea"
+        },
+        {
             "alias": "buffets",
             "title": "Buffets"
+        },
+        {
+            "alias": "bulgarian",
+            "title": "Bulgarian"
         },
         {
             "alias": "burgers",
             "title": "Burgers"
         },
         {
+            "alias": "burmese",
+            "title": "Burmese"
+        },
+        {
+            "alias": "butcher",
+            "title": "Butcher"
+        },
+        {
             "alias": "cafes",
             "title": "Cafes"
+        },
+        {
+            "alias": "cafeteria",
+            "title": "Cafeteria"
         },
         {
             "alias": "cajun",
             "title": "Cajun/Creole"
         },
         {
+            "alias": "cakeshop",
+            "title": "Patisserie/Cake Shop"
+        },
+        {
             "alias": "cambodian",
             "title": "Cambodian"
+        },
+        {
+            "alias": "candy",
+            "title": "Candy Stores"
         },
         {
             "alias": "caribbean",
@@ -87,6 +143,10 @@
         {
             "alias": "catalan",
             "title": "Catalan"
+        },
+        {
+            "alias": "cheese",
+            "title": "Cheese Shops"
         },
         {
             "alias": "cheesesteaks",
@@ -101,16 +161,44 @@
             "title": "Chicken Shop"
         },
         {
+            "alias": "chimneycakes",
+            "title": "Chimney Cakes"
+        },
+        {
             "alias": "chinese",
             "title": "Chinese"
+        },
+        {
+            "alias": "chocolate",
+            "title": "Chocolatiers & Shops"
+        },
+        {
+            "alias": "cideries",
+            "title": "Cideries"
+        },
+        {
+            "alias": "coffee",
+            "title": "Coffee & Tea"
+        },
+        {
+            "alias": "coffeeroasteries",
+            "title": "Coffee Roasteries"
         },
         {
             "alias": "comfortfood",
             "title": "Comfort Food"
         },
         {
+            "alias": "convenience",
+            "title": "Convenience Stores"
+        },
+        {
             "alias": "creperies",
             "title": "Creperies"
+        },
+        {
+            "alias": "csa",
+            "title": "CSA"
         },
         {
             "alias": "cuban",
@@ -121,8 +209,16 @@
             "title": "Cupcakes"
         },
         {
+            "alias": "customcakes",
+            "title": "Custom Cakes"
+        },
+        {
             "alias": "czech",
             "title": "Czech"
+        },
+        {
+            "alias": "delis",
+            "title": "Delis"
         },
         {
             "alias": "desserts",
@@ -131,6 +227,18 @@
         {
             "alias": "diners",
             "title": "Diners"
+        },
+        {
+            "alias": "dinnertheater",
+            "title": "Dinner Theater"
+        },
+        {
+            "alias": "distilleries",
+            "title": "Distilleries"
+        },
+        {
+            "alias": "diyfood",
+            "title": "Do-It-Yourself Food"
         },
         {
             "alias": "donuts",
@@ -149,16 +257,44 @@
             "title": "Ethiopian"
         },
         {
+            "alias": "farmersmarket",
+            "title": "Farmers Market"
+        },
+        {
             "alias": "filipino",
             "title": "Filipino"
+        },
+        {
+            "alias": "fishnchips",
+            "title": "Fish & Chips"
         },
         {
             "alias": "fondue",
             "title": "Fondue"
         },
         {
+            "alias": "food_court",
+            "title": "Food Court"
+        },
+        {
+            "alias": "fooddeliveryservices",
+            "title": "Food Delivery Services"
+        },
+        {
+            "alias": "foodstands",
+            "title": "Food Stands"
+        },
+        {
+            "alias": "foodtrucks",
+            "title": "Food Trucks"
+        },
+        {
             "alias": "french",
             "title": "French"
+        },
+        {
+            "alias": "gamemeat",
+            "title": "Game Meat"
         },
         {
             "alias": "gastropubs",
@@ -189,6 +325,10 @@
             "title": "Greek"
         },
         {
+            "alias": "grocery",
+            "title": "Grocery"
+        },
+        {
             "alias": "guamanian",
             "title": "Guamanian"
         },
@@ -201,12 +341,28 @@
             "title": "Hawaiian"
         },
         {
+            "alias": "healthmarkets",
+            "title": "Health Markets"
+        },
+        {
+            "alias": "herbsandspices",
+            "title": "Herbs & Spices"
+        },
+        {
             "alias": "himalayan",
             "title": "Himalayan/Nepalese"
         },
         {
+            "alias": "hkcafe",
+            "title": "Hong Kong Style Cafe"
+        },
+        {
             "alias": "honduran",
             "title": "Honduran"
+        },
+        {
+            "alias": "honey",
+            "title": "Honey"
         },
         {
             "alias": "hotdog",
@@ -233,12 +389,24 @@
             "title": "Ice Cream & Frozen Yogurt"
         },
         {
+            "alias": "importedfood",
+            "title": "Imported Food"
+        },
+        {
             "alias": "indonesian",
             "title": "Indonesian"
         },
         {
             "alias": "indpak",
             "title": "Indian"
+        },
+        {
+            "alias": "internetcafe",
+            "title": "Internet Cafes"
+        },
+        {
+            "alias": "intlgrocery",
+            "title": "International Grocery"
         },
         {
             "alias": "irish",
@@ -253,8 +421,16 @@
             "title": "Japanese"
         },
         {
+            "alias": "juicebars",
+            "title": "Juice Bars & Smoothies"
+        },
+        {
             "alias": "kebab",
             "title": "Kebab"
+        },
+        {
+            "alias": "kombucha",
+            "title": "Kombucha"
         },
         {
             "alias": "korean",
@@ -279,6 +455,18 @@
         {
             "alias": "malaysian",
             "title": "Malaysian"
+        },
+        {
+            "alias": "markets",
+            "title": "Fruits & Veggies"
+        },
+        {
+            "alias": "meaderies",
+            "title": "Meaderies"
+        },
+        {
+            "alias": "meats",
+            "title": "Meat Shops"
         },
         {
             "alias": "mediterranean",
@@ -321,6 +509,14 @@
             "title": "Noodles"
         },
         {
+            "alias": "oliveoil",
+            "title": "Olive Oil"
+        },
+        {
+            "alias": "organic_stores",
+            "title": "Organic Stores"
+        },
+        {
             "alias": "pakistani",
             "title": "Pakistani"
         },
@@ -359,6 +555,14 @@
         {
             "alias": "polynesian",
             "title": "Polynesian"
+        },
+        {
+            "alias": "popcorn",
+            "title": "Popcorn Shops"
+        },
+        {
+            "alias": "popuprestaurants",
+            "title": "Pop-Up Restaurants"
         },
         {
             "alias": "portuguese",
@@ -401,8 +605,16 @@
             "title": "Seafood"
         },
         {
+            "alias": "seafoodmarkets",
+            "title": "Seafood Markets"
+        },
+        {
             "alias": "shavedice",
             "title": "Shaved Ice"
+        },
+        {
+            "alias": "shavedsnow",
+            "title": "Shaved Snow"
         },
         {
             "alias": "singaporean",
@@ -445,6 +657,14 @@
             "title": "Steakhouses"
         },
         {
+            "alias": "streetvendors",
+            "title": "Street Vendors"
+        },
+        {
+            "alias": "supperclubs",
+            "title": "Supper Clubs"
+        },
+        {
             "alias": "sushi",
             "title": "Sushi Bars"
         },
@@ -455,6 +675,18 @@
         {
             "alias": "taiwanese",
             "title": "Taiwanese"
+        },
+        {
+            "alias": "tapas",
+            "title": "Tapas Bars"
+        },
+        {
+            "alias": "tapasmallplates",
+            "title": "Tapas/Small Plates"
+        },
+        {
+            "alias": "tea",
+            "title": "Tea Rooms"
         },
         {
             "alias": "tex-mex",
@@ -495,6 +727,10 @@
         {
             "alias": "waffles",
             "title": "Waffles"
+        },
+        {
+            "alias": "waterstores",
+            "title": "Water Stores"
         },
         {
             "alias": "wraps",
