@@ -2,18 +2,28 @@ import { StatusBar } from "expo-status-bar";
 import { Feather } from "@expo/vector-icons";
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Colors } from "./Colors";
+import { useAuth } from '../../contexts/authContext/index';
+import { doCreateUserWithEmailAndPassword } from '../../firebase/auth';
 
 export default function Signup({navigation}) {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
-  const [username, setUsername] = React.useState("");
+    const [username, setUsername] = React.useState("");
+    const [isRegistering, setIsRegistering] = useState(false);
+    const [passwordIsVisible, setPasswordIsVisible] = React.useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
-  const [passwordIsVisible, setPasswordIsVisible] = React.useState(false);
-
-  return (
+    const handleSignup = async (e) => {
+        e.preventDefault()
+        if (!isRegistering) {
+            setIsRegistering(true);
+            await doCreateUserWithEmailAndPassword(email, password)
+        }
+    }
+    return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto"/>
       <ScrollView
@@ -101,7 +111,7 @@ export default function Signup({navigation}) {
             </TouchableOpacity>
           </View>
           <TouchableOpacity style={styles.loginButton}>
-            <Text style={styles.loginButtonText}>Sign Up</Text>
+                    <Text style={styles.loginButtonText} onPress={() => handleSignup() }>Sign Up</Text>
           </TouchableOpacity>
           <View style={styles.orContainer}>
             <View style={styles.orLine} />
