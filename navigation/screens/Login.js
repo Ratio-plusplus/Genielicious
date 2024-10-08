@@ -5,6 +5,7 @@ import * as React from "react";
 import auth from '@react-native-firebase/auth';
 import db from '@react-native-firebase/database';
 
+
 export default function Login({navigation}) {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -118,7 +119,7 @@ export default function Login({navigation}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#2C3E50",
   },
   content: {
     paddingHorizontal: 30,
@@ -127,6 +128,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "bold",
     marginBottom: 40,
+    color: "#F4D1AE"
   },
   inputContainer: {
     flexDirection: "row",
@@ -143,7 +145,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1.5,
     flex: 1,
     paddingBottom: 10,
-    borderBottomColor: "#eee",
+    borderBottomColor: "#F4D1AE",
     fontSize: 16,
   },
   passwordVisibleButton: {
@@ -154,20 +156,20 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
   },
   forgotPasswordButtonText: {
-    color: "#3662AA",
+    color: "#f0c016",
     fontSize: 16,
     fontWeight: "500",
   },
   loginButton: {
-    backgroundColor: "#3662AA",
+    backgroundColor: "#ed9a1c",
     padding: 14,
     borderRadius: 10,
     marginTop: 20,
   },
   loginButtonText: {
-    color: "#fff",
+    color: "#272725",
     textAlign: "center",
-    fontWeight: "bold",
+    fontWeight: "500",
     fontSize: 16,
   },
   orContainer: {
@@ -188,7 +190,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   googleButton: {
-    backgroundColor: "#F2F6F2",
+    backgroundColor: "#ebeefa",
     padding: 14,
     borderRadius: 10,
     flexDirection: "row",
@@ -197,7 +199,7 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   googleButtonText: {
-    color: "#4E5867",
+    color: "#272725",
     fontSize: 16,
     fontWeight: "500",
     textAlign: "center",
@@ -214,11 +216,11 @@ const styles = StyleSheet.create({
   },
   registerButtonText: {
     fontSize: 16,
-    color: "#7C808D",
+    color: "#ebeefa",
   },
   registerButtonTextHighlight: {
     fontSize: 16,
-    color: "#3662AA",
+    color: "#f0c016",
     fontWeight: "500",
   },
 });

@@ -6,10 +6,19 @@
 const tintColorLight = '#0a7ea4';
 const tintColorDark = '#fff';
 
-export const Colors = {
+export const COLORS = {
   light: {
-    text: '#11181C',
-    background: '#fff',
+    blue: "2C3E50",
+    champagne: "F4D1AE",
+    ghost: "EBEEFA",
+    gold: "ED9A1C", 
+    yellow: "F0C016",
+    raisin: "272725",
+
+    text: "#341C02", //dark brown
+    background: "#F5EEDC", //cream
+    tomato: "#FF6347",
+    olive: "#708328",
     tint: tintColorLight,
     icon: '#687076',
     tabIconDefault: '#687076',
