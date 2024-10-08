@@ -17,7 +17,12 @@ export default function Signup({navigation}) {
     const [errorMessage, setErrorMessage] = useState('');
 
     const handleSignup = async (e) => {
-        e.preventDefault()
+        await createUser();
+        navigation.navigate('Tab')
+    }
+
+    const createUser = async (e) => {
+        //e.preventDefault()
         if (!isRegistering) {
             setIsRegistering(true);
             await doCreateUserWithEmailAndPassword(email, password)
@@ -110,8 +115,8 @@ export default function Signup({navigation}) {
               />
             </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.loginButton}>
-                    <Text style={styles.loginButtonText} onPress={() => handleSignup() }>Sign Up</Text>
+                    <TouchableOpacity style={styles.loginButton} onPress={() => handleSignup()}>
+                        <Text style={styles.loginButtonText}>Sign Up</Text>
           </TouchableOpacity>
           <View style={styles.orContainer}>
             <View style={styles.orLine} />
