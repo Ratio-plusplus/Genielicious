@@ -2,14 +2,16 @@ import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, TextInput 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import React from 'react';
+import React, { useContext } from 'react';
 import { Colors } from './Colors';
+import { ProfileContext } from './ProfileContext';
 
 export default function EditProfile({ navigation }) {
-    const pfp = require("../../assets/pfp.png");
+    const { pfp, setpfp } = useContext(ProfileContext)
+    const { username, setUsername} = useContext(ProfileContext)
     const [selectedImage, setSelectedImage] = React.useState(pfp);
     const [name, setName] = React.useState("");
-    const [username, setUsername] = React.useState("");
+    // const [username, setUsername] = React.useState("");
     const [email, setEmail] = React.useState("")
     const [password, setPassword] = React.useState("")
 
@@ -25,6 +27,8 @@ export default function EditProfile({ navigation }) {
 
         if(!result.canceled){
             setSelectedImage(result.assets[0].uri)
+            console.log(pfp)
+            
         }
     };
 
@@ -40,7 +44,7 @@ export default function EditProfile({ navigation }) {
                 flexDirection: "row",
                 justifyContent: "center"}}>
                     <TouchableOpacity 
-                        onPress={()=>navigation.navigate('Profile')}
+                        onPress={()=>navigation.navigate('Settings')}
                         style={{
                             position: "absolute",
                             left: 0
@@ -62,7 +66,7 @@ export default function EditProfile({ navigation }) {
                     <TouchableOpacity
                         onPress={handleImageSelection}>
                         <Image 
-                            source={require("../../assets/pfp.png")}
+                            source={{uri: selectedImage}}
                             style={{
                                 height: 130,
                                 width: 130,
@@ -147,7 +151,15 @@ export default function EditProfile({ navigation }) {
                         </View>
                     </View>
 
-                    <TouchableOpacity style={styles.saveButton}>
+                    {/* Save button */}
+                    <TouchableOpacity style={styles.saveButton}
+                        onPress={()=>
+                        {
+                            setpfp(selectedImage)
+                            setUsername(username)
+                            navigation.navigate('Settings')
+                            console.log(username)
+                        }}>
                         <Text style={styles.saveText}>Save Changes</Text>
                     </TouchableOpacity>
                 </View>

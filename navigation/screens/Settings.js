@@ -1,23 +1,35 @@
 import * as React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Modal, Button, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Colors } from './Colors';
 
 export default function Settings({ navigation }) {
+    const [modalVisible, setModalVisible] = React.useState(false)
+    const [modalMessage, setModalMessage] = React.useState("")
+
     const accountItems = [
         {icon: "person-outline", text: "Edit Profile", action: () => navigation.navigate('Edit Profile')},
         {icon: "location-pin", text: "Location Services", action: () => navigation.navigate('Home')},
     ];
 
     const historyItems = [
-        {icon: "delete-outline", text: "Clear History", action: console.log("Clear")}
+        {icon: "delete-outline", text: "Clear History", action: () =>{
+            setModalMessage("Are you sure you want to clear your history?")
+            setModalVisible(true);
+        }}
     ];
 
     const actionsItems = [
         {icon: "outlined-flag", text: "Report a Problem", action: console.log("Report")},
-        {icon: "logout", text: "Logout", action: console.log("Logout")},
-        {icon: "backspace", text: "Delete Account", action: console.log("Delete")}
+        {icon: "logout", text: "Logout", action: () => {
+            setModalMessage("Are you sure you want to log out?")
+            setModalVisible(true)
+        }},
+        {icon: "backspace", text: "Delete Account", action: () => {
+            setModalMessage("Are you sure you want to delete your account?")
+            setModalVisible(true)
+        }}
     ];
 
     const renderSettingItem = ({ icon, text, action }) => (
@@ -37,6 +49,19 @@ export default function Settings({ navigation }) {
             }}>{text}</Text>
         </TouchableOpacity>
     )
+
+    const handleAction = () => {
+        if (modalMessage === "Are you sure you want to clear your history?"){
+            console.log("History Cleared")
+        }
+        else if (modalMessage === "Are you sure you want to delete your account?"){
+            console.log("Account Deleted")
+        }
+        else if (modalMessage === "Are you sure you want to log out?"){
+            console.log("Logged Out")
+        }
+        setModalVisible(false)
+    }
 
     return (
         <SafeAreaView style={{
@@ -106,6 +131,38 @@ export default function Settings({ navigation }) {
                     </View>
                 </View>
             </ScrollView>
+
+            {/* Modal for clear history confirmation */}
+            <Modal
+                transparent = {true}
+                animationType ='fade'
+                visible = {modalVisible}
+                onRequestClose={() => setModalVisible(false)}
+            >
+
+            <View style = {styles.modalOverlay}></View>
+            
+            <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                    <Text style={styles.modalText}>{modalMessage}</Text>
+                    <View style={styles.buttonContainer}>
+                        {/* No Button */}
+                <Pressable
+                    style={[styles.modalButton, { backgroundColor: '#ED9A1C' }]} 
+                    onPress={() => setModalVisible(false)}>
+                    <Text style={[styles.buttonText, { color: '#000' }]}>No</Text>
+                </Pressable>
+
+                {/* Yes Button */}
+                <Pressable
+                    style={[styles.modalButton, { backgroundColor: '#EBEEFA' }]} 
+                    onPress={handleAction}>
+                    <Text style={[styles.buttonText, { color: '#000' }]}>Yes</Text>
+                </Pressable>
+            </View>
+        </View>
+    </View>
+            </Modal>
         </SafeAreaView>
     );
 }
@@ -127,5 +184,62 @@ const styles = StyleSheet.create({
     sectionBox: {
         borderRadius: 12,
         backgroundColor: Colors.champagne
+    },
+    modalContainer: {
+        backgroundColor: Colors.blue,
+        borderRadius: 15,
+        padding: 45,
+        width: '80%', // Ensure it has proper width
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: [{ translateX: -0.4 * 450 }, { translateY: -0.4 * 450 }], // Center the modal perfectly on the screen
+    },
+    modalOverlay: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black for dim effect
+    },
+    modalTitle: {
+        fontSize: 18,
+        fontWeight: "bold",
+        marginBottom: 10,
+        color: Colors.ghost // Font color using project's color
+    },
+    modalText: {
+        fontSize: 20,
+        marginBottom: 20,
+        textAlign: "center",
+        color: Colors.ghost // Font color using project's color
+    },
+    buttonContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        width: '100%', // Use full width of modal
+        marginTop: 10,
+    },
+    modalButton:{
+        paddingVertical: 3,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+        flex: 1,
+        marginHorizontal: 5,
+        alignItems: 'center',
+    },
+    buttonText: {
+        color: Colors.black, // Use project's font color
+        fontSize: 25,
+        padding: 10,
+        flex: 1, // Flex to take space
+        textAlign: "center", // Center text
+        marginHorizontal: 5 // Space between buttons
+    },
+    clearButton: {
+        color: Colors.ghost, // Change clear button color to red
     },
 })

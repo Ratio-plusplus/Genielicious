@@ -7,14 +7,15 @@ import { Colors } from './Colors';
 import CheckBox from 'react-native-check-box';
 
 export default function AddPref2({ navigation }) {
-    const pfp = require("../../assets/pfp.png");
-    const [selectedImage, setSelectedImage] = React.useState(pfp);
+    const initialpfp = Image.resolveAssetSource(require("../../assets/pfp.png")).uri;
+    const [selectedImage, setSelectedImage] = React.useState(initialpfp);
     const [name, setName] = React.useState();
     const [isChecked, setIsChecked] = useState({
         ten: false, fifteen: false, twenty: false,
         $20: false, $50: false, 
     });
 
+    // Allows user to pick an image on their phone
     const handleImageSelection = async() => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -25,7 +26,7 @@ export default function AddPref2({ navigation }) {
 
         console.log(result);
 
-        if(!result.canceled){
+        if (!result.canceled) {
             setSelectedImage(result.assets[0].uri)
         }
     };
@@ -55,7 +56,8 @@ export default function AddPref2({ navigation }) {
                     </TouchableOpacity>
                     <Text style={{marginTop: 2, fontWeight: 600, fontSize: 22, color: Colors.ghost}}>New Preference</Text>
             </View>
-
+            
+            {/* Visual changes for the perference profile picture */}
             <ScrollView>
                 <View style={{
                     alignItems: "center",
@@ -64,7 +66,8 @@ export default function AddPref2({ navigation }) {
                     <TouchableOpacity
                         onPress={handleImageSelection}>
                         <Image 
-                            source={require("../../assets/pfp.png")}
+                            // source={require("../../assets/pfp.png")}
+                            source={{uri:selectedImage}}
                             style={{
                                 height: 130,
                                 width: 130,
@@ -72,7 +75,6 @@ export default function AddPref2({ navigation }) {
                                 borderWidth: 2,
                                 borderColor: "#000"
                             }}/>
-
                         <View style={{
                             position: "absolute",
                             bottom: -5,
@@ -86,7 +88,8 @@ export default function AddPref2({ navigation }) {
                         </View>
                     </TouchableOpacity>
                 </View>
-
+                
+                {/* Title box */}
                 <View>
                     <View style={{
                         flexDirection: "column",
@@ -104,6 +107,7 @@ export default function AddPref2({ navigation }) {
                         </View>
                     </View>
 
+                    {/* Distance Checkboxes */}
                     <View style={styles.checkboxContainer}>
                         <Text style={styles.sectionTitle}>
                             Distance:
@@ -134,7 +138,8 @@ export default function AddPref2({ navigation }) {
                                 uncheckedCheckBoxColor={Colors.ghost}
                                 checkedCheckBoxColor={Colors.gold}/>
                     </View>
-
+                    
+                    {/* Budget checkboxes */}
                     <View style={styles.checkboxContainer}>
                         <Text style={styles.sectionTitle}>
                             Budget:
