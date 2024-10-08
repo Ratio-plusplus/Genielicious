@@ -15,6 +15,7 @@ export default function AddPref2({ navigation }) {
         $20: false, $50: false, 
     });
 
+    //handle image selection
     const handleImageSelection = async() => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -31,18 +32,10 @@ export default function AddPref2({ navigation }) {
     };
 
     return (
-        <SafeAreaView style={{
-            flex: 1,
-            backgroundColor: Colors.blue,
-        }}>
-            <View style={{
-                marginHorizontal: 12,
-                marginTop: 12,
-                marginBottom: 12,
-                flexDirection: "row",
-                justifyContent: "center"}}>
+        <SafeAreaView style={styles.background}>
+            <View style={styles.container}>
                     <TouchableOpacity 
-                        onPress={()=>navigation.navigate('Add Preference 1')}
+                        onPress={()=>navigation.navigate('Add Preference 1')}   //navigate back to previous page
                         style={{
                             position: "absolute",
                             left: 0
@@ -53,32 +46,17 @@ export default function AddPref2({ navigation }) {
                             color={Colors.ghost}
                         />
                     </TouchableOpacity>
-                    <Text style={{marginTop: 2, fontWeight: 600, fontSize: 22, color: Colors.ghost}}>New Preference</Text>
+                    <Text style={styles.title}>New Preference</Text>
             </View>
 
             <ScrollView>
-                <View style={{
-                    alignItems: "center",
-                    marginTop: 10,
-                    marginBottom: 20}}>
+                <View style={styles.scrollContainer}>
                     <TouchableOpacity
                         onPress={handleImageSelection}>
                         <Image 
                             source={require("../../assets/pfp.png")}
-                            style={{
-                                height: 130,
-                                width: 130,
-                                borderRadius: 85,
-                                borderWidth: 2,
-                                borderColor: "#000"
-                            }}/>
-
-                        <View style={{
-                            position: "absolute",
-                            bottom: -5,
-                            right: -5,
-                            zIndex: 9999
-                        }}>
+                            style={styles.pfpLook}/>
+                        <View style={styles.cameraLook}>
                             <MaterialIcons
                                 name="photo-camera"
                                 size={32}
@@ -88,10 +66,8 @@ export default function AddPref2({ navigation }) {
                 </View>
 
                 <View>
-                    <View style={{
-                        flexDirection: "column",
-                        marginBottom: 10
-                    }}>
+                    {/* title input field */}
+                    <View style={styles.titleContainer}>
                         <Text style={styles.sectionText}>Title:</Text>
                         <View style={styles.inputContainers}>
                             <TextInput
@@ -104,6 +80,7 @@ export default function AddPref2({ navigation }) {
                         </View>
                     </View>
 
+                    {/* distance checkbox section */}
                     <View style={styles.checkboxContainer}>
                         <Text style={styles.sectionTitle}>
                             Distance:
@@ -135,6 +112,7 @@ export default function AddPref2({ navigation }) {
                                 checkedCheckBoxColor={Colors.gold}/>
                     </View>
 
+                    {/* budget checkbox section */}
                     <View style={styles.checkboxContainer}>
                         <Text style={styles.sectionTitle}>
                             Budget:
@@ -156,9 +134,10 @@ export default function AddPref2({ navigation }) {
                                 uncheckedCheckBoxColor={Colors.ghost}
                                 checkedCheckBoxColor={Colors.gold}/>
                     </View>
-
-                    <TouchableOpacity style={styles.saveButton}>
-                        <Text style={styles.saveText}>Add Preference</Text>
+                    
+                    {/* add preference button */}
+                    <TouchableOpacity style={styles.addButton}>
+                        <Text style={styles.addText}>Add Preference</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
@@ -167,6 +146,45 @@ export default function AddPref2({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+    background: {
+        flex: 1,
+        backgroundColor: Colors.blue,
+    },
+    container: {
+        marginHorizontal: 12,
+        marginTop: 12,
+        marginBottom: 12,
+        flexDirection: "row",
+        justifyContent: "center"
+    },
+    title: {
+        marginTop: 2, 
+        fontWeight: 600, 
+        fontSize: 22, 
+        color: Colors.ghost
+    },
+    pfpLook: {
+        height: 130,
+        width: 130,
+        borderRadius: 85,
+        borderWidth: 2,
+        borderColor: "#000"
+    },
+    cameraLook: {
+        position: "absolute",
+        bottom: -5,
+        right: -5,
+        zIndex: 9999
+    },
+    titleContainer: {
+        flexDirection: "column",
+        marginBottom: 10
+    },
+    scrollContainer: {
+        alignItems: "center",
+        marginTop: 10,
+        marginBottom: 20
+    },
     sectionText: {
         fontSize: 22,
         fontWeight: "bold",
@@ -204,7 +222,7 @@ const styles = StyleSheet.create({
         fontSize: 19, 
         color: Colors.ghost,
     },
-    saveButton: {
+    addButton: {
         backgroundColor: Colors.gold,
         marginLeft: 60,
         marginTop: 20,
@@ -215,7 +233,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center"
     },
-    saveText: {
+    addText: {
         fontSize: 20,
         fontWeight: "bold",
         color: Colors.raisin
