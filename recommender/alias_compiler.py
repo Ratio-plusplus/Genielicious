@@ -4,7 +4,6 @@ output_path = "recommender/results/"
 with open(file_path, 'r') as file:
     res = json.load(file)
 
-# print(type(res))
 food_dicts = []
 for cat in res["categories"]:
     parents = []

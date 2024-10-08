@@ -1,20 +1,39 @@
 import requests
 import json
 
-# # # DO NOT share to public. These API details must be deactivated if this repo were public.
+id_path = "C:/Users/alex/Desktop/id.txt"
+key_path = "C:/Users/alex/Desktop/api_key.txt"
+
+# # # DO NOT share actual keys with public.
 ID = "id"
 API_Key = "api key"
 # # #
+
+with open(id_path, 'r') as file:
+    ID = file.readline()
+
+with open(key_path, 'r') as file:
+    API_Key = file.readline()
 
 CSULB_coordinates = (33.78336745904146, -118.1101659429386) # test location (lat,long)
 default_radius = 24140 # ~15 miles in meters
 default_category = "restaurants"
 
-def get_store(coordinates, category= default_category, radius=default_radius):
+def get_store(coordinates, term = None, categories = default_category, radius=default_radius, sort_by = "rating", checkOpen = False, price = None):
     url = "https://api.yelp.com/v3/businesses/search"
 
     query = {"latitude": coordinates[0], "longitude": coordinates[1], 
-             "category":category, "radius": radius}
+             "radius": radius, sort_by: sort_by, "categories" : categories}
+    
+    # if term exists then add that parameter to the query, otherwise use the default category option
+    if term:
+        query["term"] = term
+
+    if checkOpen:
+        query["open_now"] = True
+
+    if price:
+        query["price"] = price
     
     headers = {
         "Authorization": f"Bearer {API_Key}"
@@ -37,10 +56,10 @@ def categoryDetails(alias):
     )
     return response.json()
 
-res = get_store(CSULB_coordinates, "food")
+res = get_store(CSULB_coordinates, term = "savory", categories="acaibowls")
 # res = categoryDetails("restaurants")
 
 # Write to results file to avoid making too many calls
-with open('results.txt', 'w') as file:
+with open('results.json', 'w') as file:
     json.dump(res, file, indent=4)
 print("Dictionary written to file in JSON format.")
