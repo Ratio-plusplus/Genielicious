@@ -3,60 +3,112 @@
 # TODO: remake file with use of yelp api data
 
 import json
-from pprint import pprint
+from yelp import get_store
 
-dietary_restrictions = {"eggs", "peanuts"} ### keep these in mind
+SUPPORTED_REGIONAL_CUISINES = set(["African", "Middle Eastern", "South Asian", # cultural categories that are currently supported
+                                   "East Asian", "European", "Latin American", 
+                                   "North American"])
+ALL_OTHER_CATEGORIES = set(["Finger food", "Specialty", "Light Meals", "Vegan", 
+                            "Quick Eats", "Breakfast", "Desserts", "Health-Conscious",
+                            "Meat-Centric", "Comfort Food"])
+MAIN_FLAVORS = set(["sweet","salty", "sour", "bitter", "savory", "spicy"]) # main flavors that we will take into account
+USER_LOCATION = (33.78336745904146, -118.1101659429386) # should be provided by the client, using CSULB coords to test
 
-candidate_flavors = dict() # dict of flavors paired with their foods
-food_data = {}
-wanted_flavors = []
-unwanted_flavors = []
-undecided_flavors = [] # maybe use, we could use something more complex
-food_freq = dict()
-with open("recommender/mock_food_data.json","r") as file:
-    food_data = json.load(file)
+with open("recommender\\data\\categorized_aliases.json", "r") as file:
+    CATEGORIZED_ALIASES = json.load(file)
 
-for item in food_data["food_items"]:
-    for flavor in item["flavors"]:
-        if flavor in candidate_flavors:
-            candidate_flavors[flavor].add(item["name"])
-        else:
-            candidate_flavors[flavor] = {item["name"]}
-
-# pprint(candidate_flavors)
-
-for flavor in candidate_flavors:
-    choice = -1
+# preliminary questions
+# yelp parameter price takes integer 1 through 4
+def getPrice() -> int:
+    print("How much are you willing to spend?")
+    print("1) < $10\n\
+           2) < $30\n\
+           3) < $60\n\
+           4) >= $60\n")
+    price = "2"
     while True:
-
-        choice = str(input(f"Do you want something {flavor}? (y/n/m)"))
-
-        if choice not in ("y", "n", "m"):
-            print("invalid input")
-        else:
+        price = input()
+        if price in ("1", "2", "3", "4"):
             break
-    if choice == "y":
-        wanted_flavors.append(flavor)
-    elif choice == "m":
-        undecided_flavors.append(flavor)
-    else:
-        unwanted_flavors.append(flavor)
-
-for flav in unwanted_flavors:
-    candidate_flavors.pop(flav)
-
-
-for flavor in candidate_flavors:
-    for item in candidate_flavors[flavor]:
-        if item in food_freq:
-            food_freq[item] += 1
         else:
-            food_freq[item] = 1
+            print("Invalid input")
 
-predictions = dict(sorted(food_freq.items(), key=lambda item: item[1], reverse=True))
+    return int(price)
+
+# yelp parameter takes integer variable which represents distance in meters
+def getDistance() -> int:
+    # # # this interaction only displayed when user hasn't shared a user profile
+    distances = {
+        "1": 10,
+        "2": 15,
+        "3": 20,
+        "4": 25
+    }
+    print("How far are you willing to travel?")
+    print("1) < 10 miles\n\
+           2) < 15 miles\n\
+           3) < 20 miles\n\
+           4) < 25 miles\n")
+    option = "1"
+    while True:
+        option = input()
+        if option in ("1", "2", "3", "4"):
+            break
+        else:
+            print("Invalid input")
+    # # #
+
+    distance = int(distances[option] * 1,609.344) # convert miles to meters
+    if distance > 40000:
+        distance = 40000 # max distance allowed for yelp api
+    return distance
+
+# get desired flavors in form of space delimited string
+def getFlavors() -> str:
+    flavor_list = []
+    for flavor in MAIN_FLAVORS:
+        choice = ""
+        while True:
+            choice = str(input(f"Do you want something {flavor}? (y/n/m)"))
+            if choice not in ("y", "n", "m"):
+                print("invalid input")
+            else:
+                break
+        if choice == "y":
+            flavor_list.insert(0,flavor) # more relevant flavor
+        elif choice == "m":
+            flavor_list.append(flavor)
         
+    return " ".join(flavor_list)
 
-print("Predictions in descending order:")
+# gets desired food categories in form of comma delimited string
+def getCulture() -> str:
+    culture_res = None
+    for culture in SUPPORTED_REGIONAL_CUISINES:
+        choice = ""
+        while True:
+            choice = str(input(f"Would you want {culture} food? (y/n/m)"))
+            if choice not in ("y", "n", "m"):
+                print("invalid input")
+            else:
+                break
 
-# pprint(candidate_flavors)
-pprint(predictions,sort_dicts=False)
+        if choice == "y": # for now we return on first desired culture, other configurations may be faster
+            culture_res = culture
+            break
+
+    if not culture_res: # in case user said "no" to every cultural food
+        culture_res = "food"
+    else:
+        culture_res = ",".join(CATEGORIZED_ALIASES[culture_res])
+        
+    return culture_res
+
+term = getFlavors()
+categories = getCulture()
+results = get_store(USER_LOCATION, term = term, categories=categories)
+
+# Cache results
+with open('results.json', 'w') as file:
+    json.dump(results, file, indent=4)
+print("Dictionary written to file in JSON format.")

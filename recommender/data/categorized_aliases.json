@@ -1,0 +1,175 @@
+{
+    "African": [
+        "african",
+        "ethiopian",
+        "eritrean",
+        "somali"
+    ],
+    "Middle Eastern": [
+        "arabian",
+        "armenian",
+        "greek",
+        "halal",
+        "lebanese",
+        "mediterranean",
+        "mideastern",
+        "persian",
+        "syrian",
+        "turkish"
+    ],
+    "South Asian": [
+        "afghani",
+        "himalayan",
+        "indonesian",
+        "indpak",
+        "pakistani",
+        "panasian",
+        "bangladeshi"
+
+    ],
+    "East Asian": [
+        "asianfusion",
+        "cambodian",
+        "chinese",
+        "filipino",
+        "japanese",
+        "korean",
+        "laotian",
+        "malaysian",
+        "mongolian",
+        "panasian",
+        "singaporean",
+        "thai",
+        "taiwanese",
+        "vietnamese"
+    ],
+    "European": [
+        "austrian",
+        "czech",
+        "french",
+        "georgian",
+        "german",
+        "hungarian",
+        "iberian",
+        "irish",
+        "italian",
+        "modern_european",
+        "polish",
+        "portuguese",
+        "russian",
+        "scandinavian",
+        "scottish",
+        "slovakian",
+        "spanish",
+        "swiss",
+        "ukrainian",
+        "uzbek"
+    ],
+    "Latin American": [
+        "argentine",
+        "empanadas",
+        "brazilian",
+        "caribbean",
+        "cuban",
+        "honduran",
+        "mexican",
+        "newmexican",
+        "nicaraguan",
+        "peruvian"
+    ],
+    "North American": [
+        "cajun",
+        "newamerican",
+        "tradamerican",
+        "soulfood",
+        "southern",
+        "tex-mex"
+    ],
+    "Finger food": [
+        "cheesesteaks",
+        "burgers",
+        "sandwiches",
+        "wraps",
+        "piadina",
+        "pizza"
+    ],
+    "Specialty": [
+        "poke",
+        "sushi",
+        "fondue",
+        "noodles",
+        "buffets",
+        "cheesesteaks",
+        "pastashops"
+    ],
+    "Light Meals": [
+        "salad",
+        "soup",
+        "sandwiches"
+    ],
+    "Vegan": [
+        "vegan",
+        "vegetarian",
+        "gluten_free"
+    ],    
+    "Quick Eats": [
+        "cafes",
+        "diners",
+        "hotpot",
+        "chicken_wings",
+        "chickenshop",
+        "piadina",
+        "kebab",
+        "pretzels"
+    ],
+    "Breakfast": [
+        "breakfast_brunch",
+        "diners",
+        "cafes",
+        "waffles"
+    ],
+    "Desserts": [
+        "acaibowls",
+        "bakeries",
+        "desserts",
+        "donuts",
+        "gelato",
+        "icecream",
+        "shavedice",
+        "creperies",
+        "cupcakes",
+        "donuts",
+        "macarons"
+    ],
+    "Health-Conscious": [
+        "acaibowls",
+        "raw_food",
+        "sandwiches",
+        "salad",
+        "vegetarian",
+        "vegan",
+        "gluten_free"
+    ],
+    "Meat-Centric": [
+        "bbq",
+        "steak",
+        "smokehouse",
+        "chicken_wings",
+        "chickenshop",
+        "kebab",
+        "steak",
+        "hotdog",
+        "cheesesteaks",
+        "burgers"
+    ],
+    "Comfort Food": [
+        "comfortfood",
+        "donuts", 
+        "cheesesteaks",
+        "fondue",
+        "icecream",
+        "poutineries",
+        "pretzels",
+        "kebab"   
+    ]
+}

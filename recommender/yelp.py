@@ -1,4 +1,4 @@
-# The point of this file is to explore and compile yelp api capabilities/database
+# The point of this file is to explore yelp api capabilities and compile data
 
 import requests
 import json
@@ -18,7 +18,7 @@ with open(key_path, 'r') as file:
     API_Key = file.readline()
 
 CSULB_coordinates = (33.78336745904146, -118.1101659429386) # test location (lat,long)
-default_radius = 12000 # ~15 miles in meters
+default_radius = 16000 # ~10 miles in meters
 default_category = "restaurants"
 
 # func to get results
@@ -63,10 +63,10 @@ def categoryDetails(locale=None):
     )
     return response.json()
 
-res = get_store(CSULB_coordinates, categories="raw_food")
+# res = get_store(CSULB_coordinates, categories="raw_food")
 # res = categoryDetails("en_US") # gets all businesses within en_US locale
 
-# Cache results
-with open('results.json', 'w') as file:
-    json.dump(res, file, indent=4)
-print("Dictionary written to file in JSON format.")
+# # Cache results
+# with open('results.json', 'w') as file:
+#     json.dump(res, file, indent=4)
+# print("Dictionary written to file in JSON format.")
