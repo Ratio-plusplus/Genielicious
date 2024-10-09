@@ -6,13 +6,15 @@ import React from 'react';
 import { Colors } from './Colors';
 
 export default function EditProfile({ navigation }) {
-    const pfp = require("../../assets/pfp.png");
+    const pfp = require("../assets/pfp.png");
     const [selectedImage, setSelectedImage] = React.useState(pfp);
     const [name, setName] = React.useState("");
     const [username, setUsername] = React.useState("");
     const [email, setEmail] = React.useState("")
     const [password, setPassword] = React.useState("")
 
+    //handle image selection from device's camera roll
+    //(very basic and will be changed)
     const handleImageSelection = async() => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -29,18 +31,10 @@ export default function EditProfile({ navigation }) {
     };
 
     return (
-        <SafeAreaView style={{
-            flex: 1,
-            backgroundColor: Colors.blue,
-        }}>
-            <View style={{
-                marginHorizontal: 12,
-                marginTop: 12,
-                marginBottom: 12,
-                flexDirection: "row",
-                justifyContent: "center"}}>
+        <SafeAreaView style={styles.background}>
+            <View style={styles.container}>
                     <TouchableOpacity 
-                        onPress={()=>navigation.navigate('Profile')}
+                        onPress={()=>navigation.navigate('Settings')}   //navigate back to settings if back arrow is pressed
                         style={{
                             position: "absolute",
                             left: 0
@@ -51,18 +45,15 @@ export default function EditProfile({ navigation }) {
                             color={Colors.ghost}
                         />
                     </TouchableOpacity>
-                    <Text style={{marginTop: 2, fontWeight: 600, fontSize: 22, color: Colors.ghost}}>Edit Profile</Text>
+                    <Text style={styles.title}>Edit Profile</Text>
             </View>
 
             <ScrollView>
-                <View style={{
-                    alignItems: "center",
-                    marginTop: 10,
-                    marginBottom: 20}}>
+                <View style={styles.pfpContainer}>
                     <TouchableOpacity
                         onPress={handleImageSelection}>
                         <Image 
-                            source={require("../../assets/pfp.png")}
+                            source={require("../assets/pfp.png")}
                             style={{
                                 height: 130,
                                 width: 130,
@@ -86,6 +77,7 @@ export default function EditProfile({ navigation }) {
                 </View>
 
                 <View>
+                    {/* name input field */}
                     <View style={{
                         flexDirection: "column",
                         marginBottom: 10
@@ -97,10 +89,12 @@ export default function EditProfile({ navigation }) {
                                 placeholderTextColor="#7C808D"
                                 onChangeText={setName}
                                 value={name}
+                                color={Colors.ghost}
                                 editable={true}/>
                         </View>
                     </View>
 
+                    {/* username input field */}
                     <View style={{
                         flexDirection: "column",
                         marginBottom: 6
@@ -112,10 +106,12 @@ export default function EditProfile({ navigation }) {
                                 placeholderTextColor="#7C808D"
                                 onChangeText={setUsername}
                                 value={username}
+                                color={Colors.ghost}
                                 editable={true}/>
                         </View>
                     </View>
 
+                    {/* email input field */}
                     <View style={{
                         flexDirection: "column",
                         marginBottom: 6
@@ -127,10 +123,12 @@ export default function EditProfile({ navigation }) {
                                 placeholderTextColor="#7C808D"
                                 onChangeText={setEmail}
                                 value={email}
+                                color={Colors.ghost}
                                 editable={true}/>
                         </View>
                     </View>
 
+                    {/* password input field */}
                     <View style={{
                         flexDirection: "column",
                         marginBottom: 6
@@ -143,10 +141,12 @@ export default function EditProfile({ navigation }) {
                                 onChangeText={setPassword}
                                 value={password}
                                 editable={true}
+                                color={Colors.ghost}
                                 secureTextEntry/>
                         </View>
                     </View>
 
+                    {/* save changes button */}
                     <TouchableOpacity style={styles.saveButton}>
                         <Text style={styles.saveText}>Save Changes</Text>
                     </TouchableOpacity>
@@ -157,6 +157,41 @@ export default function EditProfile({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+    background: {
+        flex: 1,
+        backgroundColor: Colors.blue,
+    },
+    container: {
+        marginHorizontal: 12,
+        marginTop: 12,
+        marginBottom: 12,
+        flexDirection: "row",
+        justifyContent: "center"
+    },
+    title: {
+        marginTop: 2, 
+        fontWeight: 600, 
+        fontSize: 22, 
+        color: Colors.ghost
+    },
+    pfpContainer: {
+        alignItems: "center",
+        marginTop: 10,
+        marginBottom: 20
+    },
+    pfpLook: {
+        height: 130,
+        width: 130,
+        borderRadius: 85,
+        borderWidth: 2,
+        borderColor: "#000"
+    },
+    cameraLook: {
+        position: "absolute",
+        bottom: -5,
+        right: -5,
+        zIndex: 9999
+    },
     sectionText: {
         fontSize: 16,
         fontWeight: "bold",
