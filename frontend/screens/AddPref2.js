@@ -7,7 +7,7 @@ import { Colors } from './Colors';
 import CheckBox from 'react-native-check-box';
 
 export default function AddPref2({ navigation }) {
-    const initialpfp = Image.resolveAssetSource(require("../../assets/pfp.png")).uri;
+    const initialpfp = Image.resolveAssetSource(require("../assets/pfp.png")).uri;
     const [selectedImage, setSelectedImage] = React.useState(initialpfp);
     const [name, setName] = React.useState();
     const [isChecked, setIsChecked] = useState({
