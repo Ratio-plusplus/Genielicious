@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
     },
     title: {
         marginTop: 2, 
-        fontWeight: 600, 
+        fontWeight: '600', 
         fontSize: 22, 
         color: Colors.ghost
     },

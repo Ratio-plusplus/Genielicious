@@ -137,7 +137,7 @@ export default function Signup({navigation}) {
           <TouchableOpacity style={styles.googleButton}>
             <Image
               style={styles.googleLogo}
-              source={require("../../assets/google-logo.png")}
+              source={require("../assets/google-logo.png")}
             />
             <Text style={styles.googleButtonText}>Sign up with Google</Text>
           </TouchableOpacity>
