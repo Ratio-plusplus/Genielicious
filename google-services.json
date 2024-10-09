@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "8294537978",
+    "project_id": "genielicious-1229a",
+    "storage_bucket": "genielicious-1229a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:8294537978:android:1ad1ee1f5c22cc8630c743",
+        "android_client_info": {
+          "package_name": "com.ratioplusplus.genielicious"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCc23Na0A1P_mLDxb96G1sZhsM9XGooXAA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
