@@ -9,9 +9,10 @@ export default function Profile({ navigation }) {
     return (
         <SafeAreaView style={styles.background}>
             <View style={styles.container}>
+                {/* header section for settings icon */}
                 <View style={styles.header}>
                     <TouchableOpacity 
-                        onPress={()=>navigation.navigate('Settings')}
+                        onPress={()=>navigation.navigate('Settings')}   //navigate to settings screen if button is pressed
                         style={styles.settingsIcon}>
                         <Ionicons 
                             name="settings-outline"
@@ -20,6 +21,7 @@ export default function Profile({ navigation }) {
                     </TouchableOpacity>
                 </View>
 
+                {/* profile section */}
                 <View style={styles.profile}>
                     <View style={styles.profileTop}>
                         <View style={styles.avatar}>
@@ -28,16 +30,20 @@ export default function Profile({ navigation }) {
                             resizeMode='contain'
                             style={styles.avatarImg}/>
                         </View>
+
+                        {/* name and add preference button */}
                         <View style={styles.profileBody}>
                             <Text style={styles.profileTitle}>Ratio++</Text>
                             <TouchableOpacity style={styles.button} 
-                                onPress={()=>navigation.navigate('Add Preference 1')}>
+                                onPress={()=>navigation.navigate('Add Preference 1')}>  
                                 <Text style={styles.profileSubtitle}>Add Preference</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
                 </View>
             </View>
+
+            {/* separator line below the profile section */}
             <View style={styles.lineContainer}>
                 <View style={styles.line}/>
             </View>
