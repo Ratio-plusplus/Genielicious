@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, TextInput } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, TextInput, Modal, FlatList, } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -8,12 +8,29 @@ import CheckBox from 'react-native-check-box';
 
 export default function AddPref2({ navigation }) {
     const initialpfp = Image.resolveAssetSource(require("../assets/pfp.png")).uri;
+    const [isModalVisible, setModalVisible] = useState(false)
+    const [isPresetModalVisible, setPresetModalVisible] = useState(false)
     const [selectedImage, setSelectedImage] = React.useState(initialpfp);
     const [name, setName] = React.useState();
     const [isChecked, setIsChecked] = useState({
         ten: false, fifteen: false, twenty: false,
         $20: false, $50: false, 
     });
+    const [showPresetImages, setShowPresetImages] = useState(false)
+    const presetImages = [
+        //add in path for any additional preset pictures
+        require('../assets/images//Dessert.png'),
+        require('../assets/images//Vegetables.png'),
+        require('../assets/images//images.jpg'),
+        require('../assets/images//images1.jpg'),
+        require('../assets/images//images (1).jpg'),
+        require('../assets/images//images (2).jpg'),
+        require('../assets/images//images (3).jpg'),
+        require('../assets/images//images (4).jpg'),
+        require('../assets/images//images (5).jpg'),
+        require('../assets/images//images (6).jpg'),
+        
+    ]
 
     // Allows user to pick an image on their phone
     const handleImageSelection = async() => {
@@ -21,15 +38,42 @@ export default function AddPref2({ navigation }) {
             mediaTypes: ImagePicker.MediaTypeOptions.All,
             allowsEditing: true,
             aspect: [4,4],
-            quality: 1
+            quality: 1,
         });
 
         console.log(result);
+
+        setModalVisible(false)
 
         if (!result.canceled) {
             setSelectedImage(result.assets[0].uri)
         }
     };
+
+    const handleCameraCapture = async () => {
+        let result = await ImagePicker.launchCameraAsync({
+            allowsEditing: true,
+            aspect: [4, 4],
+            quality: 1
+        })
+        
+        console.log(result)
+
+        if (!result.canceled){
+            setSelectedImage(result.assets[0].uri)
+        }
+    };
+
+    const handleProfilePicturePress = () => {
+        setModalVisible(true)
+    }
+
+    const selectPresetImage = (image) => {
+        setSelectedImage(Image.resolveAssetSource(image).uri)
+        setShowPresetImages(false);
+        setModalVisible(false) 
+        setPresetModalVisible(false)
+    }
 
     return (
         <SafeAreaView style={{
@@ -57,6 +101,13 @@ export default function AddPref2({ navigation }) {
                     <Text style={{marginTop: 2, fontWeight: 600, fontSize: 22, color: Colors.ghost}}>New Preference</Text>
             </View>
             
+            {/* button to use the camera */}
+            <View style = {{alignItems: 'center', marginBottom: 15, marginTop: 15 }}>
+                <TouchableOpacity onPress = {handleCameraCapture} style = {styles.cameraButton}>
+                    <Text style = {styles.cameraButtonText}>Take a Picture</Text>
+                </TouchableOpacity>
+            </View>
+
             {/* Visual changes for the perference profile picture */}
             <ScrollView>
                 <View style={{
@@ -64,9 +115,8 @@ export default function AddPref2({ navigation }) {
                     marginTop: 10,
                     marginBottom: 20}}>
                     <TouchableOpacity
-                        onPress={handleImageSelection}>
+                        onPress={handleProfilePicturePress}>
                         <Image 
-                            // source={require("../../assets/pfp.png")}
                             source={{uri:selectedImage}}
                             style={{
                                 height: 130,
@@ -89,6 +139,67 @@ export default function AddPref2({ navigation }) {
                     </TouchableOpacity>
                 </View>
                 
+                {/* Main Modal for selecting images */}
+                <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={isModalVisible}
+                    onRequestClose={() => setModalVisible(false)}
+                >
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.modalContainer}>
+                            <Text style={styles.modalTitle}>Choose an Option</Text>
+                            <TouchableOpacity style={styles.modalButton} onPress={handleImageSelection}>
+                                <Text style={styles.modalButtonText}>Select from Gallery</Text>
+                            </TouchableOpacity>
+
+                            {/* Button to open preset images modal */}
+                            <TouchableOpacity
+                                style={styles.modalButton}
+                                onPress={() => setPresetModalVisible(true)}>
+                                <Text style={styles.modalButtonText}>Select from Preset Images</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.cancelButton}>
+                                <Text style={styles.cancelButtonText}>Cancel</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
+
+                {/* Preset Images Modal */}
+                <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={isPresetModalVisible}
+                    onRequestClose={() => setPresetModalVisible(false)}
+                >
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.modalContainer}>
+                            <Text style={styles.modalTitle}>Preset Images</Text>
+                            <FlatList
+                                data={presetImages}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity onPress={() => selectPresetImage(item)}>
+                                        <Image
+                                            source={item}
+                                            style={styles.presetImages} // Ensure all images have fixed size
+                                        />
+                                    </TouchableOpacity>
+                                )}
+                                keyExtractor={(item, index) => index.toString()}
+                                showsVerticalScrollIndicator = {true}
+                                numColumns = {3}
+                            />
+                            <TouchableOpacity onPress={() => setPresetModalVisible(false)} style={styles.cancelButton}>
+                                <Text style={styles.cancelButtonText}>Close</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
+
+                
+
                 {/* Title box */}
                 <View>
                     <View style={{
@@ -171,6 +282,7 @@ export default function AddPref2({ navigation }) {
     )
 }
 
+// Styles
 const styles = StyleSheet.create({
     sectionText: {
         fontSize: 22,
@@ -224,5 +336,62 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: "bold",
         color: Colors.raisin
-    }
+    },
+    cameraButton: {
+        backgroundColor: Colors.gold,
+        padding: 10,
+        borderRadius: 6,
+    },
+    cameraButtonText: {
+        color: Colors.raisin,
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContainer: {
+        width: '80%',
+        backgroundColor: Colors.blue,
+        borderRadius: 10,
+        padding: 20,
+        alignItems: 'center',
+    },
+    modalTitle: {
+        fontSize: 22,
+        fontWeight: 'bold',
+        marginBottom: 15,
+        color: Colors.ghost,
+    },
+    modalButton: {
+        backgroundColor: Colors.gold,
+        padding: 15,
+        borderRadius: 8,
+        marginTop: 10,
+        width: '100%',
+        alignItems: 'center',
+    },
+    modalButtonText: {
+        color: Colors.raisin,
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    cancelButton: {
+        marginTop: 15,
+    },
+    cancelButtonText: {
+        color: Colors.ghost,
+        fontSize: 16,
+    },
+    presetImages: {
+        width: 90,  // Adjust width for 3 images per row
+        height: 90, // Keep height consistent
+        margin: 5,   // Ensure spacing between images
+        borderRadius: 15,
+        borderWidth: 1,
+        borderColor: '#ddd',
+    },
 });

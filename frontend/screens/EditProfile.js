@@ -32,6 +32,20 @@ export default function EditProfile({ navigation }) {
         }
     };
 
+    const handleCameraCapture = async () => {
+        let result = await ImagePicker.launchCameraAsync({
+            allowsEditing: true,
+            aspect: [4, 4],
+            quality: 1
+        })
+        
+        console.log(result)
+    
+        if (!result.canceled){
+            setSelectedImage(result.assets[0].uri)
+        }
+    };  
+
     return (
         <SafeAreaView style={{
             flex: 1,
@@ -56,6 +70,13 @@ export default function EditProfile({ navigation }) {
                         />
                     </TouchableOpacity>
                     <Text style={{marginTop: 2, fontWeight: 600, fontSize: 22, color: Colors.ghost}}>Edit Profile</Text>
+            </View>
+
+            {/* button to use the camera */}
+            <View style = {{alignItems: 'center', marginBottom: 15, marginTop: 15 }}>
+                <TouchableOpacity onPress = {handleCameraCapture} style = {styles.cameraButton}>
+                    <Text style = {styles.cameraButtonText}>Take a Picture</Text>
+                </TouchableOpacity>
             </View>
 
             <ScrollView>
@@ -200,5 +221,15 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: "bold",
         color: Colors.raisin
-    }
+    },
+    cameraButton: {
+        backgroundColor: Colors.gold,
+        padding: 10,
+        borderRadius: 6,
+    },
+    cameraButtonText: {
+        color: Colors.raisin,
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
 });
