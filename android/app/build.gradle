@@ -109,13 +109,13 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.navigationtab"
+    namespace 'com.ratioplusplus.Genielicious'
     defaultConfig {
-        applicationId "com.navigationtab"
+        applicationId 'com.ratioplusplus.Genielicious'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
     }
     signingConfigs {
         debug {
