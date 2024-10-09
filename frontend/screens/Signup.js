@@ -1,15 +1,34 @@
 import { StatusBar } from "expo-status-bar";
 import { Feather } from "@expo/vector-icons";
+import Ionicons from '@expo/vector-icons/Ionicons'
 import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
-import * as React from "react";
+import React, { useEffect, useState } from "react";
+import { Colors } from "./Colors";
+import { useAuth } from '../../backend/contexts/authContext/index';
+import { doCreateUserWithEmailAndPassword } from '../../backend/firebase/auth';
 
-
-export default function Login({navigation}) {
+export default function Signup({navigation}) {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const [passwordIsVisible, setPasswordIsVisible] = React.useState(false);
+  const [confirmPassword, setConfirmPassword] = React.useState("");
+    const [username, setUsername] = React.useState("");
+    const [isRegistering, setIsRegistering] = useState(false);
+    const [passwordIsVisible, setPasswordIsVisible] = React.useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
-  return (
+    const handleSignup = async (e) => {
+        await createUser();
+        navigation.navigate('Tab')
+    }
+
+    const createUser = async (e) => {
+        //e.preventDefault()
+        if (!isRegistering) {
+            setIsRegistering(true);
+            await doCreateUserWithEmailAndPassword(email, password)
+        }
+    }
+    return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto"/>
       <ScrollView
@@ -20,7 +39,20 @@ export default function Login({navigation}) {
         }}>
         <View style={styles.content}>
           <View style={{alignItems: 'center'}}>
-            <Text style={styles.title}>Login</Text>
+            <Text style={styles.title}>Sign Up</Text>
+          </View>
+          <View style={styles.inputContainer}>
+            <View style={styles.icon}>
+              <Ionicons name="person" size={22} color="#7C808D" />
+            </View>
+            <TextInput
+              style={styles.input}
+              placeholder="Username"
+              placeholderTextColor="#7C808D"
+              //selectionColor="#3662AA"
+              onChangeText={setUsername}
+              value={username}
+            />
           </View>
           <View style={styles.inputContainer}>
             <View style={styles.icon}>
@@ -28,7 +60,7 @@ export default function Login({navigation}) {
             </View>
             <TextInput
               style={styles.input}
-              placeholder="Email or Username"
+              placeholder="Email"
               placeholderTextColor="#7C808D"
               //selectionColor="#3662AA"
               onChangeText={setEmail}
@@ -59,14 +91,32 @@ export default function Login({navigation}) {
               />
             </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.forgotPasswordButton}>
-            <Text style={styles.forgotPasswordButtonText}>
-              Forgot password?
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.loginButton}>
-            <Text style={styles.loginButtonText}
-            onPress={() => navigation.navigate('Tab')}>Login</Text>
+          <View style={styles.inputContainer}>
+            <View style={styles.icon}>
+              <Feather name="lock" size={22} color="#7C808D" />
+            </View>
+            <TextInput
+              style={styles.input}
+              placeholder="Confirm Password"
+              secureTextEntry={!passwordIsVisible}
+              placeholderTextColor="#7C808D"
+              //selectionColor="#3662AA"
+              onChangeText={setConfirmPassword}
+              value={confirmPassword}
+            />
+            <TouchableOpacity
+              style={styles.passwordVisibleButton}
+              onPress={() => setPasswordIsVisible(!passwordIsVisible)}
+            >
+              <Feather
+                name={passwordIsVisible ? "eye" : "eye-off"}
+                size={22}
+                color="#7C808D"
+              />
+            </TouchableOpacity>
+          </View>
+                    <TouchableOpacity style={styles.loginButton} onPress={() => handleSignup()}>
+                        <Text style={styles.loginButtonText}>Sign Up</Text>
           </TouchableOpacity>
           <View style={styles.orContainer}>
             <View style={styles.orLine} />
@@ -78,14 +128,14 @@ export default function Login({navigation}) {
               style={styles.googleLogo}
               //source={require("./assets/google-logo.png")}
             />
-            <Text style={styles.googleButtonText}>Login with Google</Text>
+            <Text style={styles.googleButtonText}>Sign up with Google</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.registerButton}>
             <Text style={styles.registerButtonText}>
-              Don't have an account yet?{" "}
+              Already have an account?{" "}
               <Text style={styles.registerButtonTextHighlight} 
-                onPress={() => navigation.navigate('Signup')}>
-                Register now!
+                onPress={() => navigation.navigate('Login')}>
+                Login now!
               </Text>
             </Text>
           </TouchableOpacity>
@@ -98,7 +148,7 @@ export default function Login({navigation}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#2C3E50",
+    backgroundColor: Colors.blue,
   },
   content: {
     paddingHorizontal: 30,
@@ -107,7 +157,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "bold",
     marginBottom: 40,
-    color: "#F4D1AE"
+    color: Colors.champagne
   },
   inputContainer: {
     flexDirection: "row",
@@ -124,31 +174,23 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1.5,
     flex: 1,
     paddingBottom: 10,
-    borderBottomColor: "#F4D1AE",
+    borderBottomColor: Colors.champagne,
     fontSize: 16,
   },
   passwordVisibleButton: {
     position: "absolute",
     right: 0,
   },
-  forgotPasswordButton: {
-    alignSelf: "flex-end",
-  },
-  forgotPasswordButtonText: {
-    color: "#f0c016",
-    fontSize: 16,
-    fontWeight: "500",
-  },
   loginButton: {
-    backgroundColor: "#ed9a1c",
+    backgroundColor: Colors.gold,
     padding: 14,
     borderRadius: 10,
     marginTop: 20,
   },
   loginButtonText: {
-    color: "#272725",
+    color: Colors.raisin,
     textAlign: "center",
-    fontWeight: "500",
+    fontWeight: "600",
     fontSize: 16,
   },
   orContainer: {
@@ -159,17 +201,17 @@ const styles = StyleSheet.create({
   },
   orLine: {
     height: 1,
-    backgroundColor: "#eee",
+    backgroundColor: Colors.ghost,
     flex: 1,
   },
   orText: {
-    color: "#7C808D",
+    color: Colors.ghost,
     marginRight: 10,
     marginLeft: 10,
     fontSize: 14,
   },
   googleButton: {
-    backgroundColor: "#ebeefa",
+    backgroundColor: Colors.ghost,
     padding: 14,
     borderRadius: 10,
     flexDirection: "row",
@@ -178,9 +220,9 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   googleButtonText: {
-    color: "#272725",
+    color: Colors.raisin,
     fontSize: 16,
-    fontWeight: "500",
+    fontWeight: "600",
     textAlign: "center",
   },
   googleLogo: {
@@ -195,11 +237,11 @@ const styles = StyleSheet.create({
   },
   registerButtonText: {
     fontSize: 16,
-    color: "#ebeefa",
+    color: Colors.ghost,
   },
   registerButtonTextHighlight: {
     fontSize: 16,
-    color: "#f0c016",
-    fontWeight: "500",
+    color: Colors.yellow,
+    fontWeight: "600",
   },
 });

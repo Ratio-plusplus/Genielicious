@@ -7,7 +7,7 @@ import { Colors } from './Colors';
 import CheckBox from 'react-native-check-box';
 
 export default function AddPref2({ navigation }) {
-    const pfp = require("../../assets/pfp.png");
+    const pfp = require("../assets/pfp.png");
     const [selectedImage, setSelectedImage] = React.useState(pfp);
     const [name, setName] = React.useState();
     const [isChecked, setIsChecked] = useState({
@@ -64,7 +64,7 @@ export default function AddPref2({ navigation }) {
                     <TouchableOpacity
                         onPress={handleImageSelection}>
                         <Image 
-                            source={require("../../assets/pfp.png")}
+                            source={require("../assets/pfp.png")}
                             style={{
                                 height: 130,
                                 width: 130,

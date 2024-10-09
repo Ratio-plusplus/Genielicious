@@ -1,34 +1,47 @@
 import { StatusBar } from "expo-status-bar";
 import { Feather } from "@expo/vector-icons";
-import Ionicons from '@expo/vector-icons/Ionicons'
 import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
 import React, { useEffect, useState } from "react";
-import { Colors } from "./Colors";
-import { useAuth } from '../../contexts/authContext/index';
-import { doCreateUserWithEmailAndPassword } from '../../firebase/auth';
+import { useAuth } from '../../backend/contexts/authContext/index';
+import { doSignInWithEmailAndPassword } from '../../backend/firebase/auth';
 
-export default function Signup({navigation}) {
+
+export default function Login({navigation}) {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const [confirmPassword, setConfirmPassword] = React.useState("");
-    const [username, setUsername] = React.useState("");
-    const [isRegistering, setIsRegistering] = useState(false);
     const [passwordIsVisible, setPasswordIsVisible] = React.useState(false);
+    const [isLoggingIn, setisLoggingIn] = React.useState(false);
+    const [validUser, setvalidUser] = React.useState(false);
     const [errorMessage, setErrorMessage] = useState('');
 
-    const handleSignup = async (e) => {
-        await createUser();
-        navigation.navigate('Tab')
+
+    const handleLogin = async (e) => {
+        await loginUser();
+        if (validUser) {
+            navigation.navigate('Tab')
+        }
+        
     }
 
-    const createUser = async (e) => {
-        //e.preventDefault()
-        if (!isRegistering) {
-            setIsRegistering(true);
-            await doCreateUserWithEmailAndPassword(email, password)
+    const loginUser = async () => {
+        setErrorMessage('');
+        if (!isLoggingIn) {
+            setisLoggingIn(true);
+
+            try {
+                await doSignInWithEmailAndPassword(email, password)
+                setvalidUser(true);
+            } catch (errorMessage) {
+                if (errorMessage.code === 'auth/invalid-email') {
+                    setErrorMessage('Invalid email.');
+                    setisLoggingIn(false);
+                }
+            }
         }
     }
-    return (
+
+
+  return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto"/>
       <ScrollView
@@ -39,20 +52,7 @@ export default function Signup({navigation}) {
         }}>
         <View style={styles.content}>
           <View style={{alignItems: 'center'}}>
-            <Text style={styles.title}>Sign Up</Text>
-          </View>
-          <View style={styles.inputContainer}>
-            <View style={styles.icon}>
-              <Ionicons name="person" size={22} color="#7C808D" />
-            </View>
-            <TextInput
-              style={styles.input}
-              placeholder="Username"
-              placeholderTextColor="#7C808D"
-              //selectionColor="#3662AA"
-              onChangeText={setUsername}
-              value={username}
-            />
+            <Text style={styles.title}>Login</Text>
           </View>
           <View style={styles.inputContainer}>
             <View style={styles.icon}>
@@ -60,7 +60,7 @@ export default function Signup({navigation}) {
             </View>
             <TextInput
               style={styles.input}
-              placeholder="Email"
+              placeholder="Email or Username"
               placeholderTextColor="#7C808D"
               //selectionColor="#3662AA"
               onChangeText={setEmail}
@@ -91,32 +91,14 @@ export default function Signup({navigation}) {
               />
             </TouchableOpacity>
           </View>
-          <View style={styles.inputContainer}>
-            <View style={styles.icon}>
-              <Feather name="lock" size={22} color="#7C808D" />
-            </View>
-            <TextInput
-              style={styles.input}
-              placeholder="Confirm Password"
-              secureTextEntry={!passwordIsVisible}
-              placeholderTextColor="#7C808D"
-              //selectionColor="#3662AA"
-              onChangeText={setConfirmPassword}
-              value={confirmPassword}
-            />
-            <TouchableOpacity
-              style={styles.passwordVisibleButton}
-              onPress={() => setPasswordIsVisible(!passwordIsVisible)}
-            >
-              <Feather
-                name={passwordIsVisible ? "eye" : "eye-off"}
-                size={22}
-                color="#7C808D"
-              />
-            </TouchableOpacity>
-          </View>
-                    <TouchableOpacity style={styles.loginButton} onPress={() => handleSignup()}>
-                        <Text style={styles.loginButtonText}>Sign Up</Text>
+          <TouchableOpacity style={styles.forgotPasswordButton}>
+            <Text style={styles.forgotPasswordButtonText}>
+              Forgot password?
+            </Text>
+                  </TouchableOpacity>
+                  <Text style={styles.error}>{errorMessage}</Text>
+                  <TouchableOpacity style={styles.loginButton} onPress={() => handleLogin()}>
+            <Text style={styles.loginButtonText}>Login</Text>
           </TouchableOpacity>
           <View style={styles.orContainer}>
             <View style={styles.orLine} />
@@ -128,14 +110,14 @@ export default function Signup({navigation}) {
               style={styles.googleLogo}
               //source={require("./assets/google-logo.png")}
             />
-            <Text style={styles.googleButtonText}>Sign up with Google</Text>
+            <Text style={styles.googleButtonText}>Login with Google</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.registerButton}>
             <Text style={styles.registerButtonText}>
-              Already have an account?{" "}
+              Don't have an account yet?{" "}
               <Text style={styles.registerButtonTextHighlight} 
-                onPress={() => navigation.navigate('Login')}>
-                Login now!
+                onPress={() => navigation.navigate('Signup')}>
+                Register now!
               </Text>
             </Text>
           </TouchableOpacity>
@@ -148,7 +130,7 @@ export default function Signup({navigation}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.blue,
+    backgroundColor: "#2C3E50",
   },
   content: {
     paddingHorizontal: 30,
@@ -157,7 +139,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "bold",
     marginBottom: 40,
-    color: Colors.champagne
+    color: "#F4D1AE"
   },
   inputContainer: {
     flexDirection: "row",
@@ -174,23 +156,35 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1.5,
     flex: 1,
     paddingBottom: 10,
-    borderBottomColor: Colors.champagne,
+    borderBottomColor: "#F4D1AE",
     fontSize: 16,
   },
   passwordVisibleButton: {
     position: "absolute",
     right: 0,
   },
+  forgotPasswordButton: {
+    alignSelf: "flex-end",
+  },
+  forgotPasswordButtonText: {
+    color: "#f0c016",
+    fontSize: 16,
+    fontWeight: "500",
+    },
+    error: {
+        color: "#ff0000",
+        marginTop: 10
+    },
   loginButton: {
-    backgroundColor: Colors.gold,
+    backgroundColor: "#ed9a1c",
     padding: 14,
     borderRadius: 10,
     marginTop: 20,
   },
   loginButtonText: {
-    color: Colors.raisin,
+    color: "#272725",
     textAlign: "center",
-    fontWeight: "600",
+    fontWeight: "500",
     fontSize: 16,
   },
   orContainer: {
@@ -201,17 +195,17 @@ const styles = StyleSheet.create({
   },
   orLine: {
     height: 1,
-    backgroundColor: Colors.ghost,
+    backgroundColor: "#eee",
     flex: 1,
   },
   orText: {
-    color: Colors.ghost,
+    color: "#7C808D",
     marginRight: 10,
     marginLeft: 10,
     fontSize: 14,
   },
   googleButton: {
-    backgroundColor: Colors.ghost,
+    backgroundColor: "#ebeefa",
     padding: 14,
     borderRadius: 10,
     flexDirection: "row",
@@ -220,9 +214,9 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   googleButtonText: {
-    color: Colors.raisin,
+    color: "#272725",
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "500",
     textAlign: "center",
   },
   googleLogo: {
@@ -237,11 +231,11 @@ const styles = StyleSheet.create({
   },
   registerButtonText: {
     fontSize: 16,
-    color: Colors.ghost,
+    color: "#ebeefa",
   },
   registerButtonTextHighlight: {
     fontSize: 16,
-    color: Colors.yellow,
-    fontWeight: "600",
+    color: "#f0c016",
+    fontWeight: "500",
   },
 });

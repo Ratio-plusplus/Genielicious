@@ -24,7 +24,7 @@ export default function Profile({ navigation }) {
                     <View style={styles.profileTop}>
                         <View style={styles.avatar}>
                             <Image
-                            source={require("../../assets/pfp.png")}
+                                source={require("../assets/pfp.png")}
                             resizeMode='contain'
                             style={styles.avatarImg}/>
                         </View>

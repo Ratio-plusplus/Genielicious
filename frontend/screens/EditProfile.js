@@ -6,7 +6,7 @@ import React from 'react';
 import { Colors } from './Colors';
 
 export default function EditProfile({ navigation }) {
-    const pfp = require("../../assets/pfp.png");
+    const pfp = require("../assets/pfp.png");
     const [selectedImage, setSelectedImage] = React.useState(pfp);
     const [name, setName] = React.useState("");
     const [username, setUsername] = React.useState("");
@@ -62,7 +62,7 @@ export default function EditProfile({ navigation }) {
                     <TouchableOpacity
                         onPress={handleImageSelection}>
                         <Image 
-                            source={require("../../assets/pfp.png")}
+                            source={require("../assets/pfp.png")}
                             style={{
                                 height: 130,
                                 width: 130,
