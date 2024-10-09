@@ -1,10 +1,10 @@
 import { StatusBar } from "expo-status-bar";
 import { Feather } from "@expo/vector-icons";
 import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
+import { Colors } from "./Colors";
 import React, { useEffect, useState } from "react";
 import { useAuth } from '../../backend/contexts/authContext/index';
 import { doSignInWithEmailAndPassword } from '../../backend/firebase/auth';
-
 
 export default function Login({navigation}) {
   const [email, setEmail] = React.useState("");
@@ -50,10 +50,13 @@ export default function Login({navigation}) {
           alignItems: "center",
           justifyContent: "center",
         }}>
+
         <View style={styles.content}>
           <View style={{alignItems: 'center'}}>
             <Text style={styles.title}>Login</Text>
           </View>
+
+          {/* email/username input field */}
           <View style={styles.inputContainer}>
             <View style={styles.icon}>
               <Feather name="mail" size={22} color="#7C808D" />
@@ -62,11 +65,13 @@ export default function Login({navigation}) {
               style={styles.input}
               placeholder="Email or Username"
               placeholderTextColor="#7C808D"
-              //selectionColor="#3662AA"
-              onChangeText={setEmail}
-              value={email}
+              color={Colors.ghost}
+              onChangeText={setEmail}   //updates email state when user types
+              value={email}   //current email state
             />
           </View>
+
+          {/* password input field */}
           <View style={styles.inputContainer}>
             <View style={styles.icon}>
               <Feather name="lock" size={22} color="#7C808D" />
@@ -76,21 +81,24 @@ export default function Login({navigation}) {
               placeholder="Password"
               secureTextEntry={!passwordIsVisible}
               placeholderTextColor="#7C808D"
-              //selectionColor="#3662AA"
-              onChangeText={setPassword}
-              value={password}
+              color={Colors.ghost}
+              onChangeText={setPassword}    //updates password state
+              value={password}    //current password state
             />
+
+            {/* toggle password visibility */}
             <TouchableOpacity
               style={styles.passwordVisibleButton}
-              onPress={() => setPasswordIsVisible(!passwordIsVisible)}
-            >
+              onPress={() => setPasswordIsVisible(!passwordIsVisible)}>
               <Feather
-                name={passwordIsVisible ? "eye" : "eye-off"}
+                name={passwordIsVisible ? "eye" : "eye-off"}    //changes icon based on visibility state
                 size={22}
                 color="#7C808D"
               />
             </TouchableOpacity>
           </View>
+
+          {/* forgot password */}
           <TouchableOpacity style={styles.forgotPasswordButton}>
             <Text style={styles.forgotPasswordButtonText}>
               Forgot password?
@@ -100,18 +108,24 @@ export default function Login({navigation}) {
                   <TouchableOpacity style={styles.loginButton} onPress={() => handleLogin()}>
             <Text style={styles.loginButtonText}>Login</Text>
           </TouchableOpacity>
+
+          {/* separator between login methods */}
           <View style={styles.orContainer}>
             <View style={styles.orLine} />
             <Text style={styles.orText}>OR</Text>
             <View style={styles.orLine} />
           </View>
+
+          {/* login with Google button */}
           <TouchableOpacity style={styles.googleButton}>
             <Image
               style={styles.googleLogo}
-              //source={require("./assets/google-logo.png")}
+              source={require("../../assets/google-logo.png")}
             />
             <Text style={styles.googleButtonText}>Login with Google</Text>
           </TouchableOpacity>
+
+          {/* navigate to the Signup screen */}
           <TouchableOpacity style={styles.registerButton}>
             <Text style={styles.registerButtonText}>
               Don't have an account yet?{" "}

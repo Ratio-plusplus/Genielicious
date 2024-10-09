@@ -32,21 +32,13 @@ export default function Settings({ navigation }) {
         }}
     ];
 
+    //render each setting item with the corresponding icon, text, and action 
     const renderSettingItem = ({ icon, text, action }) => (
         <TouchableOpacity
-            onPress={action}
-            style={{
-                flexDirection: "row",
-                alignItems: "center",
-                paddingVertical: 8,
-                paddingLeft: 12,
-            }}>
+            onPress={action}    //this action occurs when the setting item is pressed
+            style={styles.settingItems}>
             <MaterialIcons name={icon} size={24} color={Colors.raisin}/>
-            <Text style={{
-                marginLeft: 36,
-                fontWeight: 600,
-                fontSize: 16
-            }}>{text}</Text>
+            <Text style={styles.settingText}>{text}</Text>
         </TouchableOpacity>
     )
 
@@ -64,17 +56,10 @@ export default function Settings({ navigation }) {
     }
 
     return (
-        <SafeAreaView style={{
-            flex: 1, 
-            backgroundColor: Colors.blue}}>
-            <View style={{
-                marginHorizontal: 12,
-                marginTop: 12,
-                marginBottom: 12,
-                flexDirection: "row",
-                justifyContent: "center"}}>
+        <SafeAreaView style={styles.background}>
+            <View style={styles.container}>
                     <TouchableOpacity 
-                        onPress={()=>navigation.navigate('Profile')}
+                        onPress={()=>navigation.navigate('Profile')}    //navigate back to profile page if back arrow is pressed
                         style={{
                             position: "absolute",
                             left: 0
@@ -89,13 +74,14 @@ export default function Settings({ navigation }) {
             </View>
 
             <ScrollView style={{marginHorizontal: 15}}>
-                {/* Account Setting */}
+                {/* account setting section */}
                 <View style={{marginBottom: 12}}>
                     <Text style={styles.sectionTitle}>Account</Text>
                     <View style={styles.sectionBox}>
                         {
                             accountItems.map((item, index) => (
-                                <React.Fragment key={index}>
+                                //render each account setting item
+                                <React.Fragment key={index}> 
                                     {renderSettingItem(item)}
                                 </React.Fragment>
                             ))
@@ -103,12 +89,13 @@ export default function Settings({ navigation }) {
                     </View>
                 </View>
 
-                {/* History Setting */}
+                {/* user data setting section */}
                 <View style={{marginBottom: 12}}>
                     <Text style={styles.sectionTitle}>User Data</Text>
                     <View style={styles.sectionBox}>
                         {
-                            historyItems.map((item, index) => (
+                            userDataItems.map((item, index) => (
+                                //render each user data setting item
                                 <React.Fragment key={index}>
                                     {renderSettingItem(item)}
                                 </React.Fragment>
@@ -117,12 +104,13 @@ export default function Settings({ navigation }) {
                     </View>
                 </View>
 
-                {/* Actions Setting */}
+                {/* actions setting section */}
                 <View style={{marginBottom: 12}}>
                     <Text style={styles.sectionTitle}>Actions</Text>
                     <View style={styles.sectionBox}>
                         {
                             actionsItems.map((item, index) => (
+                                //render each action setting item
                                 <React.Fragment key={index}>
                                     {renderSettingItem(item)}
                                 </React.Fragment>
@@ -168,6 +156,28 @@ export default function Settings({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+    settingItems: {
+        flexDirection: "row",
+        alignItems: "center",
+        paddingVertical: 8,
+        paddingLeft: 12,
+    },
+    settingText: {
+        marginLeft: 36,
+        fontWeight: 600,
+        fontSize: 16
+    },
+    background: {
+        flex: 1, 
+        backgroundColor: Colors.blue
+    },
+    container: {
+        marginHorizontal: 12,
+        marginTop: 12,
+        marginBottom: 12,
+        flexDirection: "row",
+        justifyContent: "center"
+    },
     title: {
         marginTop: 2, 
         fontWeight: "bold", 

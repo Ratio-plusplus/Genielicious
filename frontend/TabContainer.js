@@ -15,6 +15,7 @@ const historyName = 'History';
 
 const Tab = createBottomTabNavigator();
 
+//bottom navigation bar for profile, genie, and history screens
 export default function TabContainer() {
     return(
             <Tab.Navigator 
@@ -36,12 +37,10 @@ export default function TabContainer() {
                     }
 
                     else if (rn == homeName) {
-                        // icon provided by Ionicons
                         iconName = focused ? 'home-outline' : 'home-outline'
                     }
 
                     else if (rn == historyName) {
-                        // icon provided by Ionicons
                         iconName = focused ? 'book-outline' : 'book-outline'
                     }
 

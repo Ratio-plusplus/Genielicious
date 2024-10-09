@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 
 export default function AddPref1 ({ navigation }) {
+  //manages state of each checkbox item
   const [isChecked, setIsChecked] = useState({
     savory: false, sweet: false, salty: false, spicy: false,
     bitter: false, sour: false, cool: false, hot: false,
@@ -17,7 +18,7 @@ export default function AddPref1 ({ navigation }) {
     <SafeAreaView style={styles.background}>
         <View style={styles.container}>
                 <TouchableOpacity 
-                    onPress={()=>navigation.navigate('Profile')}
+                    onPress={()=>navigation.navigate('Profile')}    //navigate to profile page if back arrow is pressed
                     style={styles.arrow}>
                     <MaterialIcons
                         name="keyboard-arrow-left"
@@ -29,17 +30,18 @@ export default function AddPref1 ({ navigation }) {
         </View>
 
         <ScrollView>
+            {/* taste preferences section */}
             <View style={styles.checkboxContainer}>
                 <Text style={styles.sectionTitle}>
                     Taste Preference:
                 </Text>
 
-                {/* Row 1 */}
+                {/* row 1: savory and sweet */}
                 <View style={styles.checkboxRow}>
                     <CheckBox
                         style={styles.checkbox}
-                        isChecked={isChecked.savory} 
-                        onClick={()=>setIsChecked({...isChecked, savory: !isChecked.savory})}
+                        isChecked={isChecked.savory}    //current state
+                        onClick={()=>setIsChecked({...isChecked, savory: !isChecked.savory})}   //toggle state
                         rightText='Savory'
                         rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
@@ -54,7 +56,7 @@ export default function AddPref1 ({ navigation }) {
                         checkedCheckBoxColor={Colors.gold}/>
                 </View>
 
-                {/* Row 2 */}
+                {/* row 2: salty and spicy */}
                 <View style={styles.checkboxRow}>
                     <CheckBox 
                         style={styles.checkbox}
@@ -74,7 +76,7 @@ export default function AddPref1 ({ navigation }) {
                         checkedCheckBoxColor={Colors.gold}/>
                 </View>
 
-                {/* Row 3 */}
+                {/* row 3: bitter and sour */}
                 <View style={styles.checkboxRow}>
                     <CheckBox 
                         style={styles.checkbox}
@@ -94,7 +96,7 @@ export default function AddPref1 ({ navigation }) {
                         checkedCheckBoxColor={Colors.gold}/>
                 </View>
 
-                {/* Row 4 */}
+                {/* row 4: cool and hot */}
                 <View style={styles.checkboxRow}>
                     <CheckBox 
                         style={styles.checkbox}
@@ -115,12 +117,13 @@ export default function AddPref1 ({ navigation }) {
                 </View>
             </View>
 
+            {/* dietary restrictions/allergies section */}
             <View style={styles.checkboxContainer}>
                 <Text style={styles.sectionTitle}>
                     Dietary Restrictions/Allergies:
                 </Text>
 
-                {/* Row 1 */}
+                {/* row 1: vegan and vegetarian */}
                 <View style={styles.checkboxRow}>
                     <CheckBox
                         style={styles.checkbox}
@@ -140,7 +143,7 @@ export default function AddPref1 ({ navigation }) {
                         checkedCheckBoxColor={Colors.gold}/>
                 </View>
 
-                {/* Row 2 */}
+                {/* row 2: peanut/tree nut and wheat/gluten */}
                 <View style={styles.checkboxRow}>
                     <CheckBox 
                         style={styles.checkbox}
@@ -160,7 +163,7 @@ export default function AddPref1 ({ navigation }) {
                         checkedCheckBoxColor={Colors.gold}/>
                 </View>
 
-                {/* Row 3 */}
+                {/* row 3: fish and shellfish */}
                 <View style={styles.checkboxRow}>
                     <CheckBox 
                         style={styles.checkbox}
@@ -180,7 +183,7 @@ export default function AddPref1 ({ navigation }) {
                         checkedCheckBoxColor={Colors.gold}/>
                 </View>
 
-                {/* Row 4 */}
+                {/* row 4: eggs and dairy */}
                 <View style={styles.checkboxRow}>
                     <CheckBox 
                         style={styles.checkbox}
@@ -200,7 +203,7 @@ export default function AddPref1 ({ navigation }) {
                         checkedCheckBoxColor={Colors.gold}/>
                 </View>
 
-                {/* Row 5 */}
+                {/* row 5: soy and keto */}
                 <View style={styles.checkboxRow}>
                     <CheckBox 
                         style={styles.checkbox}
@@ -220,11 +223,12 @@ export default function AddPref1 ({ navigation }) {
                         checkedCheckBoxColor={Colors.gold}/>
                 </View>
             </View>
-            {/* Continue Button */}
+
+            {/* continue button and navigate to next page */}
             <View style={styles.buttonContainer}>
                 <TouchableOpacity 
                     style={styles.continueButton} 
-                    onPress={()=>navigation.navigate('Add Preference 2')}>
+                    onPress={()=>navigation.navigate('Add Preference 2')}>  
                     <Text style={styles.buttonText}>Continue</Text>
                 </TouchableOpacity>
             </View>
