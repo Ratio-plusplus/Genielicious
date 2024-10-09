@@ -11,10 +11,11 @@ export default function Signup({navigation}) {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
-    const [username, setUsername] = React.useState("");
-    const [isRegistering, setIsRegistering] = useState(false);
-    const [passwordIsVisible, setPasswordIsVisible] = React.useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
+  const [username, setUsername] = React.useState("");
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [passwordIsVisible, setPasswordIsVisible] = React.useState(false);
+  const [confirmPasswordIsVisible, setConfirmPasswordIsVisible] = React.useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
     const handleSignup = async (e) => {
         await createUser();
@@ -28,6 +29,8 @@ export default function Signup({navigation}) {
             await doCreateUserWithEmailAndPassword(email, password)
         }
     }
+
+
     return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto"/>
@@ -37,10 +40,13 @@ export default function Signup({navigation}) {
           alignItems: "center",
           justifyContent: "center",
         }}>
+
         <View style={styles.content}>
           <View style={{alignItems: 'center'}}>
             <Text style={styles.title}>Sign Up</Text>
           </View>
+
+          {/* username input field */}
           <View style={styles.inputContainer}>
             <View style={styles.icon}>
               <Ionicons name="person" size={22} color="#7C808D" />
@@ -49,11 +55,13 @@ export default function Signup({navigation}) {
               style={styles.input}
               placeholder="Username"
               placeholderTextColor="#7C808D"
-              //selectionColor="#3662AA"
-              onChangeText={setUsername}
-              value={username}
+              color={Colors.ghost}
+              onChangeText={setUsername}    //updates username state
+              value={username}    //current username state
             />
           </View>
+
+          {/* email input field */}
           <View style={styles.inputContainer}>
             <View style={styles.icon}>
               <Feather name="mail" size={22} color="#7C808D" />
@@ -62,11 +70,13 @@ export default function Signup({navigation}) {
               style={styles.input}
               placeholder="Email"
               placeholderTextColor="#7C808D"
-              //selectionColor="#3662AA"
-              onChangeText={setEmail}
-              value={email}
+              color={Colors.ghost}
+              onChangeText={setEmail}     //updates email state
+              value={email}     //current email state
             />
           </View>
+
+          {/* password input field */}
           <View style={styles.inputContainer}>
             <View style={styles.icon}>
               <Feather name="lock" size={22} color="#7C808D" />
@@ -76,21 +86,24 @@ export default function Signup({navigation}) {
               placeholder="Password"
               secureTextEntry={!passwordIsVisible}
               placeholderTextColor="#7C808D"
-              //selectionColor="#3662AA"
-              onChangeText={setPassword}
-              value={password}
+              color={Colors.ghost}
+              onChangeText={setPassword}      //updates password state
+              value={password}      //current password state
             />
+
+            {/* toggle password visibility */}
             <TouchableOpacity
               style={styles.passwordVisibleButton}
-              onPress={() => setPasswordIsVisible(!passwordIsVisible)}
-            >
+              onPress={() => setPasswordIsVisible(!passwordIsVisible)}>
               <Feather
-                name={passwordIsVisible ? "eye" : "eye-off"}
+                name={passwordIsVisible ? "eye" : "eye-off"}    //changes icon based on visibility state
                 size={22}
                 color="#7C808D"
               />
             </TouchableOpacity>
           </View>
+
+          {/* confirm password input field */}
           <View style={styles.inputContainer}>
             <View style={styles.icon}>
               <Feather name="lock" size={22} color="#7C808D" />
@@ -98,42 +111,51 @@ export default function Signup({navigation}) {
             <TextInput
               style={styles.input}
               placeholder="Confirm Password"
-              secureTextEntry={!passwordIsVisible}
+              secureTextEntry={!confirmPasswordIsVisible}
               placeholderTextColor="#7C808D"
-              //selectionColor="#3662AA"
+              color={Colors.ghost}
               onChangeText={setConfirmPassword}
               value={confirmPassword}
             />
+
+            {/* toggle password visibility */}
             <TouchableOpacity
               style={styles.passwordVisibleButton}
-              onPress={() => setPasswordIsVisible(!passwordIsVisible)}
-            >
+              onPress={() => setConfirmPasswordIsVisible(!confirmPasswordIsVisible)}>
               <Feather
-                name={passwordIsVisible ? "eye" : "eye-off"}
+                name={confirmPasswordIsVisible ? "eye" : "eye-off"}
                 size={22}
                 color="#7C808D"
               />
             </TouchableOpacity>
           </View>
-                    <TouchableOpacity style={styles.loginButton} onPress={() => handleSignup()}>
-                        <Text style={styles.loginButtonText}>Sign Up</Text>
+
+          {/* signup button */}
+          <TouchableOpacity style={styles.signupButton} onPress={() => handleSignup()}>
+            <Text style={styles.signupButtonText}>Sign Up</Text>
           </TouchableOpacity>
+
+          {/* separator between signup methods */}
           <View style={styles.orContainer}>
             <View style={styles.orLine} />
             <Text style={styles.orText}>OR</Text>
             <View style={styles.orLine} />
           </View>
+
+          {/* sign up with Google button */}
           <TouchableOpacity style={styles.googleButton}>
             <Image
               style={styles.googleLogo}
-              //source={require("./assets/google-logo.png")}
+              source={require("../../frontend/assets/google-logo.png")}
             />
             <Text style={styles.googleButtonText}>Sign up with Google</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.registerButton}>
-            <Text style={styles.registerButtonText}>
+
+          {/* navigate to Login screen */}
+          <TouchableOpacity style={styles.loginButton}>
+            <Text style={styles.loginButtonText}>
               Already have an account?{" "}
-              <Text style={styles.registerButtonTextHighlight} 
+              <Text style={styles.loginButtonTextHighlight} 
                 onPress={() => navigation.navigate('Login')}>
                 Login now!
               </Text>
@@ -181,13 +203,13 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 0,
   },
-  loginButton: {
+  signupButton: {
     backgroundColor: Colors.gold,
     padding: 14,
     borderRadius: 10,
     marginTop: 20,
   },
-  loginButtonText: {
+  signupButtonText: {
     color: Colors.raisin,
     textAlign: "center",
     fontWeight: "600",
@@ -231,15 +253,15 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 14,
   },
-  registerButton: {
+  loginButton: {
     alignSelf: "center",
     marginTop: 40,
   },
-  registerButtonText: {
+  loginButtonText: {
     fontSize: 16,
     color: Colors.ghost,
   },
-  registerButtonTextHighlight: {
+  loginButtonTextHighlight: {
     fontSize: 16,
     color: Colors.yellow,
     fontWeight: "600",

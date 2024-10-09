@@ -21,6 +21,7 @@ const add2Name = "Add Preference 2";
 
 const Stack = createNativeStackNavigator();
 
+//navigation between every screens
 export default function WelcomeContainer() {
   return (
     <NavigationContainer>
