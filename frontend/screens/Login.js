@@ -9,11 +9,10 @@ import { doSignInWithEmailAndPassword } from '../../backend/firebase/auth';
 export default function Login({navigation}) {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-    const [passwordIsVisible, setPasswordIsVisible] = React.useState(false);
-    const [isLoggingIn, setisLoggingIn] = React.useState(false);
-    const [validUser, setvalidUser] = React.useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
-
+  const [passwordIsVisible, setPasswordIsVisible] = React.useState(false);
+  const [isLoggingIn, setisLoggingIn] = React.useState(false);
+  const [validUser, setvalidUser] = React.useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
     const handleLogin = async (e) => {
         await loginUser();
@@ -103,9 +102,9 @@ export default function Login({navigation}) {
             <Text style={styles.forgotPasswordButtonText}>
               Forgot password?
             </Text>
-                  </TouchableOpacity>
-                  <Text style={styles.error}>{errorMessage}</Text>
-                  <TouchableOpacity style={styles.loginButton} onPress={() => handleLogin()}>
+            </TouchableOpacity>
+              <Text style={styles.error}>{errorMessage}</Text>
+            <TouchableOpacity style={styles.loginButton} onPress={() => handleLogin()}>
             <Text style={styles.loginButtonText}>Login</Text>
           </TouchableOpacity>
 
@@ -120,7 +119,7 @@ export default function Login({navigation}) {
           <TouchableOpacity style={styles.googleButton}>
             <Image
               style={styles.googleLogo}
-              source={require("../../assets/google-logo.png")}
+              source={require("../../frontend/assets/google-logo.png")}
             />
             <Text style={styles.googleButtonText}>Login with Google</Text>
           </TouchableOpacity>
@@ -144,7 +143,7 @@ export default function Login({navigation}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#2C3E50",
+    backgroundColor: Colors.blue,
   },
   content: {
     paddingHorizontal: 30,
@@ -153,7 +152,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "bold",
     marginBottom: 40,
-    color: "#F4D1AE"
+    color: Colors.champagne
   },
   inputContainer: {
     flexDirection: "row",
@@ -170,7 +169,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1.5,
     flex: 1,
     paddingBottom: 10,
-    borderBottomColor: "#F4D1AE",
+    borderBottomColor: Colors.champagne,
     fontSize: 16,
   },
   passwordVisibleButton: {
@@ -181,22 +180,22 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
   },
   forgotPasswordButtonText: {
-    color: "#f0c016",
+    color: Colors.yellow,
     fontSize: 16,
     fontWeight: "500",
     },
-    error: {
-        color: "#ff0000",
-        marginTop: 10
-    },
+  error: {
+    color: "#ff0000",
+    marginTop: 10
+  },
   loginButton: {
-    backgroundColor: "#ed9a1c",
+    backgroundColor: Colors.gold,
     padding: 14,
     borderRadius: 10,
     marginTop: 20,
   },
   loginButtonText: {
-    color: "#272725",
+    color: Colors.raisin,
     textAlign: "center",
     fontWeight: "500",
     fontSize: 16,
@@ -219,7 +218,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   googleButton: {
-    backgroundColor: "#ebeefa",
+    backgroundColor: Colors.ghost,
     padding: 14,
     borderRadius: 10,
     flexDirection: "row",
@@ -228,7 +227,7 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   googleButtonText: {
-    color: "#272725",
+    color: Colors.raisin,
     fontSize: 16,
     fontWeight: "500",
     textAlign: "center",
@@ -245,11 +244,11 @@ const styles = StyleSheet.create({
   },
   registerButtonText: {
     fontSize: 16,
-    color: "#ebeefa",
+    color: Colors.ghost,
   },
   registerButtonTextHighlight: {
     fontSize: 16,
-    color: "#f0c016",
+    color: Colors.yellow,
     fontWeight: "500",
   },
 });

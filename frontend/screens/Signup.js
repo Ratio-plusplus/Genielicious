@@ -11,10 +11,11 @@ export default function Signup({navigation}) {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
-    const [username, setUsername] = React.useState("");
-    const [isRegistering, setIsRegistering] = useState(false);
-    const [passwordIsVisible, setPasswordIsVisible] = React.useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
+  const [username, setUsername] = React.useState("");
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [passwordIsVisible, setPasswordIsVisible] = React.useState(false);
+  const [confirmPasswordIsVisible, setConfirmPasswordIsVisible] = React.useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
     const handleSignup = async (e) => {
         await createUser();
@@ -28,6 +29,8 @@ export default function Signup({navigation}) {
             await doCreateUserWithEmailAndPassword(email, password)
         }
     }
+
+
     return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto"/>
@@ -52,6 +55,7 @@ export default function Signup({navigation}) {
               style={styles.input}
               placeholder="Username"
               placeholderTextColor="#7C808D"
+              color={Colors.ghost}
               onChangeText={setUsername}    //updates username state
               value={username}    //current username state
             />
@@ -66,6 +70,7 @@ export default function Signup({navigation}) {
               style={styles.input}
               placeholder="Email"
               placeholderTextColor="#7C808D"
+              color={Colors.ghost}
               onChangeText={setEmail}     //updates email state
               value={email}     //current email state
             />
@@ -81,6 +86,7 @@ export default function Signup({navigation}) {
               placeholder="Password"
               secureTextEntry={!passwordIsVisible}
               placeholderTextColor="#7C808D"
+              color={Colors.ghost}
               onChangeText={setPassword}      //updates password state
               value={password}      //current password state
             />
@@ -107,6 +113,7 @@ export default function Signup({navigation}) {
               placeholder="Confirm Password"
               secureTextEntry={!confirmPasswordIsVisible}
               placeholderTextColor="#7C808D"
+              color={Colors.ghost}
               onChangeText={setConfirmPassword}
               value={confirmPassword}
             />
@@ -122,8 +129,10 @@ export default function Signup({navigation}) {
               />
             </TouchableOpacity>
           </View>
-                    <TouchableOpacity style={styles.loginButton} onPress={() => handleSignup()}>
-                        <Text style={styles.loginButtonText}>Sign Up</Text>
+
+          {/* signup button */}
+          <TouchableOpacity style={styles.signupButton} onPress={() => handleSignup()}>
+            <Text style={styles.signupButtonText}>Sign Up</Text>
           </TouchableOpacity>
 
           {/* separator between signup methods */}
@@ -137,7 +146,7 @@ export default function Signup({navigation}) {
           <TouchableOpacity style={styles.googleButton}>
             <Image
               style={styles.googleLogo}
-              source={require("../../assets/google-logo.png")}
+              source={require("../../frontend/assets/google-logo.png")}
             />
             <Text style={styles.googleButtonText}>Sign up with Google</Text>
           </TouchableOpacity>
