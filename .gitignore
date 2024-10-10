@@ -19,9 +19,12 @@ web-build/
 expo-env.d.ts
 # @end expo-cli
 
+# output files
 *.txt
-!recommender/results/*.txt
+!recommender/requirements.txt
+!recommender/data/*.txt
 recommender/results/results.json
 results.json
 tester.py
-__pycache__
+__pycache__/
+.env

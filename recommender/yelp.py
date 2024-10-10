@@ -2,26 +2,18 @@
 
 import requests
 import json
+import os
+from dotenv import find_dotenv, load_dotenv
 
-id_path = "C:/Users/alex/Desktop/id.txt"
-key_path = "C:/Users/alex/Desktop/api_key.txt"
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path)
 
-# # # DO NOT share actual keys with public.
-ID = "id"
-API_Key = "api key"
+# # # DO NOT add .env file to version control
+# ID = os.getenv("YELP_CLIENT_ID")
+API_KEY = os.getenv("YELP_API_KEY")
 # # #
 
-with open(id_path, 'r') as file:
-    ID = file.readline()
-
-with open(key_path, 'r') as file:
-    API_Key = file.readline()
-
-CSULB_coordinates = (33.78336745904146, -118.1101659429386) # test location (lat,long)
-default_radius = 16000 # ~10 miles in meters
-default_category = "restaurants"
-
-# func to get results
+# func to get yelp results on specialized queries
 def get_store(coordinates, term = None, categories = default_category, radius=default_radius, sort_by = "rating", checkOpen = False, price = None):
     url = "https://api.yelp.com/v3/businesses/search"
 
@@ -39,7 +31,7 @@ def get_store(coordinates, term = None, categories = default_category, radius=de
         query["price"] = price
     
     headers = {
-        "Authorization": f"Bearer {API_Key}"
+        "Authorization": f"Bearer {API_KEY}"
     }
 
     response = requests.request(
@@ -47,15 +39,16 @@ def get_store(coordinates, term = None, categories = default_category, radius=de
     )
     return response.json()
 
-def categoryDetails(locale=None):
+# gets all supported categories within locale (e.g en_US)
+def categoryDetails(locale: str = "en_US"):
     url = f"https://api.yelp.com/v3/categories"
 
     query = dict()
     if locale:
-        query["local"] = locale
+        query["locale"] = locale
 
     headers = {
-        "Authorization": f"Bearer {API_Key}"
+        "Authorization": f"Bearer {API_KEY}"
     }
 
     response = requests.request(
@@ -63,10 +56,15 @@ def categoryDetails(locale=None):
     )
     return response.json()
 
-# res = get_store(CSULB_coordinates, categories="raw_food")
-# res = categoryDetails("en_US") # gets all businesses within en_US locale
+if __name__ == "__main__":
+    CSULB_coordinates = (33.78336745904146, -118.1101659429386) # test location (lat,long)
+    default_radius = 16000 # ~10 miles in meters
+    default_category = "restaurants"
 
-# # Cache results
-# with open('results.json', 'w') as file:
-#     json.dump(res, file, indent=4)
-# print("Dictionary written to file in JSON format.")
+    # res = get_store(CSULB_coordinates, categories="raw_food")
+    # res = categoryDetails("en_US") # gets all businesses within en_US locale
+
+    # # Cache results
+    # with open('results.json', 'w') as file:
+    #     json.dump(res, file, indent=4)
+    # print("Dictionary written to file in JSON format.")

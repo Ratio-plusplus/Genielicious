@@ -12,7 +12,6 @@ ALL_OTHER_CATEGORIES = set(["Finger food", "Specialty", "Light Meals", "Vegan",
                             "Quick Eats", "Breakfast", "Desserts", "Health-Conscious",
                             "Meat-Centric", "Comfort Food"])
 MAIN_FLAVORS = set(["sweet","salty", "sour", "bitter", "savory", "spicy"]) # main flavors that we will take into account
-USER_LOCATION = (33.78336745904146, -118.1101659429386) # should be provided by the client, using CSULB coords to test
 
 with open("recommender\\data\\categorized_aliases.json", "r") as file:
     CATEGORIZED_ALIASES = json.load(file)
@@ -104,11 +103,14 @@ def getCulture() -> str:
         
     return culture_res
 
-term = getFlavors()
-categories = getCulture()
-results = get_store(USER_LOCATION, term = term, categories=categories)
+if __name__ == "__main__":
+    USER_LOCATION = (33.78336745904146, -118.1101659429386) # should be provided by the client, using CSULB coords to test
+    
+    term = getFlavors()
+    categories = getCulture()
+    results = get_store(USER_LOCATION, term = term, categories=categories)
 
-# Cache results
-with open('results.json', 'w') as file:
-    json.dump(results, file, indent=4)
-print("Dictionary written to file in JSON format.")
+    # Cache results
+    with open('results.json', 'w') as file:
+        json.dump(results, file, indent=4)
+    print("Dictionary written to file in JSON format.")
