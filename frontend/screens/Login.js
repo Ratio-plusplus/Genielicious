@@ -32,9 +32,16 @@ export default function Login({navigation}) {
                 setvalidUser(true);
             } catch (errorMessage) {
                 if (errorMessage.code === 'auth/invalid-email') {
-                    setErrorMessage('Invalid email.');
-                    setisLoggingIn(false);
+                    setErrorMessage('Invalid email. Please try again.');
+
                 }
+                else if (errorMessage.code === 'auth/invalid-password') {
+                    setErrorMessage('Incorrect password for email. Please try again.');
+                }
+                else {
+                    setErrorMessage('An unknown error has occured. Please try again.');
+                }
+                setisLoggingIn(false);
             }
         }
     }

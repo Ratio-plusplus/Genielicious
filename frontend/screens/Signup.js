@@ -18,8 +18,23 @@ export default function Signup({navigation}) {
   const [errorMessage, setErrorMessage] = useState('');
 
     const handleSignup = async (e) => {
-        await createUser();
-        navigation.navigate('Tab')
+        try {
+            if (password === confirmPassword) {
+                await createUser();
+                navigation.navigate('Tab')
+            }
+        } catch (errorMessage) {
+            if (errorMessage.code === "auth/email-already-exists") {
+                setErrorMessage("Email already exists. Please choose a different email.");
+            } else if (errorMessage.code === "auth/invalid-display-name") {
+                setErrorMessage("Please provide an email address");
+            } else if (errorMessage.code === "auth/invalid-password") {
+                setErrorMessage("Invalid Password. Password must be at least six characters and contain an uppercase letter, number, and special character");
+            } else {
+                setErrorMessage("An unknown error has occurred. Please try again.")
+            }
+
+        }
     }
 
     const createUser = async (e) => {
@@ -129,7 +144,7 @@ export default function Signup({navigation}) {
               />
             </TouchableOpacity>
           </View>
-
+                    <Text style={styles.error}>{errorMessage}</Text>
           {/* signup button */}
           <TouchableOpacity style={styles.signupButton} onPress={() => handleSignup()}>
             <Text style={styles.signupButtonText}>Sign Up</Text>
