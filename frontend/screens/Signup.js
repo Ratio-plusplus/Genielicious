@@ -15,33 +15,46 @@ export default function Signup({navigation}) {
   const [isRegistering, setIsRegistering] = useState(false);
   const [passwordIsVisible, setPasswordIsVisible] = React.useState(false);
   const [confirmPasswordIsVisible, setConfirmPasswordIsVisible] = React.useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [createdUser, setcreatedUser] = useState(false);
 
     const handleSignup = async (e) => {
-        try {
             if (password === confirmPassword) {
                 await createUser();
-                navigation.navigate('Tab')
-            }
-        } catch (errorMessage) {
-            if (errorMessage.code === "auth/email-already-exists") {
-                setErrorMessage("Email already exists. Please choose a different email.");
-            } else if (errorMessage.code === "auth/invalid-display-name") {
-                setErrorMessage("Please provide an email address");
-            } else if (errorMessage.code === "auth/invalid-password") {
-                setErrorMessage("Invalid Password. Password must be at least six characters and contain an uppercase letter, number, and special character");
-            } else {
-                setErrorMessage("An unknown error has occurred. Please try again.")
-            }
-
+                if (createdUser) {
+                    navigation.navigate('Tab')
+                }
+                
         }
     }
 
     const createUser = async (e) => {
         //e.preventDefault()
+        setErrorMessage('');
         if (!isRegistering) {
             setIsRegistering(true);
-            await doCreateUserWithEmailAndPassword(email, password)
+            
+            try {
+                if (password === confirmPassword) {
+                    await doCreateUserWithEmailAndPassword(email, password)
+                    setcreatedUser(true);
+                }
+            } catch (errorMessage) {
+                if (errorMessage.code === "auth/email-already-in-use") {
+                    setErrorMessage("Email already exists. Please choose a different email.");
+                } else if (errorMessage.code === "auth/missing-email") {
+                    setErrorMessage("Please provide an email address");
+                } else if (errorMessage.code === "auth/invalid-password") {
+                    setErrorMessage("Invalid Password. Password must be at least six characters and contain an uppercase letter, number, and special character");
+                } else if (errorMessage.code === "auth/password-does-not-meet-requirements") {
+                    setErrorMessage("Invalid Password. Password must be at least six characters and contain an uppercase letter, number, and special character");
+                }
+                else {
+                    setErrorMessage(errorMessage.code)
+                }
+                setIsRegistering(false);
+
+            }
         }
     }
 

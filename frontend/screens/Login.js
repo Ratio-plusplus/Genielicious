@@ -4,7 +4,7 @@ import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, Touchable
 import { Colors } from "./Colors";
 import React, { useEffect, useState } from "react";
 import { useAuth } from '../../backend/contexts/authContext/index';
-import { doSignInWithEmailAndPassword } from '../../backend/firebase/auth';
+import { doSignInWithEmailAndPassword, doSignInWithGoogle } from '../../backend/firebase/auth';
 
 export default function Login({navigation}) {
   const [email, setEmail] = React.useState("");
@@ -19,7 +19,6 @@ export default function Login({navigation}) {
         if (validUser) {
             navigation.navigate('Tab')
         }
-        
     }
 
     const loginUser = async () => {
@@ -33,13 +32,15 @@ export default function Login({navigation}) {
             } catch (errorMessage) {
                 if (errorMessage.code === 'auth/invalid-email') {
                     setErrorMessage('Invalid email. Please try again.');
-
                 }
-                else if (errorMessage.code === 'auth/invalid-password') {
+                else if (errorMessage.code === 'auth/invalid-credential') {
                     setErrorMessage('Incorrect password for email. Please try again.');
                 }
+                else if (errorMessage.code === 'auth/missing-password') {
+                    setErrorMessage('Please input a password.')
+                }
                 else {
-                    setErrorMessage('An unknown error has occured. Please try again.');
+                    setErrorMessage(errorMessage.code);
                 }
                 setisLoggingIn(false);
             }
@@ -51,6 +52,17 @@ export default function Login({navigation}) {
         db().ref('/users/${response.user.uid}').set({ name });
         //db().ref('/users/${response.user.uid}').set({})
     };
+
+    const onGoogleSignIn = (e) => {
+        if (!isLoggingIn) {
+            setisLoggingIn(true);
+            doSignInWithGoogle().catch(err => {
+                setErrorMessage(err.code);
+                setisLoggingIn(false);
+            })
+        }
+    }
+    /*
     const handleLogin = async () => {
         if (email && password) {
             try {
@@ -65,7 +77,7 @@ export default function Login({navigation}) {
             }
         }
     };
-
+    */
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto"/>
@@ -142,7 +154,7 @@ export default function Login({navigation}) {
           </View>
 
           {/* login with Google button */}
-          <TouchableOpacity style={styles.googleButton}>
+                  <TouchableOpacity style={styles.googleButton} onPress={() => onGoogleSignIn() }>
             <Image
               style={styles.googleLogo}
               source={require("../../frontend/assets/google-logo.png")}
