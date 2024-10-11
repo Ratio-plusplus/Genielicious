@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from '../../backend/contexts/authContext/index';
 import { doSignInWithEmailAndPassword, doSignInWithGoogle } from '../../backend/firebase/auth';
 
-export default function Login({navigation}) {
+export default function Login({ navigation }) {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [passwordIsVisible, setPasswordIsVisible] = React.useState(false);
@@ -16,19 +16,16 @@ export default function Login({navigation}) {
 
     const handleLogin = async (e) => {
         await loginUser();
-        if (validUser) {
-            navigation.navigate('Tab')
-        }
-    }
+    };
 
     const loginUser = async () => {
         setErrorMessage('');
         if (!isLoggingIn) {
             setisLoggingIn(true);
-
             try {
                 await doSignInWithEmailAndPassword(email, password)
-                setvalidUser(true);
+                console.log("Success");
+                await setvalidUser(true);
             } catch (errorMessage) {
                 if (errorMessage.code === 'auth/invalid-email') {
                     setErrorMessage('Invalid email. Please try again.');
@@ -42,42 +39,47 @@ export default function Login({navigation}) {
                 else {
                     setErrorMessage(errorMessage.code);
                 }
-                setisLoggingIn(false);
             }
+            setisLoggingIn(false);
         }
     }
-
 
     const createProfile = async (response: FirebaseAuthTypes.UserCredential) => {
         db().ref('/users/${response.user.uid}').set({ name });
         //db().ref('/users/${response.user.uid}').set({})
     };
 
-    const onGoogleSignIn = (e) => {
-        if (!isLoggingIn) {
-            setisLoggingIn(true);
-            doSignInWithGoogle().catch(err => {
-                setErrorMessage(err.code);
-                setisLoggingIn(false);
-            })
+    const handleGoogleLogin = async (e) => {
+        await onGoogleSignIn(e);
+        if (validUser) {
+            console.log("Success2");
+            navigation.navigate('Tab')
         }
     }
-    /*
-    const handleLogin = async () => {
-        if (email && password) {
-            try {
-                const response = await auth().createUserWithEmailAndPassword(email, password);
 
-                if (response.user) {
-                    await createProfile(response);
-                    nav.replace("Home");
+    const onGoogleSignIn = async (e) => {
+        if (!isLoggingIn) {
+            setisLoggingIn(true);
+            try {
+                await doSignInWithGoogle()
+                console.log("Success");
+                await setvalidUser(true);
+                    
+            } catch (errorMessage) {
+                setErrorMessage(errorMessage.code);
+                console.log(errorMessage);
+                
                 }
-            } catch (e) {
-                Alert.alert("Oops", "Please try again.");
-            }
         }
-    };
-    */
+        setisLoggingIn(false);
+    }
+
+    useEffect(() => {
+        if (validUser) {
+            navigation.navigate('Tab');
+        }
+    }, [validUser]);
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto"/>
@@ -154,7 +156,7 @@ export default function Login({navigation}) {
           </View>
 
           {/* login with Google button */}
-                  <TouchableOpacity style={styles.googleButton} onPress={() => onGoogleSignIn() }>
+                  <TouchableOpacity style={styles.googleButton} onPress={(e) => handleGoogleLogin(e) }>
             <Image
               style={styles.googleLogo}
               source={require("../../frontend/assets/google-logo.png")}

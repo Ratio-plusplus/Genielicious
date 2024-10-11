@@ -1,6 +1,7 @@
 {
-  "project_info": {
+"project_info": {
     "project_number": "8294537978",
+    "firebase_url": "https://genielicious-1229a-default-rtdb.firebaseio.com",
     "project_id": "genielicious-1229a",
     "storage_bucket": "genielicious-1229a.appspot.com"
   },
@@ -12,7 +13,20 @@
           "package_name": "com.ratioplusplus.genielicious"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "8294537978-500vqqifk3d94f1tb0vbtahsvli4k4an.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ratioplusplus.genielicious",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "8294537978-99cqmm81e5caihqft8p7337jsav7jsmt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCc23Na0A1P_mLDxb96G1sZhsM9XGooXAA"
@@ -20,7 +34,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "8294537978-99cqmm81e5caihqft8p7337jsav7jsmt.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "8294537978-e9g0mkdqjopd5ef7btea0l7guqfvrvim.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ratioplusplus.genielicious"
+              }
+            }
+          ]
         }
       }
     }

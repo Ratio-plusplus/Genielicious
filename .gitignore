@@ -542,3 +542,5 @@ expo-env.d.ts
 /.expo
 *.ts
 /.vs
+.env
+.env

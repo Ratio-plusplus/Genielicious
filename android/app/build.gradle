@@ -109,9 +109,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.ratioplusplus.Genielicious'
+    namespace 'com.ratioplusplus.genielicious'
     defaultConfig {
-        applicationId 'com.ratioplusplus.Genielicious'
+        applicationId 'com.ratioplusplus.genielicious'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -125,6 +125,9 @@ android {
             keyPassword 'android'
         }
     }
+    buildFeatures {
+    buildConfig = true
+  }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
