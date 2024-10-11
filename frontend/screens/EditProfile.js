@@ -2,18 +2,29 @@ import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, TextInput 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Colors } from './Colors';
 import { ProfileContext } from './ProfileContext';
+import { getActionFromState } from '@react-navigation/native';
+import { getAuth, updatePassword } from '@firebase/auth';
+import { doPasswordChange } from '../../backend/firebase/auth';
 
 export default function EditProfile({ navigation }) {
     const { pfp, setpfp } = useContext(ProfileContext)
     const { username, setUsername} = useContext(ProfileContext)
     const [selectedImage, setSelectedImage] = React.useState(pfp);
-    const [name, setName] = React.useState("");
-    // const [username, setUsername] = React.useState("");
     const [email, setEmail] = React.useState("")
     const [password, setPassword] = React.useState("")
+
+    //fetch user email from Firebase
+    useEffect(() => {
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        if (user) {
+            setEmail(user.email);
+        }
+    }, []) //empty array to make sure nothing important get overwritten
 
     const handleImageSelection = async() => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -45,6 +56,19 @@ export default function EditProfile({ navigation }) {
             setSelectedImage(result.assets[0].uri)
         }
     };  
+
+    //Update user password on Firebase
+    const updateFirebasePassword = () => {
+        if (password.length >= 1) {
+            doPasswordChange(password).then(() => {
+                Alert.alert("Password updated", "Your password has been successfully updated.");
+            }).catch((error) => {
+                Alert.alert("Error", error.message);
+            });
+        } else {
+            Alert.alert("Invalid Password");
+        }
+    };
 
     return (
         <SafeAreaView style={{
@@ -111,21 +135,7 @@ export default function EditProfile({ navigation }) {
                 </View>
 
                 <View>
-                    <View style={{
-                        flexDirection: "column",
-                        marginBottom: 10
-                    }}>
-                        <Text style={styles.sectionText}>Name</Text>
-                        <View style={styles.inputContainers}>
-                            <TextInput
-                                placeholder="Name"
-                                placeholderTextColor="#7C808D"
-                                onChangeText={setName}
-                                value={name}
-                                editable={true}/>
-                        </View>
-                    </View>
-
+                    {/* Username input field */}
                     <View style={{
                         flexDirection: "column",
                         marginBottom: 6
@@ -141,6 +151,7 @@ export default function EditProfile({ navigation }) {
                         </View>
                     </View>
 
+                    {/* Email input field (non-editable) */}
                     <View style={{
                         flexDirection: "column",
                         marginBottom: 6
@@ -152,10 +163,12 @@ export default function EditProfile({ navigation }) {
                                 placeholderTextColor="#7C808D"
                                 onChangeText={setEmail}
                                 value={email}
-                                editable={true}/>
+                                color="#7C808D"
+                                editable={false}/>
                         </View>
                     </View>
 
+                    {/* Password input field */}
                     <View style={{
                         flexDirection: "column",
                         marginBottom: 6
@@ -163,7 +176,7 @@ export default function EditProfile({ navigation }) {
                         <Text style={styles.sectionText}>Password</Text>
                         <View style={styles.inputContainers}>
                             <TextInput
-                                placeholder="Password"
+                                placeholder="New Password"
                                 placeholderTextColor="#7C808D"
                                 onChangeText={setPassword}
                                 value={password}
@@ -178,6 +191,7 @@ export default function EditProfile({ navigation }) {
                         {
                             setpfp(selectedImage)
                             setUsername(username)
+                            updateFirebasePassword();
                             navigation.navigate('Settings')
                             console.log(username)
                         }}>

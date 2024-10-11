@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Modal, Button, Pr
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Colors } from './Colors';
+import { doSignInWithEmailAndPassword, doSignOut } from '../../backend/firebase/auth';
 
 export default function Settings({ navigation }) {
     const [modalVisible, setModalVisible] = React.useState(false)
@@ -50,7 +51,7 @@ export default function Settings({ navigation }) {
         </TouchableOpacity>
     )
 
-    const handleAction = () => {
+    const handleAction = async () => {
         if (modalMessage === "Are you sure you want to clear your history?"){
             console.log("History Cleared")
         }
@@ -58,7 +59,13 @@ export default function Settings({ navigation }) {
             console.log("Account Deleted")
         }
         else if (modalMessage === "Are you sure you want to log out?"){
-            console.log("Logged Out")
+            try{
+                await doSignOut();
+                navigation.navigate('Login');
+                console.log("Logged Out")
+            } catch (error) {
+                console.error("Failed to log out", error)
+            }
         }
         setModalVisible(false)
     }
