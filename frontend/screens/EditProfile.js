@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, TextInput } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, TextInput, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -58,15 +58,20 @@ export default function EditProfile({ navigation }) {
     };  
 
     //Update user password on Firebase
-    const updateFirebasePassword = () => {
-        if (password.length >= 1) {
-            doPasswordChange(password).then(() => {
-                Alert.alert("Password updated", "Your password has been successfully updated.");
-            }).catch((error) => {
-                Alert.alert("Error", error.message);
-            });
-        } else {
-            Alert.alert("Invalid Password");
+    const updateFirebasePassword = async () => {
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        if (user) {
+            if (password.length >= 1) {
+                try {
+                    //update user password
+                    await updatePassword(user, password);
+                    Alert.alert("Password has been successfully updated")
+                } catch (error) {
+                    Alert.alert("Error", error.message);
+                }
+            }
         }
     };
 

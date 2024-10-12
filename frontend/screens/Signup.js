@@ -25,9 +25,16 @@ export default function Signup({navigation}) {
         //e.preventDefault()
         if (!isRegistering) {
             setIsRegistering(true);
-            await doCreateUserWithEmailAndPassword(email, password)
+            try {
+              await doCreateUserWithEmailAndPassword(email, password, username);
+              navigation.navigate('Tab');
+            } catch (error) {
+              setErrorMessage(error.message);
+              setIsRegistering(false);
+            }
         }
     }
+    
     return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto"/>
