@@ -5,11 +5,11 @@ import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from './Colors';
 import { ProfileContext } from './ProfileContext';
+import { doSignInWithEmailAndPassword } from '../../backend/firebase/auth';
 
 export default function Profile({ navigation }) {
     //using context to be able to change the variables from the other files
-    const { pfp } = React.useContext(ProfileContext)
-    const { username } = React.useContext(ProfileContext)
+    const { pfp, username } = React.useContext(ProfileContext);
 
     return (
         <SafeAreaView style={styles.background}>

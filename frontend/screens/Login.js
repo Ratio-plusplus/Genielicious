@@ -1,44 +1,79 @@
 import { StatusBar } from "expo-status-bar";
 import { Feather } from "@expo/vector-icons";
-import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
-import React, { useEffect, useState } from "react";
+import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert} from "react-native";
+import React, { useContext, useEffect, useState } from "react";
 import { useAuth } from '../../backend/contexts/authContext/index';
 import { doSignInWithEmailAndPassword } from '../../backend/firebase/auth';
+import { ProfileContext } from "./ProfileContext";
+import { getDatabase, ref, onValue } from "firebase/database";
+import { getAuth, signInWithEmailAndPassword } from "@firebase/auth";
 
 
 export default function Login({navigation}) {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-    const [passwordIsVisible, setPasswordIsVisible] = React.useState(false);
-    const [isLoggingIn, setisLoggingIn] = React.useState(false);
-    const [validUser, setvalidUser] = React.useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
-
+  const [passwordIsVisible, setPasswordIsVisible] = React.useState(false);
+  const [isLoggingIn, setisLoggingIn] = React.useState(false);
+  const [validUser, setvalidUser] = React.useState(false);
+  const [errorMessage, setErrorMessage] = useState(''); 
+  const { setUsername, setpfp } = useContext(ProfileContext);
 
     const handleLogin = async (e) => {
-        await loginUser();
-        if (validUser) {
-            navigation.navigate('Tab')
+      const auth = getAuth();
+      try {
+        const { user } = await signInWithEmailAndPassword(auth, email, password)
+
+        //fetch user data from database using uid
+        if (user) {
+          const db = getDatabase();
+          const userRef = ref(db, 'users/' + user.uid);
+
+          //fetch data from firebase
+          onValue(userRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+              //update context with fetched user data
+              const username = data.username || "Ratio++"
+              const pfp = data.photoURL || "../assets/pfp.png"
+
+              setUsername(username);
+              setpfp(pfp);
+
+              navigation.navigate("Tab");
+            }
+          }, (error) => {
+            console.error("Error fetching user data:", error);
+          });
+        } else {
+          Alert.alert("Login Failed", "No user data found.");
         }
+      } catch (error) {
+        setErrorMessage("Login failed. Please check your credentials.");
+        console.error("Login error:", error);
+      }
+        // await loginUser();
+        // if (validUser) {
+        //     navigation.navigate('Tab')
+        // }
         
     }
 
-    const loginUser = async () => {
-        setErrorMessage('');
-        if (!isLoggingIn) {
-            setisLoggingIn(true);
+    // const loginUser = async () => {
+    //     setErrorMessage('');
+    //     if (!isLoggingIn) {
+    //         setisLoggingIn(true);
 
-            try {
-                await doSignInWithEmailAndPassword(email, password)
-                setvalidUser(true);
-            } catch (errorMessage) {
-                if (errorMessage.code === 'auth/invalid-email') {
-                    setErrorMessage('Invalid email.');
-                    setisLoggingIn(false);
-                }
-            }
-        }
-    }
+    //         try {
+    //             await doSignInWithEmailAndPassword(email, password)
+    //             setvalidUser(true);
+    //         } catch (errorMessage) {
+    //             if (errorMessage.code === 'auth/invalid-email') {
+    //                 setErrorMessage('Invalid email.');
+    //                 setisLoggingIn(false);
+    //             }
+    //         }
+    //     }
+    // }
 
 
   return (

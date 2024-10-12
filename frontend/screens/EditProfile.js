@@ -6,8 +6,10 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Colors } from './Colors';
 import { ProfileContext } from './ProfileContext';
 import { getActionFromState } from '@react-navigation/native';
-import { getAuth, updatePassword } from '@firebase/auth';
-import { doPasswordChange } from '../../backend/firebase/auth';
+import { getAuth, updatePassword, updateProfile } from '@firebase/auth';
+import { getDatabase, ref, set } from 'firebase/database';
+import { database } from '../../backend/firebase/firebase';
+
 
 export default function EditProfile({ navigation }) {
     const { pfp, setpfp } = useContext(ProfileContext)
@@ -74,6 +76,44 @@ export default function EditProfile({ navigation }) {
             }
         }
     };
+
+    //save profile changes to firebase auth and realtime database
+    const saveProfile = async () => {
+        const auth = getAuth();
+        const user = auth.currentUser;
+        
+        console.log("user UID:", user.uid);
+        console.log("Selected Image URI:", selectedImage);
+        console.log("Username:", username);
+        console.log("Email:", email);
+
+        try {
+            // update Firebase Authentication profile
+            await updateProfile(user, {
+                username: username,
+                photoURL: selectedImage,
+            });
+            
+            //save to Realtime Database
+            await set(ref(database, 'users/' + user.uid), {
+                username: username,
+                photoURL: selectedImage,
+            });
+
+            console.log(pfp)
+            //update context state
+            setUsername(username);
+            setpfp(selectedImage);
+
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            Alert.alert("Error", error.message);
+        }
+        
+
+        
+
+    }
 
     return (
         <SafeAreaView style={{
@@ -192,13 +232,14 @@ export default function EditProfile({ navigation }) {
 
                     {/* Save button */}
                     <TouchableOpacity style={styles.saveButton}
-                        onPress={()=>
+                        onPress={async()=>
                         {
-                            setpfp(selectedImage)
-                            setUsername(username)
-                            updateFirebasePassword();
+                            // setpfp(selectedImage)
+                            // setUsername(username)
+                            await updateFirebasePassword();
+                            await saveProfile();
                             navigation.navigate('Settings')
-                            console.log(username)
+                            
                         }}>
                         <Text style={styles.saveText}>Save Changes</Text>
                     </TouchableOpacity>
