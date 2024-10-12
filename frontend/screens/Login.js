@@ -144,7 +144,7 @@ export default function Login({ navigation }) {
             </Text>
             </TouchableOpacity>
               <Text style={styles.error}>{errorMessage}</Text>
-            <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('Tab')}>
+            <TouchableOpacity style={styles.loginButton} onPress={() => handleLogin()}>
             <Text style={styles.loginButtonText}>Login</Text>
           </TouchableOpacity>
 

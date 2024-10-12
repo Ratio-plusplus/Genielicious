@@ -4,12 +4,15 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
 import React, { useEffect, useState } from "react";
 import { Colors } from "./Colors";
+import { useAuth } from '../../backend/contexts/authContext/index';
+import { doCreateUserWithEmailAndPassword } from '../../backend/firebase/auth';
 
 export default function Signup({navigation}) {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
   const [username, setUsername] = React.useState("");
+  const [isRegistering, setIsRegistering] = useState(false);
   const [passwordIsVisible, setPasswordIsVisible] = React.useState(false);
   const [confirmPasswordIsVisible, setConfirmPasswordIsVisible] = React.useState(false);
     const [errorMessage, setErrorMessage] = useState('');
@@ -211,7 +214,7 @@ export default function Signup({navigation}) {
           </View>
                     <Text style={styles.error}>{errorMessage}</Text>
           {/* signup button */}
-          <TouchableOpacity style={styles.signupButton} onPress={() => navigation.navigate('Tab')}>
+          <TouchableOpacity style={styles.signupButton} onPress={() => handleSignup()}>
             <Text style={styles.signupButtonText}>Sign Up</Text>
           </TouchableOpacity>
 
