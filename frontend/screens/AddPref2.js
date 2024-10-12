@@ -12,10 +12,20 @@ export default function AddPref2({ navigation }) {
     const [isPresetModalVisible, setPresetModalVisible] = useState(false)
     const [selectedImage, setSelectedImage] = React.useState(initialpfp);
     const [name, setName] = React.useState();
+    const [selectedDistance, setSelectedDistance] = useState(null);
+    const [selectedBudget, setSelectedBudget] = useState(null);
     const [isChecked, setIsChecked] = useState({
-        ten: false, fifteen: false, twenty: false,
-        $20: false, $50: false, 
+        distance: {
+            ten: false,
+            fifteen: false,
+            twenty: false,
+        },
+        budget: {
+            $20: false,
+            $50: false,
+        },
     });
+    
     const [showPresetImages, setShowPresetImages] = useState(false)
     const presetImages = [
         //add in path for any additional preset pictures
@@ -31,6 +41,29 @@ export default function AddPref2({ navigation }) {
         require('../assets/images//images (6).jpg'),
         
     ]
+
+    // Update selected option for Distance, ensuring only one is selected
+    // const handleDistanceSelection = (selectedDistance) => {
+    //     setIsChecked({
+    //         ...isChecked,
+    //         distance: {
+    //             ten: selectedDistance === 'ten',
+    //             fifteen: selectedDistance === 'fifteen',
+    //             twenty: selectedDistance === 'twenty',
+    //         },
+    //     });
+    // };
+
+    // Update selected option for Budget, ensuring only one is selected
+    const handleBudgetSelection = (selectedBudget) => {
+        setIsChecked({
+            ...isChecked,
+            budget: {
+                $20: selectedBudget === '$20',
+                $50: selectedBudget === '$50',
+            },
+        });
+    };
 
     // Allows user to pick an image on their phone
     const handleImageSelection = async() => {
@@ -74,6 +107,16 @@ export default function AddPref2({ navigation }) {
         setModalVisible(false) 
         setPresetModalVisible(false)
     }
+
+    //custom radio button component
+    const RadioButton = ({ isSelected, onPress, label }) => {
+        return (
+            <TouchableOpacity onPress={onPress} style={styles.radioButtonContainer}>
+                <View style={[styles.circle, isSelected && styles.selectedCircle]} />
+                <Text style={styles.radioLabel}>{label}</Text>
+            </TouchableOpacity>
+        );
+    };
 
     return (
         <SafeAreaView style={{
@@ -218,61 +261,40 @@ export default function AddPref2({ navigation }) {
                         </View>
                     </View>
 
-                    {/* Distance Checkboxes */}
-                    <View style={styles.checkboxContainer}>
-                        <Text style={styles.sectionTitle}>
-                            Distance:
-                        </Text>
-                            <CheckBox
-                                style={styles.checkbox}
-                                isChecked={isChecked.ten} 
-                                onClick={()=>setIsChecked({...isChecked, ten: !isChecked.ten})}
-                                rightText='Within 10 miles'
-                                rightTextStyle={styles.checkboxText}
-                                uncheckedCheckBoxColor={Colors.ghost}
-                                checkedCheckBoxColor={Colors.gold}/>
-                            <CheckBox 
-                                style={styles.checkbox}
-                                isChecked={isChecked.fifteen} 
-                                onClick={()=>setIsChecked({...isChecked, fifteen: !isChecked.fifteen})}
-                                rightText='Within 15 miles'
-                                rightTextStyle={styles.checkboxText}
-                                uncheckedCheckBoxColor={Colors.ghost}
-                                checkedCheckBoxColor={Colors.gold}/>
+                {/* Distance checkbox section */}
+                <View style={styles.checkboxContainer}>
+                    <Text style={styles.sectionTitle}>Distance:</Text>
+                    <RadioButton
+                        label="Within 10 miles"
+                        isSelected={selectedDistance === 'ten'}
+                        onPress={() => setSelectedDistance('ten')}
+                    />
+                    <RadioButton
+                        label="Within 15 miles"
+                        isSelected={selectedDistance === 'fifteen'}
+                        onPress={() => setSelectedDistance('fifteen')}
+                    />
+                    <RadioButton
+                        label="Within 20 miles"
+                        isSelected={selectedDistance === 'twenty'}
+                        onPress={() => setSelectedDistance('twenty')}
+                    />
+                </View>
 
-                            <CheckBox 
-                                style={styles.checkbox}
-                                isChecked={isChecked.twenty} 
-                                onClick={()=>setIsChecked({...isChecked, twenty: !isChecked.twenty})}
-                                rightText='Within 20 miles'
-                                rightTextStyle={styles.checkboxText}
-                                uncheckedCheckBoxColor={Colors.ghost}
-                                checkedCheckBoxColor={Colors.gold}/>
-                    </View>
-                    
-                    {/* Budget checkboxes */}
-                    <View style={styles.checkboxContainer}>
-                        <Text style={styles.sectionTitle}>
-                            Budget:
-                        </Text>
-                            <CheckBox
-                                style={styles.checkbox}
-                                isChecked={isChecked.$20} 
-                                onClick={()=>setIsChecked({...isChecked, $20: !isChecked.$20})}
-                                rightText='$20'
-                                rightTextStyle={styles.checkboxText}
-                                uncheckedCheckBoxColor={Colors.ghost}
-                                checkedCheckBoxColor={Colors.gold}/>
-                            <CheckBox 
-                                style={styles.checkbox}
-                                isChecked={isChecked.$50} 
-                                onClick={()=>setIsChecked({...isChecked, $50: !isChecked.$50})}
-                                rightText='$50'
-                                rightTextStyle={styles.checkboxText}
-                                uncheckedCheckBoxColor={Colors.ghost}
-                                checkedCheckBoxColor={Colors.gold}/>
-                    </View>
-
+                {/* Budget Circle Select */}
+                <View style={styles.selectContainer}>
+                    <Text style={styles.sectionTitle}>Budget:</Text>
+                    <RadioButton
+                        label="$20"
+                        isSelected={selectedBudget === '$20'}
+                        onPress={() => setSelectedBudget('$20')}
+                    />
+                    <RadioButton
+                        label="$50"
+                        isSelected={selectedBudget === '$50'}
+                        onPress={() => setSelectedBudget('$50')}
+                    />
+                </View>
                     <TouchableOpacity style={styles.saveButton}>
                         <Text style={styles.saveText}>Add Preference</Text>
                     </TouchableOpacity>
@@ -303,6 +325,10 @@ const styles = StyleSheet.create({
         paddingLeft: 8
     },
     checkboxContainer: {
+        paddingLeft: 22,
+        paddingTop: 10,
+    },
+    selectContainer: {
         paddingLeft: 22,
         paddingTop: 10,
     },
@@ -393,5 +419,25 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         borderWidth: 1,
         borderColor: '#ddd',
+    },
+    radioButtonContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 16,
+    },
+    circle: {
+        height: 20,
+        width: 20,
+        borderRadius: 10,
+        borderWidth: 2,
+        borderColor: Colors.ghost,
+        marginRight: 12,
+    },
+    selectedCircle: {
+        backgroundColor: Colors.gold,
+    },
+    radioLabel: {
+        fontSize: 19,
+        color: Colors.ghost,
     },
 });
