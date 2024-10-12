@@ -1,0 +1,222 @@
+{
+    "businesses": [
+        {
+            "id": "mtn4uojv4aXT5-WfTKnxow",
+            "alias": "the-vox-kitchen-by-kei-concepts-fountain-valley",
+            "name": "The Vox Kitchen by Kei Concepts",
+            "image_url": "https://s3-media3.fl.yelpcdn.com/bphoto/cRv41ySAoNW_LmO7mUAyXg/o.jpg",
+            "is_closed": false,
+            "url": "https://www.yelp.com/biz/the-vox-kitchen-by-kei-concepts-fountain-valley?adjust_creative=3lMv7jkZTdziX-utSK_Ngw&utm_campaign=yelp_api_v3&utm_medium=api_v3_business_search&utm_source=3lMv7jkZTdziX-utSK_Ngw",
+            "review_count": 7372,
+            "categories": [
+                {
+                    "alias": "vietnamese",
+                    "title": "Vietnamese"
+                },
+                {
+                    "alias": "asianfusion",
+                    "title": "Asian Fusion"
+                },
+                {
+                    "alias": "peruvian",
+                    "title": "Peruvian"
+                }
+            ],
+            "rating": 4.5,
+            "coordinates": {
+                "latitude": 33.72744,
+                "longitude": -117.95568
+            },
+            "transactions": [
+                "pickup",
+                "restaurant_reservation",
+                "delivery"
+            ],
+            "price": "$$",
+            "location": {
+                "address1": "16161 Brookhurst St",
+                "address2": null,
+                "address3": "",
+                "city": "Fountain Valley",
+                "zip_code": "92708",
+                "country": "US",
+                "state": "CA",
+                "display_address": [
+                    "16161 Brookhurst St",
+                    "Fountain Valley, CA 92708"
+                ]
+            },
+            "phone": "+16572316493",
+            "display_phone": "(657) 231-6493",
+            "distance": 15537.450473316001,
+            "business_hours": [
+                {
+                    "open": [
+                        {
+                            "is_overnight": false,
+                            "start": "1000",
+                            "end": "2100",
+                            "day": 0
+                        },
+                        {
+                            "is_overnight": false,
+                            "start": "1000",
+                            "end": "2100",
+                            "day": 1
+                        },
+                        {
+                            "is_overnight": false,
+                            "start": "1000",
+                            "end": "2100",
+                            "day": 2
+                        },
+                        {
+                            "is_overnight": false,
+                            "start": "1000",
+                            "end": "2100",
+                            "day": 3
+                        },
+                        {
+                            "is_overnight": false,
+                            "start": "1000",
+                            "end": "2200",
+                            "day": 4
+                        },
+                        {
+                            "is_overnight": false,
+                            "start": "1000",
+                            "end": "2200",
+                            "day": 5
+                        },
+                        {
+                            "is_overnight": false,
+                            "start": "1000",
+                            "end": "2100",
+                            "day": 6
+                        }
+                    ],
+                    "hours_type": "REGULAR",
+                    "is_open_now": false
+                }
+            ],
+            "attributes": {
+                "business_temp_closed": null,
+                "menu_url": "http://eatvox.com/menu/",
+                "open24_hours": null,
+                "waitlist_reservation": true
+            }
+        },
+        {
+            "id": "nf3BTiWPOkJPJynrCsxEag",
+            "alias": "bom-bom-grill-bellflower-2",
+            "name": "Bom Bom Grill",
+            "image_url": "https://s3-media1.fl.yelpcdn.com/bphoto/8g2zlzcBBdHFtRC80TLUvw/o.jpg",
+            "is_closed": false,
+            "url": "https://www.yelp.com/biz/bom-bom-grill-bellflower-2?adjust_creative=3lMv7jkZTdziX-utSK_Ngw&utm_campaign=yelp_api_v3&utm_medium=api_v3_business_search&utm_source=3lMv7jkZTdziX-utSK_Ngw",
+            "review_count": 884,
+            "categories": [
+                {
+                    "alias": "asianfusion",
+                    "title": "Asian Fusion"
+                },
+                {
+                    "alias": "japanese",
+                    "title": "Japanese"
+                },
+                {
+                    "alias": "mexican",
+                    "title": "Mexican"
+                }
+            ],
+            "rating": 4.2,
+            "coordinates": {
+                "latitude": 33.89047,
+                "longitude": -118.11679
+            },
+            "transactions": [
+                "pickup",
+                "delivery"
+            ],
+            "price": "$$",
+            "location": {
+                "address1": "15726 Woodruff Ave",
+                "address2": null,
+                "address3": "",
+                "city": "Bellflower",
+                "zip_code": "90706",
+                "country": "US",
+                "state": "CA",
+                "display_address": [
+                    "15726 Woodruff Ave",
+                    "Bellflower, CA 90706"
+                ]
+            },
+            "phone": "+15628040084",
+            "display_phone": "(562) 804-0084",
+            "distance": 11943.01110153438,
+            "business_hours": [
+                {
+                    "open": [
+                        {
+                            "is_overnight": false,
+                            "start": "1100",
+                            "end": "2100",
+                            "day": 0
+                        },
+                        {
+                            "is_overnight": false,
+                            "start": "1100",
+                            "end": "2100",
+                            "day": 1
+                        },
+                        {
+                            "is_overnight": false,
+                            "start": "1100",
+                            "end": "2100",
+                            "day": 2
+                        },
+                        {
+                            "is_overnight": false,
+                            "start": "1100",
+                            "end": "2100",
+                            "day": 3
+                        },
+                        {
+                            "is_overnight": false,
+                            "start": "1100",
+                            "end": "2100",
+                            "day": 4
+                        },
+                        {
+                            "is_overnight": false,
+                            "start": "1100",
+                            "end": "2100",
+                            "day": 5
+                        },
+                        {
+                            "is_overnight": false,
+                            "start": "1100",
+                            "end": "2100",
+                            "day": 6
+                        }
+                    ],
+                    "hours_type": "REGULAR",
+                    "is_open_now": false
+                }
+            ],
+            "attributes": {
+                "business_temp_closed": null,
+                "menu_url": "",
+                "open24_hours": null,
+                "waitlist_reservation": null
+            }
+        }
+    ],
+    "total": 2,
+    "region": {
+        "center": {
+            "longitude": -118.1101659429386,
+            "latitude": 33.78336745904146
+        }
+    }
+}

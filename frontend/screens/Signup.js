@@ -12,6 +12,104 @@ export default function Signup({navigation}) {
   const [username, setUsername] = React.useState("");
   const [passwordIsVisible, setPasswordIsVisible] = React.useState(false);
   const [confirmPasswordIsVisible, setConfirmPasswordIsVisible] = React.useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [createdUser, setcreatedUser] = useState(false);
+
+    //On Press Method
+    const handleSignup = async (e) => {
+        //Check if passwords match
+        if (password == confirmPassword) {
+                //Async method to run firebase backend
+                await createUser();
+                if (createdUser) {
+                    navigation.navigate('Tab')
+                }
+                
+        }
+    }
+
+    const validate = (text) => {
+        console.log(text);
+        let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+        if (reg.test(text) === false) {
+            setErrorMessage("Invalid Email");
+            setEmail(text)
+            return false;
+        }
+        else {
+            setEmail(text)
+            console.log("Email is Correct");
+            setErrorMessage("");
+            return true;
+        }
+    }
+
+    //Create user method
+    const createUser = async (e) => {
+        //e.preventDefault()
+        setErrorMessage('');
+        if (!isRegistering) {
+            setIsRegistering(true);
+            
+            try {
+                //Check if passwords match
+                if (validate(email)){
+                    if (password == confirmPassword) {
+                        await doCreateUserWithEmailAndPassword(email, password)
+                        setcreatedUser(true);
+                    }
+                }
+                //Error msgs from Firebase Auth
+            } catch (errorMessage) {
+                if (errorMessage.code === "auth/email-already-in-use") {
+                    setErrorMessage("Email already exists. Please choose a different email.");
+                } else if (errorMessage.code === "auth/missing-email") {
+                    setErrorMessage("Please provide an email address");
+                } else if (errorMessage.code === "auth/invalid-password") {
+                    setErrorMessage("Invalid Password. Password must be at least six characters and contain an uppercase letter, number, and special character");
+                } else if (errorMessage.code === "auth/password-does-not-meet-requirements") {
+                    setErrorMessage("Invalid Password. Password must be at least six characters and contain an uppercase letter, number, and special character");
+                }
+                else {
+                    setErrorMessage(errorMessage.code)
+                }
+                //No longer registering
+                setIsRegistering(false);
+
+            }
+        }
+    }
+
+    const handleGoogleLogin = async (e) => {
+        await onGoogleSignIn(e);
+        if (createdUser) {
+            console.log("Success2");
+            navigation.navigate('Tab')
+        }
+    }
+
+    const onGoogleSignIn = async (e) => {
+        if (!isRegistering) {
+            setIsRegistering(true);
+            try {
+                await doSignInWithGoogle()
+                console.log("Success");
+                setcreatedUser(true);
+
+            } catch (errorMessage) {
+                setErrorMessage(errorMessage.code);
+                console.log(errorMessage);
+
+            }
+        }
+        setIsRegistering(false);
+    }
+
+    useEffect(() => {
+        if (createdUser) {
+            navigation.navigate('Tab');
+        }
+    }, [createdUser]);
 
     return (
     <SafeAreaView style={styles.container}>
@@ -53,7 +151,7 @@ export default function Signup({navigation}) {
               placeholder="Email"
               placeholderTextColor="#7C808D"
               color={Colors.ghost}
-              onChangeText={setEmail}     //updates email state
+              onChangeText={(text) => validate(text)}     //updates email state
               value={email}     //current email state
             />
           </View>
@@ -111,7 +209,7 @@ export default function Signup({navigation}) {
               />
             </TouchableOpacity>
           </View>
-
+                    <Text style={styles.error}>{errorMessage}</Text>
           {/* signup button */}
           <TouchableOpacity style={styles.signupButton} onPress={() => navigation.navigate('Tab')}>
             <Text style={styles.signupButtonText}>Sign Up</Text>
@@ -162,7 +260,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 40,
     color: Colors.champagne
-  },
+    },
+    error: {
+        color: "#ff0000",
+        marginTop: 10
+    },
   inputContainer: {
     flexDirection: "row",
     width: "100%",

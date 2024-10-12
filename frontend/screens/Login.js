@@ -3,11 +3,82 @@ import { Feather } from "@expo/vector-icons";
 import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
 import { Colors } from "./Colors";
 import React, { useEffect, useState } from "react";
+import { useAuth } from '../../backend/contexts/authContext/index';
+import { doSignInWithEmailAndPassword, doSignInWithGoogle } from '../../backend/firebase/auth';
 
-export default function Login({navigation}) {
+export default function Login({ navigation }) {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [passwordIsVisible, setPasswordIsVisible] = React.useState(false);
+  const [isLoggingIn, setisLoggingIn] = React.useState(false);
+  const [validUser, setvalidUser] = React.useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+    const handleLogin = async (e) => {
+        await loginUser();
+    };
+
+    const loginUser = async () => {
+        setErrorMessage('');
+        if (!isLoggingIn) {
+            setisLoggingIn(true);
+            try {
+                await doSignInWithEmailAndPassword(email, password)
+                console.log("Success");
+                await setvalidUser(true);
+            } catch (errorMessage) {
+                if (errorMessage.code === 'auth/invalid-email') {
+                    setErrorMessage('Invalid email. Please try again.');
+                }
+                else if (errorMessage.code === 'auth/invalid-credential') {
+                    setErrorMessage('Incorrect password for email. Please try again.');
+                }
+                else if (errorMessage.code === 'auth/missing-password') {
+                    setErrorMessage('Please input a password.')
+                }
+                else {
+                    setErrorMessage(errorMessage.code);
+                }
+            }
+            setisLoggingIn(false);
+        }
+    }
+
+    const createProfile = async (response: FirebaseAuthTypes.UserCredential) => {
+        db().ref('/users/${response.user.uid}').set({ name });
+        //db().ref('/users/${response.user.uid}').set({})
+    };
+
+    const handleGoogleLogin = async (e) => {
+        await onGoogleSignIn(e);
+        if (validUser) {
+            console.log("Success2");
+            navigation.navigate('Tab')
+        }
+    }
+
+    const onGoogleSignIn = async (e) => {
+        if (!isLoggingIn) {
+            setisLoggingIn(true);
+            try {
+                await doSignInWithGoogle()
+                console.log("Success");
+                await setvalidUser(true);
+                    
+            } catch (errorMessage) {
+                setErrorMessage(errorMessage.code);
+                console.log(errorMessage);
+                
+                }
+        }
+        setisLoggingIn(false);
+    }
+
+    useEffect(() => {
+        if (validUser) {
+            navigation.navigate('Tab');
+        }
+    }, [validUser]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -85,7 +156,7 @@ export default function Login({navigation}) {
           </View>
 
           {/* login with Google button */}
-          <TouchableOpacity style={styles.googleButton}>
+                  <TouchableOpacity style={styles.googleButton} onPress={(e) => handleGoogleLogin(e) }>
             <Image
               style={styles.googleLogo}
               source={require("../../frontend/assets/google-logo.png")}

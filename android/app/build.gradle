@@ -109,9 +109,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.ratioplusplus.Genielicious'
+    namespace 'com.ratioplusplus.genielicious'
     defaultConfig {
-        applicationId 'com.ratioplusplus.Genielicious'
+        applicationId 'com.ratioplusplus.genielicious'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -125,6 +125,9 @@ android {
             keyPassword 'android'
         }
     }
+    buildFeatures {
+    buildConfig = true
+  }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
@@ -199,3 +202,5 @@ if (rnVersion < versionToNumber(0, 75, 0)) {
     apply from: new File(["node", "--print", "require.resolve('@react-native-community/cli-platform-android/package.json', { paths: [require.resolve('react-native/package.json')] })"].execute(null, rootDir).text.trim(), "../native_modules.gradle");
     applyNativeModulesAppBuildGradle(project)
 }
+
+apply plugin: 'com.google.gms.google-services'
