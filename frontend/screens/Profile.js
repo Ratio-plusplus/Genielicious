@@ -1,9 +1,12 @@
 import * as React from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from './Colors';
+import { horizontalScale, verticalScale, moderateScale } from './Metrics';
+import { width, height, size, fontSize } from "react-native-responsive-sizes";
+//const { width, height } = Dimensions.get('window');
 
 export default function Profile({ navigation }) {
     return (
@@ -16,7 +19,7 @@ export default function Profile({ navigation }) {
                         style={styles.settingsIcon}>
                         <Ionicons 
                             name="settings-outline"
-                            size={28}
+                            size={size(30)}
                             color={Colors.champagne}/>
                     </TouchableOpacity>
                 </View>
@@ -57,72 +60,72 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.blue,
     },
     container: {
-        paddingLeft: 20,
-        paddingRight: 10,
-        paddingVertical: 7,
-        flex: 1
+        paddingLeft: size(30),
+        paddingRight: size(10),
+        paddingVertical: size(7),
+        flex: 1,
     },
     lineContainer: {
         flex: 1,
-        marginTop: -240
+        marginTop: height(-38)
     },
     line: {
         backgroundColor: Colors.champagne,
-        marginTop: 12,
-        height: 1.5,
-        width: 400,
+        marginTop: size(12),
+        height: height(0.25),
+        width: width(400),
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'flex-end',
-        paddingVertical: 8,
-        paddingHorizontal: 12,
+        paddingVertical: size(8),
+        paddingHorizontal: size(12),
     },
     settingsIcon: {
         alignItems: 'flex-end',
         justifyContent: 'flex-end',
     },
     profile: {
-        paddingBottom: 16,
+        paddingBottom: height(16),
     },
     profileTop: {
         flexDirection: 'row',
         alignItems: 'flex-start',
         justifyContent: 'space-between',
-        marginBottom: 16,
+        marginBottom: height(16),
     },
     profileBody: {
         flexGrow: 1,
         flexShrink: 1,
         flexBasis: 0,
-        paddingLeft: 16,
+        paddingLeft: width(8),
     },
     profileTitle: {
-        fontSize: 30,
+        fontSize: size(30),
         fontWeight: 'bold',
-        lineHeight: 32,
+        lineHeight: size(32),
         color: Colors.champagne,
-        marginTop: 8
+        marginTop: size(10)
     },
     profileSubtitle: {
-        fontSize: 17,
+        fontSize: size(20),
         fontWeight: '600',
     },
     avatar: {
         position: 'relative',
     },
     avatarImg: {
-        width: 110,
-        height: 110,
-        borderRadius: 9999,
-        borderWidth: 1
+        width: size(130),
+        height: size(130),
+        borderRadius: size(9999),
+        borderWidth: size(1)
     },
     button: {
         alignItems: 'center',
         backgroundColor: Colors.gold,
-        padding: 10,
-        marginTop: 20,
-        width: 150,
-        borderRadius: 10
+        padding: size(10),
+        marginTop: size(20),
+        width: width(40),
+        borderRadius: size(10)
     }
 });

@@ -3,42 +3,11 @@ import { Feather } from "@expo/vector-icons";
 import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
 import { Colors } from "./Colors";
 import React, { useEffect, useState } from "react";
-import { useAuth } from '../../backend/contexts/authContext/index';
-import { doSignInWithEmailAndPassword } from '../../backend/firebase/auth';
 
 export default function Login({navigation}) {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [passwordIsVisible, setPasswordIsVisible] = React.useState(false);
-  const [isLoggingIn, setisLoggingIn] = React.useState(false);
-  const [validUser, setvalidUser] = React.useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-
-    const handleLogin = async (e) => {
-        await loginUser();
-        if (validUser) {
-            navigation.navigate('Tab')
-        }
-        
-    }
-
-    const loginUser = async () => {
-        setErrorMessage('');
-        if (!isLoggingIn) {
-            setisLoggingIn(true);
-
-            try {
-                await doSignInWithEmailAndPassword(email, password)
-                setvalidUser(true);
-            } catch (errorMessage) {
-                if (errorMessage.code === 'auth/invalid-email') {
-                    setErrorMessage('Invalid email.');
-                    setisLoggingIn(false);
-                }
-            }
-        }
-    }
-
 
   return (
     <SafeAreaView style={styles.container}>
@@ -104,7 +73,7 @@ export default function Login({navigation}) {
             </Text>
             </TouchableOpacity>
               <Text style={styles.error}>{errorMessage}</Text>
-            <TouchableOpacity style={styles.loginButton} onPress={() => handleLogin()}>
+            <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('Tab')}>
             <Text style={styles.loginButtonText}>Login</Text>
           </TouchableOpacity>
 
