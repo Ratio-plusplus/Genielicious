@@ -551,3 +551,6 @@ backend/recommender/results/results.json
 results.json
 __pycache__
 tester.py
+
+#backend configuration file
+frontend/screens/FirebaseConfig.js

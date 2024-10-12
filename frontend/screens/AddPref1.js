@@ -5,6 +5,11 @@ import { Colors } from './Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 
+//routing to the backend
+import { BrowserRouter as Router, Route, Routes}  from "react-router-dom";
+import FirebaseConfig from FirebaseConfig.js;
+import { getDatabase, ref, set, push} from "firebase/database";
+
 export default function AddPref1 ({ navigation }) {
   //manages state of each checkbox item
   const [isChecked, setIsChecked] = useState({
@@ -13,6 +18,19 @@ export default function AddPref1 ({ navigation }) {
     vegan: false, vegetarian: false, peanut: false, gluten: false, fish: false,
     shellfish: false, eggs: false, soy: false, dairy: false, keto: false
   });
+  const [selectedValues, setSelectedValues] = useState([]);
+  
+  const SendData = async () => {
+        const db = getDatabase(FirebaseConfig);
+        const newDoc = push(ref(db, "flavorProfile/newProfiles"));
+        set(newDoc, {
+            flavorPreference: isChecked
+        }).then( () => {
+            console.log("Data is sent!");
+        }).catcht( () => {
+            console.log("Something didn't work");
+        })
+    }
 
   return (
     <SafeAreaView style={styles.background}>
@@ -228,8 +246,9 @@ export default function AddPref1 ({ navigation }) {
             <View style={styles.buttonContainer}>
                 <TouchableOpacity 
                     style={styles.continueButton} 
-                    onPress={()=>navigation.navigate('Add Preference 2')}>  
-                    <Text style={styles.buttonText}>Continue</Text>
+                    onPress={()=>navigation.navigate('Add Preference 2')}>
+                    {/* I can use this as a submit button*/}
+                    <Text style={styles.buttonText}>Continue</Text> 
                 </TouchableOpacity>
             </View>
         </ScrollView>
