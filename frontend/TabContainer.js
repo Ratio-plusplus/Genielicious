@@ -2,6 +2,7 @@ import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Colors } from './screens/Colors';
+import { Image } from 'react-native';
 
 // importing screens
 import Home from './screens/Home';
@@ -9,9 +10,12 @@ import Profile from './screens/Profile';
 import History from './screens/History';
 
 // screens name
-const homeName = 'Home';
+const homeName = 'Genie';
 const profileName = 'Profile';
 const historyName = 'History';
+const genieIconBlack = require('../frontend/assets/iconGenieDark.png');
+const genieIconChampagne = require('../frontend/assets/iconGenieLight.png');
+
 
 const Tab = createBottomTabNavigator();
 
@@ -36,8 +40,13 @@ export default function TabContainer() {
                     }
 
                     else if (rn == homeName) {
-                        // icon provided by Ionicons
-                        iconName = focused ? 'home-outline' : 'home-outline'
+                        return (
+                            <Image
+                                source={focused ? genieIconBlack : genieIconChampagne}
+                                style={{ width: size, height: size }}
+                                resizeMode="contain"
+                            />
+                        );
                     }
 
                     else if (rn == historyName) {
