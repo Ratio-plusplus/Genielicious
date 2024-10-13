@@ -4,15 +4,21 @@ import CheckBox from 'react-native-check-box';
 import { Colors } from './Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
+//Initializing and connecting to backend
+import { initializeApp } from 'firebase/app';
+import { getDatabase, ref, push } from 'firebase/database';
 
-//routing to the backend
-import { BrowserRouter as Router, Route, Routes}  from "react-router-dom";
-import FirebaseConfig from FirebaseConfig.js;
-import { getDatabase, ref, set, push} from "firebase/database";
+const app = initializeApp(appSettings)
+const database = getDatabase(app)
+//need to connect user authentication to this part
 
-export default function AddPref1 ({ navigation }) {
-  //manages state of each checkbox item
-  const [isChecked, setIsChecked] = useState({
+//manages state of each checkbox item, changed to global so I can push everything at once on the second screen
+const appSettings = {
+    databaseURL: REACT_APP_FIREBASE_DATABASE_URL
+}
+
+//manages state of each checkbox item, changed to global so I can push everything at once on the second screen
+const [isChecked, setIsChecked] = useState({
     savory: false, sweet: false, salty: false, spicy: false,
     bitter: false, sour: false, cool: false, hot: false,
     vegan: false, vegetarian: false, peanut: false, gluten: false, fish: false,
@@ -20,17 +26,12 @@ export default function AddPref1 ({ navigation }) {
   });
   const [selectedValues, setSelectedValues] = useState([]);
   
-  const SendData = async () => {
-        const db = getDatabase(FirebaseConfig);
-        const newDoc = push(ref(db, "flavorProfile/newProfiles"));
-        set(newDoc, {
-            flavorPreference: isChecked
-        }).then( () => {
-            console.log("Data is sent!");
-        }).catcht( () => {
-            console.log("Something didn't work");
-        })
-    }
+export default function AddPref1 ({ navigation }) {
+  //pushes flavor preferences to DBs
+  const addToProfile = () => {
+    const flavorProfileDB = ref(database, "flavorProfile")
+    push(flavorProfileDB, isChecked);
+  }
 
   return (
     <SafeAreaView style={styles.background}>
@@ -246,15 +247,16 @@ export default function AddPref1 ({ navigation }) {
             <View style={styles.buttonContainer}>
                 <TouchableOpacity 
                     style={styles.continueButton} 
-                    onPress={()=>navigation.navigate('Add Preference 2')}>
-                    {/* I can use this as a submit button*/}
-                    <Text style={styles.buttonText}>Continue</Text> 
+                    onClick={addToProfile}
+                    onPress={()=>navigation.navigate('Add Preference 2')}>  
+                    <Text style={styles.buttonText}>Continue</Text>
                 </TouchableOpacity>
             </View>
         </ScrollView>
     </SafeAreaView>
   );
 };
+
 
 const styles = StyleSheet.create({
     background: {

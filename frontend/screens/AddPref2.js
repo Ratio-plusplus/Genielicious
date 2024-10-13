@@ -6,6 +6,20 @@ import React, {useState} from 'react';
 import { Colors } from './Colors';
 import CheckBox from 'react-native-check-box';
 
+
+//adding backend plus previous data from other page
+import { initializeApp } from 'firebase/app';
+import { getDatabase, ref, push } from 'firebase/database';
+import { isChecked } from ''
+
+const appSettings = {
+    databaseURL: REACT_APP_FIREBASE_DATABASE_URL
+}
+
+const app = initializeApp(appSettings)
+const database = getDatabase(app)
+//need to connect user authentication to this part
+
 export default function AddPref2({ navigation }) {
     const pfp = require("../assets/pfp.png");
     const [selectedImage, setSelectedImage] = React.useState(pfp);
