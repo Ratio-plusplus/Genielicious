@@ -1,21 +1,26 @@
 import { auth } from "./firebase";
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithEmailAndPassword, updatePassword } from "firebase/auth";
 import { ref, set, getDatabase, get } from "firebase/database";
+import { Image } from "react-native";
 
 export const doCreateUserWithEmailAndPassword = async (email, password, username) => {
     const database = getDatabase();
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
+
     console.log("User ID:", user.uid)
+
+    const defaultImage = "./pfp.png"
     //save username to realtime database
     await set(ref(database, 'users/' + user.uid), {
         username: username,
         email: email,
-        pfp: "",
+        pfp: defaultImage,
     }). then(() => {
         console.log("Data saved successfully!");
     }).catch((error) => {
         console.error("Error saving data:", error);
+        throw error;
     });
 
     return userCredential

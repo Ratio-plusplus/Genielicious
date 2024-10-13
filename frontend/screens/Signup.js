@@ -6,6 +6,10 @@ import React, { useEffect, useState } from "react";
 import { Colors } from "./Colors";
 import { useAuth } from '../../backend/contexts/authContext/index';
 import { doCreateUserWithEmailAndPassword } from '../../backend/firebase/auth';
+import { ProfileContext } from "./ProfileContext";
+import { useContext } from "react";
+import { getDataConnect } from "firebase/data-connect";
+import { getDatabase, ref, get} from "firebase/database";
 
 export default function Signup({navigation}) {
   const [email, setEmail] = React.useState("");
@@ -16,21 +20,45 @@ export default function Signup({navigation}) {
     const [passwordIsVisible, setPasswordIsVisible] = React.useState(false);
     const [errorMessage, setErrorMessage] = useState('');
 
+    const { setUsername: setProfileUsername, setpfp } = useContext(ProfileContext)
+
     const handleSignup = async (e) => {
-        await createUser();
-        navigation.navigate('Tab')
-    }
+      try{
+        const userCredential = await createUser();
+
+        if (userCredential) {
+          //fetch user data after signing up
+          const userId = userCredential.user.uid;
+          const userRef = ref(getDatabase(), 'users/' + userId);
+          const snapshot = await get(userRef);
+
+          if (snapshot.exists()) {
+            const userData = snapshot.val();
+            //Update profilecontext with username and pfp
+            setProfileUsername(userData.username || "Ratio++");
+            setpfp(userData.pfp || Image.resolveAssetSource(require("../assets/pfp.png")).uri);
+          }
+
+          navigation.navigate('Tab')
+        }
+      } catch (error) {
+        console.error("Error during signup:", error.message);
+        setErrorMessage(error.message);
+        setIsRegistering(false);
+      }
+    };
 
     const createUser = async (e) => {
         //e.preventDefault()
         if (!isRegistering) {
             setIsRegistering(true);
             try {
-              await doCreateUserWithEmailAndPassword(email, password, username);
-              navigation.navigate('Tab');
+              return await doCreateUserWithEmailAndPassword(email, password, username);
             } catch (error) {
+              console.error("Error creating user:", error.message);
               setErrorMessage(error.message);
               setIsRegistering(false);
+              return null;
             }
         }
     }
