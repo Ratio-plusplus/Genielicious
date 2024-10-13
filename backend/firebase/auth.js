@@ -10,12 +10,10 @@ export const doCreateUserWithEmailAndPassword = async (email, password, username
 
     console.log("User ID:", user.uid)
 
-    const defaultImage = "./pfp.png"
     //save username to realtime database
     await set(ref(database, 'users/' + user.uid), {
         username: username,
         email: email,
-        pfp: defaultImage,
     }). then(() => {
         console.log("Data saved successfully!");
     }).catch((error) => {

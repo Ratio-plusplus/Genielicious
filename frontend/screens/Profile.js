@@ -29,7 +29,7 @@ export default function Profile({ navigation }) {
                     <View style={styles.profileTop}>
                         <View style={styles.avatar}>
                             <Image
-                            source={{uri: pfp}} //using pfp from context
+                            source={pfp ? {uri: pfp} : require('../assets/pfp.png')} //using pfp from context
                             resizeMode='contain'
                             style={styles.avatarImg}/>
                         </View>
