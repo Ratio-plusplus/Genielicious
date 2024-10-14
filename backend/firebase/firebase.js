@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
+import { getDatabase } from 'firebase/database';
 import {
     REACT_APP_FIREBASE_API_KEY,
     REACT_APP_FIREBASE_AUTH_DOMAIN,
@@ -24,9 +25,9 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-
 const auth = initializeAuth(app, {
     persistence: getReactNativePersistence(ReactNativeAsyncStorage)
 });
 
 export { app, auth };
+export const database = getDatabase(app); //initialize realtime database
