@@ -4,12 +4,12 @@ import CheckBox from 'react-native-check-box';
 import { Colors } from './Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
-//Initializing and connecting to backend
+//Initializing and connecting to backend + users 
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, push } from 'firebase/database';
 
-const app = initializeApp(appSettings)
-const database = getDatabase(app)
+const app = initializeApp(appSettings);
+const database = getDatabase(app);
 //need to connect user authentication to this part
 
 //manages state of each checkbox item, changed to global so I can push everything at once on the second screen
@@ -17,14 +17,31 @@ const appSettings = {
     databaseURL: REACT_APP_FIREBASE_DATABASE_URL
 }
 
-//manages state of each checkbox item, changed to global so I can push everything at once on the second screen
+
 const [isChecked, setIsChecked] = useState({
-    savory: false, sweet: false, salty: false, spicy: false,
-    bitter: false, sour: false, cool: false, hot: false,
-    vegan: false, vegetarian: false, peanut: false, gluten: false, fish: false,
-    shellfish: false, eggs: false, soy: false, dairy: false, keto: false
-  });
-  const [selectedValues, setSelectedValues] = useState([]);
+    tastePreferences: {
+        savory: false, 
+        sweet: false, 
+        salty: false, 
+        spicy: false,
+        bitter: false, 
+        sour: false, 
+        cool: false, 
+        hot: false
+    },
+    allergies: {
+        vegan: false, 
+        vegetarian: false, 
+        peanut: false, 
+        gluten: false, 
+        fish: false,
+        shellfish: false, 
+        eggs: false, 
+        soy: false, 
+        dairy: false, 
+        keto: false
+    },
+});
   
 export default function AddPref1 ({ navigation }) {
   //pushes flavor preferences to DBs

@@ -10,24 +10,40 @@ import CheckBox from 'react-native-check-box';
 //adding backend plus previous data from other page
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, push } from 'firebase/database';
-import { isChecked } from ''
 
 const appSettings = {
     databaseURL: REACT_APP_FIREBASE_DATABASE_URL
 }
-
 const app = initializeApp(appSettings)
 const database = getDatabase(app)
+
 //need to connect user authentication to this part
 
 export default function AddPref2({ navigation }) {
     const pfp = require("../assets/pfp.png");
     const [selectedImage, setSelectedImage] = React.useState(pfp);
     const [name, setName] = React.useState();
+    //selects the distance and budget
     const [isChecked, setIsChecked] = useState({
-        ten: false, fifteen: false, twenty: false,
-        $20: false, $50: false, 
+        title: {
+            name: name
+        },
+        distance: {
+            ten: false,
+            fifteen: false,
+            twenty: false
+        },
+        budget: {
+            $20: false,
+            $50: false
+        }
     });
+
+    //pushes the selected checkboxes to the database
+    const addToProfile = () => {
+        const flavorProfileDB = ref(database, "flavorProfile")
+        push(flavorProfileDB, isChecked);
+      }
 
     //handle image selection
     const handleImageSelection = async() => {
@@ -162,7 +178,8 @@ export default function AddPref2({ navigation }) {
                     </View>
                     
                     {/* add preference button */}
-                    <TouchableOpacity style={styles.addButton}>
+                    <TouchableOpacity style={styles.addButton}
+                        onClick={addToProfile}>
                         <Text style={styles.addText}>Add Preference</Text>
                     </TouchableOpacity>
                 </View>
