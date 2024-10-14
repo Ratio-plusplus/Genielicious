@@ -56,6 +56,11 @@ def categoryDetails(locale: str = "en_US"):
     )
     return response.json()
 
+def cacheToJson(result_path:str, values:str):
+    with open(result_path, 'w') as file:
+        json.dump(values, file, indent=4)
+    print(f"Results cached in {result_path}.")
+
 if __name__ == "__main__":
     CSULB_coordinates = (33.78336745904146, -118.1101659429386) # test location (lat,long)
     default_radius = 16000 # ~10 miles in meters
@@ -64,7 +69,4 @@ if __name__ == "__main__":
     # res = getStore(CSULB_coordinates, categories="raw_food")
     # res = categoryDetails("en_US") # gets all businesses within en_US locale
 
-    # # Cache results
-    # with open('results.json', 'w') as file:
-    #     json.dump(res, file, indent=4)
-    # print("Dictionary written to file in JSON format.")
+    # cacheToJson("results.json", res)
