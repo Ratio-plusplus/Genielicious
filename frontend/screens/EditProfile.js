@@ -1,20 +1,32 @@
-import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, TextInput } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, TextInput, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Colors } from './Colors';
+import { ProfileContext } from '../../backend/contexts/ProfileContext';
+import { getActionFromState } from '@react-navigation/native';
+import { getAuth, updatePassword, updateProfile } from '@firebase/auth';
+import { getDatabase, ref, set } from 'firebase/database';
+import { database, auth } from '../../backend/firebase/firebase';
+
 
 export default function EditProfile({ navigation }) {
-    const pfp = require("../assets/pfp.png");
+    const { pfp, setpfp } = useContext(ProfileContext)
+    const { username, setUsername} = useContext(ProfileContext)
     const [selectedImage, setSelectedImage] = React.useState(pfp);
-    const [name, setName] = React.useState("");
-    const [username, setUsername] = React.useState("");
     const [email, setEmail] = React.useState("")
     const [password, setPassword] = React.useState("")
 
-    //handle image selection from device's camera roll
-    //(very basic and will be changed)
+    //fetch user email from Firebase
+    useEffect(() => {
+        const user = auth.currentUser;
+
+        if (user) {
+            setEmail(user.email);
+        }
+    }, []) //empty array to make sure nothing important get overwritten
+
     const handleImageSelection = async() => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -27,8 +39,80 @@ export default function EditProfile({ navigation }) {
 
         if(!result.canceled){
             setSelectedImage(result.assets[0].uri)
+            console.log(pfp)
+            
         }
     };
+
+    const handleCameraCapture = async () => {
+        let result = await ImagePicker.launchCameraAsync({
+            allowsEditing: true,
+            aspect: [4, 4],
+            quality: 1
+        })
+        
+        console.log(result)
+    
+        if (!result.canceled){
+            setSelectedImage(result.assets[0].uri)
+        }
+    };  
+
+    //Update user password on Firebase
+    const updateFirebasePassword = async () => {
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        if (user) {
+            if (password.length >= 1) {
+                try {
+                    //update user password
+                    await updatePassword(user, password);
+                    Alert.alert("Password has been successfully updated")
+                } catch (error) {
+                    Alert.alert("Error", error.message);
+                }
+            }
+        }
+    };
+
+    //save profile changes to firebase auth and realtime database
+    const saveProfile = async () => {
+        const auth = getAuth();
+        const user = auth.currentUser;
+        
+        console.log("user UID:", user.uid);
+        console.log("Selected Image URI:", selectedImage);
+        console.log("Username:", username);
+        console.log("Email:", email);
+
+        try {
+            // update Firebase Authentication profile
+            await updateProfile(user, {
+                username: username,
+                photoURL: selectedImage,
+            });
+            
+            //save to Realtime Database
+            await set(ref(database, 'users/' + user.uid), {
+                username: username,
+                photoURL: selectedImage,
+            });
+
+            console.log(pfp)
+            //update context state
+            setUsername(username);
+            setpfp(selectedImage);
+
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            Alert.alert("Error", error.message);
+        }
+        
+
+        
+
+    }
 
     return (
         <SafeAreaView style={styles.background}>
@@ -48,12 +132,19 @@ export default function EditProfile({ navigation }) {
                     <Text style={styles.title}>Edit Profile</Text>
             </View>
 
+            {/* button to use the camera */}
+            <View style = {{alignItems: 'center', marginBottom: 15, marginTop: 15 }}>
+                <TouchableOpacity onPress = {handleCameraCapture} style = {styles.cameraButton}>
+                    <Text style = {styles.cameraButtonText}>Take a Picture</Text>
+                </TouchableOpacity>
+            </View>
+
             <ScrollView>
                 <View style={styles.pfpContainer}>
                     <TouchableOpacity
                         onPress={handleImageSelection}>
                         <Image 
-                            source={require("../assets/pfp.png")}
+                            source={{uri: selectedImage}}
                             style={{
                                 height: 130,
                                 width: 130,
@@ -111,7 +202,7 @@ export default function EditProfile({ navigation }) {
                         </View>
                     </View>
 
-                    {/* email input field */}
+                    {/* Email input field (non-editable) */}
                     <View style={{
                         flexDirection: "column",
                         marginBottom: 6
@@ -136,7 +227,7 @@ export default function EditProfile({ navigation }) {
                         <Text style={styles.sectionText}>Password</Text>
                         <View style={styles.inputContainers}>
                             <TextInput
-                                placeholder="Password"
+                                placeholder="New Password"
                                 placeholderTextColor="#7C808D"
                                 onChangeText={setPassword}
                                 value={password}
@@ -146,8 +237,17 @@ export default function EditProfile({ navigation }) {
                         </View>
                     </View>
 
-                    {/* save changes button */}
-                    <TouchableOpacity style={styles.saveButton}>
+                    {/* Save button */}
+                    <TouchableOpacity style={styles.saveButton}
+                        onPress={async()=>
+                        {
+                            // setpfp(selectedImage)
+                            // setUsername(username)
+                            await updateFirebasePassword();
+                            await saveProfile();
+                            navigation.navigate('Settings')
+                            
+                        }}>
                         <Text style={styles.saveText}>Save Changes</Text>
                     </TouchableOpacity>
                 </View>
@@ -223,5 +323,15 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: "bold",
         color: Colors.raisin
-    }
+    },
+    cameraButton: {
+        backgroundColor: Colors.gold,
+        padding: 10,
+        borderRadius: 6,
+    },
+    cameraButtonText: {
+        color: Colors.raisin,
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
 });

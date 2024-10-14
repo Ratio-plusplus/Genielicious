@@ -1,4 +1,4 @@
-package com.ratioplusplus.Genielicious
+package com.ratioplusplus.genielicious
 
 import android.app.Application
 import android.content.res.Configuration

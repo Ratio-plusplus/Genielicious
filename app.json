@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Genielicious",
-    "slug": "Genielicious",
+    "name": "genielicious",
+    "slug": "genielicious",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./frontend/assets/images/icon.png",
@@ -13,14 +13,17 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ratioplusplus.genielicious"
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./frontend/assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.ratioplusplus.Genielicious"
+      "package": "com.ratioplusplus.genielicious"
     },
     "web": {
       "bundler": "metro",
@@ -29,7 +32,7 @@
     },
     "plugins": [
       "expo-router",
-
+      
       [
         "expo-build-properties",
         {
@@ -38,7 +41,7 @@
           }
         }
       ]
-  ],
+    ],
     "experiments": {
       "typedRoutes": true
     }

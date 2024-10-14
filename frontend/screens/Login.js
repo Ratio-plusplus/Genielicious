@@ -1,44 +1,100 @@
 import { StatusBar } from "expo-status-bar";
 import { Feather } from "@expo/vector-icons";
-import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
+import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert} from "react-native";
 import { Colors } from "./Colors";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useAuth } from '../../backend/contexts/authContext/index';
-import { doSignInWithEmailAndPassword } from '../../backend/firebase/auth';
+import { doSignInWithEmailAndPassword, doSignInWithGoogle } from '../../backend/firebase/auth';
+import { ProfileContext } from "../../backend/contexts/ProfileContext";
+import { getDatabase, ref, onValue } from "firebase/database";
+import { getAuth, signInWithEmailAndPassword } from "@firebase/auth";
 
-export default function Login({navigation}) {
+export default function Login({ navigation }) {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [passwordIsVisible, setPasswordIsVisible] = React.useState(false);
   const [isLoggingIn, setisLoggingIn] = React.useState(false);
   const [validUser, setvalidUser] = React.useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const { setUsername, setpfp } = useContext(ProfileContext);
+
 
     const handleLogin = async (e) => {
-        await loginUser();
+      setErrorMessage('');
+      if (!isLoggingIn) {
+        setisLoggingIn(true);
+      }
+      try {
+        const { user } = await doSignInWithEmailAndPassword(email, password)
+
+        //fetch user data from database using uid
+        if (user) {
+          const db = getDatabase();
+          const userRef = ref(db, 'users/' + user.uid);
+
+          //fetch data from firebase
+          onValue(userRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+              //update context with fetched user data
+              const username = data.username || "Ratio++"
+              const pfp = data.photoURL || "../assets/pfp.png"
+
+              setUsername(username);
+              setpfp(pfp);
+
+              navigation.navigate("Tab");
+            }
+          });
+        }
+      } catch (errorMessage) {
+        if (errorMessage.code === 'auth/invalid-email') {
+          setErrorMessage('Invalid email. Please try again.');
+        }
+        else if (errorMessage.code === 'auth/invalid-credential') {
+            setErrorMessage('Incorrect password for email. Please try again.');
+        }
+        else if (errorMessage.code === 'auth/missing-password') {
+            setErrorMessage('Please input a password.')
+        }
+        else {
+            setErrorMessage(errorMessage.code);
+          setErrorMessage("Login failed. Please check your credentials.");
+        }
+        setisLoggingIn(false);
+      }
+    };
+
+    const handleGoogleLogin = async (e) => {
+        await onGoogleSignIn(e);
         if (validUser) {
+            console.log("Success2");
             navigation.navigate('Tab')
         }
-        
     }
 
-    const loginUser = async () => {
-        setErrorMessage('');
+    const onGoogleSignIn = async (e) => {
         if (!isLoggingIn) {
             setisLoggingIn(true);
-
             try {
-                await doSignInWithEmailAndPassword(email, password)
-                setvalidUser(true);
+                await doSignInWithGoogle()
+                console.log("Success");
+                await setvalidUser(true);
+                    
             } catch (errorMessage) {
-                if (errorMessage.code === 'auth/invalid-email') {
-                    setErrorMessage('Invalid email.');
-                    setisLoggingIn(false);
+                setErrorMessage(errorMessage.code);
+                console.log(errorMessage);
+                
                 }
-            }
         }
+        setisLoggingIn(false);
     }
 
+    useEffect(() => {
+        if (validUser) {
+            navigation.navigate('Tab');
+        }
+    }, [validUser]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -116,7 +172,7 @@ export default function Login({navigation}) {
           </View>
 
           {/* login with Google button */}
-          <TouchableOpacity style={styles.googleButton}>
+                  <TouchableOpacity style={styles.googleButton} onPress={(e) => handleGoogleLogin(e) }>
             <Image
               style={styles.googleLogo}
               source={require("../../frontend/assets/google-logo.png")}
