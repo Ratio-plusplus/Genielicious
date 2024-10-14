@@ -3,7 +3,7 @@
 # TODO: remake file with use of yelp api data
 
 import json
-from yelp import get_store
+from yelp import getStore
 
 SUPPORTED_REGIONAL_CUISINES = set(["African", "Middle Eastern", "South Asian", # cultural categories that are currently supported
                                    "East Asian", "European", "Latin American", 
@@ -11,7 +11,7 @@ SUPPORTED_REGIONAL_CUISINES = set(["African", "Middle Eastern", "South Asian", #
 ALL_OTHER_CATEGORIES = set(["Finger food", "Specialty", "Light Meals", "Vegan", 
                             "Quick Eats", "Breakfast", "Desserts", "Health-Conscious",
                             "Meat-Centric", "Comfort Food"])
-MAIN_FLAVORS = set(["sweet","salty", "sour", "bitter", "savory", "spicy"]) # main flavors that we will take into account
+MAIN_FLAVORS = set(["sweet","salty", "sour", "umami", "spicy"]) # main flavors that we will take into account
 
 with open("recommender\\data\\categorized_aliases.json", "r") as file:
     CATEGORIZED_ALIASES = json.load(file)
@@ -105,10 +105,17 @@ def getCulture() -> str:
 
 if __name__ == "__main__":
     USER_LOCATION = (33.78336745904146, -118.1101659429386) # should be provided by the client, using CSULB coords to test
-    
-    term = getFlavors()
+    USER_PRICE = None # provided by user profile
+    USER_DISTANCE = None # provided by user profile
+
+    if not USER_PRICE: 
+        price = getPrice()
+    if not USER_DISTANCE: 
+        distance = getDistance()
+
+    flavors = getFlavors()
     categories = getCulture()
-    results = get_store(USER_LOCATION, term = term, categories=categories)
+    results = getStore(USER_LOCATION, term = flavors, categories=categories, price = price, distance = distance)
 
     # Cache results
     with open('results.json', 'w') as file:

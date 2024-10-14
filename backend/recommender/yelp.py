@@ -14,7 +14,7 @@ API_KEY = os.getenv("YELP_API_KEY")
 # # #
 
 # func to get yelp results on specialized queries
-def get_store(coordinates, term = None, categories = "restaurants", radius=16000, sort_by = "rating", checkOpen = False, price = None):
+def getStore(coordinates, term = None, categories = "restaurants", radius=16000, sort_by = "rating", checkOpen = False, price = None):
     url = "https://api.yelp.com/v3/businesses/search"
 
     query = {"latitude": coordinates[0], "longitude": coordinates[1], 
@@ -61,7 +61,7 @@ if __name__ == "__main__":
     default_radius = 16000 # ~10 miles in meters
     default_category = "restaurants"
 
-    # res = get_store(CSULB_coordinates, categories="raw_food")
+    # res = getStore(CSULB_coordinates, categories="raw_food")
     # res = categoryDetails("en_US") # gets all businesses within en_US locale
 
     # # Cache results
