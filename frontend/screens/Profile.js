@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from './Colors';
-import { ProfileContext } from './ProfileContext';
+import { ProfileContext } from '../../backend/contexts/ProfileContext';
 import { doSignInWithEmailAndPassword } from '../../backend/firebase/auth';
 
 export default function Profile({ navigation }) {
