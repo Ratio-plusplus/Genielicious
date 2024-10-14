@@ -3,7 +3,8 @@
 # TODO: remake file with use of yelp api data
 
 import json
-from yelp import get_store
+import os
+from yelp import getStore
 
 SUPPORTED_REGIONAL_CUISINES = set(["African", "Middle Eastern", "South Asian", # cultural categories that are currently supported
                                    "East Asian", "European", "Latin American", 
@@ -11,19 +12,19 @@ SUPPORTED_REGIONAL_CUISINES = set(["African", "Middle Eastern", "South Asian", #
 ALL_OTHER_CATEGORIES = set(["Finger food", "Specialty", "Light Meals", "Vegan", 
                             "Quick Eats", "Breakfast", "Desserts", "Health-Conscious",
                             "Meat-Centric", "Comfort Food"])
-MAIN_FLAVORS = set(["sweet","salty", "sour", "bitter", "savory", "spicy"]) # main flavors that we will take into account
+MAIN_FLAVORS = set(["sweet","salty", "sour", "umami", "spicy"]) # main flavors that we will take into account
 
-with open("recommender\\data\\categorized_aliases.json", "r") as file:
+with open("backend\\recommender\\data\\categorized_aliases.json", "r") as file:
     CATEGORIZED_ALIASES = json.load(file)
 
 # preliminary questions
 # yelp parameter price takes integer 1 through 4
 def getPrice() -> int:
     print("How much are you willing to spend?")
-    print("1) < $10\n\
-           2) < $30\n\
-           3) < $60\n\
-           4) >= $60\n")
+    print("\t1) < $10\n\
+        2) < $30\n\
+        3) < $60\n\
+        4) >= $60\n")
     price = "2"
     while True:
         price = input()
@@ -36,7 +37,6 @@ def getPrice() -> int:
 
 # yelp parameter takes integer variable which represents distance in meters
 def getDistance() -> int:
-    # # # this interaction only displayed when user hasn't shared a user profile
     distances = {
         "1": 10,
         "2": 15,
@@ -44,10 +44,10 @@ def getDistance() -> int:
         "4": 25
     }
     print("How far are you willing to travel?")
-    print("1) < 10 miles\n\
-           2) < 15 miles\n\
-           3) < 20 miles\n\
-           4) < 25 miles\n")
+    print("\t1) < 10 miles\n\
+        2) < 15 miles\n\
+        3) < 20 miles\n\
+        4) < 25 miles\n")
     option = "1"
     while True:
         option = input()
@@ -55,9 +55,7 @@ def getDistance() -> int:
             break
         else:
             print("Invalid input")
-    # # #
-
-    distance = int(distances[option] * 1,609.344) # convert miles to meters
+    distance = int(distances[option] * 1609.344) # convert miles to meters
     if distance > 40000:
         distance = 40000 # max distance allowed for yelp api
     return distance
@@ -92,9 +90,11 @@ def getCulture() -> str:
             else:
                 break
 
-        if choice == "y": # for now we return on first desired culture, other configurations may be faster
+        if choice == "y": # return on first desired culture
             culture_res = culture
             break
+        elif choice == "m": # consider "maybe" if not "yes" on any culture
+            culture_res = culture
 
     if not culture_res: # in case user said "no" to every cultural food
         culture_res = "food"
@@ -103,14 +103,30 @@ def getCulture() -> str:
         
     return culture_res
 
-if __name__ == "__main__":
-    USER_LOCATION = (33.78336745904146, -118.1101659429386) # should be provided by the client, using CSULB coords to test
-    
-    term = getFlavors()
+def shortSession(user_location, user_price:int = None, user_distance:int = None) -> str:
+    if not user_price: # must have price and distance
+        user_price = getPrice()
+    if not user_distance: 
+        user_distance = getDistance()
+
+    flavors = getFlavors()
     categories = getCulture()
-    results = get_store(USER_LOCATION, term = term, categories=categories)
+    results = getStore(user_location, term = flavors, categories=categories, price = user_price, radius = user_distance)
+    
+    if results["total"] == 0: # check if there are any results
+        results = getStore(user_location, term = "", price = user_price, radius = user_distance)
+
+    return results
+
+if __name__ == "__main__":
+    from yelp import cacheToJson
+    USER_LOCATION = (33.78336745904146, -118.1101659429386) # should be provided by the client, using CSULB coords to test
+    USER_PRICE = None # provided by user profile
+    USER_DISTANCE = None # provided by user profile
+
+    RESULTS_PATH = f"{os.getcwd()}\\results.json"
+    results = shortSession(USER_LOCATION)
 
     # Cache results
-    with open('results.json', 'w') as file:
-        json.dump(results, file, indent=4)
-    print("Dictionary written to file in JSON format.")
+    cacheToJson(RESULTS_PATH,results)
+    print(f"Number of results:{results["total"]}")
