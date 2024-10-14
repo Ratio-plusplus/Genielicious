@@ -6,47 +6,53 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 //Initializing and connecting to backend + users 
 import { initializeApp } from 'firebase/app';
-import { getDatabase, ref, push } from 'firebase/database';
-
-const app = initializeApp(appSettings);
-const database = getDatabase(app);
-//need to connect user authentication to this part
+import { getAuth }  from '@firebase/auth';
+import { getDatabase, ref, set } from 'firebase/database';
+import { database, auth } from '../../backend/firebase/firebase';
 
 //manages state of each checkbox item, changed to global so I can push everything at once on the second screen
 const appSettings = {
     databaseURL: REACT_APP_FIREBASE_DATABASE_URL
 }
-
-const [isChecked, setIsChecked] = useState({
-    tastePreferences: {
-        savory: false, 
-        sweet: false, 
-        salty: false, 
-        spicy: false,
-        bitter: false, 
-        sour: false, 
-        cool: false, 
-        hot: false
-    },
-    allergies: {
-        vegan: false, 
-        vegetarian: false, 
-        peanut: false, 
-        gluten: false, 
-        fish: false,
-        shellfish: false, 
-        eggs: false, 
-        soy: false, 
-        dairy: false, 
-        keto: false
-    },
-});
+const app = initializeApp(appSettings);
+const database = getDatabase(app);
   
 export default function AddPref1 ({ navigation }) {
+    //list of flavor preferences 
+    const [isChecked, setIsChecked] = useState({
+        tastePreferences: {
+            savory: false, 
+            sweet: false, 
+            salty: false, 
+            spicy: false,
+            bitter: false, 
+            sour: false, 
+            cool: false, 
+            hot: false
+        },
+        allergies: {
+            vegan: false, 
+            vegetarian: false, 
+            peanut: false, 
+            gluten: false, 
+            fish: false,
+            shellfish: false, 
+            eggs: false, 
+            soy: false, 
+            dairy: false, 
+            keto: false
+        },
+    });
+
   //pushes flavor preferences to DBs
   const addToProfile = () => {
-    const flavorProfileDB = ref(database, "flavorProfile")
-    push(flavorProfileDB, isChecked);
+    const auth = getAuth();
+    const user = auth.currentUser;
+    const flavorProfileDB = ref(database, 'users/'+user.uid+"/flavorProfile");
+    set(flavorProfileDB, {
+        prefPage1: isChecked
+    });
+
   }
 
   return (

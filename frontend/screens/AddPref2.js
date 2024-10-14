@@ -38,7 +38,19 @@ export default function AddPref2({ navigation }) {
             $50: false,
         },
     });
-    
+
+    //pushes flavor preferences to DBs
+    const addToProfile = () => {
+        const auth = getAuth();
+        const user = auth.currentUser;
+        const flavorProfileDB = ref(database, 'users/'+user.uid+"/flavorProfile");
+        set(flavorProfileDB, {
+            profileName: name,
+            distance: selectedDistance,
+            budget: selectedBudget,
+            prefPage2: isChecked
+    });
+
     const [showPresetImages, setShowPresetImages] = useState(false)
     const presetImages = [
         //add in path for any additional preset pictures
@@ -486,4 +498,4 @@ const styles = StyleSheet.create({
         fontSize: 19,
         color: Colors.ghost,
     },
-});
+})};
