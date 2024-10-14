@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { auth } from "./firebase";
+import { auth , database} from "./firebase";
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithEmailAndPassword, signInWithCredential, updatePassword } from "firebase/auth";
 import { ref, set, getDatabase, get } from "firebase/database";
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
@@ -8,9 +8,9 @@ import { Image } from "react-native";
 
 
 export const doCreateUserWithEmailAndPassword = async (email, password, username) => {
-    const database = getDatabase();
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
+    console.log(userCredential);
 
     console.log("User ID:", user.uid)
 
@@ -29,11 +29,12 @@ export const doCreateUserWithEmailAndPassword = async (email, password, username
 };
 
 export const doSignInWithEmailAndPassword = async (email, password) => {
-    const database = getDatabase();
-    const userCredential = await(signInWithEmailAndPassword(auth, email, password))
-    user = userCredential.user;
+
+    const userCredential = await(signInWithEmailAndPassword(auth, email, password));
+    currentuser = userCredential.user;
+    console.log(userCredential.user);
+
     /*
-    //console.log("User ID:", user.uid)
 
     //const userRef = ref(database, 'users/' + user.uid);
     //const snapshot = await get(userRef);
@@ -46,7 +47,7 @@ export const doSignInWithEmailAndPassword = async (email, password) => {
         console.log("No user data found");
     }
     */
-    return user;
+    return currentuser;
     
 };
 

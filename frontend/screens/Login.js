@@ -19,14 +19,14 @@ export default function Login({ navigation }) {
   const { setUsername, setpfp } = useContext(ProfileContext);
 
 
-    const handleLogin = async (e) => {
+    const handleLogin = async () => {
       setErrorMessage('');
       if (!isLoggingIn) {
         setisLoggingIn(true);
       }
       try {
-        const { user } = await doSignInWithEmailAndPassword(email, password)
-
+        console.log("Bidoof")
+        const user = await doSignInWithEmailAndPassword(email, password);
         //fetch user data from database using uid
         if (user) {
           const db = getDatabase();
@@ -43,7 +43,7 @@ export default function Login({ navigation }) {
               setUsername(username);
               setpfp(pfp);
 
-              navigation.navigate("Tab");
+              setValidUser(true);
             }
           });
         }
@@ -59,27 +59,27 @@ export default function Login({ navigation }) {
         }
         else {
             setErrorMessage(errorMessage.code);
-          setErrorMessage("Login failed. Please check your credentials.");
+            console.log(errorMessage);
         }
         setisLoggingIn(false);
       }
     };
 
-    const handleGoogleLogin = async (e) => {
-        await onGoogleSignIn(e);
+    const handleGoogleLogin = async () => {
+        await onGoogleSignIn();
         if (validUser) {
             console.log("Success2");
             navigation.navigate('Tab')
         }
     }
 
-    const onGoogleSignIn = async (e) => {
+    const onGoogleSignIn = async () => {
         if (!isLoggingIn) {
             setisLoggingIn(true);
             try {
                 await doSignInWithGoogle()
                 console.log("Success");
-                await setvalidUser(true);
+                setvalidUser(true);
                     
             } catch (errorMessage) {
                 setErrorMessage(errorMessage.code);
@@ -172,7 +172,7 @@ export default function Login({ navigation }) {
           </View>
 
           {/* login with Google button */}
-                  <TouchableOpacity style={styles.googleButton} onPress={(e) => handleGoogleLogin(e) }>
+                  <TouchableOpacity style={styles.googleButton} onPress={() => handleGoogleLogin() }>
             <Image
               style={styles.googleLogo}
               source={require("../../frontend/assets/google-logo.png")}

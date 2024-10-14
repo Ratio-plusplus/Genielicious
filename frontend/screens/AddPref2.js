@@ -5,17 +5,18 @@ import * as ImagePicker from 'expo-image-picker';
 import React, {useState} from 'react';
 import { Colors } from './Colors';
 import CheckBox from 'react-native-check-box';
-
+import { database, auth } from '../../backend/firebase/firebase';
+import { REACT_APP_FIREBASE_DATABASE_URL } from "@env";
 
 //adding backend plus previous data from other page
-import { initializeApp } from 'firebase/app';
+// import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, push } from 'firebase/database';
 
 const appSettings = {
     databaseURL: REACT_APP_FIREBASE_DATABASE_URL
 }
-const app = initializeApp(appSettings)
-const database = getDatabase(app)
+// const app = initializeApp(appSettings)
+// const database = getDatabase(app)
 
 //need to connect user authentication to this part
 

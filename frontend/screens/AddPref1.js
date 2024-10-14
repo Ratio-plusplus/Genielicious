@@ -5,17 +5,18 @@ import { Colors } from './Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 //Initializing and connecting to backend + users 
-import { initializeApp } from 'firebase/app';
+// import { initializeApp } from 'firebase/app';
 import { getAuth }  from '@firebase/auth';
 import { getDatabase, ref, set } from 'firebase/database';
 import { database, auth } from '../../backend/firebase/firebase';
+import { REACT_APP_FIREBASE_DATABASE_URL } from "@env";
 
 //manages state of each checkbox item, changed to global so I can push everything at once on the second screen
 const appSettings = {
     databaseURL: REACT_APP_FIREBASE_DATABASE_URL
 }
-const app = initializeApp(appSettings);
-const database = getDatabase(app);
+// const app = initializeApp(appSettings);
+// const database = getDatabase(app);
   
 export default function AddPref1 ({ navigation }) {
     //list of flavor preferences 

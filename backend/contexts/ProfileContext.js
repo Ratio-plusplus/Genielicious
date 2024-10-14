@@ -47,7 +47,7 @@ export const ProfileProvider = ({ children }) => {
 
     return (
         <ProfileContext.Provider value={{ pfp, setpfp, username, setUsername}}>
-        {children}
+            {children}
         </ProfileContext.Provider>
     );
 };

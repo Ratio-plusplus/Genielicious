@@ -4,7 +4,6 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
 import React, { useEffect, useState } from "react";
 import { Colors } from "./Colors";
-import { useAuth } from '../../backend/contexts/authContext/index';
 import { doCreateUserWithEmailAndPassword } from '../../backend/firebase/auth';
 import { ProfileContext } from "../../backend/contexts/ProfileContext";
 import { useContext } from "react";
@@ -25,11 +24,13 @@ export default function Signup({navigation}) {
 
 
     //On Press Method
-    const handleSignup = async (e) => {
+    const handleSignup = async () => {
         //Check if passwords match
         try{
           const userCredential = await createUser();
+          console.log(userCredential);
           if (userCredential) {
+            console.log('penis');
             //fetch user data after signing up
             const userId = userCredential.user.uid;
             const userRef = ref(getDatabase(), 'users/' + userId);
@@ -67,7 +68,7 @@ export default function Signup({navigation}) {
     }
 
     //Create user method
-    const createUser = async (e) => {
+    const createUser = async () => {
         //e.preventDefault()
         setErrorMessage('');
         if (!isRegistering) {
@@ -77,7 +78,7 @@ export default function Signup({navigation}) {
                 //Check if passwords match
                 if (validate(email)){
                     if (password == confirmPassword) {
-                        return await doCreateUserWithEmailAndPassword(email, password)
+                        return await doCreateUserWithEmailAndPassword(email, password, username)
                     }
                 }
                 //Error msgs from Firebase Auth
@@ -100,15 +101,15 @@ export default function Signup({navigation}) {
         }
     }
 
-    const handleGoogleLogin = async (e) => {
-        await onGoogleSignIn(e);
+    const handleGoogleLogin = async () => {
+        await onGoogleSignIn();
         if (createdUser) {
             console.log("Success2");
             navigation.navigate('Tab')
         }
     }
 
-    const onGoogleSignIn = async (e) => {
+    const onGoogleSignIn = async () => {
         if (!isRegistering) {
             setIsRegistering(true);
             try {
