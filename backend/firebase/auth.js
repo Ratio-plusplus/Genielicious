@@ -33,22 +33,7 @@ export const doSignInWithEmailAndPassword = async (email, password) => {
     const userCredential = await(signInWithEmailAndPassword(auth, email, password));
     currentuser = userCredential.user;
     console.log(userCredential.user);
-
-    /*
-
-    //const userRef = ref(database, 'users/' + user.uid);
-    //const snapshot = await get(userRef);
-
-    //let userData = null;
-    if (snapshot.exists()) {
-        userData = snapshot.val();
-        console.log("User Data:", userData);
-    } else {
-        console.log("No user data found");
-    }
-    */
     return currentuser;
-    
 };
 
 export const doSignInWithGoogle = async () => {

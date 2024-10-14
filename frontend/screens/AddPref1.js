@@ -270,8 +270,7 @@ export default function AddPref1 ({ navigation }) {
             <View style={styles.buttonContainer}>
                 <TouchableOpacity 
                     style={styles.continueButton} 
-                    onClick={addToProfile}
-                    onPress={()=>navigation.navigate('Add Preference 2')}>  
+                    onPress={()=>navigation.replace('Add Preference 2')}>  
                     <Text style={styles.buttonText}>Continue</Text>
                 </TouchableOpacity>
             </View>

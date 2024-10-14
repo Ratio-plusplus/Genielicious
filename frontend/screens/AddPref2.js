@@ -42,7 +42,6 @@ export default function AddPref2({ navigation }) {
 
     //pushes flavor preferences to DBs
     const addToProfile = () => {
-        const auth = getAuth();
         const user = auth.currentUser;
         const flavorProfileDB = ref(database, 'users/'+user.uid+"/flavorProfile");
         set(flavorProfileDB, {

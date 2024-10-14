@@ -5,6 +5,7 @@ import { Colors } from "./Colors";
 import React, { useContext, useEffect, useState } from "react";
 import { useAuth } from '../../backend/contexts/authContext/index';
 import { doSignInWithEmailAndPassword, doSignInWithGoogle } from '../../backend/firebase/auth';
+import { database } from '../../backend/firebase/firebase'
 import { ProfileContext } from "../../backend/contexts/ProfileContext";
 import { getDatabase, ref, onValue } from "firebase/database";
 import { getAuth, signInWithEmailAndPassword } from "@firebase/auth";
@@ -25,28 +26,34 @@ export default function Login({ navigation }) {
         setisLoggingIn(true);
       }
       try {
-        console.log("Bidoof")
-        const user = await doSignInWithEmailAndPassword(email, password);
+          console.log("Bidoof");
+          const user = await doSignInWithEmailAndPassword(email, password);
         //fetch user data from database using uid
-        if (user) {
-          const db = getDatabase();
-          const userRef = ref(db, 'users/' + user.uid);
-
+          if (user) {
+              console.log("dumb");
+          const userRef = ref(database, 'users/' + user.uid);
+              console.log("dumb");
           //fetch data from firebase
-          onValue(userRef, (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
+              onValue(userRef, (snapshot) => {
+                  console.log("dumb");
+                  const data = snapshot.val();
+                  console.log("dumb1");
+                  if (data) {
+                      console.log("dumb2");
               //update context with fetched user data
-              const username = data.username || "Ratio++"
-              const pfp = data.photoURL || "../assets/pfp.png"
-
-              setUsername(username);
-              setpfp(pfp);
-
-              setValidUser(true);
-            }
-          });
-        }
+                      const username = data.username || "Ratio++"
+                      console.log("dumb3");
+                      const pfp = data.photoURL || "../assets/pfp.png"
+                      console.log("dumb4");
+                      setUsername(username);
+                      console.log("dumb5");
+                      setpfp(pfp);
+                      console.log("dumb6");
+                      setvalidUser(true);
+                      console.log("dumb7");
+                  }
+              });
+          }
       } catch (errorMessage) {
         if (errorMessage.code === 'auth/invalid-email') {
           setErrorMessage('Invalid email. Please try again.');
