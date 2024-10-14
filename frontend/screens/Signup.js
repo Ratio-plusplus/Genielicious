@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { Colors } from "./Colors";
 import { useAuth } from '../../backend/contexts/authContext/index';
 import { doCreateUserWithEmailAndPassword } from '../../backend/firebase/auth';
-import { ProfileContext } from "./ProfileContext";
+import { ProfileContext } from "../../backend/contexts/ProfileContext";
 import { useContext } from "react";
 import { getDataConnect } from "firebase/data-connect";
 import { getDatabase, ref, get} from "firebase/database";

@@ -9,7 +9,7 @@ export const ProfileContext = createContext();
 // Create a provider component
 export const ProfileProvider = ({ children }) => {
     //default values
-    const defaultPfp = Image.resolveAssetSource(require("../assets/pfp.png")).uri
+    const defaultPfp = Image.resolveAssetSource(require("../../frontend/assets/pfp.png")).uri
     const defaultUsername = "Ratio++";
 
     //Initalization for our inital values

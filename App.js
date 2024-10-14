@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import WelcomeContainer from './frontend/WelcomeContainer';
 import Profile from './frontend/screens/Profile';
 import EditProfile from './frontend/screens/EditProfile';
-import { ProfileProvider } from './frontend/screens/ProfileContext';
+import { ProfileProvider } from './backend/contexts/ProfileContext';
 
 function App() {
   return(

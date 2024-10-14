@@ -17,7 +17,6 @@ const appSettings = {
     databaseURL: REACT_APP_FIREBASE_DATABASE_URL
 }
 
-
 const [isChecked, setIsChecked] = useState({
     tastePreferences: {
         savory: false, 

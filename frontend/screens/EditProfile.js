@@ -108,10 +108,7 @@ export default function EditProfile({ navigation }) {
             console.error('Error updating profile:', error);
             Alert.alert("Error", error.message);
         }
-        
-
-        
-
+    
     }
 
     return (
