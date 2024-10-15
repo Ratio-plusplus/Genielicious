@@ -30,27 +30,17 @@ export default function Login({ navigation }) {
           const user = await doSignInWithEmailAndPassword(email, password);
         //fetch user data from database using uid
           if (user) {
-              console.log("dumb");
           const userRef = ref(database, 'users/' + user.uid);
-              console.log("dumb");
           //fetch data from firebase
               onValue(userRef, (snapshot) => {
-                  console.log("dumb");
                   const data = snapshot.val();
-                  console.log("dumb1");
                   if (data) {
-                      console.log("dumb2");
               //update context with fetched user data
                       const username = data.username || "Ratio++"
-                      console.log("dumb3");
                       const pfp = data.photoURL || Image.resolveAssetSource(require("../assets/pfp.png").uri)
-                      console.log("dumb4");
                       setUsername(username);
-                      console.log("dumb5");
                       setpfp(pfp);
-                      console.log("dumb6");
                       setvalidUser(true);
-                      console.log("dumb7");
                   }
               });
           }

@@ -9,13 +9,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { getAuth }  from '@firebase/auth';
 import { getDatabase, ref, set } from 'firebase/database';
 import { database, auth } from '../../backend/firebase/firebase';
-import { REACT_APP_FIREBASE_DATABASE_URL } from "@env";
 
-//manages state of each checkbox item, changed to global so I can push everything at once on the second screen
-const appSettings = {
-    databaseURL: REACT_APP_FIREBASE_DATABASE_URL
-}
-// const app = initializeApp(appSettings);
 // const database = getDatabase(app);
   
 export default function AddPref1 ({ navigation }) {
@@ -46,15 +40,40 @@ export default function AddPref1 ({ navigation }) {
     });
 
   //pushes flavor preferences to DBs
-  const addToProfile = () => {
-    const auth = getAuth();
+  const addToProfile = async () => {
     const user = auth.currentUser;
-    const flavorProfileDB = ref(database, 'users/'+user.uid+"/flavorProfile");
-    set(flavorProfileDB, {
-        prefPage1: isChecked
-    });
+    if (user) {
+        console.log(user.uid)
+        //Pushing tastePreferences
+        await set(ref(database, 'users/' + user.uid + "/flavorProfile/tastePreference"), {
+            savory: isChecked.tastePreferences.savory,
+            sweet: isChecked.tastePreferences.sweet,
+            salty: isChecked.tastePreferences.salty,
+            spicy: isChecked.tastePreferences.spicy,
+            bitter: isChecked.tastePreferences.bitter,
+            sour: isChecked.tastePreferences.sour,
+            cool: isChecked.tastePreferences.cool,
+            hot: isChecked.tastePreferences.hot,
+        });
 
-  }
+        await set(ref(database, 'users/' + user.uid + "/flavorProfile/allergies"), {
+            vegan: isChecked.allergies.vegan,
+            vegetarian: isChecked.allergies.vegetarian,
+            peanut: isChecked.allergies.peanut,
+            gluten: isChecked.allergies.gluten,
+            fish: isChecked.allergies.fish,
+            shellfish: isChecked.allergies.shellfish,
+            eggs: isChecked.allergies.eggs,
+            soy: isChecked.allergies.soy,
+            dairy: isChecked.allergies.dairy,
+            keto: isChecked.allergies.keto,
+        });
+
+        console.log("Preferences saved successfully");
+    } else {
+        console.log("No user is signed in.");
+    }
+  };
 
   return (
     <SafeAreaView style={styles.background}>
@@ -80,82 +99,163 @@ export default function AddPref1 ({ navigation }) {
 
                 {/* row 1: savory and sweet */}
                 <View style={styles.checkboxRow}>
-                    <CheckBox
-                        style={styles.checkbox}
-                        isChecked={isChecked.savory}    //current state
-                        onClick={()=>setIsChecked({...isChecked, savory: !isChecked.savory})}   //toggle state
-                        rightText='Savory'
-                        rightTextStyle={styles.checkboxText}
-                        uncheckedCheckBoxColor={Colors.ghost}
-                        checkedCheckBoxColor={Colors.gold}/>
-                    <CheckBox 
-                        style={styles.checkbox}
-                        isChecked={isChecked.sweet} 
-                        onClick={()=>setIsChecked({...isChecked, sweet: !isChecked.sweet})}
-                        rightText='Sweet'
-                        rightTextStyle={styles.checkboxText}
-                        uncheckedCheckBoxColor={Colors.ghost}
-                        checkedCheckBoxColor={Colors.gold}/>
-                </View>
+                    <View style = {styles.checkboxItem}>
+                        <CheckBox
+                            style={styles.checkbox}
+                            isChecked={isChecked.tastePreferences.savory}    //current state
+                            onClick={()=>setIsChecked({
+                                ...isChecked, 
+                                tastePreferences: {
+                                    ...isChecked.tastePreferences,
+                                    savory: !isChecked.tastePreferences.savory //update only savory
+                                }
+                            })}   //toggle state
+                            // rightText='Savory'
+                            // rightTextStyle={styles.checkboxText}
+                            uncheckedCheckBoxColor={Colors.ghost}
+                            checkedCheckBoxColor={Colors.gold}
+                        />
+                    <Text style = {styles.checkboxText}>Savory</Text>
+                    </View>
 
+                    <View style = {styles.checkboxItem}>
+                        <CheckBox 
+                            style={styles.checkbox}
+                            isChecked={isChecked.tastePreferences.sweet} 
+                            onClick={()=>setIsChecked({
+                                ...isChecked,
+                                tastePreferences: {
+                                    ...isChecked.tastePreferences,
+                                    sweet: !isChecked.tastePreferences.sweet 
+                                }
+                            })}
+                            // rightText='Sweet'
+                            // rightTextStyle={styles.checkboxText}
+                            uncheckedCheckBoxColor={Colors.ghost}
+                            checkedCheckBoxColor={Colors.gold}/>
+                            <Text style={styles.checkboxText}>Sweet</Text>
+                    </View>
+                    
+                </View>
+                        
                 {/* row 2: salty and spicy */}
                 <View style={styles.checkboxRow}>
+                    <View style = {styles.checkboxItem}>
+                        <CheckBox 
+                            style={styles.checkbox}
+                            isChecked={isChecked.tastePreferences.salty} 
+                            onClick={()=>setIsChecked({
+                                ...isChecked, 
+                                tastePreferences: {
+                                    ...isChecked.tastePreferences,
+                                    salty: !isChecked.tastePreferences.salty
+                                }
+                            })}
+                            // rightText='Salty'
+                            // rightTextStyle={styles.checkboxText}
+                            uncheckedCheckBoxColor={Colors.ghost}
+                            checkedCheckBoxColor={Colors.gold}/>
+                            <Text style={styles.checkboxText}>Salty</Text>
+                    </View>
+
+                    <View style = {styles.checkboxItem}>
                     <CheckBox 
                         style={styles.checkbox}
-                        isChecked={isChecked.salty} 
-                        onClick={()=>setIsChecked({...isChecked, salty: !isChecked.salty})}
-                        rightText='Salty'
-                        rightTextStyle={styles.checkboxText}
+                        isChecked={isChecked.tastePreferences.spicy} 
+                        onClick={()=>setIsChecked({
+                            ...isChecked, 
+                            tastePreferences: {
+                                ...isChecked.tastePreferences,
+                                spicy: !isChecked.tastePreferences.spicy
+                            }
+                        })}
+                        // rightText='Spicy'
+                        // rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
-                    <CheckBox 
-                        style={styles.checkbox}
-                        isChecked={isChecked.spicy} 
-                        onClick={()=>setIsChecked({...isChecked, spicy: !isChecked.spicy})}
-                        rightText='Spicy'
-                        rightTextStyle={styles.checkboxText}
-                        uncheckedCheckBoxColor={Colors.ghost}
-                        checkedCheckBoxColor={Colors.gold}/>
+                        <Text style={styles.checkboxText}>Spicy</Text>
+                    </View>
                 </View>
 
                 {/* row 3: bitter and sour */}
                 <View style={styles.checkboxRow}>
+
+                <View style = {styles.checkboxItem}>
                     <CheckBox 
                         style={styles.checkbox}
-                        isChecked={isChecked.bitter} 
-                        onClick={()=>setIsChecked({...isChecked, bitter: !isChecked.bitter})}
-                        rightText='Bitter'
-                        rightTextStyle={styles.checkboxText}
+                        isChecked={isChecked.tastePreferences.bitter} 
+                        onClick={()=>setIsChecked({
+                            ...isChecked,
+                            tastePreferences: {
+                                ...isChecked.tastePreferences,
+                                bitter: !isChecked.tastePreferences.bitter
+                            }
+                        })}
+                        // rightText='Bitter'
+                        // rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
-                    <CheckBox 
-                        style={styles.checkbox}
-                        isChecked={isChecked.sour} 
-                        onClick={()=>setIsChecked({...isChecked, sour: !isChecked.sour})}
-                        rightText='Sour'
-                        rightTextStyle={styles.checkboxText}
-                        uncheckedCheckBoxColor={Colors.ghost}
-                        checkedCheckBoxColor={Colors.gold}/>
+                        <Text style={styles.checkboxText}>Bitter</Text>
+                    </View>
+
+                    <View style = {styles.checkboxItem}>
+                        <CheckBox 
+                            style={styles.checkbox}
+                            isChecked={isChecked.tastePreferences.sour} 
+                            onClick={()=>setIsChecked({
+                                ...isChecked,
+                                tastePreferences: {
+                                    ...isChecked.tastePreferences,
+                                    sour: !isChecked.tastePreferences.sour
+                                }
+                            })}
+                            // rightText='Sour'
+                            // rightTextStyle={styles.checkboxText}
+                            uncheckedCheckBoxColor={Colors.ghost}
+                            checkedCheckBoxColor={Colors.gold}/>
+                            <Text style={styles.checkboxText}>Sour</Text>
+                    </View>
                 </View>
 
                 {/* row 4: cool and hot */}
                 <View style={styles.checkboxRow}>
+
+                    <View style = {styles.checkboxItem}>
+                        <CheckBox 
+                            style={styles.checkbox}
+                            isChecked={isChecked.tastePreferences.cool} 
+                            onClick={()=>setIsChecked({
+                                ...isChecked,
+                                tastePreferences: {
+                                    ...isChecked.tastePreferences,
+                                    cool: !isChecked.tastePreferences.cool
+                                }
+                            })}
+                            // rightText='Cool'
+                            // rightTextStyle={styles.checkboxText}
+                            uncheckedCheckBoxColor={Colors.ghost}
+                            checkedCheckBoxColor={Colors.gold}/>
+                            <Text style={styles.checkboxText}>Cool</Text>
+                    </View>
+
+
+                    <View style = {styles.checkboxItem}>    
                     <CheckBox 
                         style={styles.checkbox}
-                        isChecked={isChecked.cool} 
-                        onClick={()=>setIsChecked({...isChecked, cool: !isChecked.cool})}
-                        rightText='Cool'
-                        rightTextStyle={styles.checkboxText}
+                        isChecked={isChecked.tastePreferences.hot} 
+                        onClick={()=>setIsChecked({
+                            ...isChecked,
+                            tastePreferences: {
+                                ...isChecked.tastePreferences,
+                                hot: !isChecked.tastePreferences.hot
+                            }
+                        })}
+                        // rightText='Hot'
+                        // rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
-                    <CheckBox 
-                        style={styles.checkbox}
-                        isChecked={isChecked.hot} 
-                        onClick={()=>setIsChecked({...isChecked, hot: !isChecked.hot})}
-                        rightText='Hot'
-                        rightTextStyle={styles.checkboxText}
-                        uncheckedCheckBoxColor={Colors.ghost}
-                        checkedCheckBoxColor={Colors.gold}/>
+                        <Text style={styles.checkboxText}>Hot</Text>
+                    </View>
                 </View>
             </View>
 
@@ -167,102 +267,201 @@ export default function AddPref1 ({ navigation }) {
 
                 {/* row 1: vegan and vegetarian */}
                 <View style={styles.checkboxRow}>
+
+                    <View style = {styles.checkboxItem}>
                     <CheckBox
                         style={styles.checkbox}
-                        isChecked={isChecked.vegan} 
-                        onClick={()=>setIsChecked({...isChecked, vegan: !isChecked.vegan})}
-                        rightText='Vegan'
-                        rightTextStyle={styles.checkboxText}
+                        isChecked={isChecked.allergies.vegan} 
+                        onClick={()=>setIsChecked({
+                            ...isChecked,
+                            allergies: {
+                                ...isChecked.allergies,
+                                vegan: !isChecked.allergies.vegan
+                            }
+                        })}
+                        // rightText='Vegan'
+                        // rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
+                        <Text style={styles.checkboxText}>Vegan</Text>
+                    </View>
+
+                    <View style = {styles.checkboxItem}>
                     <CheckBox 
                         style={styles.checkbox}
-                        isChecked={isChecked.vegetarian} 
-                        onClick={()=>setIsChecked({...isChecked, vegetarian: !isChecked.vegetarian})}
-                        rightText='Vegetarian'
-                        rightTextStyle={styles.checkboxText}
+                        isChecked={isChecked.allergies.vegetarian} 
+                        onClick={()=>setIsChecked({
+                            ...isChecked,
+                            allergies: {
+                                ...isChecked.allergies,
+                                vegetarian: !isChecked.allergies.vegetarian
+                            }
+                        })}
+                        // rightText='Vegetarian'
+                        // rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
+                        <Text style={styles.checkboxText}>Vegetarian</Text>
+                    </View>
                 </View>
 
                 {/* row 2: peanut/tree nut and wheat/gluten */}
                 <View style={styles.checkboxRow}>
+                    <View style = {styles.checkboxItem}>
                     <CheckBox 
                         style={styles.checkbox}
-                        isChecked={isChecked.peanut} 
-                        onClick={()=>setIsChecked({...isChecked, peanut: !isChecked.peanut})}
-                        rightText='Peanut/Tree Nut'
-                        rightTextStyle={styles.checkboxText}
+                        isChecked={isChecked.allergies.peanut} 
+                        onClick={()=>setIsChecked({
+                            ...isChecked,
+                            allergies: {
+                                ...isChecked.allergies,
+                                peanut: !isChecked.allergies.peanut
+                            }
+                        })}
+                        // rightText='Peanut/Tree Nut'
+                        // rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
+                        <Text style={styles.checkboxText}>Peanut/Tree Nut</Text>
+                    </View>
+
+                    <View style = {styles.checkboxItem}>
                     <CheckBox 
                         style={styles.checkbox}
-                        isChecked={isChecked.gluten} 
-                        onClick={()=>setIsChecked({...isChecked, gluten: !isChecked.gluten})}
-                        rightText='Wheat/Gluten'
-                        rightTextStyle={styles.checkboxText}
+                        isChecked={isChecked.allergies.gluten} 
+                        onClick={()=>setIsChecked({
+                            ...isChecked,
+                            allergies: {
+                                ...isChecked.allergies,
+                                gluten: !isChecked.allergies.gluten
+                            }
+                        })}
+                        // rightText='Wheat/Gluten'
+                        // rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
+                        <Text style={styles.checkboxText}>Wheat/Gluten</Text>
+                    </View>
                 </View>
 
                 {/* row 3: fish and shellfish */}
                 <View style={styles.checkboxRow}>
+
+                    <View style = {styles.checkboxItem}>
                     <CheckBox 
                         style={styles.checkbox}
-                        isChecked={isChecked.fish} 
-                        onClick={()=>setIsChecked({...isChecked, fish: !isChecked.fish})}
-                        rightText='Fish'
-                        rightTextStyle={styles.checkboxText}
+                        isChecked={isChecked.allergies.fish} 
+                        onClick={()=>setIsChecked({
+                            ...isChecked,
+                            allergies: {
+                                ...isChecked.allergies,
+                                fish: !isChecked.allergies.fish
+                            }
+                        })}
+                        // rightText='Fish'
+                        // rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
+                        <Text style={styles.checkboxText}>Fish</Text>
+                    </View>
+
+                    <View style = {styles.checkboxItem}>
                     <CheckBox 
                         style={styles.checkbox}
-                        isChecked={isChecked.shellfish} 
-                        onClick={()=>setIsChecked({...isChecked, shellfish: !isChecked.shellfish})}
-                        rightText='Shellfish'
-                        rightTextStyle={styles.checkboxText}
+                        isChecked={isChecked.allergies.shellfish} 
+                        onClick={()=>setIsChecked({
+                            ...isChecked,
+                            allergies: {
+                                ...isChecked.allergies,
+                                shellfish: !isChecked.allergies.shellfish
+                            }
+                        })}
+                        // rightText='Shellfish'
+                        // rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
+                        <Text style={styles.checkboxText}>Shellfish</Text>
+                    </View>
                 </View>
 
                 {/* row 4: eggs and dairy */}
                 <View style={styles.checkboxRow}>
+
+                    <View style = {styles.checkboxItem}>
                     <CheckBox 
                         style={styles.checkbox}
-                        isChecked={isChecked.eggs} 
-                        onClick={()=>setIsChecked({...isChecked, eggs: !isChecked.eggs})}
-                        rightText='Eggs'
-                        rightTextStyle={styles.checkboxText}
+                        isChecked={isChecked.allergies.eggs} 
+                        onClick={()=>setIsChecked({
+                            ...isChecked,
+                            allergies: {
+                                ...isChecked.allergies,
+                                eggs: !isChecked.allergies.eggs
+                            }
+                        })}
+                        // rightText='Eggs'
+                        // rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
+                        <Text style={styles.checkboxText}>Eggs</Text>
+                    </View>
+
+                    <View style = {styles.checkboxItem}>
                     <CheckBox 
                         style={styles.checkbox}
-                        isChecked={isChecked.dairy} 
-                        onClick={()=>setIsChecked({...isChecked, dairy: !isChecked.dairy})}
-                        rightText='Dairy'
-                        rightTextStyle={styles.checkboxText}
+                        isChecked={isChecked.allergies.dairy} 
+                        onClick={()=>setIsChecked({
+                            ...isChecked,
+                            allergies: {
+                                ...isChecked.allergies,
+                                dairy: !isChecked.allergies.dairy
+                            }
+                        })}
+                        // rightText='Dairy'
+                        // rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
+                        <Text style={styles.checkboxText}>Dairy</Text>
+                    </View>
                 </View>
 
                 {/* row 5: soy and keto */}
                 <View style={styles.checkboxRow}>
+
+                    <View style = {styles.checkboxItem}>
                     <CheckBox 
                         style={styles.checkbox}
-                        isChecked={isChecked.soy} 
-                        onClick={()=>setIsChecked({...isChecked, soy: !isChecked.soy})}
-                        rightText='Soy'
-                        rightTextStyle={styles.checkboxText}
+                        isChecked={isChecked.allergies.soy} 
+                        onClick={()=>setIsChecked({
+                            ...isChecked,
+                            allergies: {
+                                ...isChecked.allergies,
+                                soy: !isChecked.allergies.soy
+                            }
+                        })}
+                        // rightText='Soy'
+                        // rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
+                        <Text style={styles.checkboxText}>Soy</Text>
+                    </View>
+
+                    <View style = {styles.checkboxItem}>
                     <CheckBox 
                         style={styles.checkbox}
-                        isChecked={isChecked.keto} 
-                        onClick={()=>setIsChecked({...isChecked, keto: !isChecked.keto})}
-                        rightText='Keto'
-                        rightTextStyle={styles.checkboxText}
+                        isChecked={isChecked.allergies.keto} 
+                        onClick={()=>setIsChecked({
+                            ...isChecked,
+                            allergies: {
+                                ...isChecked.allergies,
+                                keto: !isChecked.allergies.keto
+                            }
+                        })}
+                        // rightText='Keto'
+                        // rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
+                        <Text style={styles.checkboxText}>Keto</Text>
+                    </View>
                 </View>
             </View>
 
@@ -270,7 +469,15 @@ export default function AddPref1 ({ navigation }) {
             <View style={styles.buttonContainer}>
                 <TouchableOpacity 
                     style={styles.continueButton} 
-                    onPress={()=>navigation.navigate('Add Preference 2')}>  
+                    onPress={()=>{
+                        try{
+                            addToProfile();
+                            navigation.navigate('Add Preference 2') ;           
+                        } catch (error) {
+                            console.error("Error during navigation: ", error);
+                        }
+                        
+                    }}>  
                     <Text style={styles.buttonText}>Continue</Text>
                 </TouchableOpacity>
             </View>
@@ -315,11 +522,17 @@ const styles = StyleSheet.create({
     checkboxRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 16,
+        marginBottom: 20,
     },
-    checkbox: {
+    checkboxItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
         flex: 1,
         marginRight: 20,
+    },
+    checkbox: {
+        // flex: 1,
+        marginRight: 10,
     },
     checkboxText: {
         fontSize: 19, 

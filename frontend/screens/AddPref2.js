@@ -5,6 +5,8 @@ import * as ImagePicker from 'expo-image-picker';
 import React, {useState} from 'react';
 import { Colors } from './Colors';
 import CheckBox from 'react-native-check-box';
+import { auth, database } from '../../backend/firebase/firebase';
+import { ref, set } from 'firebase/database';
 
 export default function AddPref2({ navigation }) {
     const initialpfp = Image.resolveAssetSource(require("../assets/pfp.png")).uri;
@@ -21,8 +23,8 @@ export default function AddPref2({ navigation }) {
             twenty: false,
         },
         budget: {
-            $20: false,
-            $50: false,
+            dollar20: false,
+            dollar50: false,
         },
     });
     
@@ -42,28 +44,34 @@ export default function AddPref2({ navigation }) {
         
     ]
 
-    // Update selected option for Distance, ensuring only one is selected
-    // const handleDistanceSelection = (selectedDistance) => {
-    //     setIsChecked({
-    //         ...isChecked,
-    //         distance: {
-    //             ten: selectedDistance === 'ten',
-    //             fifteen: selectedDistance === 'fifteen',
-    //             twenty: selectedDistance === 'twenty',
-    //         },
-    //     });
-    // };
-
     // Update selected option for Budget, ensuring only one is selected
     const handleBudgetSelection = (selectedBudget) => {
         setIsChecked({
             ...isChecked,
             budget: {
-                $20: selectedBudget === '$20',
-                $50: selectedBudget === '$50',
+                dollar20: selectedBudget === '$20',
+                dollar50: selectedBudget === '$50',
             },
         });
     };
+
+    const addToProfile = async () => {
+        const user = auth.currentUser
+        if (user) {
+            await set(ref(database, 'users/' + user.uid + "/flavorProfile/Distance "), {
+                //pushing distance
+                ten: isChecked.distance.ten,
+                fifteen: isChecked.distance.fifteen,
+                twenty: isChecked.distance.twenty,
+            });
+            
+            await set(ref(database, 'users/' + user.uid + "/flavorProfile/Budget "), {
+                //pushing budget
+                dollar20: isChecked.budget.dollar20,
+                dollar50: isChecked.budget.dollar50,
+            });
+        }
+    }
 
     // Allows user to pick an image on their phone
     const handleImageSelection = async() => {
@@ -267,17 +275,47 @@ export default function AddPref2({ navigation }) {
                     <RadioButton
                         label="Within 10 miles"
                         isSelected={selectedDistance === 'ten'}
-                        onPress={() => setSelectedDistance('ten')}
+                        onPress={() => {
+                            setSelectedDistance("ten");
+                            setIsChecked({
+                            ...isChecked,
+                            distance: {
+                                ten: true,
+                                fifteen: false,
+                                twenty: false,
+                            }})
+                        }
+                    }
                     />
                     <RadioButton
                         label="Within 15 miles"
                         isSelected={selectedDistance === 'fifteen'}
-                        onPress={() => setSelectedDistance('fifteen')}
+                        onPress={() => {
+                            setSelectedDistance("fifteen");
+                            setIsChecked({
+                            ...isChecked,
+                            distance: {
+                                ten: false,
+                                fifteen: true,
+                                twenty: false,
+                            }})
+                        }
+                    }
                     />
                     <RadioButton
                         label="Within 20 miles"
                         isSelected={selectedDistance === 'twenty'}
-                        onPress={() => setSelectedDistance('twenty')}
+                        onPress={() => {
+                            setSelectedDistance("twenty");
+                            setIsChecked({
+                            ...isChecked,
+                            distance: {
+                                ten: false,
+                                fifteen: false,
+                                twenty: true,
+                            }})
+                        }
+                    }
                     />
                 </View>
 
@@ -287,15 +325,35 @@ export default function AddPref2({ navigation }) {
                     <RadioButton
                         label="$20"
                         isSelected={selectedBudget === '$20'}
-                        onPress={() => setSelectedBudget('$20')}
+                        onPress={() => {
+                            setSelectedBudget("$20");
+                            setIsChecked({
+                            ...isChecked,
+                            budget: {
+                                dollar20: true,
+                                dollar50: false,
+                            }})
+                        }}       
                     />
                     <RadioButton
                         label="$50"
                         isSelected={selectedBudget === '$50'}
-                        onPress={() => setSelectedBudget('$50')}
+                        onPress={() => {
+                            setSelectedBudget("$50");
+                            setIsChecked({
+                            ...isChecked,
+                            budget: {
+                                dollar20: false,
+                                dollar50: true,
+                            }})
+                        }}
                     />
                 </View>
-                    <TouchableOpacity style={styles.saveButton}>
+                    <TouchableOpacity style={styles.saveButton}
+                        onPress={() =>{
+                            addToProfile();
+                            navigation.navigate('Profile');
+                        }}>
                         <Text style={styles.saveText}>Add Preference</Text>
                     </TouchableOpacity>
                 </View>
