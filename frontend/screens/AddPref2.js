@@ -5,20 +5,6 @@ import * as ImagePicker from 'expo-image-picker';
 import React, {useState} from 'react';
 import { Colors } from './Colors';
 import CheckBox from 'react-native-check-box';
-import { database, auth } from '../../backend/firebase/firebase';
-import { REACT_APP_FIREBASE_DATABASE_URL } from "@env";
-
-//adding backend plus previous data from other page
-// import { initializeApp } from 'firebase/app';
-import { getDatabase, ref, push } from 'firebase/database';
-
-const appSettings = {
-    databaseURL: REACT_APP_FIREBASE_DATABASE_URL
-}
-// const app = initializeApp(appSettings)
-// const database = getDatabase(app)
-
-//need to connect user authentication to this part
 
 export default function AddPref2({ navigation }) {
     const initialpfp = Image.resolveAssetSource(require("../assets/pfp.png")).uri;
@@ -39,18 +25,7 @@ export default function AddPref2({ navigation }) {
             $50: false,
         },
     });
-
-    //pushes flavor preferences to DBs
-    const addToProfile = () => {
-        const user = auth.currentUser;
-        const flavorProfileDB = ref(database, 'users/'+user.uid+"/flavorProfile");
-        set(flavorProfileDB, {
-            profileName: name,
-            distance: selectedDistance,
-            budget: selectedBudget,
-            prefPage2: isChecked
-    });
-
+    
     const [showPresetImages, setShowPresetImages] = useState(false)
     const presetImages = [
         //add in path for any additional preset pictures
@@ -67,13 +42,6 @@ export default function AddPref2({ navigation }) {
         
     ]
 
-    //pushes the selected checkboxes to the database
-    const addToProfile = () => {
-        const flavorProfileDB = ref(database, "flavorProfile")
-        push(flavorProfileDB, isChecked);
-      }
-
-    //handle image selection
     // Update selected option for Distance, ensuring only one is selected
     // const handleDistanceSelection = (selectedDistance) => {
     //     setIsChecked({
@@ -151,10 +119,18 @@ export default function AddPref2({ navigation }) {
     };
 
     return (
-        <SafeAreaView style={styles.background}>
-            <View style={styles.container}>
+        <SafeAreaView style={{
+            flex: 1,
+            backgroundColor: Colors.blue,
+        }}>
+            <View style={{
+                marginHorizontal: 12,
+                marginTop: 12,
+                marginBottom: 12,
+                flexDirection: "row",
+                justifyContent: "center"}}>
                     <TouchableOpacity 
-                        onPress={()=>navigation.navigate('Add Preference 1')}   //navigate back to previous page
+                        onPress={()=>navigation.navigate('Add Preference 1')}
                         style={{
                             position: "absolute",
                             left: 0
@@ -165,7 +141,7 @@ export default function AddPref2({ navigation }) {
                             color={Colors.ghost}
                         />
                     </TouchableOpacity>
-                    <Text style={styles.title}>New Preference</Text>
+                    <Text style={{marginTop: 2, fontWeight: 600, fontSize: 22, color: Colors.ghost}}>New Preference</Text>
             </View>
             
             {/* button to use the camera */}
@@ -177,7 +153,10 @@ export default function AddPref2({ navigation }) {
 
             {/* Visual changes for the perference profile picture */}
             <ScrollView>
-                <View style={styles.scrollContainer}>
+                <View style={{
+                    alignItems: "center",
+                    marginTop: 10,
+                    marginBottom: 20}}>
                     <TouchableOpacity
                         onPress={handleProfilePicturePress}>
                         <Image 
@@ -266,8 +245,10 @@ export default function AddPref2({ navigation }) {
 
                 {/* Title box */}
                 <View>
-                    {/* title input field */}
-                    <View style={styles.titleContainer}>
+                    <View style={{
+                        flexDirection: "column",
+                        marginBottom: 10
+                    }}>
                         <Text style={styles.sectionText}>Title:</Text>
                         <View style={styles.inputContainers}>
                             <TextInput
@@ -325,45 +306,6 @@ export default function AddPref2({ navigation }) {
 
 // Styles
 const styles = StyleSheet.create({
-    background: {
-        flex: 1,
-        backgroundColor: Colors.blue,
-    },
-    container: {
-        marginHorizontal: 12,
-        marginTop: 12,
-        marginBottom: 12,
-        flexDirection: "row",
-        justifyContent: "center"
-    },
-    title: {
-        marginTop: 2, 
-        fontWeight: 600, 
-        fontSize: 22, 
-        color: Colors.ghost
-    },
-    pfpLook: {
-        height: 130,
-        width: 130,
-        borderRadius: 85,
-        borderWidth: 2,
-        borderColor: "#000"
-    },
-    cameraLook: {
-        position: "absolute",
-        bottom: -5,
-        right: -5,
-        zIndex: 9999
-    },
-    titleContainer: {
-        flexDirection: "column",
-        marginBottom: 10
-    },
-    scrollContainer: {
-        alignItems: "center",
-        marginTop: 10,
-        marginBottom: 20
-    },
     sectionText: {
         fontSize: 22,
         fontWeight: "bold",
@@ -405,7 +347,7 @@ const styles = StyleSheet.create({
         fontSize: 19, 
         color: Colors.ghost,
     },
-    addButton: {
+    saveButton: {
         backgroundColor: Colors.gold,
         marginLeft: 60,
         marginTop: 20,
@@ -416,7 +358,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center"
     },
-    addText: {
+    saveText: {
         fontSize: 20,
         fontWeight: "bold",
         color: Colors.raisin
@@ -498,4 +440,4 @@ const styles = StyleSheet.create({
         fontSize: 19,
         color: Colors.ghost,
     },
-})};
+});
