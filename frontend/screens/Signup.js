@@ -64,7 +64,7 @@ export default function Signup({navigation}) {
             console.log("Email is Correct");
             setErrorMessage("");
             return true;
-        }
+        } 
     }
 
     //Create user method

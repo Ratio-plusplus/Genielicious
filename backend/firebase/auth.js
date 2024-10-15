@@ -18,6 +18,7 @@ export const doCreateUserWithEmailAndPassword = async (email, password, username
     await set(ref(database, 'users/' + user.uid), {
         username: username,
         email: email,
+        pfp: Image.resolveAssetSource("../../frontend/assets/pfp.png")
     }). then(() => {
         console.log("Data saved successfully!");
     }).catch((error) => {

@@ -43,7 +43,7 @@ export default function Login({ navigation }) {
               //update context with fetched user data
                       const username = data.username || "Ratio++"
                       console.log("dumb3");
-                      const pfp = data.photoURL || "../assets/pfp.png"
+                      const pfp = data.photoURL || Image.resolveAssetSource(require("../assets/pfp.png").uri)
                       console.log("dumb4");
                       setUsername(username);
                       console.log("dumb5");

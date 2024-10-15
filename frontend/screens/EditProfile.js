@@ -165,23 +165,6 @@ export default function EditProfile({ navigation }) {
                 </View>
 
                 <View>
-                    {/* name input field */}
-                    <View style={{
-                        flexDirection: "column",
-                        marginBottom: 10
-                    }}>
-                        <Text style={styles.sectionText}>Name</Text>
-                        <View style={styles.inputContainers}>
-                            <TextInput
-                                placeholder="Name"
-                                placeholderTextColor="#7C808D"
-                                onChangeText={setName}
-                                value={name}
-                                color={Colors.ghost}
-                                editable={true}/>
-                        </View>
-                    </View>
-
                     {/* username input field */}
                     <View style={{
                         flexDirection: "column",
@@ -267,7 +250,7 @@ const styles = StyleSheet.create({
     },
     title: {
         marginTop: 2, 
-        fontWeight: 600, 
+        fontWeight: '600', 
         fontSize: 22, 
         color: Colors.ghost
     },

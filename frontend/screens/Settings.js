@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     },
     settingText: {
         marginLeft: 36,
-        fontWeight: 600,
+        fontWeight: '600',
         fontSize: 16
     },
     background: {
