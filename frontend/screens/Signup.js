@@ -4,8 +4,11 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
 import React, { useEffect, useState } from "react";
 import { Colors } from "./Colors";
-import { useAuth } from '../../backend/contexts/authContext/index';
 import { doCreateUserWithEmailAndPassword } from '../../backend/firebase/auth';
+import { ProfileContext } from "../../backend/contexts/ProfileContext";
+import { useContext } from "react";
+import { getDataConnect } from "firebase/data-connect";
+import { getDatabase, ref, get} from "firebase/database";
 
 export default function Signup({navigation}) {
   const [email, setEmail] = React.useState("");
@@ -17,19 +20,36 @@ export default function Signup({navigation}) {
   const [confirmPasswordIsVisible, setConfirmPasswordIsVisible] = React.useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [createdUser, setcreatedUser] = useState(false);
+    const { setUsername: setProfileUsername, setpfp } = useContext(ProfileContext)
+
 
     //On Press Method
-    const handleSignup = async (e) => {
+    const handleSignup = async () => {
         //Check if passwords match
-        if (password == confirmPassword) {
-                //Async method to run firebase backend
-                await createUser();
-                if (createdUser) {
-                    navigation.navigate('Tab')
-                }
-                
+        try{
+          const userCredential = await createUser();
+          console.log(userCredential);
+          if (userCredential) {
+            console.log('penis');
+            //fetch user data after signing up
+            const userId = userCredential.user.uid;
+            const userRef = ref(getDatabase(), 'users/' + userId);
+            const snapshot = await get(userRef);
+  
+            if (snapshot.exists()) {
+              const userData = snapshot.val();
+              //Update profilecontext with username and pfp
+              setProfileUsername(userData.username || "Ratio++");
+              setpfp(userData.pfp || Image.resolveAssetSource(require("../assets/pfp.png")).uri);
+            }
+            setcreatedUser(true);
+          }
+        } catch (error) {
+          console.error("Error during signup:", error.message);
+          setErrorMessage(error.message);
+          setIsRegistering(false);
         }
-    }
+      };
 
     const validate = (text) => {
         console.log(text);
@@ -44,11 +64,11 @@ export default function Signup({navigation}) {
             console.log("Email is Correct");
             setErrorMessage("");
             return true;
-        }
+        } 
     }
 
     //Create user method
-    const createUser = async (e) => {
+    const createUser = async () => {
         //e.preventDefault()
         setErrorMessage('');
         if (!isRegistering) {
@@ -58,8 +78,7 @@ export default function Signup({navigation}) {
                 //Check if passwords match
                 if (validate(email)){
                     if (password == confirmPassword) {
-                        await doCreateUserWithEmailAndPassword(email, password)
-                        setcreatedUser(true);
+                        return await doCreateUserWithEmailAndPassword(email, password, username)
                     }
                 }
                 //Error msgs from Firebase Auth
@@ -78,20 +97,19 @@ export default function Signup({navigation}) {
                 }
                 //No longer registering
                 setIsRegistering(false);
-
             }
         }
     }
 
-    const handleGoogleLogin = async (e) => {
-        await onGoogleSignIn(e);
+    const handleGoogleLogin = async () => {
+        await onGoogleSignIn();
         if (createdUser) {
             console.log("Success2");
             navigation.navigate('Tab')
         }
     }
 
-    const onGoogleSignIn = async (e) => {
+    const onGoogleSignIn = async () => {
         if (!isRegistering) {
             setIsRegistering(true);
             try {

@@ -4,11 +4,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from './Colors';
-import { horizontalScale, verticalScale, moderateScale } from './Metrics';
-import { width, height, size, fontSize } from "react-native-responsive-sizes";
-//const { width, height } = Dimensions.get('window');
+import { ProfileContext } from '../../backend/contexts/ProfileContext';
+import { doSignInWithEmailAndPassword } from '../../backend/firebase/auth';
 
 export default function Profile({ navigation }) {
+    //using context to be able to change the variables from the other files
+    const { pfp, username } = React.useContext(ProfileContext);
+
     return (
         <SafeAreaView style={styles.background}>
             <View style={styles.container}>
@@ -29,14 +31,14 @@ export default function Profile({ navigation }) {
                     <View style={styles.profileTop}>
                         <View style={styles.avatar}>
                             <Image
-                                source={require("../assets/pfp.png")}
+                            source={pfp ? {uri: pfp} : Image.resolveAssetSource(require('../assets/pfp.png'))} //using pfp from context
                             resizeMode='contain'
                             style={styles.avatarImg}/>
                         </View>
 
                         {/* name and add preference button */}
                         <View style={styles.profileBody}>
-                            <Text style={styles.profileTitle}>Ratio++</Text>
+                            <Text style={styles.profileTitle}>{username}</Text>
                             <TouchableOpacity style={styles.button} 
                                 onPress={()=>navigation.navigate('Add Preference 1')}>  
                                 <Text style={styles.profileSubtitle}>Add Preference</Text>

@@ -3,8 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Image, Dimensions } from 'react-native';
 import { Colors } from './screens/Colors';
-import { width, height, size, fontSize } from "react-native-responsive-sizes";
-//const { width, height } = Dimensions.get('window');
+import { Image } from 'react-native';
 
 // importing screens
 import Home from './screens/Home';
@@ -15,6 +14,9 @@ import History from './screens/History';
 const homeName = 'Genie';
 const profileName = 'Profile';
 const historyName = 'History';
+const genieIconBlack = require('../frontend/assets/iconGenieDark.png');
+const genieIconChampagne = require('../frontend/assets/iconGenieLight.png');
+
 
 const Tab = createBottomTabNavigator();
 
@@ -46,11 +48,11 @@ export default function TabContainer() {
                         iconName = focused ? 'person-outline' : 'person-outline';
                     }
 
-                    else if (rn === homeName) {
+                    else if (rn == homeName) {
                         return (
                             <Image
                                 source={focused ? genieIconBlack : genieIconChampagne}
-                                style={{ width: width(7.5), height: height(7.5) }}
+                                style={{ width: size, height: size }}
                                 resizeMode="contain"
                             />
                         );
