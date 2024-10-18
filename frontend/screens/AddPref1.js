@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {Text, StyleSheet, View, ScrollView, TouchableOpacity} from 'react-native';
 import CheckBox from 'react-native-check-box';
 import { Colors } from './Colors';
@@ -9,71 +9,12 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { getAuth }  from '@firebase/auth';
 import { getDatabase, ref, set } from 'firebase/database';
 import { database, auth } from '../../backend/firebase/firebase';
-
+import { FlavorPreferencesContext } from '../../backend/contexts/FlavorPreferencesContext';
 // const database = getDatabase(app);
   
 export default function AddPref1 ({ navigation }) {
     //list of flavor preferences 
-    const [isChecked, setIsChecked] = useState({
-        tastePreferences: {
-            savory: false, 
-            sweet: false, 
-            salty: false, 
-            spicy: false,
-            bitter: false, 
-            sour: false, 
-            cool: false, 
-            hot: false
-        },
-        allergies: {
-            vegan: false, 
-            vegetarian: false, 
-            peanut: false, 
-            gluten: false, 
-            fish: false,
-            shellfish: false, 
-            eggs: false, 
-            soy: false, 
-            dairy: false, 
-            keto: false
-        },
-    });
-
-  //pushes flavor preferences to DBs
-  const addToProfile = async () => {
-    const user = auth.currentUser;
-    if (user) {
-        console.log(user.uid)
-        //Pushing tastePreferences
-        await set(ref(database, 'users/' + user.uid + "/flavorProfile/tastePreference"), {
-            savory: isChecked.tastePreferences.savory,
-            sweet: isChecked.tastePreferences.sweet,
-            salty: isChecked.tastePreferences.salty,
-            spicy: isChecked.tastePreferences.spicy,
-            bitter: isChecked.tastePreferences.bitter,
-            sour: isChecked.tastePreferences.sour,
-            cool: isChecked.tastePreferences.cool,
-            hot: isChecked.tastePreferences.hot,
-        });
-
-        await set(ref(database, 'users/' + user.uid + "/flavorProfile/allergies"), {
-            vegan: isChecked.allergies.vegan,
-            vegetarian: isChecked.allergies.vegetarian,
-            peanut: isChecked.allergies.peanut,
-            gluten: isChecked.allergies.gluten,
-            fish: isChecked.allergies.fish,
-            shellfish: isChecked.allergies.shellfish,
-            eggs: isChecked.allergies.eggs,
-            soy: isChecked.allergies.soy,
-            dairy: isChecked.allergies.dairy,
-            keto: isChecked.allergies.keto,
-        });
-
-        console.log("Preferences saved successfully");
-    } else {
-        console.log("No user is signed in.");
-    }
-  };
+    const { isChecked, setIsChecked } = useContext(FlavorPreferencesContext);
 
   return (
     <SafeAreaView style={styles.background}>
@@ -421,7 +362,6 @@ export default function AddPref1 ({ navigation }) {
                     style={styles.continueButton} 
                     onPress={()=>{
                         try{
-                            addToProfile();
                             navigation.navigate('Add Preference 2') ;           
                         } catch (error) {
                             console.error("Error during navigation: ", error);

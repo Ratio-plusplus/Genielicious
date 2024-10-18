@@ -2,11 +2,12 @@ import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, TextInput,
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import { Colors } from './Colors';
 import CheckBox from 'react-native-check-box';
 import { auth, database } from '../../backend/firebase/firebase';
 import { ref, set } from 'firebase/database';
+import { FlavorPreferencesContext } from '../../backend/contexts/FlavorPreferencesContext';
 
 export default function AddPref2({ navigation }) {
     const initialpfp = Image.resolveAssetSource(require("../assets/pfp.png")).uri;
@@ -16,17 +17,7 @@ export default function AddPref2({ navigation }) {
     const [name, setName] = React.useState();
     const [selectedDistance, setSelectedDistance] = useState(null);
     const [selectedBudget, setSelectedBudget] = useState(null);
-    const [isChecked, setIsChecked] = useState({
-        distance: {
-            ten: false,
-            fifteen: false,
-            twenty: false,
-        },
-        budget: {
-            dollar20: false,
-            dollar50: false,
-        },
-    });
+    const { isChecked, setIsChecked, addToProfile } = useContext(FlavorPreferencesContext)
     
     const [showPresetImages, setShowPresetImages] = useState(false)
     const presetImages = [
@@ -54,32 +45,6 @@ export default function AddPref2({ navigation }) {
             },
         });
     };
-
-    const addToProfile = async () => {
-        const user = auth.currentUser
-        if (user) {
-            await set(ref(database, 'users/' + user.uid + "/flavorProfile/Distance "), {
-                //pushing distance
-                ten: isChecked.distance.ten,
-                fifteen: isChecked.distance.fifteen,
-                twenty: isChecked.distance.twenty,
-            });
-            
-            await set(ref(database, 'users/' + user.uid + "/flavorProfile/Budget "), {
-                //pushing budget
-                dollar20: isChecked.budget.dollar20,
-                dollar50: isChecked.budget.dollar50,
-            });
-
-            await set(ref(database, 'users/' + user.uid + "/flavorProfile/Title "), {
-                Title: name,
-            });
-
-            await set(ref(database, 'users/' + user.uid + "/flavorProfile/Image "), {
-                imageUri: selectedImage,
-            });
-        }
-    }
 
     // Allows user to pick an image on their phone
     const handleImageSelection = async() => {
@@ -133,6 +98,12 @@ export default function AddPref2({ navigation }) {
             </TouchableOpacity>
         );
     };
+
+    const handleAddPreference = () => {
+        const prefName = name;
+        const prefImage = selectedImage;
+        addToProfile(prefName, prefImage);
+    }
 
     return (
         <SafeAreaView style={{
@@ -359,7 +330,7 @@ export default function AddPref2({ navigation }) {
                 </View>
                     <TouchableOpacity style={styles.saveButton}
                         onPress={() =>{
-                            addToProfile();
+                            handleAddPreference();
                             navigation.navigate('Profile');
                         }}>
                         <Text style={styles.saveText}>Add Preference</Text>

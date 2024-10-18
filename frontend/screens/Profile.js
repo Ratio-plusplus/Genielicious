@@ -6,10 +6,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { Colors } from './Colors';
 import { ProfileContext } from '../../backend/contexts/ProfileContext';
 import { doSignInWithEmailAndPassword } from '../../backend/firebase/auth';
+import { FlavorPreferencesContext } from '../../backend/contexts/FlavorPreferencesContext';
 
 export default function Profile({ navigation }) {
     //using context to be able to change the variables from the other files
     const { pfp, username } = React.useContext(ProfileContext);
+    const { resetPreferences } = React.useContext(FlavorPreferencesContext)
 
     return (
         <SafeAreaView style={styles.background}>
@@ -40,7 +42,11 @@ export default function Profile({ navigation }) {
                         <View style={styles.profileBody}>
                             <Text style={styles.profileTitle}>{username}</Text>
                             <TouchableOpacity style={styles.button} 
-                                onPress={()=>navigation.navigate('Add Preference 1')}>  
+                                onPress={()=> {
+                                    resetPreferences();
+                                    navigation.navigate('Add Preference 1')
+                                }}>  
+                                
                                 <Text style={styles.profileSubtitle}>Add Preference</Text>
                             </TouchableOpacity>
                         </View>
