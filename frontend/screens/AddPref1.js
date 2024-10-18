@@ -481,7 +481,7 @@ const styles = StyleSheet.create({
         marginRight: 20,
     },
     checkbox: {
-        // flex: 1,
+        flex: 1,
         marginRight: 10,
     },
     checkboxText: {
