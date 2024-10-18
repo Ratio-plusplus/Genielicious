@@ -70,6 +70,14 @@ export default function AddPref2({ navigation }) {
                 dollar20: isChecked.budget.dollar20,
                 dollar50: isChecked.budget.dollar50,
             });
+
+            await set(ref(database, 'users/' + user.uid + "/flavorProfile/Title "), {
+                Title: name,
+            });
+
+            await set(ref(database, 'users/' + user.uid + "/flavorProfile/Image "), {
+                imageUri: selectedImage,
+            });
         }
     }
 
