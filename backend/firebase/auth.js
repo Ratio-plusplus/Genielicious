@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { auth , database} from "./firebase";
-import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithEmailAndPassword, signInWithCredential, updatePassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithEmailAndPassword, signInWithCredential, updatePassword, sendEmailVerification, sendPasswordResetEmail} from "firebase/auth";
 import { ref, set, getDatabase, get } from "firebase/database";
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { REACT_APP_WEBCLIENTID } from '@env';
@@ -10,9 +10,8 @@ import { Image } from "react-native";
 export const doCreateUserWithEmailAndPassword = async (email, password, username) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
-    console.log(userCredential);
-
-    console.log("User ID:", user.uid)
+    await sendEmailVerification(user);
+    return user;
 
     //save username to realtime database
     await set(ref(database, 'users/' + user.uid), {
@@ -52,14 +51,11 @@ export const doSignOut = () => {
     return auth.signOut();
 };
 
-// export const doPasswordReset = (email) => {
-//     return sendPasswordResetEmail(auth, email);
-// };
+ export const doPasswordReset = (email) => {
+     return sendPasswordResetEmail(auth, email);
+ };
 
 export const doPasswordChange = (password) => {
     return updatePassword(auth.currentUser, password);
 };
 
-// export const doSendEmailVerification = () => {
-//     return sendEmailVerification(auth.currentUser, { url: '${window.location.origin}/home', });
-// };
