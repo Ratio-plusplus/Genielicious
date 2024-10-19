@@ -1,0 +1,1 @@
+# single script to handle connection/auth to database
