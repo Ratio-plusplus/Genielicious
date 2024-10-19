@@ -3,7 +3,11 @@
 import React, { useContext, useState, useEffect } from "react";
 import { auth } from "../../firebase/firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import { AppRegistry } from "react-native";
+import { name as appName } from '../../../app.json'
 
+
+AppRegistry.registerComponent(appName, () => App);
 const AuthContext = React.createContext();
 
 export function useAuth() {
@@ -15,7 +19,7 @@ export function AuthProvider({ children }) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const unsubscribe = onAuthStatechanged(auth, initializeUser);
+        const unsubscribe = onAuthStateChanged(auth, initializeUser);
         return unsubscribe;
     }, [])
 

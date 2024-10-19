@@ -1,10 +1,14 @@
 import { StatusBar } from "expo-status-bar";
 import { Feather } from "@expo/vector-icons";
-import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
+import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert} from "react-native";
 import { Colors } from "./Colors";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useAuth } from '../../backend/contexts/authContext/index';
 import { doSignInWithEmailAndPassword, doSignInWithGoogle } from '../../backend/firebase/auth';
+import { database } from '../../backend/firebase/firebase'
+import { ProfileContext } from "../../backend/contexts/ProfileContext";
+import { getDatabase, ref, onValue } from "firebase/database";
+import { getAuth, signInWithEmailAndPassword } from "@firebase/auth";
 
 export default function Login({ navigation }) {
   const [email, setEmail] = React.useState("");
@@ -13,57 +17,66 @@ export default function Login({ navigation }) {
   const [isLoggingIn, setisLoggingIn] = React.useState(false);
   const [validUser, setvalidUser] = React.useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const { setUsername, setpfp } = useContext(ProfileContext);
 
-    const handleLogin = async (e) => {
-        await loginUser();
-    };
 
-    const loginUser = async () => {
-        setErrorMessage('');
-        if (!isLoggingIn) {
-            setisLoggingIn(true);
-            try {
-                await doSignInWithEmailAndPassword(email, password)
-                console.log("Success");
-                await setvalidUser(true);
-            } catch (errorMessage) {
-                if (errorMessage.code === 'auth/invalid-email') {
-                    setErrorMessage('Invalid email. Please try again.');
-                }
-                else if (errorMessage.code === 'auth/invalid-credential') {
-                    setErrorMessage('Incorrect password for email. Please try again.');
-                }
-                else if (errorMessage.code === 'auth/missing-password') {
-                    setErrorMessage('Please input a password.')
-                }
-                else {
-                    setErrorMessage(errorMessage.code);
-                }
-            }
-            setisLoggingIn(false);
+    const handleLogin = async () => {
+      setErrorMessage('');
+      if (!isLoggingIn) {
+        setisLoggingIn(true);
+      }
+      try {
+          console.log("Bidoof");
+          const user = await doSignInWithEmailAndPassword(email, password);
+        //fetch user data from database using uid
+          if (user) {
+          const userRef = ref(database, 'users/' + user.uid);
+          //fetch data from firebase
+              onValue(userRef, (snapshot) => {
+                  const data = snapshot.val();
+                  if (data) {
+              //update context with fetched user data
+                      const username = data.username || "Ratio++"
+                      const pfp = data.photoURL || Image.resolveAssetSource(require("../assets/pfp.png").uri)
+                      setUsername(username);
+                      setpfp(pfp);
+                      setvalidUser(true);
+                  }
+              });
+          }
+      } catch (errorMessage) {
+        if (errorMessage.code === 'auth/invalid-email') {
+          setErrorMessage('Invalid email. Please try again.');
         }
-    }
-
-    const createProfile = async (response: FirebaseAuthTypes.UserCredential) => {
-        db().ref('/users/${response.user.uid}').set({ name });
-        //db().ref('/users/${response.user.uid}').set({})
+        else if (errorMessage.code === 'auth/invalid-credential') {
+            setErrorMessage('Incorrect password for email. Please try again.');
+        }
+        else if (errorMessage.code === 'auth/missing-password') {
+            setErrorMessage('Please input a password.')
+        }
+        else {
+            setErrorMessage(errorMessage.code);
+            console.log(errorMessage);
+        }
+        setisLoggingIn(false);
+      }
     };
 
-    const handleGoogleLogin = async (e) => {
-        await onGoogleSignIn(e);
+    const handleGoogleLogin = async () => {
+        await onGoogleSignIn();
         if (validUser) {
             console.log("Success2");
             navigation.navigate('Tab')
         }
     }
 
-    const onGoogleSignIn = async (e) => {
+    const onGoogleSignIn = async () => {
         if (!isLoggingIn) {
             setisLoggingIn(true);
             try {
                 await doSignInWithGoogle()
                 console.log("Success");
-                await setvalidUser(true);
+                setvalidUser(true);
                     
             } catch (errorMessage) {
                 setErrorMessage(errorMessage.code);
@@ -156,7 +169,7 @@ export default function Login({ navigation }) {
           </View>
 
           {/* login with Google button */}
-                  <TouchableOpacity style={styles.googleButton} onPress={(e) => handleGoogleLogin(e) }>
+                  <TouchableOpacity style={styles.googleButton} onPress={() => handleGoogleLogin() }>
             <Image
               style={styles.googleLogo}
               source={require("../../frontend/assets/google-logo.png")}
