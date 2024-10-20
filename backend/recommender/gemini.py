@@ -1,3 +1,4 @@
+#!pip install -q -U google-generativeai
 import requests
 import json
 import os
