@@ -21,7 +21,7 @@ export default function Home({ navigation }) {
                 <Text style={styles.titleText}>Genielicious</Text>
             </View>
 
-            <View style={[styles.genieContainer, open ? { zIndex: 1 } : { zIndex: 0 }]}>
+            <View style={styles.genieContainer}>
                 <Image
                     source={require("../../assets/sparkle.png")}
                     style={styles.sparkle}
@@ -71,7 +71,7 @@ export default function Home({ navigation }) {
                 <View style={styles.buttonsContainer}>
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={() => navigation.navigate('History')}>
+                        onPress={() => navigation.navigate('Question')}>
                         <Text style={styles.profileSubtitle}>Short</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
