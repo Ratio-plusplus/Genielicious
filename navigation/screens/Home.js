@@ -5,22 +5,26 @@ import { Colors } from './Colors';
 import DropDownPicker from 'react-native-dropdown-picker';
 
 export default function Home({ navigation }) {
-    const [open, setOpen] = useState(false);
-    const [value, setValue] = useState(null);
+    const [open, setOpen] = useState(false);    // boolean if the dropdown is open or not
+    const [value, setValue] = useState(null);   // holds the selected value (there is none initially)
     const [items, setItems] = useState([
         { label: 'Vegetarian', value: 'vegetarian' },
         { label: 'Spicy Savory', value: 'spicy savory' },
         { label: 'Spicy Vegan', value: 'spicy vegan' },
         { label: 'Gluten Free Desserts', value: 'gluten free desserts' },
         { label: 'Sweet and Sour', value: 'sweet and sour' },
-    ]);
+    ]);     // array for all available options in dropdown
+            // label (what user sees)
+            // value (value associated with that label) - this will update as user click on other options
 
     return (
         <SafeAreaView style={styles.background}>
+            {/* title */}
             <View style={styles.titleContainer}>
                 <Text style={styles.titleText}>Genielicious</Text>
             </View>
 
+            {/* all the images in the background */}
             <View style={styles.genieContainer}>
                 <Image
                     source={require("../../assets/sparkle.png")}
@@ -44,6 +48,7 @@ export default function Home({ navigation }) {
                 />
             </View>
 
+            {/* taste profile dropdown section */}
             <View style={[styles.tasteProfilesContainer, { zIndex: 1000 }]}>
                 <Text style={styles.tasteProfilesText}>Taste Profile:</Text>
                 <View style={styles.pickerContainer}>
@@ -66,6 +71,7 @@ export default function Home({ navigation }) {
                 </View>
             </View>
 
+            {/* select a mode section */}
             <View style={styles.modeContainer}>
                 <Text style={styles.modeText}>Select a Mode:</Text>
                 <View style={styles.buttonsContainer}>

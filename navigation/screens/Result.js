@@ -3,6 +3,8 @@ import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text, ScrollVi
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 
+// array for the different restaurant results
+// has the name, taste, address, distance, and image
 const restaurants = [
     {
         name: 'Wingstop',
@@ -34,21 +36,24 @@ const restaurants = [
     },
 ];
 
+// map the name, taste, address, and distance (put it into text to show up in results)
 const renderRestaurantItem = ({ name, taste, address, distance }) => (
     <View style={styles.restaurantDetails}>
         <Text 
             style={styles.restaurantName} 
-            onPress={() => openMap(address)} // Make the name clickable
+            onPress={() => openMap(address)} // make the name clickable
         >
             {name}
         </Text>
         <Text style={styles.restaurantTaste}>{taste}</Text>
         <Text 
             style={styles.restaurantAddress} 
-            onPress={() => openMap(address)} // Make the address clickable
+            onPress={() => openMap(address)} // make the address clickable
         >
             {address}
         </Text>
+
+        {/* location icon for the distance */} 
         <View style={styles.distanceContainer}>
             <MaterialIcons
                 name="location-on"
@@ -61,16 +66,17 @@ const renderRestaurantItem = ({ name, taste, address, distance }) => (
     </View>
 );
 
+// put the address into a URL that will open it in Google Maps
 const openMap = (address) => {
-    const formattedAddress = encodeURIComponent(address); // Format the address for the URL
+    const formattedAddress = encodeURIComponent(address); // format the address for a Google Maps URL
     const url = `https://www.google.com/maps/search/?api=1&query=${formattedAddress}`;
-    Linking.openURL(url); // Open the URL in the device's browser or Maps app
+    Linking.openURL(url); // Linking API allows user to open URLs
 };
 
 export default function Result({ navigation }) {
     return (
         <SafeAreaView style={styles.background}>
-            {/* Header Section */}
+            {/* back arrow to navigate back to Home page if pressed */}
             <View style={styles.header}>
                 <TouchableOpacity
                     onPress={() => navigation.navigate('Home')}
@@ -84,7 +90,7 @@ export default function Result({ navigation }) {
                 <Text style={styles.title}>Here are your Results:</Text>
             </View>
 
-            {/* Fixed Image Section */}
+            {/* images for the background */}
             <View style={styles.genieContainer}>
                 <Image
                     source={require("../../assets/sparkle.png")}
@@ -103,7 +109,7 @@ export default function Result({ navigation }) {
                 />
             </View>
 
-            {/* Restaurant List Container */}
+            {/* restaurant list that is scrollable */}
             <View style={styles.restaurantListContainer}>
                 <ScrollView contentContainerStyle={styles.restaurantList}>
                     {restaurants.map((item, index) => (

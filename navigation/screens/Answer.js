@@ -6,6 +6,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 export default function Answer({ navigation }) {
     return (
         <SafeAreaView style={styles.background}>
+            {/* back arrow that will navigate back to Home page if pressed */}
             <View style={styles.header}>
                 <TouchableOpacity 
                     onPress={() => navigation.navigate('Home')}
@@ -18,6 +19,7 @@ export default function Answer({ navigation }) {
                 </TouchableOpacity>
             </View>
 
+            {/* images in the background */}
             <View style={styles.genieContainer}>
                 <Image
                     source={require("../../assets/sparkle.png")}
@@ -36,13 +38,14 @@ export default function Answer({ navigation }) {
                 />
             </View>
 
-            {/* Container for the question button */}
+            {/* confirmation question before going to results */}
             <View style={styles.questionContainer}>
                 <View style={styles.questionButton}>
-                    <Text style={styles.questionText}>Are you craving spicy food?</Text>
+                    <Text style={styles.questionText}>Are you craving chicken wings?</Text>
                 </View>
             </View>
 
+            {/* if yes, then move to result, if not then questions repeat */}
             <View style={styles.responsesContainer}>
                 <View style={styles.buttonsContainer}>
                     <TouchableOpacity
@@ -58,6 +61,7 @@ export default function Answer({ navigation }) {
                 </View>
             </View>
 
+            {/* ad area */}
             <View style={styles.adContainer}>
                 <View style={styles.adButton}>
                     <Text style={styles.adTitle}>Ad</Text>
