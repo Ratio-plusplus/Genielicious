@@ -12,7 +12,7 @@ SUPPORTED_REGIONAL_CUISINES = {"7":"African", "8":"Middle Eastern", "9":"South A
 #                             "Meat-Centric", "Comfort Food"])
 MAIN_FLAVORS = {"2":"sweet","3":"salty", "4":"sour", "5":"umami", "6":"spicy"} # main flavors that we will take into account
 
-with open("data\\categorized_aliases.json", "r") as file:
+with open("backend\\recommender\\data\\categorized_aliases.json", "r") as file:
     CATEGORIZED_ALIASES = json.load(file)
 
 # preliminary questions
