@@ -1,22 +1,44 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {Text, StyleSheet, View, ScrollView, TouchableOpacity} from 'react-native';
 import CheckBox from 'react-native-check-box';
 import { Colors } from './Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
-//Initializing and connecting to backend + users 
-// import { initializeApp } from 'firebase/app';
-import { getAuth }  from '@firebase/auth';
-import { getDatabase, ref, set } from 'firebase/database';
+import { getAuth, updateProfile }  from '@firebase/auth';
+import { getDatabase, ref, set, get } from 'firebase/database';
 import { database, auth } from '../../backend/firebase/firebase';
 import { FlavorPreferencesContext } from '../../backend/contexts/FlavorPreferencesContext';
-// const database = getDatabase(app);
+import { useRoute, route } from '@react-navigation/native';
   
 export default function AddPref1 ({ navigation }) {
+    const route = useRoute();
+    
     //list of flavor preferences 
-    const { isChecked, setIsChecked } = useContext(FlavorPreferencesContext);
+    const { isChecked, setIsChecked, resetPreferences } = useContext(FlavorPreferencesContext);
+    const { profileData } = route.params || {}; //get profile data from navigation params
 
-  return (
+    // if profile data is provided, set inital state from it
+    useEffect(() => {
+        if (profileData) {
+            // Populate the fields with the profileData
+            setIsChecked(profileData);
+        } else {
+            // If we aren't editing a pre-existing data then we go back to default
+            resetPreferences();
+        }
+    }, [profileData]);
+
+    const handleSave = async () => {
+        const updatedData = {
+            ...isChecked,
+            Title: profileData.title,
+
+        };
+
+        //call the up
+    }
+
+    return (
     <SafeAreaView style={styles.background}>
         <View style={styles.container}>
                 <TouchableOpacity 
@@ -362,7 +384,7 @@ export default function AddPref1 ({ navigation }) {
                     style={styles.continueButton} 
                     onPress={()=>{
                         try{
-                            navigation.navigate('Add Preference 2') ;           
+                            navigation.navigate('Add Preference 2');           
                         } catch (error) {
                             console.error("Error during navigation: ", error);
                         }

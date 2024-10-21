@@ -2,12 +2,13 @@ import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, TextInput,
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import { Colors } from './Colors';
 import CheckBox from 'react-native-check-box';
 import { auth, database } from '../../backend/firebase/firebase';
-import { ref, set } from 'firebase/database';
+import { ref, set, push, get } from 'firebase/database';
 import { FlavorPreferencesContext } from '../../backend/contexts/FlavorPreferencesContext';
+import { useRoute } from '@react-navigation/native';
 
 export default function AddPref2({ navigation }) {
     const initialpfp = Image.resolveAssetSource(require("../assets/pfp.png")).uri;
@@ -17,9 +18,11 @@ export default function AddPref2({ navigation }) {
     const [name, setName] = React.useState();
     const [selectedDistance, setSelectedDistance] = useState(null);
     const [selectedBudget, setSelectedBudget] = useState(null);
-    const { isChecked, setIsChecked, addToProfile } = useContext(FlavorPreferencesContext)
-    
+    const { isChecked, setIsChecked, addToProfile } = useContext(FlavorPreferencesContext) 
     const [showPresetImages, setShowPresetImages] = useState(false)
+    const route = useRoute();
+    const { existingName, existingImage, existingDistance, existingBudget, profileId } = route.params || {};
+    const { updateProfile } = useContext(FlavorPreferencesContext);
     const presetImages = [
         //add in path for any additional preset pictures
         require('../assets/images//Dessert.png'),
@@ -34,17 +37,6 @@ export default function AddPref2({ navigation }) {
         require('../assets/images//images (6).jpg'),
         
     ]
-
-    // Update selected option for Budget, ensuring only one is selected
-    const handleBudgetSelection = (selectedBudget) => {
-        setIsChecked({
-            ...isChecked,
-            budget: {
-                dollar20: selectedBudget === '$20',
-                dollar50: selectedBudget === '$50',
-            },
-        });
-    };
 
     // Allows user to pick an image on their phone
     const handleImageSelection = async() => {
@@ -104,6 +96,82 @@ export default function AddPref2({ navigation }) {
         const prefImage = selectedImage;
         addToProfile(prefName, prefImage);
     }
+
+    //firebase logic to add or update the profile
+    const handleSaveProfile = async () => {
+        console.log("handleSaveProfile called"); // Debugging line
+        const userId = auth.currentUser.uid;
+        const profileData = {
+            name,
+            image: selectedImage,
+            distance: selectedDistance,
+            budget: selectedBudget,
+            tastePreferences: isChecked.tastePreferences,
+            allergies: isChecked.allergies,
+        };
+
+        console.log("Profile Data:", profileData); // Debugging line
+
+        const profileRef = ref(database, `users/${userId}/flavorProfiles/${profileId}`)
+
+        console.log("existingName:", existingName);
+
+        if (existingName !== undefined) {
+            // If editing an existing profile
+            await update(profileRef, profileData);
+            console.log("Profile updated successfully.");
+        } else {
+            // If adding a new profile
+            const newProfileRef = push(ref(database, `users/${userId}/flavorProfiles`));
+            await set(newProfileRef, profileData);
+            console.log("Profile added successfully");
+        }
+
+        navigation.navigate('Profile');
+    };
+
+
+    useEffect(() => {
+        const fetchProfileData = async () => {
+            if (profileId) { // Ensure profileId is defined
+                const userId = auth.currentUser.uid;
+                const profileRef = ref(database, `users/${userId}/flavorProfiles/${profileId}`);
+                
+                try {
+                    const snapshot = await get(profileRef); // Fetch data from Firebase
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        setName(data.name);
+                        setSelectedImage(data.image);
+                        setSelectedBudget(data.budget);
+                        setSelectedDistance(data.distance);
+    
+                        // Set the checked preferences from the fetched data
+                        setIsChecked((prev) => ({
+                            ...prev,
+                            // tastePreferences: data.tastePreferences,
+                            // allergies: data.allergies,
+                            distance: {
+                                ten: data.distance === 'ten',
+                                fifteen: data.distance === 'fifteen',
+                                twenty: data.distance === 'twenty',
+                            },
+                            budget: {
+                                dollar20: data.budget === '$20',
+                                dollar50: data.budget === '$50',
+                            },
+                        }));
+                    } else {
+                        console.log("No data available for this profile.");
+                    }
+                } catch (error) {
+                    console.error("Error fetching profile data:", error);
+                }
+            }
+        };
+    
+        fetchProfileData();
+    }, [profileId]); // Dependency array includes profileId
 
     return (
         <SafeAreaView style={{
@@ -329,7 +397,7 @@ export default function AddPref2({ navigation }) {
                     />
                 </View>
                     <TouchableOpacity style={styles.saveButton}
-                        onPress={() =>{
+                        onPress={() => {
                             handleAddPreference();
                             navigation.navigate('Profile');
                         }}>
