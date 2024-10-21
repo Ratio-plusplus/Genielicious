@@ -1099,3 +1099,7 @@ backend/recommender/results/results.json
 results.json
 __pycache__
 tester.py
+
+android
+ios
+confidential/

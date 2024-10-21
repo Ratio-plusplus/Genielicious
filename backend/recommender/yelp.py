@@ -9,7 +9,6 @@ dotenv_path = find_dotenv()
 load_dotenv(dotenv_path)
 
 # # # DO NOT add .env file to version control
-# ID = os.getenv("YELP_CLIENT_ID")
 API_KEY = os.getenv("YELP_API_KEY")
 # # #
 
