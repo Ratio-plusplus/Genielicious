@@ -3,7 +3,7 @@ import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text } from 'r
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 
-export default function Question({ navigation }) {
+export default function Answer({ navigation }) {
     return (
         <SafeAreaView style={styles.background}>
             <View style={styles.header}>
@@ -25,7 +25,7 @@ export default function Question({ navigation }) {
                     resizeMode="contain"
                 />
                 <Image
-                    source={require("../../assets/chef_content.png")}
+                    source={require("../../assets/chef_hands_hover.png")}
                     style={styles.genieImage}
                     resizeMode="contain"
                 />
@@ -36,6 +36,7 @@ export default function Question({ navigation }) {
                 />
             </View>
 
+            {/* Container for the question button */}
             <View style={styles.questionContainer}>
                 <View style={styles.questionButton}>
                     <Text style={styles.questionText}>Are you craving spicy food?</Text>
@@ -46,23 +47,13 @@ export default function Question({ navigation }) {
                 <View style={styles.buttonsContainer}>
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={() => navigation.navigate('Answer')}>
+                        onPress={() => navigation.navigate('Result')}>
                         <Text style={styles.profileSubtitle}>Yes</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={() => navigation.navigate('Answer')}>
+                        onPress={() => navigation.navigate('Question')}>
                         <Text style={styles.profileSubtitle}>No</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.button}
-                        onPress={() => navigation.navigate('Answer')}>
-                        <Text style={styles.profileSubtitle}>Maybe</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.button}
-                        onPress={() => navigation.navigate('Answer')}>
-                        <Text style={styles.profileSubtitle}>Not Sure</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -117,7 +108,7 @@ const styles = StyleSheet.create({
         right: '-55%'
     },
     questionContainer: {
-        flex: 0.1, 
+        flex: 0.15, 
         alignItems: 'center',
         justifyContent: 'center',
         marginTop: -50, 

@@ -76,12 +76,12 @@ export default function Home({ navigation }) {
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={() => navigation.navigate('History')}>
+                        onPress={() => navigation.navigate('Question')}>
                         <Text style={styles.profileSubtitle}>Medium</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={() => navigation.navigate('History')}>
+                        onPress={() => navigation.navigate('Question')}>
                         <Text style={styles.profileSubtitle}>Long</Text>
                     </TouchableOpacity>
                 </View>
