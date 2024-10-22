@@ -8,10 +8,23 @@ import { Image } from "react-native";
 
 
 export const doCreateUserWithEmailAndPassword = async (email, password, username) => {
+    const info = JSON.stringify({ email, password, username })
+    console.log(info)
+    const response = await fetch('http://10.0.2.2:5000/auth/create_user',
+        {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({email: email, password: password, username: username}),
+        });
+    console.log(response);
+    const json = await response.json();
+    console.log(json);
+
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     await sendEmailVerification(user);
-    return user;
 
     //save username to realtime database
     await set(ref(database, 'users/' + user.uid), {

@@ -1,12 +1,14 @@
 # testing Flask
+import flask
 from flask import Flask, redirect, url_for, request, abort
 import json
 import uuid
 import decider
+import firebase_auth
 
 app = Flask(__name__)
 
-# simply returns out the questions to be displayed on the frontend
+# simply returns out the questions to be displayed on the frontendpip
 @app.route("/client/questions/short")
 def sendShortQuestions():
     query = request.args
@@ -39,5 +41,31 @@ def receiveShortAnswers():
     answers = json.loads(answers)
     return decider.processShortSessionAnswers(answers)
 
+@app.route("/auth/create_user", methods=['POST'])
+def createUser():
+    query = request.get_json()
+
+    if not query:
+        abort(400, "User info not provided")
+
+   
+    #info = json.loads(info)
+    print(query)
+    return firebase_auth.create_user(query)
+
+@app.route("/auth/verify_tokens", methods=['POST'])
+def verifyToken():
+    query = request.args
+    info = query.get("info", None)
+
+    if not info:
+        abort(400, "User info not provided")
+
+    info = json.loads(info)
+    return firebase_auth.verify_id_token(info)
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    try:
+        app.run(debug=False)
+    except Exception as e:
+        print(f"Error: {e}")

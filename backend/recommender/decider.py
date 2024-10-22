@@ -12,7 +12,13 @@ SUPPORTED_REGIONAL_CUISINES = {"7":"African", "8":"Middle Eastern", "9":"South A
 #                             "Meat-Centric", "Comfort Food"])
 MAIN_FLAVORS = {"2":"sweet","3":"salty", "4":"sour", "5":"umami", "6":"spicy"} # main flavors that we will take into account
 
-with open("data\\categorized_aliases.json", "r") as file:
+# Get the directory of the current script
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Create the full path to the file
+file_path = os.path.join(script_dir, "data", "categorized_aliases.json")
+
+with open(file_path, "r") as file:
     CATEGORIZED_ALIASES = json.load(file)
 
 # preliminary questions
@@ -136,4 +142,4 @@ if __name__ == "__main__":
 
     # Cache results
     cacheToJson(RESULTS_PATH,results)
-    print(f"Number of results:{results["total"]}")
+    print(f"Number of results:{results['total']}")
