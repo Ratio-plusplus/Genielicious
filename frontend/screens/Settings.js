@@ -22,7 +22,10 @@ export default function Settings({ navigation }) {
     ];
 
     const actionsItems = [
-        {icon: "outlined-flag", text: "Report a Problem", action: console.log("Report")},
+        {icon: "outlined-flag", text: "Report a Problem", action:  () => {
+            navigation.navigate('Report a Problem')
+            console.log("Report")
+        }},
         {icon: "logout", text: "Logout", action: () => {
             setModalMessage("Are you sure you want to log out?")
             setModalVisible(true)

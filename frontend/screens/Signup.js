@@ -18,9 +18,9 @@ export default function Signup({navigation}) {
   const [isRegistering, setIsRegistering] = useState(false);
   const [passwordIsVisible, setPasswordIsVisible] = React.useState(false);
   const [confirmPasswordIsVisible, setConfirmPasswordIsVisible] = React.useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
-    const [createdUser, setcreatedUser] = useState(false);
-    const { setUsername: setProfileUsername, setpfp } = useContext(ProfileContext)
+  const [errorMessage, setErrorMessage] = useState('');
+  const [createdUser, setcreatedUser] = useState(false);
+  const { setUsername: setProfileUsername, setpfp } = useContext(ProfileContext)
 
 
     //On Press Method
@@ -30,7 +30,6 @@ export default function Signup({navigation}) {
           const userCredential = await createUser();
           console.log(userCredential);
           if (userCredential) {
-            console.log('penis');
             //fetch user data after signing up
             const userId = userCredential.user.uid;
             const userRef = ref(getDatabase(), 'users/' + userId);
