@@ -1,15 +1,45 @@
 import * as React from 'react';
-import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text } from 'react-native';
+import { useState } from 'react';
+import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text, Modal } from 'react-native';
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 
 export default function Question({ navigation }) {
+    const [modalVisible, setModalVisible] = React.useState(false);
+    const [modalVisibleAd, setModalVisibleAd] = React.useState(false);
+
+    const handleBackPress = () => {
+        setModalVisible(true); //show the modal when pressed
+    };
+
+    const handleConfirmYes = () => {
+        setModalVisible(false);  // close the modal
+        navigation.navigate('Home');  // navigate back to the Home page
+    };
+
+    const handleConfirmNo = () => {
+        setModalVisible(false);  // close the modal without navigating
+    };
+
+    const handleAdPress = () => {
+        setModalVisibleAd(true); 
+    };
+
+    const handleConfirmYesAd = () => {
+        setModalVisibleAd(false);  
+        navigation.navigate('History');  // navigate to ad (change when needed)
+    };
+
+    const handleConfirmNoAd = () => {
+        setModalVisibleAd(false);  
+    };
+
     return (
         <SafeAreaView style={styles.background}>
-            {/* back arrow that will navigate back to Home page if pressed */}
+            {/* back arrow that opens the confirmation modal */}
             <View style={styles.header}>
-                <TouchableOpacity 
-                    onPress={() => navigation.navigate('Home')}
+                <TouchableOpacity
+                    onPress={handleBackPress}
                     style={styles.arrowButton}>
                     <MaterialIcons
                         name="keyboard-arrow-left"
@@ -18,6 +48,32 @@ export default function Question({ navigation }) {
                     />
                 </TouchableOpacity>
             </View>
+
+            {/* confirmation modal for back arrow */}
+            <Modal
+                animationType='fade'
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => setModalVisible(false)} // handle hardware back button
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContainer}>
+                        <Text style={styles.modalText}>Are you sure you want to exit session?</Text>
+                        <View style={styles.modalButtons}>
+                            <TouchableOpacity
+                                style={styles.modalYesButton}
+                                onPress={handleConfirmYes}>
+                                <Text style={styles.buttonText}>Yes</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.modalNoButton}
+                                onPress={handleConfirmNo}>
+                                <Text style={styles.buttonText}>No</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
 
             {/* images in the background */}
             <View style={styles.genieContainer}>
@@ -73,10 +129,37 @@ export default function Question({ navigation }) {
 
             {/* ad area */}
             <View style={styles.adContainer}>
-                <View style={styles.adButton}>
+                <TouchableOpacity style={styles.adButton}
+                    onPress={handleAdPress}>
                     <Text style={styles.adTitle}>Ad</Text>
-                </View>
+                </TouchableOpacity>
             </View>
+
+            {/* confirmation modal for ad */}
+            <Modal
+                animationType='fade'
+                transparent={true}
+                visible={modalVisibleAd}
+                onRequestClose={() => setModalVisibleAd(false)} // Handle hardware back button
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContainer}>
+                        <Text style={styles.modalText}>Are you sure you want to exit session?</Text>
+                        <View style={styles.modalButtons}>
+                            <TouchableOpacity
+                                style={styles.modalYesButton}
+                                onPress={handleConfirmYesAd}>
+                                <Text style={styles.buttonText}>Yes</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.modalNoButton}
+                                onPress={handleConfirmNoAd}>
+                                <Text style={styles.buttonText}>No</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </SafeAreaView>
     );
 }
@@ -89,15 +172,15 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: "row",
         justifyContent: "flex-start",
-        padding: 12, 
-        zIndex: 1000, 
-        position: "relative", 
+        padding: 12,
+        zIndex: 1000,
+        position: "relative",
     },
     arrowButton: {
-        zIndex: 100000, 
+        zIndex: 100000,
     },
     genieContainer: {
-        flex: 0.5,  
+        flex: 0.5,
         justifyContent: 'center',
         alignItems: 'center',
         zIndex: 0,
@@ -112,7 +195,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         width: '100%',
         height: '100%',
-        transform: [{ scale: 1.2 }], 
+        transform: [{ scale: 1.2 }],
     },
     crystalBall: {
         position: 'absolute',
@@ -122,10 +205,10 @@ const styles = StyleSheet.create({
         right: '-55%'
     },
     questionContainer: {
-        flex: 0.1, 
+        flex: 0.1,
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: -50, 
+        marginTop: -50,
     },
     questionButton: {
         backgroundColor: Colors.champagne,
@@ -140,53 +223,111 @@ const styles = StyleSheet.create({
         color: Colors.raisin,
     },
     responsesContainer: {
-        flex: 0.3, 
+        flex: 0.3,
         paddingLeft: 20,
-        paddingTop: 10 
+        paddingTop: 10
     },
     buttonsContainer: {
         flexDirection: 'column',
-        justifyContent: 'center', 
-        width: '93%', 
-        alignItems: 'center', 
+        justifyContent: 'center',
+        width: '93%',
+        alignItems: 'center',
     },
     button: {
         alignItems: 'center',
         backgroundColor: Colors.gold,
         padding: 10,
-        width: '40%', 
+        width: '40%',
         borderRadius: 10,
         borderColor: Colors.raisin,
         borderWidth: 1,
         marginVertical: 5,
     },
     profileSubtitle: {
-        fontSize: 16, 
+        fontSize: 16,
         fontWeight: '500',
-        color: Colors.raisin, 
+        color: Colors.raisin,
     },
     adContainer: {
         position: 'absolute',
-        bottom: 0, 
-        height: '12%', 
+        bottom: 0,
+        height: '12%',
         width: '100%',
         alignItems: 'center',
         justifyContent: 'center',
     },
     adButton: {
         alignItems: 'center',
-        justifyContent: 'center', 
-        backgroundColor: Colors.ghost, 
-        paddingVertical: 30, 
-        paddingHorizontal: 50, 
-        width: '100%', 
-        borderRadius: 15, 
+        justifyContent: 'center',
+        backgroundColor: Colors.ghost,
+        paddingVertical: 30,
+        paddingHorizontal: 50,
+        width: '100%',
+        borderRadius: 15,
         borderColor: Colors.raisin,
         borderWidth: 1,
     },
     adTitle: {
-        fontSize: 25, 
-        fontWeight: '600', 
-        color: Colors.raisin, 
+        fontSize: 25,
+        fontWeight: '600',
+        color: Colors.raisin,
+    },
+    modalOverlay: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',  
+    },
+    modalContainer: {
+        width: '80%',
+        height: '20%',
+        backgroundColor: Colors.blue,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: Colors.ghost,
+        padding: 20,
+        marginHorizontal: 0,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    modalText: {
+        fontSize: 22,
+        fontWeight: '600',
+        marginBottom: 20,
+        color: Colors.ghost,
+        alignItems: 'center'
+    },
+    modalButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        width: '100%',
+        height: '35%'
+    },
+    modalYesButton: {
+        padding: 10,
+        borderRadius: 5,
+        minWidth: 100,
+        alignItems: 'center',
+        backgroundColor: Colors.gold
+    },
+    modalNoButton: {
+        padding: 10,
+        borderRadius: 5,
+        minWidth: 100,
+        alignItems: 'center',
+        backgroundColor: Colors.champagne
+    },
+    buttonText: {
+        color: Colors.raisin,
+        fontWeight: '600',
+        marginTop: 3,
+        fontSize: 19
     },
 });

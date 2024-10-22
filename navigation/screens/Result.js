@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text, ScrollView, Linking } from 'react-native';
+import { useState } from 'react';
+import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text, ScrollView, Linking, Modal } from 'react-native';
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -74,12 +75,27 @@ const openMap = (address) => {
 };
 
 export default function Result({ navigation }) {
+    const [modalVisible, setModalVisible] = React.useState(false);
+
+    const handleBackPress = () => {
+        setModalVisible(true); //show the modal when pressed
+    };
+
+    const handleConfirmYes = () => {
+        setModalVisible(false);  // close the modal
+        navigation.navigate('Home');  // navigate back to the Home page
+    };
+
+    const handleConfirmNo = () => {
+        setModalVisible(false);  // close the modal without navigating
+    };
+
     return (
         <SafeAreaView style={styles.background}>
-            {/* back arrow to navigate back to Home page if pressed */}
+            {/* back arrow that opens the confirmation modal */}
             <View style={styles.header}>
                 <TouchableOpacity
-                    onPress={() => navigation.navigate('Home')}
+                    onPress={handleBackPress}
                     style={styles.arrowButton}>
                     <MaterialIcons
                         name="keyboard-arrow-left"
@@ -89,6 +105,32 @@ export default function Result({ navigation }) {
                 </TouchableOpacity>
                 <Text style={styles.title}>Here are your Results:</Text>
             </View>
+
+            {/* confirmation modal for back arrow */}
+            <Modal
+                animationType='fade'
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => setModalVisible(false)} // handle hardware back button
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContainer}>
+                        <Text style={styles.modalText}>Are you sure you want to exit session?</Text>
+                        <View style={styles.modalButtons}>
+                            <TouchableOpacity
+                                style={styles.modalYesButton}
+                                onPress={handleConfirmYes}>
+                                <Text style={styles.buttonText}>Yes</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.modalNoButton}
+                                onPress={handleConfirmNo}>
+                                <Text style={styles.buttonText}>No</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
 
             {/* images for the background */}
             <View style={styles.genieContainer}>
@@ -233,5 +275,63 @@ const styles = StyleSheet.create({
     restaurantDistance: {
         fontSize: 15,
         color: Colors.champagne,
+    },
+    modalOverlay: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',  
+    },
+    modalContainer: {
+        width: '80%',
+        height: '20%',
+        backgroundColor: Colors.blue,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: Colors.ghost,
+        padding: 20,
+        marginHorizontal: 0,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    modalText: {
+        fontSize: 22,
+        fontWeight: '600',
+        marginBottom: 20,
+        color: Colors.ghost,
+        alignItems: 'center'
+    },
+    modalButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        width: '100%',
+        height: '35%'
+    },
+    modalYesButton: {
+        padding: 10,
+        borderRadius: 5,
+        minWidth: 100,
+        alignItems: 'center',
+        backgroundColor: Colors.gold
+    },
+    modalNoButton: {
+        padding: 10,
+        borderRadius: 5,
+        minWidth: 100,
+        alignItems: 'center',
+        backgroundColor: Colors.champagne
+    },
+    buttonText: {
+        color: Colors.raisin,
+        fontWeight: '600',
+        marginTop: 3,
+        fontSize: 19
     },
 });
