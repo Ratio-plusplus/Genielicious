@@ -5,6 +5,7 @@ import json
 import uuid
 import decider
 import firebase_auth
+import firebase_database
 
 app = Flask(__name__)
 
@@ -63,6 +64,25 @@ def verifyToken():
 
     info = json.loads(info)
     return firebase_auth.verify_id_token(info)
+
+@app.route("/database/get_user_info", methods=["GET"])
+def getUserInfo():
+    query = request.get_json()
+
+    if not query:
+        abort(400, "Information not provided")
+
+    return firebase_database.getUser(query)
+
+@app.route("/database/create_user", methods=["POST"])
+def setUserInfo():
+
+    query = request.get_json()
+
+    if not query:
+        abort(400, "Information not provided")
+
+    return firebase_database.createNewUser(query)
 
 if __name__ == "__main__":
     try:

@@ -3,10 +3,13 @@ from dotenv import find_dotenv, load_dotenv
 import os
 from flask import Flask, request, jsonify
 
-cred = credentials.Certificate("confidential\\serviceAccountKey.json")
-db_url = {'databaseURL': os.getenv("DATABASE_URL")}
+from firebase_init import initialize_firebase   
 
-genie_app = initialize_app(cred, db_url)
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path) # loads env vars into path
+
+initialize_firebase();
+
 
 def create_user(query):
     try:
