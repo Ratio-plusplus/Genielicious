@@ -80,7 +80,7 @@ export default function EditProfile({ navigation }) {
     const saveProfile = async () => {
         const auth = getAuth();
         const user = auth.currentUser;
-        const idToken = user.getIdToken(true);
+        const idToken = await user.getIdToken(true);
         console.log(idToken)
         console.log("user UID:", user.uid);
         console.log("Selected Image URI:", selectedImage);
@@ -101,10 +101,10 @@ export default function EditProfile({ navigation }) {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ idToken: user.getIdToken(true), username: username, photoURL: selectedImage}),
+                body: JSON.stringify({ idToken: idToken, username: username, photoURL: selectedImage}),
             });
-            console.log("hi")
-            const json = await response.json();
+            console.log("hi");
+            //rconst json = await response.json();
             //await set(ref(database, 'users/' + user.uid), {
             //    username: username,
             //    photoURL: selectedImage,

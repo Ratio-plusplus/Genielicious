@@ -83,12 +83,6 @@ def createUserInfo():
 
     return firebase.createNewUser(query)
 
-if __name__ == "__main__":
-    try:
-        app.run(debug=False)
-    except Exception as e:
-        print(f"Error: {e}")
-
 @app.route("/database/update_user", methods=["POST"])
 def updateUser():
     query = request.get_json()
@@ -96,4 +90,11 @@ def updateUser():
     if not query:
         abort(400, "Data not provided")
 
-    return firebase.updateUser(query)
+    return firebase.updateDatabaseUser(query)
+
+if __name__ == "__main__":
+    try:
+        app.run(debug=False)
+    except Exception as e:
+        print(f"Error: {e}")
+

@@ -20,8 +20,7 @@ def verify_id_token(idToken):
         uid = decoded_token['uid']
         return uid
     except auth.InvalidTokenError:
-        return NULL
-
+        return None
 def getTestUser(user_id):
     return db.reference(f"test_users/{user_id}")
 
@@ -58,7 +57,7 @@ def createNewUser(query):
     except Exception as e:
         return jsonify(message=f"Error with code: {e}")
 
-def updateUser(query):
+def updateDatabaseUser(query):
     try:
         token = query.get("idToken")
         uid = verify_id_token(token)
