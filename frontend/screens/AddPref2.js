@@ -2,11 +2,13 @@ import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, TextInput,
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import React, {useState} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import { Colors } from './Colors';
 import CheckBox from 'react-native-check-box';
 import { auth, database } from '../../backend/firebase/firebase';
-import { ref, set } from 'firebase/database';
+import { ref, set, push, get } from 'firebase/database';
+import { FlavorPreferencesContext } from '../../backend/contexts/FlavorPreferencesContext';
+import { useRoute } from '@react-navigation/native';
 
 export default function AddPref2({ navigation }) {
     const initialpfp = Image.resolveAssetSource(require("../assets/pfp.png")).uri;
@@ -16,19 +18,10 @@ export default function AddPref2({ navigation }) {
     const [name, setName] = React.useState();
     const [selectedDistance, setSelectedDistance] = useState(null);
     const [selectedBudget, setSelectedBudget] = useState(null);
-    const [isChecked, setIsChecked] = useState({
-        distance: {
-            ten: false,
-            fifteen: false,
-            twenty: false,
-        },
-        budget: {
-            dollar20: false,
-            dollar50: false,
-        },
-    });
-    
+    const { isChecked, setIsChecked, addToProfile, updateProfile } = useContext(FlavorPreferencesContext) 
     const [showPresetImages, setShowPresetImages] = useState(false)
+    const route = useRoute();
+    const { existingProfileData } = route.params || {};
     const presetImages = [
         //add in path for any additional preset pictures
         require('../assets/images//Dessert.png'),
@@ -43,35 +36,6 @@ export default function AddPref2({ navigation }) {
         require('../assets/images//images (6).jpg'),
         
     ]
-
-    // Update selected option for Budget, ensuring only one is selected
-    const handleBudgetSelection = (selectedBudget) => {
-        setIsChecked({
-            ...isChecked,
-            budget: {
-                dollar20: selectedBudget === '$20',
-                dollar50: selectedBudget === '$50',
-            },
-        });
-    };
-
-    const addToProfile = async () => {
-        const user = auth.currentUser
-        if (user) {
-            await set(ref(database, 'users/' + user.uid + "/flavorProfile/Distance "), {
-                //pushing distance
-                ten: isChecked.distance.ten,
-                fifteen: isChecked.distance.fifteen,
-                twenty: isChecked.distance.twenty,
-            });
-            
-            await set(ref(database, 'users/' + user.uid + "/flavorProfile/Budget "), {
-                //pushing budget
-                dollar20: isChecked.budget.dollar20,
-                dollar50: isChecked.budget.dollar50,
-            });
-        }
-    }
 
     // Allows user to pick an image on their phone
     const handleImageSelection = async() => {
@@ -126,6 +90,52 @@ export default function AddPref2({ navigation }) {
         );
     };
 
+    const handleAddPreference = () => {
+        const prefName = name;
+        const prefImage = selectedImage;
+        addToProfile(prefName, prefImage);
+    }
+
+    //firebase logic to add or update the profile
+    const handleSaveProfile = async () => {
+        console.log("handleSaveProfile called"); // Debugging line
+        
+        const profileData = {
+            name: name ?? existingProfileData.name,
+            image: selectedImage ?? existingProfileData.image,
+            distance: selectedDistance ?? existingProfileData.distance,
+            budget: selectedBudget ?? existingProfileData.budget,
+            tastePreferences: isChecked.tastePreferences ?? existingProfileData.tastePreferences,
+            allergies: isChecked.allergies ?? existingProfileData.allergies,
+        };
+    
+        try {
+            if (existingProfileData !== undefined) {
+                // If editing an existing profile
+                await updateProfile(existingProfileData.id, profileData)
+                console.log("Profile updated successfully.");
+            } else {
+                // If adding a new profile
+                await addToProfile(name, selectedImage);
+                console.log("Profile added successfully");
+            }
+        } catch (error) {
+            console.error("Error saving profile:", error);
+        }
+
+        navigation.navigate('Profile');
+    };
+
+
+    useEffect(() => {
+        if(existingProfileData){
+            setSelectedImage(existingProfileData.image)
+            setName(existingProfileData.name);
+            setSelectedBudget(existingProfileData.budget)
+            setSelectedDistance(existingProfileData.distance)
+        }
+    }, [existingProfileData]);
+
     return (
         <SafeAreaView style={{
             flex: 1,
@@ -159,7 +169,7 @@ export default function AddPref2({ navigation }) {
                 </TouchableOpacity>
             </View>
 
-            {/* Visual changes for the perference profile picture */}
+            {/* Visual changes for the preference profile picture */}
             <ScrollView>
                 <View style={{
                     alignItems: "center",
@@ -167,15 +177,30 @@ export default function AddPref2({ navigation }) {
                     marginBottom: 20}}>
                     <TouchableOpacity
                         onPress={handleProfilePicturePress}>
-                        <Image 
-                            source={{uri:selectedImage}}
-                            style={{
-                                height: 130,
-                                width: 130,
-                                borderRadius: 85,
-                                borderWidth: 2,
-                                borderColor: "#000"
-                            }}/>
+                            {selectedImage ? (
+                                <Image 
+                                    source={{uri:selectedImage}}
+                                    style={{
+                                        height: 130,
+                                        width: 130,
+                                        borderRadius: 85,
+                                        borderWidth: 2,
+                                        borderColor: "#000"
+                                    }}
+                                />
+                            ) : (
+                                <Image 
+                                    source={{ uri: initialpfp }} // Fallback image if selectedImage is null
+                                    style={{
+                                        height: 130,
+                                        width: 130,
+                                        borderRadius: 85,
+                                        borderWidth: 2,
+                                        borderColor: "#000",
+                                    }}
+                                />
+                            )}
+
                         <View style={{
                             position: "absolute",
                             bottom: -5,
@@ -264,7 +289,7 @@ export default function AddPref2({ navigation }) {
                                 placeholderTextColor="#7C808D"
                                 color={Colors.ghost}
                                 onChangeText={setName}
-                                value={name}
+                                value={name || ''}
                                 editable={true}/>
                         </View>
                     </View>
@@ -350,9 +375,10 @@ export default function AddPref2({ navigation }) {
                     />
                 </View>
                     <TouchableOpacity style={styles.saveButton}
-                        onPress={() =>{
-                            addToProfile();
-                            navigation.navigate('Profile');
+                        onPress={() => {
+                            handleSaveProfile();
+                            // handleAddPreference();
+                            // navigation.navigate('Profile');
                         }}>
                         <Text style={styles.saveText}>Add Preference</Text>
                     </TouchableOpacity>

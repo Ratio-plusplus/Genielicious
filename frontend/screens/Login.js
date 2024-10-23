@@ -30,7 +30,6 @@ export default function Login({ navigation }) {
         setisLoggingIn(true);
       }
       try {
-          console.log("Bidoof");
           const user = await doSignInWithEmailAndPassword(email, password);
         //fetch user data from database using uid
           if (user) {

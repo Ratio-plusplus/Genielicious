@@ -1,15 +1,36 @@
 import * as React from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from './Colors';
 import { ProfileContext } from '../../backend/contexts/ProfileContext';
 import { doSignInWithEmailAndPassword } from '../../backend/firebase/auth';
+import { FlavorPreferencesContext } from '../../backend/contexts/FlavorPreferencesContext';
+import { useEffect } from 'react';
 
 export default function Profile({ navigation }) {
     //using context to be able to change the variables from the other files
     const { pfp, username } = React.useContext(ProfileContext);
+    const { resetPreferences, flavorProfiles, fetchProfiles } = React.useContext(FlavorPreferencesContext)
+
+    useEffect(async () => {
+        await fetchProfiles();
+    }, []);
+
+    const renderProfileItem = ({ item }) => (
+        <TouchableOpacity
+        style={styles.profileIconContainer}
+        onPress={() => navigation.navigate('Add Preference 1', { profileData: item })}>
+        <Image
+            source={item.Image ? {uri: item.Image } : Image.resolveAssetSource(require('../assets/pfp.png'))}
+            style={styles.profileIconImage}
+        />
+        <Text style={styles.profileIconText}>
+            {item.Title || 'Unnamed Profile'}
+        </Text>
+    </TouchableOpacity>
+    );
 
     return (
         <SafeAreaView style={styles.background}>
@@ -40,7 +61,11 @@ export default function Profile({ navigation }) {
                         <View style={styles.profileBody}>
                             <Text style={styles.profileTitle}>{username}</Text>
                             <TouchableOpacity style={styles.button} 
-                                onPress={()=>navigation.navigate('Add Preference 1')}>  
+                                onPress={()=> {
+                                    resetPreferences();
+                                    navigation.navigate('Add Preference 1')
+                                }}>  
+                                
                                 <Text style={styles.profileSubtitle}>Add Preference</Text>
                             </TouchableOpacity>
                         </View>
@@ -49,9 +74,24 @@ export default function Profile({ navigation }) {
             </View>
 
             {/* separator line below the profile section */}
-            <View style={styles.lineContainer}>
+            {/* <View style={styles.lineContainer}>
                 <View style={styles.line}/>
-            </View>
+            </View> */}
+
+            {/* flavor profiles section */}
+            {flavorProfiles.length > 0 ? (
+                    <FlatList
+                    data={flavorProfiles}
+                    renderItem={renderProfileItem}
+                    keyExtractor={(item) => item.id}
+                    numColumns={3}
+                    contentContainerStyle={styles.grid}
+                    style={{ flex: 1  }}
+                    />      
+            ): (
+                <Text style={{color: 'white' }}>No profiles found</Text>
+            )}
+            
         </SafeAreaView>
     );
 }
@@ -65,7 +105,6 @@ const styles = StyleSheet.create({
         paddingLeft: 20,
         paddingRight: 10,
         paddingVertical: 7,
-        flex: 1
     },
     lineContainer: {
         flex: 1,
@@ -86,6 +125,7 @@ const styles = StyleSheet.create({
     settingsIcon: {
         alignItems: 'flex-end',
         justifyContent: 'flex-end',
+        zIndex: 1,
     },
     profile: {
         paddingBottom: 16,
@@ -94,7 +134,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'flex-start',
         justifyContent: 'space-between',
-        marginBottom: 16,
     },
     profileBody: {
         flexGrow: 1,
@@ -128,6 +167,29 @@ const styles = StyleSheet.create({
         padding: 10,
         marginTop: 20,
         width: 150,
-        borderRadius: 10
-    }
+        borderRadius: 10,
+        zIndex: 1
+    }, 
+    grid: {
+        justifyContent: 'center',
+        paddingBottom: 20,
+    },
+    profileIconContainer: {
+        flex: 1,
+        margin: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: "50%",
+    },
+    profileIconImage: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        borderWidth: 1,
+    },
+    profileIconText: {
+        marginTop: 8,
+        fontSize: 14,
+        color: Colors.champagne,
+    },
 });
