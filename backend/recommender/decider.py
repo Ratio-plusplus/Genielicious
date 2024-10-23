@@ -1,6 +1,7 @@
 # Provides and processes question within backend api
-
+###TODO: update file and api call to support Interactive session calls
 import json
+from firebase_init import getYelpDataRef, getTestUser
 import os
 from yelp import getStore
 
@@ -11,15 +12,6 @@ SUPPORTED_REGIONAL_CUISINES = {"7":"African", "8":"Middle Eastern", "9":"South A
 #                             "Quick Eats", "Breakfast", "Desserts", "Health-Conscious",
 #                             "Meat-Centric", "Comfort Food"])
 MAIN_FLAVORS = {"2":"sweet","3":"salty", "4":"sour", "5":"umami", "6":"spicy"} # main flavors that we will take into account
-
-# Get the directory of the current script
-script_dir = os.path.dirname(os.path.abspath(__file__))
-
-# Create the full path to the file
-file_path = os.path.join(script_dir, "data", "categorized_aliases.json")
-
-with open(file_path, "r") as file:
-    CATEGORIZED_ALIASES = json.load(file)
 
 # preliminary questions
 # yelp parameter price takes integer 1 through 4
@@ -91,9 +83,18 @@ def getShortSessionQuestions(hasDistance:bool = False, hasPrice:bool = False) ->
 
     return response
 
-def processShortSessionAnswers(answers):
-    # TODO: CHANGE HARDCODED LOCATION TO USER'S LOCATION BASED OFF DB
-    USER_LOCATION = (33.78336745904146, -118.1101659429386)
+def getLocationOfUser(user_id):
+    user = getTestUser(user_id) # TODO: change to getUser()
+    latitude = user.child("location").child("latitude").get()
+    longitude = user.child("location").child("longitude").get()
+    coords = (latitude, longitude)
+    print(coords)
+    return coords
+
+def processShortSessionAnswers(user_id :str ,answers):
+    yelp_data = getYelpDataRef()
+    CATEGORIZED_ALIASES = yelp_data.child("categorized_aliases").get()
+    USER_LOCATION = getLocationOfUser("3") # TODO: Change to given argument
     term = ""
     temp_term = ""
     categories = ""
@@ -133,13 +134,11 @@ def processShortSessionAnswers(answers):
 
 if __name__ == "__main__":
     from yelp import cacheToJson
-    USER_LOCATION = (33.78336745904146, -118.1101659429386) # should be provided by the client, using CSULB coords to test
-    USER_PRICE = None # provided by user profile
-    USER_DISTANCE = None # provided by user profile
+    
 
     RESULTS_PATH = f"{os.getcwd()}\\results.json"
-    results = getShortSessionQuestions()
+    results = getShortSessionQuestions("3")
 
     # Cache results
-    cacheToJson(RESULTS_PATH,results)
-    print(f"Number of results:{results['total']}")
+    # cacheToJson(RESULTS_PATH,CATEGORIZED_ALIASES)
+    # print(f"Number of results:{results["total"]}")

@@ -5,41 +5,71 @@ import json
 import uuid
 import decider
 import firebase
+import gemini
+import results
 
 app = Flask(__name__)
 
-# simply returns out the questions to be displayed on the frontendpip
-@app.route("/client/questions/short")
-def sendShortQuestions():
-    query = request.args
+# clears all user related cache in the database
+@app.route("/client/session_cache/clear")
+def clearSessionCache():
+    user_id = "3" #TODO: get from auth
+    return results.clearCache(user_id)
 
-    # booleans that decides if the price/distance question should be provided;
-    # ... do not provide in event where distance and price pref are already known
-    distance_bool = query.get("hasDistance", "false")
-    hasDistance = distance_bool.lower() == "true"  
-    
-    price_bool = query.get("hasPrice", "false")
-    hasPrice = price_bool.lower() == "true"
-    
-    return decider.getShortSessionQuestions(hasPrice=hasPrice,hasDistance=hasDistance)
+# compilation of restaurant recommendations to be displayed on results page
+@app.route("/client/results")
+def compileResults():
+    user_id = "3" # TODO: get from auth
+    return results.compileResults(user_id)
+
+# simply returns out the questions to be displayed on the frontend
+@app.route("/client/questions/<mode>")
+def sendQuestion(mode: str):
+    user_id = "3" # TODO: will get from Auth Token
+    mode = mode.lower()
+    if mode not in ("short", "medium", "long"):
+        abort(400, "Invalid API url")
+
+    if mode == "short":
+        return decider.getShortSessionQuestions()
+    if mode == "medium":
+        return gemini.getNextQuestion(user_id,mode)
+    if mode == "long":
+        # TODO
+        pass
 
 # receives short question answers to process results and return yelp api results
-@app.route("/client/answers/short")
-def receiveShortAnswers():
-    # TODO: verify answers are valid
+@app.route("/client/answers/<mode>")
+def receiveAnswer(mode:str, methods=["POST"]):
+    user_id = "3" # TODO: will get from Auth Token
+    # verify the mode called
+    mode = mode.lower()
+    if mode not in ("short", "medium", "long"):
+        abort(400, "Invalid API url")
+
+    # check for answer parameters
     query = request.args
     answers = query.get("answers",None)
-    # answers should be in this format:
-    # query["answers"] = 
-    #               {
-    #                   "<questionID>": "<answer>",
-    #                    ...
-    #               }
     if not answers:
         abort(400, "Parameter \"answers\" not provided.")
-    
     answers = json.loads(answers)
-    return decider.processShortSessionAnswers(answers)
+
+    # carryout mode selection
+    if mode == "short":
+        # TODO: verify answers are valid (will be done within decider)
+        # answers should be in this format:
+        # query["answers"] = 
+        #               {
+        #                   "<questionID>": "<answer>",
+        #                    ...
+        #               }
+        return decider.processShortSessionAnswers(answers)
+    if mode == "medium":
+        # TODO: complete this
+        # answers are should be in this format: 
+        #       query["answers"] = <answer> 
+        # return answers
+        return gemini.submitAnswer(user_id, answers)
 
 # @app.route("/auth/create_user", methods=['POST'])
 # def createUser():

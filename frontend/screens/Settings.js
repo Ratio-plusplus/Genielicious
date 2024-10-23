@@ -11,7 +11,8 @@ export default function Settings({ navigation }) {
 
     const accountItems = [
         {icon: "person-outline", text: "Edit Profile", action: () => navigation.navigate('Edit Profile')},
-        {icon: "location-pin", text: "Location Services", action: () => navigation.navigate('Home')},
+        //Change icon to better fit the screeen
+        {icon: "location-pin", text: "Device Permissions", action: () => navigation.navigate('DevicePermissions')},
     ];
 
     const historyItems = [
@@ -22,7 +23,10 @@ export default function Settings({ navigation }) {
     ];
 
     const actionsItems = [
-        {icon: "outlined-flag", text: "Report a Problem", action: console.log("Report")},
+        {icon: "outlined-flag", text: "Report a Problem", action:  () => {
+            navigation.navigate('Report a Problem')
+            console.log("Report")
+        }},
         {icon: "logout", text: "Logout", action: () => {
             setModalMessage("Are you sure you want to log out?")
             setModalVisible(true)
