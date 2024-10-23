@@ -127,7 +127,7 @@ import { MaterialIcons } from '@expo/vector-icons';
                 <View style={styles.selectContainer}>
                     <Text style={styles.sectionTitle}>Problem Description:</Text>
                 </View>
-                <View style={styles.inputContainers}>
+                <View style={styles.descContainers}>
                     <TextInput
                         placeholder="Description"
                         placeholderTextColor="#7C808D"
@@ -174,6 +174,17 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingLeft: 8
     },
+    descContainers: {
+        height: 300,
+        width: "92%",
+        flexDirection: "row",
+        borderWidth: 1,
+        borderRadius: 4,
+        marginVertical: 6,
+        marginLeft: 15,
+        alignItems: "center",
+        paddingLeft: 8
+    },
     background: {
         flex: 1, 
         backgroundColor: Colors.blue
@@ -194,10 +205,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: Colors.ghost,
         marginTop: 2,
-    },
-    checkboxContainer: {
-        paddingLeft: 22,
-        paddingTop: 10,
     },
     saveButton: {
         backgroundColor: Colors.gold,
@@ -225,17 +232,6 @@ const styles = StyleSheet.create({
         paddingLeft: 22,
         paddingTop: 10,
     },
-    checkboxRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 20,
-    },
-    checkboxItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        flex: 1,
-        marginRight: 20,
-    },
     checkbox: {
         // flex: 1,
         marginRight: 10,
@@ -243,15 +239,6 @@ const styles = StyleSheet.create({
     checkboxText: {
         fontSize: 19, 
         color: Colors.ghost,
-    },
-    buttonContainer: {
-        alignItems: 'center',
-        marginTop: 20,
-    },
-    buttonText: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: Colors.raisin,
     },
     radioButtonContainer: {
         flexDirection: "row",
