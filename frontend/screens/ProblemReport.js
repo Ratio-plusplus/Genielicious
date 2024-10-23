@@ -142,13 +142,13 @@ import { MaterialIcons } from '@expo/vector-icons';
             {/* Submit button */}
             <View>
                 <TouchableOpacity style={styles.saveButton}
-                        onPress={() =>{
+                        onPress={() =>{ 
                             addToProfile();
                             navigation.navigate('Profile');
                         }}>
                     <Text style={styles.saveText}>Submit</Text>
                 </TouchableOpacity>
-            </View>
+            </View>  
         </SafeAreaView>
     )
     
