@@ -9,7 +9,7 @@ import results
 app = Flask(__name__)
 
 # clears all user related cache in the database
-@app.route("/client/session_cache/clear")
+@app.route("/client/clear_session")
 def clearSessionCache():
     user_id = "3" #TODO: get from auth
     return results.clearCache(user_id)

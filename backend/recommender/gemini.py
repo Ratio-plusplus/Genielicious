@@ -4,6 +4,7 @@ import json
 from firebase_init import getTestUser, getDataRef
 from dotenv import find_dotenv, load_dotenv
 from yelp import cacheToJson # used in development
+from results import clearCache, compileResults
 import google.generativeai as genai
 import os
 dotenv_path = find_dotenv()
@@ -79,9 +80,13 @@ def getNextQuestion(user_id:str, mode:str):
 
   user.update({"surveyCache" : surveyCache})
   # cacheToJson("backend\\recommender\\tests\\model_history.json",surveyCache) # saves surverycache locally
+
   #TODO: update conditional based on if the formatted_question is actually the final result
-  # if formatted_question: 
-  #   user.update({"surveyCache" : None}) #erase surveyCache after giving result
+  if "recommendations" in formatted_question: 
+    clearCache(user_id) #erase surveyCache after giving result
+    compileResults(formatted_question) # puts results into resultsCache
+    return {"results": True} # tells frontend results are ready
+
   return formatted_question
 
 if __name__ == "__main__":
