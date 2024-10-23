@@ -11,6 +11,9 @@ import EditProfile from './screens/EditProfile';
 import ProblemReport from './screens/ProblemReport';
 import AddPref1 from './screens/AddPref1';
 import AddPref2 from './screens/AddPref2';
+import Question from './screens/Question';
+import Answer from './screens/Answer';
+import Result from './screens/Result';
 
 const loginName = 'Login';
 const signupName = 'Signup';
@@ -20,6 +23,9 @@ const editName = 'Edit Profile';
 const problemReport = 'Report a Problem'
 const add1Name = "Add Preference 1";
 const add2Name = "Add Preference 2";
+const questionName = "Question";
+const answerName = "Answer";
+const resultName = "Result";
 
 const Stack = createNativeStackNavigator();
 
@@ -36,6 +42,9 @@ export default function WelcomeContainer() {
         <Stack.Screen name={problemReport} component={ProblemReport}/>
         <Stack.Screen name={add1Name} component={AddPref1}/>
         <Stack.Screen name={add2Name} component={AddPref2}/>
+        <Stack.Screen name={questionName} component={Question}/>
+        <Stack.Screen name={answerName} component={Answer}/>
+        <Stack.Screen name={resultName} component={Result}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
