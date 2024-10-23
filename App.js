@@ -21,7 +21,6 @@ function App() {
 
 // Register the app component
 AppRegistry.registerComponent(appName, () => App);
-console.log(appName);
 // AppRegistry.registerComponent(appName.toLowerCase(), () => App); // Register lowercase version if needed
 
 export default App;

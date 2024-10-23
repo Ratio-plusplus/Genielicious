@@ -80,7 +80,8 @@ export default function EditProfile({ navigation }) {
     const saveProfile = async () => {
         const auth = getAuth();
         const user = auth.currentUser;
-        
+        const idToken = user.getIdToken(true);
+        console.log(idToken)
         console.log("user UID:", user.uid);
         console.log("Selected Image URI:", selectedImage);
         console.log("Username:", username);
@@ -94,10 +95,20 @@ export default function EditProfile({ navigation }) {
             });
             
             //save to Realtime Database
-            await set(ref(database, 'users/' + user.uid), {
-                username: username,
-                photoURL: selectedImage,
+            const response = await fetch('http://10.0.2.2:5000/database/update_user',
+            {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ idToken: user.getIdToken(true), username: username, photoURL: selectedImage}),
             });
+            console.log("hi")
+            const json = await response.json();
+            //await set(ref(database, 'users/' + user.uid), {
+            //    username: username,
+            //    photoURL: selectedImage,
+            //});
 
             console.log(pfp)
             //update context state

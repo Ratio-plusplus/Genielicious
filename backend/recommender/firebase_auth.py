@@ -34,11 +34,3 @@ def create_user(query):
         print(f"Error creating user: {e}")
         return jsonify(message=f"Error with code: {e}")
 
-def verify_id_token(info):
-    idToken = info['idToken']
-    try:
-        decoded_token = auth.verify_id_token(idToken)
-        uid = decoded_token['uid']
-        return jsonify({"uid": uid, "message": "Token verificed!"}), 200
-    except auth.InvalidTokenError:
-        return jsonify({"error": "Invalid token"}), 400

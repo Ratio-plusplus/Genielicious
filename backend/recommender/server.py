@@ -4,8 +4,7 @@ from flask import Flask, redirect, url_for, request, abort
 import json
 import uuid
 import decider
-import firebase_auth
-import firebase_database
+import firebase
 
 app = Flask(__name__)
 
@@ -42,17 +41,17 @@ def receiveShortAnswers():
     answers = json.loads(answers)
     return decider.processShortSessionAnswers(answers)
 
-@app.route("/auth/create_user", methods=['POST'])
-def createUser():
-    query = request.get_json()
+# @app.route("/auth/create_user", methods=['POST'])
+# def createUser():
+#     query = request.get_json()
 
-    if not query:
-        abort(400, "User info not provided")
+#     if not query:
+#         abort(400, "User info not provided")
 
    
-    #info = json.loads(info)
-    print(query)
-    return firebase_auth.create_user(query)
+#     #info = json.loads(info)
+#     print(query)
+#     return firebase.create_user(query)
 
 @app.route("/auth/verify_tokens", methods=['POST'])
 def verifyToken():
@@ -63,7 +62,7 @@ def verifyToken():
         abort(400, "User info not provided")
 
     info = json.loads(info)
-    return firebase_auth.verify_id_token(info)
+    return firebase.verify_id_token(info)
 
 @app.route("/database/get_user_info", methods=["GET"])
 def getUserInfo():
@@ -72,20 +71,29 @@ def getUserInfo():
     if not query:
         abort(400, "Information not provided")
 
-    return firebase_database.getUser(query)
+    return firebase.getUser(query)
 
 @app.route("/database/create_user", methods=["POST"])
-def setUserInfo():
+def createUserInfo():
 
     query = request.get_json()
 
     if not query:
         abort(400, "Information not provided")
 
-    return firebase_database.createNewUser(query)
+    return firebase.createNewUser(query)
 
 if __name__ == "__main__":
     try:
         app.run(debug=False)
     except Exception as e:
         print(f"Error: {e}")
+
+@app.route("/database/update_user", methods=["POST"])
+def updateUser():
+    query = request.get_json()
+
+    if not query:
+        abort(400, "Data not provided")
+
+    return firebase.updateUser(query)

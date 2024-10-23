@@ -8,36 +8,23 @@ import { Image } from "react-native";
 
 
 export const doCreateUserWithEmailAndPassword = async (email, password, username) => {
+    //Create User in Firebase Auth
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
+    //Send Email Verifcation to use
     await sendEmailVerification(user);
-
-    //save username to realtime database
-    //await set(ref(database, 'users/' + user.uid), {
-    //    username: username,
-    //    email: email,
-    //    pfp: Image.resolveAssetSource("../../frontend/assets/pfp.png")
-    //}). then(() => {
-    //    console.log("Data saved successfully!");
-    //}).catch((error) => {
-    //    console.error("Error saving data:", error);
-    //    throw error;
-    //});
-    //Convert image to base64 string
-    //const imagePath = path.join(__dirname, 'frontend', 'assets', 'pfp.png');
-
-    console.log("Before");
+    
+    //Save user information to database through backend
+    const pfp = Image.resolveAssetSource(require("../../frontend/assets/pfp.png"));
     const response = await fetch('http://10.0.2.2:5000/database/create_user',
         {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ uid: user.uid, username: username, email: email}),
+            body: JSON.stringify({ uid: user.uid, username: username, email: email, pfp: pfp.uri}),
         });
-    console.log(response);
     const json = await response.json();
-    console.log(json);
     return user;
 };
 
