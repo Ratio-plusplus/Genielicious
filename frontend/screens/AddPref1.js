@@ -28,16 +28,6 @@ export default function AddPref1 ({ navigation }) {
         }
     }, [profileData]);
 
-    const handleSave = async () => {
-        const updatedData = {
-            ...isChecked,
-            Title: profileData.title,
-
-        };
-
-        //call the up
-    }
-
     return (
     <SafeAreaView style={styles.background}>
         <View style={styles.container}>
@@ -384,7 +374,7 @@ export default function AddPref1 ({ navigation }) {
                     style={styles.continueButton} 
                     onPress={()=>{
                         try{
-                            navigation.navigate('Add Preference 2');           
+                            navigation.navigate('Add Preference 2', { existingProfileData: profileData});           
                         } catch (error) {
                             console.error("Error during navigation: ", error);
                         }

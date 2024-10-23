@@ -18,11 +18,10 @@ export default function AddPref2({ navigation }) {
     const [name, setName] = React.useState();
     const [selectedDistance, setSelectedDistance] = useState(null);
     const [selectedBudget, setSelectedBudget] = useState(null);
-    const { isChecked, setIsChecked, addToProfile } = useContext(FlavorPreferencesContext) 
+    const { isChecked, setIsChecked, addToProfile, updateProfile } = useContext(FlavorPreferencesContext) 
     const [showPresetImages, setShowPresetImages] = useState(false)
     const route = useRoute();
-    const { existingName, existingImage, existingDistance, existingBudget, profileId } = route.params || {};
-    const { updateProfile } = useContext(FlavorPreferencesContext);
+    const { existingProfileData } = route.params || {};
     const presetImages = [
         //add in path for any additional preset pictures
         require('../assets/images//Dessert.png'),
@@ -100,31 +99,28 @@ export default function AddPref2({ navigation }) {
     //firebase logic to add or update the profile
     const handleSaveProfile = async () => {
         console.log("handleSaveProfile called"); // Debugging line
-        const userId = auth.currentUser.uid;
+        
         const profileData = {
-            name,
-            image: selectedImage,
-            distance: selectedDistance,
-            budget: selectedBudget,
-            tastePreferences: isChecked.tastePreferences,
-            allergies: isChecked.allergies,
+            name: name ?? existingProfileData.name,
+            image: selectedImage ?? existingProfileData.image,
+            distance: selectedDistance ?? existingProfileData.distance,
+            budget: selectedBudget ?? existingProfileData.budget,
+            tastePreferences: isChecked.tastePreferences ?? existingProfileData.tastePreferences,
+            allergies: isChecked.allergies ?? existingProfileData.allergies,
         };
-
-        console.log("Profile Data:", profileData); // Debugging line
-
-        const profileRef = ref(database, `users/${userId}/flavorProfiles/${profileId}`)
-
-        console.log("existingName:", existingName);
-
-        if (existingName !== undefined) {
-            // If editing an existing profile
-            await update(profileRef, profileData);
-            console.log("Profile updated successfully.");
-        } else {
-            // If adding a new profile
-            const newProfileRef = push(ref(database, `users/${userId}/flavorProfiles`));
-            await set(newProfileRef, profileData);
-            console.log("Profile added successfully");
+    
+        try {
+            if (existingProfileData !== undefined) {
+                // If editing an existing profile
+                await updateProfile(existingProfileData.id, profileData)
+                console.log("Profile updated successfully.");
+            } else {
+                // If adding a new profile
+                await addToProfile(name, selectedImage);
+                console.log("Profile added successfully");
+            }
+        } catch (error) {
+            console.error("Error saving profile:", error);
         }
 
         navigation.navigate('Profile');
@@ -132,46 +128,13 @@ export default function AddPref2({ navigation }) {
 
 
     useEffect(() => {
-        const fetchProfileData = async () => {
-            if (profileId) { // Ensure profileId is defined
-                const userId = auth.currentUser.uid;
-                const profileRef = ref(database, `users/${userId}/flavorProfiles/${profileId}`);
-                
-                try {
-                    const snapshot = await get(profileRef); // Fetch data from Firebase
-                    if (snapshot.exists()) {
-                        const data = snapshot.val();
-                        setName(data.name);
-                        setSelectedImage(data.image);
-                        setSelectedBudget(data.budget);
-                        setSelectedDistance(data.distance);
-    
-                        // Set the checked preferences from the fetched data
-                        setIsChecked((prev) => ({
-                            ...prev,
-                            // tastePreferences: data.tastePreferences,
-                            // allergies: data.allergies,
-                            distance: {
-                                ten: data.distance === 'ten',
-                                fifteen: data.distance === 'fifteen',
-                                twenty: data.distance === 'twenty',
-                            },
-                            budget: {
-                                dollar20: data.budget === '$20',
-                                dollar50: data.budget === '$50',
-                            },
-                        }));
-                    } else {
-                        console.log("No data available for this profile.");
-                    }
-                } catch (error) {
-                    console.error("Error fetching profile data:", error);
-                }
-            }
-        };
-    
-        fetchProfileData();
-    }, [profileId]); // Dependency array includes profileId
+        if(existingProfileData){
+            setSelectedImage(existingProfileData.image)
+            setName(existingProfileData.name);
+            setSelectedBudget(existingProfileData.budget)
+            setSelectedDistance(existingProfileData.distance)
+        }
+    }, [existingProfileData]);
 
     return (
         <SafeAreaView style={{
@@ -206,7 +169,7 @@ export default function AddPref2({ navigation }) {
                 </TouchableOpacity>
             </View>
 
-            {/* Visual changes for the perference profile picture */}
+            {/* Visual changes for the preference profile picture */}
             <ScrollView>
                 <View style={{
                     alignItems: "center",
@@ -214,15 +177,30 @@ export default function AddPref2({ navigation }) {
                     marginBottom: 20}}>
                     <TouchableOpacity
                         onPress={handleProfilePicturePress}>
-                        <Image 
-                            source={{uri:selectedImage}}
-                            style={{
-                                height: 130,
-                                width: 130,
-                                borderRadius: 85,
-                                borderWidth: 2,
-                                borderColor: "#000"
-                            }}/>
+                            {selectedImage ? (
+                                <Image 
+                                    source={{uri:selectedImage}}
+                                    style={{
+                                        height: 130,
+                                        width: 130,
+                                        borderRadius: 85,
+                                        borderWidth: 2,
+                                        borderColor: "#000"
+                                    }}
+                                />
+                            ) : (
+                                <Image 
+                                    source={{ uri: initialpfp }} // Fallback image if selectedImage is null
+                                    style={{
+                                        height: 130,
+                                        width: 130,
+                                        borderRadius: 85,
+                                        borderWidth: 2,
+                                        borderColor: "#000",
+                                    }}
+                                />
+                            )}
+
                         <View style={{
                             position: "absolute",
                             bottom: -5,
@@ -311,7 +289,7 @@ export default function AddPref2({ navigation }) {
                                 placeholderTextColor="#7C808D"
                                 color={Colors.ghost}
                                 onChangeText={setName}
-                                value={name}
+                                value={name || ''}
                                 editable={true}/>
                         </View>
                     </View>
@@ -398,8 +376,9 @@ export default function AddPref2({ navigation }) {
                 </View>
                     <TouchableOpacity style={styles.saveButton}
                         onPress={() => {
-                            handleAddPreference();
-                            navigation.navigate('Profile');
+                            handleSaveProfile();
+                            // handleAddPreference();
+                            // navigation.navigate('Profile');
                         }}>
                         <Text style={styles.saveText}>Add Preference</Text>
                     </TouchableOpacity>

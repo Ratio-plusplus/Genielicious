@@ -14,11 +14,8 @@ export default function Profile({ navigation }) {
     const { pfp, username } = React.useContext(ProfileContext);
     const { resetPreferences, flavorProfiles, fetchProfiles } = React.useContext(FlavorPreferencesContext)
 
-    useEffect(() => {
-        fetchProfiles();
-        console.log("Fetching profiles")
-        console.log(flavorProfiles);
-        console.log("Profiles fetched")
+    useEffect(async () => {
+        await fetchProfiles();
     }, []);
 
     const renderProfileItem = ({ item }) => (
@@ -77,19 +74,20 @@ export default function Profile({ navigation }) {
             </View>
 
             {/* separator line below the profile section */}
-            <View style={styles.lineContainer}>
+            {/* <View style={styles.lineContainer}>
                 <View style={styles.line}/>
-            </View>
+            </View> */}
 
             {/* flavor profiles section */}
             {flavorProfiles.length > 0 ? (
-                <FlatList
-                data={flavorProfiles}
-                renderItem={renderProfileItem}
-                keyExtractor={(item) => item.id}
-                numColumns={3}
-                contentContainerStyle={styles.grid}
-                />
+                    <FlatList
+                    data={flavorProfiles}
+                    renderItem={renderProfileItem}
+                    keyExtractor={(item) => item.id}
+                    numColumns={3}
+                    contentContainerStyle={styles.grid}
+                    style={{ flex: 1  }}
+                    />      
             ): (
                 <Text style={{color: 'white' }}>No profiles found</Text>
             )}
@@ -107,7 +105,6 @@ const styles = StyleSheet.create({
         paddingLeft: 20,
         paddingRight: 10,
         paddingVertical: 7,
-        flex: 1
     },
     lineContainer: {
         flex: 1,
@@ -128,6 +125,7 @@ const styles = StyleSheet.create({
     settingsIcon: {
         alignItems: 'flex-end',
         justifyContent: 'flex-end',
+        zIndex: 1,
     },
     profile: {
         paddingBottom: 16,
@@ -136,7 +134,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'flex-start',
         justifyContent: 'space-between',
-        marginBottom: 16,
     },
     profileBody: {
         flexGrow: 1,
@@ -170,18 +167,19 @@ const styles = StyleSheet.create({
         padding: 10,
         marginTop: 20,
         width: 150,
-        borderRadius: 10
-    },
+        borderRadius: 10,
+        zIndex: 1
+    }, 
     grid: {
-        paddingTop: 10,
         justifyContent: 'center',
+        paddingBottom: 20,
     },
     profileIconContainer: {
         flex: 1,
         margin: 10,
         alignItems: 'center',
         justifyContent: 'center',
-        width: 100,
+        width: "50%",
     },
     profileIconImage: {
         width: 100,

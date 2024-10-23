@@ -58,7 +58,6 @@ export const FlavorPreferencesProvider = ({ children }) => {
             onValue(profilesRef, (snapshot) => {
                 const data = snapshot.val();
                 console.log("Data fetched from Firebase:", data);
-                console.log(data)
                 if (data) {
                     const profilesArray = Object.keys(data).map((key) => ({
                         id: key,
@@ -71,6 +70,17 @@ export const FlavorPreferencesProvider = ({ children }) => {
                     setFlavorProfiles([]);
                 }
             })
+        } else {
+            console.log("No user is signed in.");
+        }
+    }
+
+    const updateProfile = async (profileId, updatedData) => {
+        const user = auth.currentUser;
+        if(user) {
+            const profileRef = ref(database, `users/${user.uid}/flavorProfiles/${profileId}`);
+            await set(profileRef, updatedData);
+            console.log("Profile Updated successfully");
         } else {
             console.log("No user is signed in.");
         }
@@ -124,19 +134,20 @@ export const FlavorPreferencesProvider = ({ children }) => {
         }
     };
 
-    const handleSave = async () => {
-        const updatedData = {
-            ...isChecked,
-            Title: profileData.Title,
-        }
-    }
-
     const resetPreferences = () => {
         setIsChecked(defaultPreferences);
     }
 
     return (
-        <FlavorPreferencesContext.Provider value={{ isChecked, setIsChecked, addToProfile, resetPreferences, fetchProfiles, flavorProfiles }}>
+        <FlavorPreferencesContext.Provider value={{ 
+            isChecked, 
+            setIsChecked, 
+            addToProfile, 
+            resetPreferences, 
+            fetchProfiles, 
+            flavorProfiles,
+            updateProfile,
+        }}>
             {children}
         </FlavorPreferencesContext.Provider>
     );
