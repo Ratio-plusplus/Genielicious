@@ -11,7 +11,8 @@ export default function Settings({ navigation }) {
 
     const accountItems = [
         {icon: "person-outline", text: "Edit Profile", action: () => navigation.navigate('Edit Profile')},
-        {icon: "location-pin", text: "Location Services", action: () => navigation.navigate('Home')},
+        //Change icon to better fit the screeen
+        {icon: "location-pin", text: "Device Permissions", action: () => navigation.navigate('DevicePermissions')},
     ];
 
     const historyItems = [
