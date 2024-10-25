@@ -21,7 +21,6 @@ def getResults(user_id):
     return results
 
 def compileResults(user_id, food_item:str):
-    # TODO fill resultsCache with output from yelp
     user = getTestUser(user_id) # TODO: change to getUser()
 
     # getting user location
@@ -32,22 +31,24 @@ def compileResults(user_id, food_item:str):
     # getting user budget
     budget = user.child("budget").get()
     if budget: # checks if budget exists and is not empty string
-        budget = int(budget) 
+        budget = int(budget)
+        if budget > 4:
+            budget = 4
     else: budget = None
 
+    #TODO: update how distance and budget are retrieved to reflect how active food profiles are setup
     # getting user distance preference
     distance = user.child("distance").get()
     if distance: # checks if distance exists and is not empty string
         distance = int(distance)
     else: distance = None
 
-    # TODO: return yelp results after testing
-    # yelp_results = getStore(coords, term = food_item, price=budget, radius=distance)
+    yelp_results = getStore(coords, term = food_item, price=budget, radius=distance)
     # [OPTIONAL]: Parse Yelp results to not include unnecessary/extra fields
 
-    # user.update({
-    #     "resultsCache" : json.dumps(yelp_results)
-    # })
-    user.update({ #### TESTING FIRST
-        "resultsCache" : json.dumps({"Test output" : "this is test"})
+    user.update({
+        "resultsCache" : json.dumps(yelp_results)
     })
+    # user.update({ #### TESTING
+    #     "resultsCache" : json.dumps({"Test output" : "this is test"})
+    # })

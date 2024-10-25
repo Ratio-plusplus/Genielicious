@@ -16,10 +16,13 @@ genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel("gemini-1.5-flash") # model version we're using
 
 def getPrompt(mode):
-  # TODO: -Add active food profile details to default prompt
-  #       -Change prompt based on medium or long mode
+  # TODO: -Add active food profile details to chosen prompt
   data_ref = getDataRef()
-  prompt = data_ref.child("default_prompt").get()
+
+  if mode == "medium":
+    prompt = data_ref.child("medium_prompt").get()
+  elif mode == "long":
+    prompt = data_ref.child("long_prompt").get()
   return prompt
 
 def submitAnswer(user_id,answer):
@@ -31,9 +34,12 @@ def submitAnswer(user_id,answer):
     return {"Error 401" : "No question provided yet."} 
   else:
     surveyCache = json.loads(surveyCache)
-    if surveyCache[-1]["role"] == "user": # if not user then the last response was model
+    # TODO: check if the answer corresponds to budget/distance
+    if "budget" in surveyCache or "distance" in surveyCache:
+      pass
+    elif surveyCache[-1]["role"] == "user": # if not user then the last response was model
       return {"Error 401" : "Client already answered question."}
-    elif "recommendations" in surveyCache[-1]["parts"][0]: # checks if last response from model were the recommendations
+    elif "recommendations" in json.loads(surveyCache[-1]["parts"]): # checks if last response from model were the recommendations
       results.clearCache(user_id) # erase surveyCache and resultsCache before compiling results
       results.compileResults(user_id, answer) # puts results into resultsCache
       return {"success": True, "results": True}
@@ -47,6 +53,7 @@ def submitAnswer(user_id,answer):
   
 
 def getNextQuestion(user_id:str, mode:str):
+  # TODO: check if distance/price exists in active food profile
   user = getTestUser(user_id) ### TODO: change to actual users when Auth complete
 
   surveyCache = user.child("surveyCache").get()
@@ -71,8 +78,13 @@ def getNextQuestion(user_id:str, mode:str):
   )
   
   formatted_question = formatStringToJson(response.text) # response made into json dictionary
-  cacheToJson("backend\\recommender\\tests\\model_history.json",formatted_question) # saves formatted_question locally
-  # print("formattype:",type(formatted_question)) # TODO: REMOVE THIS AND CACHETOJSON
+
+  # encode json object for gemini input
+  surveyCache.append({"role":"model","parts":json.dumps(formatted_question)})
+  # cacheToJson("backend\\recommender\\tests\\surveryCache_history.json",surveyCache) # saves surverycache locally
+
+  # converts cache to a single string for db
+  user.update({"surveyCache" : json.dumps(surveyCache)})
 
   if "recommendations" in formatted_question: # ai outputs a json with recommendations field when it is done
     final_choices = formatted_question["recommendations"]
@@ -81,22 +93,14 @@ def getNextQuestion(user_id:str, mode:str):
         "answer_choices" : final_choices
         }
     return final_question # sends frontend final question
-  
-  # encode json object for gemini input
-  surveyCache.append({"role":"model","parts":json.dumps(formatted_question)})
-  cacheToJson("backend\\recommender\\tests\\surveryCache_history.json",surveyCache) # saves surverycache locally
-  # converts cache to a single string for db
-  user.update({"surveyCache" : json.dumps(surveyCache)})
 
   return formatted_question #return dict
 
 #formats the output from gemini api
 def formatStringToJson(s):
-  cacheToJson("backend\\recommender\\tests\\reponse_history.json",s) # TODO: Remove
   data = str(s).replace('json', '').replace('\\n', '').replace('\\"', '"').replace('```', '').replace('\n', '').replace('\\', '')
   
-  data = json.loads(json.loads(json.dumps(data))) # returns json dictionary
-  cacheToJson("backend\\recommender\\tests\\formatted_reponse_history.json",data) # TODO: Remove
+  data = json.loads(data) # returns json dictionary
   return data
 
 if __name__ == "__main__":
