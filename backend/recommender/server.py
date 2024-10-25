@@ -11,14 +11,14 @@ app = Flask(__name__)
 # clears all user related cache in the database
 @app.route("/client/clear_session")
 def clearSessionCache():
-    user_id = "3" #TODO: get from auth
+    user_id = "3" #TODO: get from auth Token
     return results.clearCache(user_id)
 
 # compilation of restaurant recommendations to be displayed on results page
 @app.route("/client/results")
-def compileResults():
+def getResults():
     user_id = "3" # TODO: get from auth
-    return results.compileResults(user_id)
+    return results.getResults(user_id)
 
 # simply returns out the questions to be displayed on the frontend
 @app.route("/client/questions/<mode>")
