@@ -365,6 +365,7 @@ export default function AddPref2({ navigation }) {
                         onPress={() => {
                             handleSaveProfile();
                             fetchProfiles();
+                            navigation.navigate('Preference');
                             // handleAddPreference();
                             // navigation.navigate('Profile');
                         }}>

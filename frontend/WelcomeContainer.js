@@ -15,6 +15,7 @@ import Question from './screens/Question';
 import Answer from './screens/Answer';
 import Result from './screens/Result';
 import DevicePermissions from './screens/DevicePermissions';
+import Preference from './screens/Preference';
 
 const loginName = 'Login';
 const signupName = 'Signup';
@@ -28,6 +29,7 @@ const questionName = "Question";
 const answerName = "Answer";
 const resultName = "Result";
 const devicePerms = "DevicePermissions";
+const prefName = "Preference";
 
 const Stack = createNativeStackNavigator();
 
@@ -48,6 +50,7 @@ export default function WelcomeContainer() {
         <Stack.Screen name={answerName} component={Answer}/>
         <Stack.Screen name={resultName} component={Result}/>
         <Stack.Screen name={devicePerms} component={DevicePermissions}/>
+        <Stack.Screen name={prefName} component={Preference}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
