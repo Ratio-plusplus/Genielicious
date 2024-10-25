@@ -30,15 +30,8 @@ export const FlavorPreferencesProvider = ({ children }) => {
             dairy: false, 
             keto: false
         },
-        distance: {
-            ten: false,
-            fifteen: false,
-            twenty: false,
-        },
-        budget: {
-            dollar20: false,
-            dollar50: false,
-        },
+        distance: 0,
+        budget: 0,
         Title: {
             name: ""
         },
@@ -115,15 +108,8 @@ export const FlavorPreferencesProvider = ({ children }) => {
                     dairy: isChecked.allergies.dairy,
                     keto: isChecked.allergies.keto,
                 },
-                distance: {
-                    ten: isChecked.distance.ten,
-                    fifteen: isChecked.distance.fifteen,
-                    twenty: isChecked.distance.twenty,
-                },
-                budget: {
-                    dollar20: isChecked.budget.dollar20,
-                    dollar50: isChecked.budget.dollar50,
-                },
+                distance: isChecked.distance,
+                budget: isChecked.budget,
                 Title: name,
                 Image: selectedImage,
             })

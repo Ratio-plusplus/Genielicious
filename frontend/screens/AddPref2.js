@@ -18,7 +18,7 @@ export default function AddPref2({ navigation }) {
     const [name, setName] = React.useState();
     const [selectedDistance, setSelectedDistance] = useState(null);
     const [selectedBudget, setSelectedBudget] = useState(null);
-    const { isChecked, setIsChecked, addToProfile, updateProfile } = useContext(FlavorPreferencesContext) 
+    const { isChecked, setIsChecked, addToProfile, updateProfile, fetchProfiles } = useContext(FlavorPreferencesContext) 
     const [showPresetImages, setShowPresetImages] = useState(false)
     const route = useRoute();
     const { existingProfileData } = route.params || {};
@@ -299,46 +299,37 @@ export default function AddPref2({ navigation }) {
                     <Text style={styles.sectionTitle}>Distance:</Text>
                     <RadioButton
                         label="Within 10 miles"
-                        isSelected={selectedDistance === 'ten'}
+                        isSelected={selectedDistance === "10m"}
                         onPress={() => {
-                            setSelectedDistance("ten");
-                            setIsChecked({
-                            ...isChecked,
-                            distance: {
-                                ten: true,
-                                fifteen: false,
-                                twenty: false,
-                            }})
+                            setSelectedDistance("10m");
+                            setIsChecked((prevState) => ({
+                                ...prevState,
+                                distance: 10
+                            }))
                         }
                     }
                     />
                     <RadioButton
                         label="Within 15 miles"
-                        isSelected={selectedDistance === 'fifteen'}
+                        isSelected={selectedDistance === "15m"}
                         onPress={() => {
-                            setSelectedDistance("fifteen");
-                            setIsChecked({
-                            ...isChecked,
-                            distance: {
-                                ten: false,
-                                fifteen: true,
-                                twenty: false,
-                            }})
+                            setSelectedDistance("15m");
+                            setIsChecked((prevState) => ({
+                                ...prevState,
+                                distance: 15
+                            }))
                         }
                     }
                     />
                     <RadioButton
                         label="Within 20 miles"
-                        isSelected={selectedDistance === 'twenty'}
+                        isSelected={selectedDistance === "20m"}
                         onPress={() => {
-                            setSelectedDistance("twenty");
-                            setIsChecked({
-                            ...isChecked,
-                            distance: {
-                                ten: false,
-                                fifteen: false,
-                                twenty: true,
-                            }})
+                            setSelectedDistance("20m");
+                            setIsChecked((prevState) => ({
+                                ...prevState,
+                                distance: 20
+                            }))
                         }
                     }
                     />
@@ -349,34 +340,31 @@ export default function AddPref2({ navigation }) {
                     <Text style={styles.sectionTitle}>Budget:</Text>
                     <RadioButton
                         label="$20"
-                        isSelected={selectedBudget === '$20'}
+                        isSelected={selectedBudget === "$20"}
                         onPress={() => {
                             setSelectedBudget("$20");
-                            setIsChecked({
-                            ...isChecked,
-                            budget: {
-                                dollar20: true,
-                                dollar50: false,
-                            }})
+                            setIsChecked((prevState) => ({
+                                ...prevState,
+                                budget: 20
+                            }))
                         }}       
                     />
                     <RadioButton
                         label="$50"
-                        isSelected={selectedBudget === '$50'}
+                        isSelected={selectedBudget === "$50"}
                         onPress={() => {
                             setSelectedBudget("$50");
-                            setIsChecked({
-                            ...isChecked,
-                            budget: {
-                                dollar20: false,
-                                dollar50: true,
-                            }})
+                            setIsChecked((prevState) => ({
+                                ...prevState,
+                                budget: 50
+                            }))
                         }}
                     />
                 </View>
                     <TouchableOpacity style={styles.saveButton}
                         onPress={() => {
                             handleSaveProfile();
+                            fetchProfiles();
                             // handleAddPreference();
                             // navigation.navigate('Profile');
                         }}>
