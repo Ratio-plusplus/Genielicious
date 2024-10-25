@@ -103,7 +103,7 @@ export default function EditProfile({ navigation }) {
             //update context state
             setUsername(username);
             setpfp(selectedImage);
-
+            
         } catch (error) {
             console.error('Error updating profile:', error);
             Alert.alert("Error", error.message);
