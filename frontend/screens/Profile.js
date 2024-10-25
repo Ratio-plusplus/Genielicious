@@ -7,30 +7,29 @@ import { Colors } from './Colors';
 import { ProfileContext } from '../../backend/contexts/ProfileContext';
 import { doSignInWithEmailAndPassword } from '../../backend/firebase/auth';
 import { FlavorPreferencesContext } from '../../backend/contexts/FlavorPreferencesContext';
-import { useEffect, useCallback } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
+import { useEffect } from 'react';
 
 export default function Profile({ navigation }) {
     //using context to be able to change the variables from the other files
     const { pfp, username } = React.useContext(ProfileContext);
     const { resetPreferences, flavorProfiles, fetchProfiles } = React.useContext(FlavorPreferencesContext)
 
-    useEffect(() => {
-        fetchProfiles();
+    useEffect(async () => {
+        await fetchProfiles();
     }, []);
-    
+
     const renderProfileItem = ({ item }) => (
         <TouchableOpacity
-            style={styles.profileIconContainer}
-            onPress={() => navigation.navigate('Add Preference 1', { profileData: item })}>
-            <Image
-                source={item.image ? {uri: item.image } : Image.resolveAssetSource(require('../assets/pfp.png'))}
-                style={styles.profileIconImage}
-            />
-            <Text style={styles.profileIconText}>
-                {item.name || 'Unnamed Profile'}
-            </Text>
-        </TouchableOpacity>
+        style={styles.profileIconContainer}
+        onPress={() => navigation.navigate('Add Preference 1', { profileData: item })}>
+        <Image
+            source={item.Image ? {uri: item.Image } : Image.resolveAssetSource(require('../assets/pfp.png'))}
+            style={styles.profileIconImage}
+        />
+        <Text style={styles.profileIconText}>
+            {item.Title || 'Unnamed Profile'}
+        </Text>
+    </TouchableOpacity>
     );
 
     return (
@@ -73,11 +72,6 @@ export default function Profile({ navigation }) {
                     </View>
                 </View>
             </View>
-
-            {/* separator line below the profile section */}
-            {/* <View style={styles.lineContainer}>
-                <View style={styles.line}/>
-            </View> */}
 
             {/* flavor profiles section */}
             {flavorProfiles.length > 0 ? (

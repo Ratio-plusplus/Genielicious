@@ -101,8 +101,8 @@ export default function AddPref2({ navigation }) {
         console.log("handleSaveProfile called"); // Debugging line
         
         const profileData = {
-            name: name ?? existingProfileData.name,
-            image: selectedImage ?? existingProfileData.image,
+            Title: name ?? existingProfileData.name,
+            Image: selectedImage ?? existingProfileData.image,
             distance: selectedDistance ?? existingProfileData.distance,
             budget: selectedBudget ?? existingProfileData.budget,
             tastePreferences: isChecked.tastePreferences ?? existingProfileData.tastePreferences,
