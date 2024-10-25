@@ -157,7 +157,9 @@ export default function AddPref2({ navigation }) {
                                 checkedCheckBoxColor={Colors.gold}/>
                     </View>
 
-                    <TouchableOpacity style={styles.saveButton}>
+                    <TouchableOpacity 
+                        style={styles.saveButton}
+                        onPress={()=>navigation.navigate('Preference')}>
                         <Text style={styles.saveText}>Add Preference</Text>
                     </TouchableOpacity>
                 </View>
