@@ -9,7 +9,7 @@ import { ProfileContext } from "../../backend/contexts/ProfileContext";
 import { useContext } from "react";
 import { getDataConnect } from "firebase/data-connect";
 import { getDatabase, ref, get } from "firebase/database";
-import { useAuth } from '../../backend/contexts/authContext/index';
+import { useAuth } from '../../backend/contexts/AuthContext';
 
 
 export default function Signup({navigation}) {

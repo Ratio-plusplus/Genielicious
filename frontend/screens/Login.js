@@ -3,7 +3,7 @@ import { Feather } from "@expo/vector-icons";
 import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Modal} from "react-native";
 import { Colors } from "./Colors";
 import React, { useContext, useEffect, useState } from "react";
-import { useAuth } from '../../backend/contexts/authContext/index';
+import { useAuth } from '../../backend/contexts/AuthContext';
 import { doSignInWithEmailAndPassword, doSignInWithGoogle, doPasswordReset } from '../../backend/firebase/auth';
 import { database } from '../../backend/firebase/firebase'
 import { ProfileContext } from "../../backend/contexts/ProfileContext";

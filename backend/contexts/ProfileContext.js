@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { Image } from 'react-native';
-import { getAuth } from '@firebase/auth';
+import {useAuth} from './AuthContext'
 import { getDatabase, ref, onValue } from 'firebase/database';
 
 // Create the context
@@ -17,19 +17,18 @@ export const ProfileProvider = ({ children }) => {
     const [username, setUsername] = useState(defaultUsername)
 
     const fetchData = async () => {
-        const auth = getAuth();
-        const user = auth.currentUser;
-        const idToken = await user.getIdToken(true);
-        console.log(idToken);
+        const user = useAuth().currentUser;
+        console.log(user);
         if (user) {
-            console.log("Inside User");
+            const idToken = await user.getIdToken(true);
+            console.log(idToken)
             const response = await fetch('http://10.0.2.2:5000/database/get_user_info',
                 {
-                    method: "POST",
+                    method: "GET",
                     headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ idToken: idToken }),
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${idToken}`
+                    }
                 });
             const json = await response.json();
             const info = json["info"]

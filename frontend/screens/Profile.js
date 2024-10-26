@@ -18,7 +18,6 @@ export default function Profile({ navigation }) {
         async function loadData() {
             await fetchData();
             await fetchProfiles();
-
         }
         loadData();
     }, []);

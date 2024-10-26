@@ -94,18 +94,18 @@ def verifyToken():
     info = json.loads(info)
     return firebase.verify_id_token(info)
 
-@app.route("/database/get_user_info", methods=["POST"])
+@app.route("/database/get_user_info", methods=["GET"])
 def getUserInfo():
-    query = request.get_json()
+    query = request.headers.get("Authorization")
 
     if not query:
         abort(400, "Information not provided")
 
     return firebase.getUser(query)
 
-@app.route("/database/get_user_profile", methods=["POST"])
+@app.route("/database/get_user_profile", methods=["GET"])
 def getUserProfile():
-    query = request.get_json()
+    query = request.headers.get("Authorization")
 
     if not query:
         abort(400, "Information not provided")

@@ -1,10 +1,10 @@
 //Will create authContext which encapsualtes all of the children
 
 import React, { useContext, useState, useEffect } from "react";``
-import { auth } from "../../firebase/firebase";
+import { auth } from "../firebase/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { AppRegistry } from "react-native";
-import { name as appName } from '../../../app.json'
+import { name as appName } from '../../app.json'
 
 
 AppRegistry.registerComponent(appName, () => App);
@@ -33,12 +33,9 @@ export function AuthProvider({ children }) {
         }
         setLoading(false);
     }
-    const value = {
-        currentUser, userLoggedIn, loading
-    }
 
     return (
-        <AuthContext.Provider value={value}>
+        <AuthContext.Provider value={currentUser, userLoggedIn, loading}>
             {!loading && children }
         </AuthContext.Provider>
     )

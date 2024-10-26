@@ -20,26 +20,37 @@ def verify_id_token(idToken):
         uid = decoded_token['uid']
         return uid
     except auth.InvalidIdTokenError:
+        print("Invalid ID token")
+        return None
+    except auth.ExpiredIdTokenError:
+        print("Expired ID token")
+        return None
+    except Exception as e:
+        print(f"Error verifying ID token: {str(e)}")
         return None
 def getTestUser(user_id):
     return db.reference(f"test_users/{user_id}")
 
 def getUser(query):
     try:
-        idToken = query.get("idToken")
+        idToken = query.split("Bearer ")[1]
+        print(idToken)
         uid = verify_id_token(idToken)
+        print(uid)
         if uid:
             info = db.reference(f"users/{uid}").get()
             return jsonify({"info": info})
         else:
-            return jsonify({"error": "Invalid token"}), 400
+            return jsonify({"error": "Invalid token"}), 401
     except Exception as e:
         return jsonify(message=f"Error with code: {e}")
     
 def getProfile(query):
     try:
-        idToken = query.get("idToken")
+        idToken = query.split("Bearer ")[1]
+        print(idToken)
         uid = verify_id_token(idToken)
+        print(uid)
         if uid:
             info = db.reference(f"users/{uid}/flavorProfiles").get()
             return jsonify({"profiles": info})
@@ -67,49 +78,51 @@ def updateFlavorProfile(query):
 
 def addFlavorProfile(query, idToken):
     try:
-        preferences = query.get("preferences")
-        tastePreferences = preferences.tastePreferences
-        allergies = preferences.allergies
-        distance = preferences.distance
-        budget = preferences.budget
-        name = query.get("name")
-        photoURL = query.get("photoURL")
         uid = verify_id_token(idToken)
-        ref = db.reference(f"users/{uid}/flavorProfiles")
-        newref = ref.push()
-        newref.set({
-            "title" : name, 
-            "photoURL": photoURL, 
-            "tastePreferences" : {
-                "savory": tastePreferences.savory,
-                    "sweet": tastePreferences.sweet,
-                    "salty": tastePreferences.salty,
-                    "spicy": tastePreferences.spicy,
-                    "bitter": tastePreferences.bitter,
-                    "sour": tastePreferences.sour,
-                    "cool": tastePreferences.cool,
-                    "hot": tastePreferences.hot,
-                }, "allergies" : {
-                    "vegan" : allergies.vegan,
-                    "vegetarian" : allergies.vegetarian,
-                    "peanut": allergies.peanut,
-                    "gluten": allergies.gluten,
-                    "fish": allergies.fish,
-                    "shellfish": allergies.shellfish,
-                    "eggs": allergies.eggs,
-                    "soy": allergies.soy,
-                    "dairy": allergies.dairy,
-                    "keto": allergies.keto,
-                    }, 
-            "distance" : distance,
-            "budget" : budget
-            })
-        return jsonify({"uid": uid, "message": "User flavor profile successfully created in database"}), 200
-
-
+        if uid:
+            preferences = query.get("preferences")
+            tastePreferences = preferences["tastePreferences"]
+            allergies = preferences["allergies"]
+            distance = preferences["distance"]
+            budget = preferences["budget"]
+            name = query.get("name")
+            photoURL = query.get("photoURL")
+        
+            ref = db.reference(f"users/{uid}/flavorProfiles")
+            newref = ref.push()
+            newref.set({
+                "title" : name, 
+                "photoURL": photoURL, 
+                "tastePreferences" : {
+                        "savory": tastePreferences["savory"],
+                        "sweet": tastePreferences["sweet"],
+                        "salty": tastePreferences["salty"],
+                        "spicy": tastePreferences["spicy"],
+                        "bitter": tastePreferences["bitter"],
+                        "sour": tastePreferences["sour"],
+                        "cool": tastePreferences["cool"],
+                        "hot": tastePreferences["hot"],
+                    }, "allergies" : {
+                        "vegan" : allergies["vegan"],
+                        "vegetarian" : allergies["vegetarian"],
+                        "peanut": allergies["peanut"],
+                        "gluten": allergies["gluten"],
+                        "fish": allergies["fish"],
+                        "shellfish": allergies["shellfish"],
+                        "eggs": allergies["eggs"],
+                        "soy": allergies["soy"],
+                        "dairy": allergies["dairy"],
+                        "keto": allergies["keto"],
+                        }, 
+                "distance" : distance,
+                "budget" : budget
+                })
+            return jsonify({"uid": uid, "message": "User flavor profile successfully created in database"}), 200
+        else:
+            return jsonify({"error": "Invalid token"}), 400
     except Exception as e:
         return jsonify(message=f"Error with code: {e}")
-
+            
 
 def createNewUser(query):
     try:
