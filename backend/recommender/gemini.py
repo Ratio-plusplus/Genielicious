@@ -1,9 +1,10 @@
 #!pip install -q -U google-generativeai
 # import requests
 import json
-from firebase_init import getTestUser, getDataRef
+from firebase_init import getUser, getDataRef
+# from firebase_init import getTestUser
 from dotenv import find_dotenv, load_dotenv
-from yelp import cacheToJson # used in development
+# from yelp import cacheToJson # used in development
 import results
 import google.generativeai as genai
 import os
@@ -16,17 +17,20 @@ genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel("gemini-1.5-flash") # model version we're using
 
 def getPrompt(mode):
-  # TODO: -Add active food profile details to chosen prompt
+  # TODO: -Add active food profile details to chosen prompt (next sprint)
   data_ref = getDataRef()
 
-  if mode == "medium":
+  if mode == "short":
+    prompt = data_ref.child("short_prompt").get()
+  elif mode == "medium":
     prompt = data_ref.child("medium_prompt").get()
   elif mode == "long":
     prompt = data_ref.child("long_prompt").get()
   return prompt
 
 def submitAnswer(user_id,answer):
-  user = getTestUser(user_id) ### TODO: change to actual users when complete
+  # user = getTestUser(user_id) 
+  user = getUser(user_id)
 
   surveyCache = user.child("surveyCache").get()
 
@@ -34,10 +38,8 @@ def submitAnswer(user_id,answer):
     return {"Error 401" : "No question provided yet."} 
   else:
     surveyCache = json.loads(surveyCache)
-    # TODO: check if the answer corresponds to budget/distance
-    if "budget" in surveyCache or "distance" in surveyCache:
-      pass
-    elif surveyCache[-1]["role"] == "user": # if not user then the last response was model
+    # TODO: check if the answer corresponds to budget/distance (next sprint)
+    if surveyCache[-1]["role"] == "user": # if not user then the last response was model
       return {"Error 401" : "Client already answered question."}
     elif "recommendations" in json.loads(surveyCache[-1]["parts"]): # checks if last response from model were the recommendations
       results.clearCache(user_id) # erase surveyCache and resultsCache before compiling results
@@ -53,8 +55,9 @@ def submitAnswer(user_id,answer):
   
 
 def getNextQuestion(user_id:str, mode:str):
-  # TODO: check if distance/price exists in active food profile
-  user = getTestUser(user_id) ### TODO: change to actual users when Auth complete
+  # TODO: check if distance/price exists in active food profile (next sprint)
+  # user = getTestUser(user_id) 
+  user = getUser(user_id)
 
   surveyCache = user.child("surveyCache").get()
 

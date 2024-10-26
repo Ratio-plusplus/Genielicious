@@ -1,6 +1,6 @@
 # single script to handle connection/auth to database
 # !sudo pip install firebase-admin
-from firebase_admin import db, credentials, initialize_app
+from firebase_admin import db, credentials, initialize_app, auth
 from dotenv import find_dotenv, load_dotenv
 import os
 
@@ -12,6 +12,14 @@ db_url = {'databaseURL': os.getenv("DATABASE_URL")}
 
 genie_app = initialize_app(cred, db_url)
 
+def verifyIDToken(idToken):
+    try:
+        decoded_token = auth.verify_id_token(idToken)
+        uid = decoded_token['uid']
+        return uid
+    except auth.InvalidTokenError:
+        return None
+        
 def getTestUser(user_id):
     return db.reference(f"test_users/{user_id}")
 
