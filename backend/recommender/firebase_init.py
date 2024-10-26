@@ -40,29 +40,12 @@ def changeTestUserID(this:str, that:str):
 if __name__ == "__main__":
     import json
 
-    file_path = r"backend\recommender\unused\important_food_categories.json"
+    file_path = r"backend\recommender\data\default_prompt.json"
 
     with open(file_path, "r") as file:
         json_ob = json.load(file)
 
-    yelp_data = db.reference("/test_users/3")
+    yelp_data = db.reference("/data")
     yelp_data.update({
-        "flavorProfiles" : [
-            {
-                "image" : "some_image_idk",
-                "title" : "healthy",
-                "allergies" : {
-                    "dairy" : False,
-                    "eggs": False,
-                    "fish": False,
-                    "gluten":True,
-                    "keto" : False,
-                    "peanut": False,
-                    "shellfish": False,
-                    "soy": False,
-                    "vegan" : False,
-                    "vegetarian": True
-                }
-            }
-        ]
+        "medium_prompt" : json_ob["default_prompt"]
     })
