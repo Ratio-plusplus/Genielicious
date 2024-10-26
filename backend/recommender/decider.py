@@ -88,7 +88,7 @@ def getLocationOfUser(user_id):
     latitude = user.child("location").child("latitude").get()
     longitude = user.child("location").child("longitude").get()
     coords = (latitude, longitude)
-    print(coords)
+    # print(coords)
     return coords
 
 def processShortSessionAnswers(user_id :str ,answers):

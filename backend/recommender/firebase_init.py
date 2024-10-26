@@ -1,6 +1,6 @@
 # single script to handle connection/auth to database
 # !sudo pip install firebase-admin
-from firebase_admin import db, credentials, initialize_app
+from firebase_admin import db, credentials, initialize_app, auth
 from dotenv import find_dotenv, load_dotenv
 import os
 
@@ -12,6 +12,14 @@ db_url = {'databaseURL': os.getenv("DATABASE_URL")}
 
 genie_app = initialize_app(cred, db_url)
 
+def verifyIDToken(idToken):
+    try:
+        decoded_token = auth.verify_id_token(idToken)
+        uid = decoded_token['uid']
+        return uid
+    except auth.InvalidTokenError:
+        return None
+        
 def getTestUser(user_id):
     return db.reference(f"test_users/{user_id}")
 
@@ -40,29 +48,12 @@ def changeTestUserID(this:str, that:str):
 if __name__ == "__main__":
     import json
 
-    file_path = r"backend\recommender\unused\important_food_categories.json"
+    file_path = r"backend\recommender\data\default_prompt.json"
 
     with open(file_path, "r") as file:
         json_ob = json.load(file)
 
-    yelp_data = db.reference("/test_users/3")
+    yelp_data = db.reference("/data")
     yelp_data.update({
-        "flavorProfiles" : [
-            {
-                "image" : "some_image_idk",
-                "title" : "healthy",
-                "allergies" : {
-                    "dairy" : False,
-                    "eggs": False,
-                    "fish": False,
-                    "gluten":True,
-                    "keto" : False,
-                    "peanut": False,
-                    "shellfish": False,
-                    "soy": False,
-                    "vegan" : False,
-                    "vegetarian": True
-                }
-            }
-        ]
+        "medium_prompt" : json_ob["default_prompt"]
     })
