@@ -32,7 +32,6 @@ export const doSignInWithEmailAndPassword = async (email, password) => {
 
     const userCredential = await(signInWithEmailAndPassword(auth, email, password));
     currentuser = userCredential.user;
-    console.log(userCredential.user);
     return currentuser;
 };
 

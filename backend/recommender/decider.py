@@ -1,7 +1,7 @@
 # Provides and processes question within backend api
 ###TODO: update file and api call to support Interactive session calls
 import json
-from firebase_init import getYelpDataRef, getTestUser
+from firebase import getYelpDataRef, getTestUser
 import os
 from yelp import getStore
 

@@ -15,38 +15,34 @@ export const ProfileProvider = ({ children }) => {
     //Initalization for our inital values
     const [pfp, setpfp] = useState(defaultPfp);
     const [username, setUsername] = useState(defaultUsername)
-    
-    //fetch user profile from realtime database
-    useEffect(() => {
+
+    const fetchData = async () => {
         const auth = getAuth();
         const user = auth.currentUser;
-
+        const idToken = await user.getIdToken(true);
+        console.log(idToken);
         if (user) {
-            const db = getDatabase();
-            const userRef = ref(db, 'users/' + user.uid);
-
-            //listen for changes in the user's data
-            const unsubscribe = onValue(userRef, (snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    if (data.username && data.username !== defaultUsername) {
-                        setUsername(data.username);
-                    }
-                    if (data.photoURL && data.photoURL !== defaultPfp) {
-                        setpfp(data.photoURL);
-                    }
-                }
-            }, (error) => {
-                console.error("Error fetching user data:", error);
-            });
-
-            //Cleanup subscription on unmount
-            return () => unsubscribe();
+            console.log("Inside User");
+            const response = await fetch('http://10.0.2.2:5000/database/get_user_info',
+                {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ idToken: idToken }),
+                });
+            const json = await response.json();
+            const info = json["info"]
+            setUsername(info["Username"]);
+            setpfp(info["photoURL"]);
+            console.log("Response:", json);
+        } else {
+            console.log("No user is signed in.");
         }
-    }, []);
+    }
 
     return (
-        <ProfileContext.Provider value={{ pfp, setpfp, username, setUsername}}>
+        <ProfileContext.Provider value={{ pfp, setpfp, username, setUsername, fetchData}}>
             {children}
         </ProfileContext.Provider>
     );

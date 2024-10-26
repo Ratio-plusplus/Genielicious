@@ -94,7 +94,7 @@ def verifyToken():
     info = json.loads(info)
     return firebase.verify_id_token(info)
 
-@app.route("/database/get_user_info", methods=["GET"])
+@app.route("/database/get_user_info", methods=["POST"])
 def getUserInfo():
     query = request.get_json()
 
@@ -102,6 +102,26 @@ def getUserInfo():
         abort(400, "Information not provided")
 
     return firebase.getUser(query)
+
+@app.route("/database/get_user_profile", methods=["POST"])
+def getUserProfile():
+    query = request.get_json()
+
+    if not query:
+        abort(400, "Information not provided")
+
+    return firebase.getProfile(query)
+
+@app.route("/database/add_flavor_profile", methods=["POST"])
+def addFlavorProfile():
+    query = request.get_json()
+    idToken = request.headers.get("Authorization")
+
+
+    if not query:
+        abort(400, "Information not provided")
+
+    return firebase.addFlavorProfile(query, idToken)
 
 @app.route("/database/create_user", methods=["POST"])
 def createUserInfo():

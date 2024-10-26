@@ -1,4 +1,4 @@
-from firebase_init import getTestUser
+from firebase import getTestUser
 from yelp import getStore
 
 def clearCache(user_id):

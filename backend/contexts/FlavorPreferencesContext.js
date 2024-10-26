@@ -53,23 +53,37 @@ export const FlavorPreferencesProvider = ({ children }) => {
     const fetchProfiles = async () => {
         const user = auth.currentUser;
         if (user) {
-            const profilesRef = ref(database, 'users/' + user.uid + "/flavorProfiles");
+            idToken = await user.getIdToken(true);
+            //const profilesRef = ref(database, 'users/' + user.uid + "/flavorProfiles");
 
-            onValue(profilesRef, (snapshot) => {
-                const data = snapshot.val();
-                console.log("Data fetched from Firebase:", data);
-                if (data) {
-                    const profilesArray = Object.keys(data).map((key) => ({
-                        id: key,
-                        ...data[key]
-                    }));
-                    console.log("Fetched profiles: ", profilesArray);
-                    setFlavorProfiles(profilesArray);
-                } else {
-                    console.log("No profiles found in database");
-                    setFlavorProfiles([]);
-                }
-            })
+            //onValue(profilesRef, (snapshot) => {
+            //    const data = snapshot.val();
+            //    console.log("Data fetched from Firebase:", data);
+            //    if (data) {
+            //        const profilesArray = Object.keys(data).map((key) => ({
+            //            id: key,
+            //            ...data[key]
+            //        }));
+            //        console.log("Fetched profiles: ", profilesArray);
+            //        setFlavorProfiles(profilesArray);
+            //    } else {
+            //        console.log("No profiles found in database");
+            //        setFlavorProfiles([]);
+            //    }
+            //})
+            const response = await fetch('http://10.0.2.2:5000/database/get_user_profile',
+                {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ idToken: idToken }),
+                });
+            const json = await response.json();  
+            const info = json["profiles"]
+            //const profilesArray = 
+            console.log("Response:", json);
+
         } else {
             console.log("No user is signed in.");
         }
@@ -89,46 +103,49 @@ export const FlavorPreferencesProvider = ({ children }) => {
     const addToProfile = async (name, selectedImage) => {
         const user = auth.currentUser
         if (user) {
-            const profileRef = ref(database, 'users/' + user.uid + "/flavorProfiles");
-            const newProfileRef = push(profileRef)
+            idToken = await user.getIdToken(true);
+            const response = await fetch('http://10.0.2.2:5000/database/add_flavor_profile',
+                {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization' : idToken
+                    },
+                    body: JSON.stringify({ preferences: isChecked, name: name, photoURL: selectedImage }),
+                });
+            const json = await response.json();  
+            //const profileRef = ref(database, 'users/' + user.uid + "/flavorProfiles");
+            //const newProfileRef = push(profileRef)
+            //console.log("Is Checked:" , isChecked);
+            //await set(newProfileRef, {
+            //    Title: name,
+            //    Image: selectedImage,
+            //    tastePreferences: {
+            //        savory: isChecked.tastePreferences.savory,
+            //        sweet: isChecked.tastePreferences.sweet,
+            //        salty: isChecked.tastePreferences.salty,
+            //        spicy: isChecked.tastePreferences.spicy,
+            //        bitter: isChecked.tastePreferences.bitter,
+            //        sour: isChecked.tastePreferences.sour,
+            //        cool: isChecked.tastePreferences.cool,
+            //        hot: isChecked.tastePreferences.hot,
+            //    },
+            //    allergies: {
+            //        vegan: isChecked.allergies.vegan,
+            //        vegetarian: isChecked.allergies.vegetarian,
+            //        peanut: isChecked.allergies.peanut,
+            //        gluten: isChecked.allergies.gluten,
+            //        fish: isChecked.allergies.fish,
+            //        shellfish: isChecked.allergies.shellfish,
+            //        eggs: isChecked.allergies.eggs,
+            //        soy: isChecked.allergies.soy,
+            //        dairy: isChecked.allergies.dairy,
+            //        keto: isChecked.allergies.keto,
+            //    },
+            //    distance: isChecked.distance,
+            //    budget: isChecked.budget
+            //})
 
-            await set(newProfileRef, {
-                tastePreferences: {
-                    savory: isChecked.tastePreferences.savory,
-                    sweet: isChecked.tastePreferences.sweet,
-                    salty: isChecked.tastePreferences.salty,
-                    spicy: isChecked.tastePreferences.spicy,
-                    bitter: isChecked.tastePreferences.bitter,
-                    sour: isChecked.tastePreferences.sour,
-                    cool: isChecked.tastePreferences.cool,
-                    hot: isChecked.tastePreferences.hot,
-                },
-                allergies: {
-                    vegan: isChecked.allergies.vegan,
-                    vegetarian: isChecked.allergies.vegetarian,
-                    peanut: isChecked.allergies.peanut,
-                    gluten: isChecked.allergies.gluten,
-                    fish: isChecked.allergies.fish,
-                    shellfish: isChecked.allergies.shellfish,
-                    eggs: isChecked.allergies.eggs,
-                    soy: isChecked.allergies.soy,
-                    dairy: isChecked.allergies.dairy,
-                    keto: isChecked.allergies.keto,
-                },
-                distance: {
-                    ten: isChecked.distance.ten,
-                    fifteen: isChecked.distance.fifteen,
-                    twenty: isChecked.distance.twenty,
-                },
-                budget: {
-                    dollar20: isChecked.budget.dollar20,
-                    dollar50: isChecked.budget.dollar50,
-                },
-                Title: name,
-                Image: selectedImage,
-            })
-
-            console.log("Preferences saved successfully");
         } else {
             console.log("No user is signed in.");
         }

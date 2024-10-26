@@ -2,7 +2,6 @@ import * as React from 'react';
 import useLocation from '../../backend/locationPerms/useLocation';
 import {StyleSheet, SafeAreaView, View, Image, Text, TouchableOpacity, TextInput} from 'react-native';
 import { useState } from 'react';
-import { StyleSheet, View, Image, Text, SafeAreaView, TouchableOpacity } from 'react-native';
 import { Colors } from './Colors';
 import DropDownPicker from 'react-native-dropdown-picker';
 

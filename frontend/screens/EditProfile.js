@@ -81,19 +81,9 @@ export default function EditProfile({ navigation }) {
         const auth = getAuth();
         const user = auth.currentUser;
         const idToken = await user.getIdToken(true);
-        console.log(idToken)
-        console.log("user UID:", user.uid);
-        console.log("Selected Image URI:", selectedImage);
-        console.log("Username:", username);
-        console.log("Email:", email);
+
 
         try {
-            // update Firebase Authentication profile
-            await updateProfile(user, {
-                username: username,
-                photoURL: selectedImage,
-            });
-            
             //save to Realtime Database
             const response = await fetch('http://10.0.2.2:5000/database/update_user',
             {
@@ -102,15 +92,8 @@ export default function EditProfile({ navigation }) {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ idToken: idToken, username: username, photoURL: selectedImage}),
-            });
-            console.log("hi");
-            //rconst json = await response.json();
-            //await set(ref(database, 'users/' + user.uid), {
-            //    username: username,
-            //    photoURL: selectedImage,
-            //});
+                });
 
-            console.log(pfp)
             //update context state
             setUsername(username);
             setpfp(selectedImage);
