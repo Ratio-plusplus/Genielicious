@@ -80,26 +80,20 @@ export default function EditProfile({ navigation }) {
     const saveProfile = async () => {
         const auth = getAuth();
         const user = auth.currentUser;
-        
-        console.log("user UID:", user.uid);
-        console.log("Selected Image URI:", selectedImage);
-        console.log("Username:", username);
-        console.log("Email:", email);
+        const idToken = await user.getIdToken(true);
+
 
         try {
-            // update Firebase Authentication profile
-            await updateProfile(user, {
-                username: username,
-                photoURL: selectedImage,
-            });
-            
             //save to Realtime Database
-            await set(ref(database, 'users/' + user.uid), {
-                username: username,
-                photoURL: selectedImage,
-            });
+            const response = await fetch('http://10.0.2.2:5000/database/update_user',
+            {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ idToken: idToken, username: username, photoURL: selectedImage}),
+                });
 
-            console.log(pfp)
             //update context state
             setUsername(username);
             setpfp(selectedImage);

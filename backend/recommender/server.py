@@ -1,8 +1,10 @@
 # testing Flask
-from flask import Flask, request, abort
-from firebase_init import verifyIDToken
+import flask
+from flask import Flask, redirect, url_for, request, abort
 import json
-# import decider
+import uuid
+import decider
+import firebase
 import gemini
 import results
 
@@ -98,5 +100,80 @@ def receiveAnswer(mode:str, methods=["POST"]):
     # answer submission works the same in all modes
     return gemini.submitAnswer(user_id, answer)
 
+# @app.route("/auth/create_user", methods=['POST'])
+# def createUser():
+#     query = request.get_json()
+
+#     if not query:
+#         abort(400, "User info not provided")
+
+   
+#     #info = json.loads(info)
+#     print(query)
+#     return firebase.create_user(query)
+
+@app.route("/auth/verify_tokens", methods=['POST'])
+def verifyToken():
+    query = request.args
+    info = query.get("info", None)
+
+    if not info:
+        abort(400, "User info not provided")
+
+    info = json.loads(info)
+    return firebase.verify_id_token(info)
+
+@app.route("/database/get_user_info", methods=["GET"])
+def getUserInfo():
+    query = request.headers.get("Authorization")
+
+    if not query:
+        abort(400, "Information not provided")
+
+    return firebase.getUser(query)
+
+@app.route("/database/get_user_profile", methods=["GET"])
+def getUserProfile():
+    query = request.headers.get("Authorization")
+
+    if not query:
+        abort(400, "Information not provided")
+
+    return firebase.getProfile(query)
+
+@app.route("/database/add_flavor_profile", methods=["POST"])
+def addFlavorProfile():
+    query = request.get_json()
+    idToken = request.headers.get("Authorization")
+
+
+    if not query:
+        abort(400, "Information not provided")
+
+    return firebase.addFlavorProfile(query, idToken)
+
+@app.route("/database/create_user", methods=["POST"])
+def createUserInfo():
+
+    query = request.get_json()
+
+    if not query:
+        abort(400, "Information not provided")
+
+    return firebase.createNewUser(query)
+
+@app.route("/database/update_user", methods=["POST"])
+def updateUser():
+    query = request.get_json()
+
+    if not query:
+        abort(400, "Data not provided")
+
+    return firebase.updateDatabaseUser(query)
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    try:
+        app.run(debug=False)
+    except Exception as e:
+        print(f"Error: {e}")
+

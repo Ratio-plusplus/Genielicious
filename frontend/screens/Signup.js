@@ -8,7 +8,9 @@ import { doCreateUserWithEmailAndPassword } from '../../backend/firebase/auth';
 import { ProfileContext } from "../../backend/contexts/ProfileContext";
 import { useContext } from "react";
 import { getDataConnect } from "firebase/data-connect";
-import { getDatabase, ref, get} from "firebase/database";
+import { getDatabase, ref, get } from "firebase/database";
+import { useAuth } from '../../backend/contexts/AuthContext';
+
 
 export default function Signup({navigation}) {
   const [email, setEmail] = React.useState("");
@@ -18,29 +20,40 @@ export default function Signup({navigation}) {
   const [isRegistering, setIsRegistering] = useState(false);
   const [passwordIsVisible, setPasswordIsVisible] = React.useState(false);
   const [confirmPasswordIsVisible, setConfirmPasswordIsVisible] = React.useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [createdUser, setcreatedUser] = useState(false);
-  const { setUsername: setProfileUsername, setpfp } = useContext(ProfileContext)
+    const [errorMessage, setErrorMessage] = useState('');
+    const [createdUser, setcreatedUser] = useState(false);
+    const { setUsername: setProfileUsername, setpfp } = useContext(ProfileContext);
+    const { currentUser } = useAuth();
 
 
     //On Press Method
     const handleSignup = async () => {
         //Check if passwords match
         try{
-          const userCredential = await createUser();
-          console.log(userCredential);
-          if (userCredential) {
-            //fetch user data after signing up
-            const userId = userCredential.user.uid;
-            const userRef = ref(getDatabase(), 'users/' + userId);
-            const snapshot = await get(userRef);
-  
-            if (snapshot.exists()) {
-              const userData = snapshot.val();
-              //Update profilecontext with username and pfp
-              setProfileUsername(userData.username || "Ratio++");
-              setpfp(userData.pfp || Image.resolveAssetSource(require("../assets/pfp.png")).uri);
-            }
+          const user = await createUser();
+            if (user) {
+                const intervalId = setInterval(async () => {
+                    await user.reload();
+                    if (user.emailVerified) {
+                        console.log("verified");
+                        clearInterval(intervalId);
+                        //fetch user data after signing up
+                        const userId = user.uid;
+                        const userRef = ref(getDatabase(), 'users/' + userId);
+                        const snapshot = await get(userRef);
+
+                        if (snapshot.exists()) {
+                            const userData = snapshot.val();
+                            //Update profilecontext with username and pfp
+                            setProfileUsername(userData.username || "Ratio++");
+                            setpfp(userData.pfp || Image.resolveAssetSource(require("../assets/pfp.png")).uri);
+                        }
+                        navigation.navigate('Tab');
+                    } else {
+                        setErrorMessage('Please verify your email before logging in.');
+                    }
+                }, 1000);
+            
             setcreatedUser(true);
           }
         } catch (error) {
@@ -51,7 +64,6 @@ export default function Signup({navigation}) {
       };
 
     const validate = (text) => {
-        console.log(text);
         let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
         if (reg.test(text) === false) {
             setErrorMessage("Invalid Email");
@@ -60,7 +72,6 @@ export default function Signup({navigation}) {
         }
         else {
             setEmail(text)
-            console.log("Email is Correct");
             setErrorMessage("");
             return true;
         } 
@@ -123,13 +134,8 @@ export default function Signup({navigation}) {
             }
         }
         setIsRegistering(false);
-    }
+    };
 
-    useEffect(() => {
-        if (createdUser) {
-            navigation.navigate('Tab');
-        }
-    }, [createdUser]);
 
     return (
     <SafeAreaView style={styles.container}>

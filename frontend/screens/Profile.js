@@ -11,11 +11,15 @@ import { useEffect } from 'react';
 
 export default function Profile({ navigation }) {
     //using context to be able to change the variables from the other files
-    const { pfp, username } = React.useContext(ProfileContext);
+    const { pfp, username, fetchData } = React.useContext(ProfileContext);
     const { resetPreferences, flavorProfiles, fetchProfiles } = React.useContext(FlavorPreferencesContext)
 
-    useEffect(async () => {
-        await fetchProfiles();
+    useEffect(() => {
+        async function loadData() {
+            await fetchData();
+            await fetchProfiles();
+        }
+        loadData();
     }, []);
 
     const renderProfileItem = ({ item }) => (
@@ -27,7 +31,7 @@ export default function Profile({ navigation }) {
             style={styles.profileIconImage}
         />
         <Text style={styles.profileIconText}>
-            {item.Title || 'Unnamed Profile'}
+            {item.id || 'Unnamed Profile'}
         </Text>
     </TouchableOpacity>
     );

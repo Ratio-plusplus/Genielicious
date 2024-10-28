@@ -1,8 +1,7 @@
 #!pip install -q -U google-generativeai
 # import requests
 import json
-from firebase_init import getUser, getDataRef
-# from firebase_init import getTestUser
+from firebase import getTestUser, getDataRef
 from dotenv import find_dotenv, load_dotenv
 # from yelp import cacheToJson # used in development
 import results

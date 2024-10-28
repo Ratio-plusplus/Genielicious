@@ -1,52 +1,47 @@
+// ProfileContext.js
 import React, { createContext, useEffect, useState } from 'react';
 import { Image } from 'react-native';
-import { getAuth } from '@firebase/auth';
+import { useAuth } from './AuthContext'; // Import useAuth to get loading state and currentUser
 import { getDatabase, ref, onValue } from 'firebase/database';
 
-// Create the context
 export const ProfileContext = createContext();
 
-// Create a provider component
 export const ProfileProvider = ({ children }) => {
-    //default values
-    const defaultPfp = Image.resolveAssetSource(require("../../frontend/assets/pfp.png")).uri
+    const defaultPfp = Image.resolveAssetSource(require("../../frontend/assets/pfp.png")).uri;
     const defaultUsername = "Ratio++";
 
-    //Initalization for our inital values
-    const [pfp, setpfp] = useState(defaultPfp);
-    const [username, setUsername] = useState(defaultUsername)
+    const [pfp, setPfp] = useState(defaultPfp);
+    const [username, setUsername] = useState(defaultUsername);
     
-    //fetch user profile from realtime database
-    useEffect(() => {
-        const auth = getAuth();
-        const user = auth.currentUser;
+    const { currentUser, loading } = useAuth(); // Access currentUser and loading
 
-        if (user) {
-            const db = getDatabase();
-            const userRef = ref(db, 'users/' + user.uid);
-
-            //listen for changes in the user's data
-            const unsubscribe = onValue(userRef, (snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    if (data.username && data.username !== defaultUsername) {
-                        setUsername(data.username);
-                    }
-                    if (data.photoURL && data.photoURL !== defaultPfp) {
-                        setpfp(data.photoURL);
-                    }
+    const fetchData = async () => {
+        if (currentUser) {
+            const idToken = await currentUser.getIdToken(true);
+            const response = await fetch('http://10.0.2.2:5000/database/get_user_info', {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${idToken}`
                 }
-            }, (error) => {
-                console.error("Error fetching user data:", error);
             });
-
-            //Cleanup subscription on unmount
-            return () => unsubscribe();
+            const json = await response.json();
+            const info = json["info"];
+            setUsername(info["Username"]);
+            setPfp(info["photoURL"]);
+        } else {
+            console.log("No user is signed in.");
         }
-    }, []);
+    };
+
+    useEffect(() => {
+        if (!loading) {
+            fetchData(); // Only fetch data when loading is false
+        }
+    }, [loading, currentUser]); // Depend on loading and currentUser
 
     return (
-        <ProfileContext.Provider value={{ pfp, setpfp, username, setUsername}}>
+        <ProfileContext.Provider value={{ pfp, setPfp, username, setUsername, fetchData }}>
             {children}
         </ProfileContext.Provider>
     );

@@ -1,5 +1,4 @@
-# from firebase_init import getTestUser 
-from firebase_init import getUser
+from firebase import getUser
 from yelp import getStore
 import json
 
