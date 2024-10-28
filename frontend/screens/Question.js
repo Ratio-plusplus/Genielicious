@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text, Modal } from 'react-native';
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -9,18 +9,94 @@ import {
 } from '@env';
 
 const adUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : ADMOB_Key;
+import {useAuth} from '../contexts/AuthContext';
+import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
+import { useFocusEffect } from '@react-navigation/native';
+
+
+
 
 export default function Question({ navigation }) {
     const [modalVisible, setModalVisible] = React.useState(false);
     const [modalVisibleAd, setModalVisibleAd] = React.useState(false);
+    const {mode} = React.useContext(FlavorPreferencesContext);
+    const { currentUser, loading } = useAuth(); // Access currentUser and loading
+    const [question, setQuestion] = React.useState("");
+    const [answer1, setAnswer1] = React.useState("Yes");
+    const [answer2, setAnswer2] = React.useState("No");
+    const [answer3, setAnswer3] = React.useState("Maybe");
+    const [answer4, setAnswer4] = React.useState("Not Sure");
 
+
+
+    
+    const handleQuestionnaire = async () => {
+        console.log("Inside Questionaire");
+        const idToken = await currentUser.getIdToken();
+        console.log(idToken);
+        const response = await fetch(`http://10.0.2.2:5000/client/questions/${mode}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${idToken}`
+                }
+            });
+            const json = await response.json();
+            console.log("Question Response:" , json);
+            setQuestion(json["question"]);
+            const answer = json["answer_choices" ];
+            setAnswer1(answer[0]);
+            console.log(answer[0]);
+            setAnswer2(answer[1]);
+            console.log(answer[1]);
+            setAnswer3(answer[2]);
+            console.log(answer[2]);
+            setAnswer4(answer[3]);
+            console.log(answer[3]);
+            
+    }
+
+    const handleResults = async (answer) => {
+        console.log("Results", answer);
+        const idToken = await currentUser.getIdToken();
+        const response = await fetch(`http://10.0.2.2:5000/client/answer/${mode}`, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${idToken}`
+                }, body : JSON.stringify({answer: answer})
+            });
+            const json = await response.json();
+            console.log("Response", json);
+            if (json["results"] == false) {
+                if (json["success"] == true){
+                handleQuestionnaire();
+            }
+        }
+    }
+    const clearSession = async() =>{
+        const idToken = await currentUser.getIdToken();
+        console.log(idToken);
+        const response = await fetch('http://10.0.2.2:5000/client/clear_session', {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${idToken}`
+                }
+            });
+            const json = await response.json();
+    }
+    useFocusEffect(
+        useCallback(() => {
+            handleQuestionnaire();
+        }, [])
+    )
     const handleBackPress = () => {
         setModalVisible(true); //show the modal when pressed
     };
 
     const handleConfirmYes = () => {
         setModalVisible(false);  // close the modal
-        navigation.navigate('Home');  // navigate back to the Home page
+        clearSession();
+        navigation.navigate('Tab');  // navigate back to the Home page
     };
 
     const handleConfirmNo = () => {
@@ -103,7 +179,7 @@ export default function Question({ navigation }) {
             {/* question section */}
             <View style={styles.questionContainer}>
                 <View style={styles.questionButton}>
-                    <Text style={styles.questionText}>Are you craving spicy food?</Text>
+                    <Text style={styles.questionText}>{question}</Text>
                 </View>
             </View>
 
@@ -112,23 +188,23 @@ export default function Question({ navigation }) {
                 <View style={styles.buttonsContainer}>
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={() => navigation.navigate('Answer')}>
-                        <Text style={styles.profileSubtitle}>Yes</Text>
+                        onPress={() => handleResults(answer1)}>
+                        <Text style={styles.profileSubtitle}>{answer1}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={() => navigation.navigate('Answer')}>
-                        <Text style={styles.profileSubtitle}>No</Text>
+                        onPress={() => handleResults(answer2)}>
+                        <Text style={styles.profileSubtitle}>{answer2}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={() => navigation.navigate('Answer')}>
-                        <Text style={styles.profileSubtitle}>Maybe</Text>
+                        onPress={() => handleResults(answer3)}>
+                        <Text style={styles.profileSubtitle}>{answer3}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={() => navigation.navigate('Answer')}>
-                        <Text style={styles.profileSubtitle}>Not Sure</Text>
+                        onPress={() => handleResults(answer4)}>
+                        <Text style={styles.profileSubtitle}>{answer4}</Text>
                     </TouchableOpacity>
                 </View>
             </View>

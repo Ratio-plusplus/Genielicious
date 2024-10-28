@@ -1,81 +1,34 @@
-import React, {useState} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {Text, StyleSheet, View, ScrollView, TouchableOpacity} from 'react-native';
 import CheckBox from 'react-native-check-box';
 import { Colors } from './Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
-//Initializing and connecting to backend + users 
-// import { initializeApp } from 'firebase/app';
-import { getAuth }  from '@firebase/auth';
-import { getDatabase, ref, set } from 'firebase/database';
-import { database, auth } from '../../backend/firebase/firebase';
-
-// const database = getDatabase(app);
+import { getAuth, updateProfile }  from '@firebase/auth';
+import { getDatabase, ref, set, get } from 'firebase/database';
+import { database, auth } from '../firebase/firebase';
+import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
+import { useRoute, route } from '@react-navigation/native';
   
 export default function AddPref1 ({ navigation }) {
+    const route = useRoute();
+    
     //list of flavor preferences 
-    const [isChecked, setIsChecked] = useState({
-        tastePreferences: {
-            savory: false, 
-            sweet: false, 
-            salty: false, 
-            spicy: false,
-            bitter: false, 
-            sour: false, 
-            cool: false, 
-            hot: false
-        },
-        allergies: {
-            vegan: false, 
-            vegetarian: false, 
-            peanut: false, 
-            gluten: false, 
-            fish: false,
-            shellfish: false, 
-            eggs: false, 
-            soy: false, 
-            dairy: false, 
-            keto: false
-        },
-    });
+    const { isChecked, setIsChecked, resetPreferences } = useContext(FlavorPreferencesContext);
+    const { profileData } = route.params || {}; //get profile data from navigation params
 
-  //pushes flavor preferences to DBs
-  const addToProfile = async () => {
-    const user = auth.currentUser;
-    if (user) {
-        console.log(user.uid)
-        //Pushing tastePreferences
-        await set(ref(database, 'users/' + user.uid + "/flavorProfile/tastePreference"), {
-            savory: isChecked.tastePreferences.savory,
-            sweet: isChecked.tastePreferences.sweet,
-            salty: isChecked.tastePreferences.salty,
-            spicy: isChecked.tastePreferences.spicy,
-            bitter: isChecked.tastePreferences.bitter,
-            sour: isChecked.tastePreferences.sour,
-            cool: isChecked.tastePreferences.cool,
-            hot: isChecked.tastePreferences.hot,
-        });
+    // if profile data is provided, set inital state from it
+    useEffect(() => {
+        if (profileData) {
+            // Populate the fields with the profileData
+            setIsChecked(profileData);
+        } else {
+            // If we aren't editing a pre-existing data then we go back to default
+            resetPreferences();
+        }
+    }, [profileData]);
 
-        await set(ref(database, 'users/' + user.uid + "/flavorProfile/allergies"), {
-            vegan: isChecked.allergies.vegan,
-            vegetarian: isChecked.allergies.vegetarian,
-            peanut: isChecked.allergies.peanut,
-            gluten: isChecked.allergies.gluten,
-            fish: isChecked.allergies.fish,
-            shellfish: isChecked.allergies.shellfish,
-            eggs: isChecked.allergies.eggs,
-            soy: isChecked.allergies.soy,
-            dairy: isChecked.allergies.dairy,
-            keto: isChecked.allergies.keto,
-        });
-
-        console.log("Preferences saved successfully");
-    } else {
-        console.log("No user is signed in.");
-    }
-  };
-
-  return (
+    return (
     <SafeAreaView style={styles.background}>
         <View style={styles.container}>
                 <TouchableOpacity 
@@ -99,7 +52,7 @@ export default function AddPref1 ({ navigation }) {
 
                 {/* row 1: savory and sweet */}
                 <View style={styles.checkboxRow}>
-                    <View style = {styles.checkboxItem}>
+                    
                         <CheckBox
                             style={styles.checkbox}
                             isChecked={isChecked.tastePreferences.savory}    //current state
@@ -110,15 +63,12 @@ export default function AddPref1 ({ navigation }) {
                                     savory: !isChecked.tastePreferences.savory //update only savory
                                 }
                             })}   //toggle state
-                            // rightText='Savory'
-                            // rightTextStyle={styles.checkboxText}
+                            rightText='Savory'
+                            rightTextStyle={styles.checkboxText}
                             uncheckedCheckBoxColor={Colors.ghost}
                             checkedCheckBoxColor={Colors.gold}
                         />
-                    <Text style = {styles.checkboxText}>Savory</Text>
-                    </View>
-
-                    <View style = {styles.checkboxItem}>
+                    
                         <CheckBox 
                             style={styles.checkbox}
                             isChecked={isChecked.tastePreferences.sweet} 
@@ -129,18 +79,15 @@ export default function AddPref1 ({ navigation }) {
                                     sweet: !isChecked.tastePreferences.sweet 
                                 }
                             })}
-                            // rightText='Sweet'
-                            // rightTextStyle={styles.checkboxText}
+                            rightText='Sweet'
+                            rightTextStyle={styles.checkboxText}
                             uncheckedCheckBoxColor={Colors.ghost}
                             checkedCheckBoxColor={Colors.gold}/>
-                            <Text style={styles.checkboxText}>Sweet</Text>
-                    </View>
-                    
                 </View>
                         
                 {/* row 2: salty and spicy */}
                 <View style={styles.checkboxRow}>
-                    <View style = {styles.checkboxItem}>
+                    
                         <CheckBox 
                             style={styles.checkbox}
                             isChecked={isChecked.tastePreferences.salty} 
@@ -151,14 +98,12 @@ export default function AddPref1 ({ navigation }) {
                                     salty: !isChecked.tastePreferences.salty
                                 }
                             })}
-                            // rightText='Salty'
-                            // rightTextStyle={styles.checkboxText}
+                            rightText='Salty'
+                            rightTextStyle={styles.checkboxText}
                             uncheckedCheckBoxColor={Colors.ghost}
                             checkedCheckBoxColor={Colors.gold}/>
-                            <Text style={styles.checkboxText}>Salty</Text>
-                    </View>
 
-                    <View style = {styles.checkboxItem}>
+                    
                     <CheckBox 
                         style={styles.checkbox}
                         isChecked={isChecked.tastePreferences.spicy} 
@@ -169,18 +114,16 @@ export default function AddPref1 ({ navigation }) {
                                 spicy: !isChecked.tastePreferences.spicy
                             }
                         })}
-                        // rightText='Spicy'
-                        // rightTextStyle={styles.checkboxText}
+                        rightText='Spicy'
+                        rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
-                        <Text style={styles.checkboxText}>Spicy</Text>
-                    </View>
                 </View>
 
                 {/* row 3: bitter and sour */}
                 <View style={styles.checkboxRow}>
 
-                <View style = {styles.checkboxItem}>
+                
                     <CheckBox 
                         style={styles.checkbox}
                         isChecked={isChecked.tastePreferences.bitter} 
@@ -191,14 +134,12 @@ export default function AddPref1 ({ navigation }) {
                                 bitter: !isChecked.tastePreferences.bitter
                             }
                         })}
-                        // rightText='Bitter'
-                        // rightTextStyle={styles.checkboxText}
+                        rightText='Bitter'
+                        rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
-                        <Text style={styles.checkboxText}>Bitter</Text>
-                    </View>
 
-                    <View style = {styles.checkboxItem}>
+                    
                         <CheckBox 
                             style={styles.checkbox}
                             isChecked={isChecked.tastePreferences.sour} 
@@ -209,18 +150,16 @@ export default function AddPref1 ({ navigation }) {
                                     sour: !isChecked.tastePreferences.sour
                                 }
                             })}
-                            // rightText='Sour'
-                            // rightTextStyle={styles.checkboxText}
+                            rightText='Sour'
+                            rightTextStyle={styles.checkboxText}
                             uncheckedCheckBoxColor={Colors.ghost}
                             checkedCheckBoxColor={Colors.gold}/>
-                            <Text style={styles.checkboxText}>Sour</Text>
                     </View>
-                </View>
 
                 {/* row 4: cool and hot */}
                 <View style={styles.checkboxRow}>
 
-                    <View style = {styles.checkboxItem}>
+                    
                         <CheckBox 
                             style={styles.checkbox}
                             isChecked={isChecked.tastePreferences.cool} 
@@ -231,15 +170,11 @@ export default function AddPref1 ({ navigation }) {
                                     cool: !isChecked.tastePreferences.cool
                                 }
                             })}
-                            // rightText='Cool'
-                            // rightTextStyle={styles.checkboxText}
+                            rightText='Cool'
+                            rightTextStyle={styles.checkboxText}
                             uncheckedCheckBoxColor={Colors.ghost}
                             checkedCheckBoxColor={Colors.gold}/>
-                            <Text style={styles.checkboxText}>Cool</Text>
-                    </View>
-
-
-                    <View style = {styles.checkboxItem}>    
+                        
                     <CheckBox 
                         style={styles.checkbox}
                         isChecked={isChecked.tastePreferences.hot} 
@@ -250,12 +185,11 @@ export default function AddPref1 ({ navigation }) {
                                 hot: !isChecked.tastePreferences.hot
                             }
                         })}
-                        // rightText='Hot'
-                        // rightTextStyle={styles.checkboxText}
+                        rightText='Hot'
+                        rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
-                        <Text style={styles.checkboxText}>Hot</Text>
-                    </View>
+
                 </View>
             </View>
 
@@ -267,8 +201,6 @@ export default function AddPref1 ({ navigation }) {
 
                 {/* row 1: vegan and vegetarian */}
                 <View style={styles.checkboxRow}>
-
-                    <View style = {styles.checkboxItem}>
                     <CheckBox
                         style={styles.checkbox}
                         isChecked={isChecked.allergies.vegan} 
@@ -279,14 +211,11 @@ export default function AddPref1 ({ navigation }) {
                                 vegan: !isChecked.allergies.vegan
                             }
                         })}
-                        // rightText='Vegan'
-                        // rightTextStyle={styles.checkboxText}
+                        rightText='Vegan'
+                        rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
-                        <Text style={styles.checkboxText}>Vegan</Text>
-                    </View>
-
-                    <View style = {styles.checkboxItem}>
+                    
                     <CheckBox 
                         style={styles.checkbox}
                         isChecked={isChecked.allergies.vegetarian} 
@@ -297,17 +226,15 @@ export default function AddPref1 ({ navigation }) {
                                 vegetarian: !isChecked.allergies.vegetarian
                             }
                         })}
-                        // rightText='Vegetarian'
-                        // rightTextStyle={styles.checkboxText}
+                        rightText='Vegetarian'
+                        rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
-                        <Text style={styles.checkboxText}>Vegetarian</Text>
-                    </View>
                 </View>
 
                 {/* row 2: peanut/tree nut and wheat/gluten */}
                 <View style={styles.checkboxRow}>
-                    <View style = {styles.checkboxItem}>
+                    
                     <CheckBox 
                         style={styles.checkbox}
                         isChecked={isChecked.allergies.peanut} 
@@ -318,14 +245,11 @@ export default function AddPref1 ({ navigation }) {
                                 peanut: !isChecked.allergies.peanut
                             }
                         })}
-                        // rightText='Peanut/Tree Nut'
-                        // rightTextStyle={styles.checkboxText}
+                        rightText='Peanut/Tree Nut'
+                        rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
-                        <Text style={styles.checkboxText}>Peanut/Tree Nut</Text>
-                    </View>
-
-                    <View style = {styles.checkboxItem}>
+                    
                     <CheckBox 
                         style={styles.checkbox}
                         isChecked={isChecked.allergies.gluten} 
@@ -336,18 +260,14 @@ export default function AddPref1 ({ navigation }) {
                                 gluten: !isChecked.allergies.gluten
                             }
                         })}
-                        // rightText='Wheat/Gluten'
-                        // rightTextStyle={styles.checkboxText}
+                        rightText='Wheat/Gluten'
+                        rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
-                        <Text style={styles.checkboxText}>Wheat/Gluten</Text>
-                    </View>
                 </View>
 
                 {/* row 3: fish and shellfish */}
                 <View style={styles.checkboxRow}>
-
-                    <View style = {styles.checkboxItem}>
                     <CheckBox 
                         style={styles.checkbox}
                         isChecked={isChecked.allergies.fish} 
@@ -358,14 +278,12 @@ export default function AddPref1 ({ navigation }) {
                                 fish: !isChecked.allergies.fish
                             }
                         })}
-                        // rightText='Fish'
-                        // rightTextStyle={styles.checkboxText}
+                        rightText='Fish'
+                        rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
-                        <Text style={styles.checkboxText}>Fish</Text>
-                    </View>
 
-                    <View style = {styles.checkboxItem}>
+                    
                     <CheckBox 
                         style={styles.checkbox}
                         isChecked={isChecked.allergies.shellfish} 
@@ -376,18 +294,14 @@ export default function AddPref1 ({ navigation }) {
                                 shellfish: !isChecked.allergies.shellfish
                             }
                         })}
-                        // rightText='Shellfish'
-                        // rightTextStyle={styles.checkboxText}
+                        rightText='Shellfish'
+                        rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
-                        <Text style={styles.checkboxText}>Shellfish</Text>
-                    </View>
                 </View>
 
                 {/* row 4: eggs and dairy */}
                 <View style={styles.checkboxRow}>
-
-                    <View style = {styles.checkboxItem}>
                     <CheckBox 
                         style={styles.checkbox}
                         isChecked={isChecked.allergies.eggs} 
@@ -398,14 +312,11 @@ export default function AddPref1 ({ navigation }) {
                                 eggs: !isChecked.allergies.eggs
                             }
                         })}
-                        // rightText='Eggs'
-                        // rightTextStyle={styles.checkboxText}
+                        rightText='Eggs'
+                        rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
-                        <Text style={styles.checkboxText}>Eggs</Text>
-                    </View>
 
-                    <View style = {styles.checkboxItem}>
                     <CheckBox 
                         style={styles.checkbox}
                         isChecked={isChecked.allergies.dairy} 
@@ -416,18 +327,14 @@ export default function AddPref1 ({ navigation }) {
                                 dairy: !isChecked.allergies.dairy
                             }
                         })}
-                        // rightText='Dairy'
-                        // rightTextStyle={styles.checkboxText}
+                        rightText='Dairy'
+                        rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
-                        <Text style={styles.checkboxText}>Dairy</Text>
-                    </View>
                 </View>
 
                 {/* row 5: soy and keto */}
                 <View style={styles.checkboxRow}>
-
-                    <View style = {styles.checkboxItem}>
                     <CheckBox 
                         style={styles.checkbox}
                         isChecked={isChecked.allergies.soy} 
@@ -438,14 +345,12 @@ export default function AddPref1 ({ navigation }) {
                                 soy: !isChecked.allergies.soy
                             }
                         })}
-                        // rightText='Soy'
-                        // rightTextStyle={styles.checkboxText}
+                        rightText='Soy'
+                        rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
-                        <Text style={styles.checkboxText}>Soy</Text>
-                    </View>
 
-                    <View style = {styles.checkboxItem}>
+                    
                     <CheckBox 
                         style={styles.checkbox}
                         isChecked={isChecked.allergies.keto} 
@@ -456,12 +361,10 @@ export default function AddPref1 ({ navigation }) {
                                 keto: !isChecked.allergies.keto
                             }
                         })}
-                        // rightText='Keto'
-                        // rightTextStyle={styles.checkboxText}
+                        rightText='Keto'
+                        rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
-                        <Text style={styles.checkboxText}>Keto</Text>
-                    </View>
                 </View>
             </View>
 
@@ -471,8 +374,7 @@ export default function AddPref1 ({ navigation }) {
                     style={styles.continueButton} 
                     onPress={()=>{
                         try{
-                            addToProfile();
-                            navigation.navigate('Add Preference 2') ;           
+                            navigation.navigate('Add Preference 2', { existingProfileData: profileData});           
                         } catch (error) {
                             console.error("Error during navigation: ", error);
                         }
@@ -531,7 +433,7 @@ const styles = StyleSheet.create({
         marginRight: 20,
     },
     checkbox: {
-        // flex: 1,
+        flex: 1,
         marginRight: 10,
     },
     checkboxText: {

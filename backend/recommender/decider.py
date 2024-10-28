@@ -1,7 +1,7 @@
 # Provides and processes question within backend api
 ###TODO: update file and api call to support Interactive session calls
 import json
-from firebase_init import getYelpDataRef, getTestUser
+from firebase import getYelpDataRef, getTestUser
 import os
 from yelp import getStore
 
@@ -88,7 +88,7 @@ def getLocationOfUser(user_id):
     latitude = user.child("location").child("latitude").get()
     longitude = user.child("location").child("longitude").get()
     coords = (latitude, longitude)
-    print(coords)
+    # print(coords)
     return coords
 
 def processShortSessionAnswers(user_id :str ,answers):

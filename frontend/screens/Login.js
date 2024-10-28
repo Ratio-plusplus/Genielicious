@@ -1,12 +1,12 @@
 import { StatusBar } from "expo-status-bar";
 import { Feather } from "@expo/vector-icons";
-import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert} from "react-native";
+import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Modal} from "react-native";
 import { Colors } from "./Colors";
 import React, { useContext, useEffect, useState } from "react";
-import { useAuth } from '../../backend/contexts/authContext/index';
-import { doSignInWithEmailAndPassword, doSignInWithGoogle } from '../../backend/firebase/auth';
-import { database } from '../../backend/firebase/firebase'
-import { ProfileContext } from "../../backend/contexts/ProfileContext";
+import { initializeUser, useAuth } from '../contexts/AuthContext';
+import { doSignInWithEmailAndPassword, doSignInWithGoogle, doPasswordReset } from '../firebase/auth';
+import { database } from '../firebase/firebase'
+import { ProfileContext } from "../contexts/ProfileContext";
 import { getDatabase, ref, onValue } from "firebase/database";
 import { getAuth, signInWithEmailAndPassword } from "@firebase/auth";
 
@@ -17,7 +17,11 @@ export default function Login({ navigation }) {
   const [isLoggingIn, setisLoggingIn] = React.useState(false);
   const [validUser, setvalidUser] = React.useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const { setUsername, setpfp } = useContext(ProfileContext);
+    const { setUsername, setPfp } = useContext(ProfileContext);
+    //Reset Password States
+    const [resetEmail, setResetEmail] = useState("");
+    const [message, setMessage] = useState("");
+    const [modalVisible, setModalVisible] = useState(false);
 
 
     const handleLogin = async () => {
@@ -29,19 +33,7 @@ export default function Login({ navigation }) {
           const user = await doSignInWithEmailAndPassword(email, password);
         //fetch user data from database using uid
           if (user) {
-          const userRef = ref(database, 'users/' + user.uid);
-          //fetch data from firebase
-              onValue(userRef, (snapshot) => {
-                  const data = snapshot.val();
-                  if (data) {
-              //update context with fetched user data
-                      const username = data.username || "Ratio++"
-                      const pfp = data.photoURL || Image.resolveAssetSource(require("../assets/pfp.png").uri)
-                      setUsername(username);
-                      setpfp(pfp);
-                      setvalidUser(true);
-                  }
-              });
+                  setvalidUser(true);
           }
       } catch (errorMessage) {
         if (errorMessage.code === 'auth/invalid-email') {
@@ -67,7 +59,7 @@ export default function Login({ navigation }) {
             console.log("Success2");
             navigation.navigate('Tab')
         }
-    }
+    };
 
     const onGoogleSignIn = async () => {
         if (!isLoggingIn) {
@@ -76,21 +68,36 @@ export default function Login({ navigation }) {
                 await doSignInWithGoogle()
                 console.log("Success");
                 setvalidUser(true);
-                    
+
             } catch (errorMessage) {
                 setErrorMessage(errorMessage.code);
                 console.log(errorMessage);
-                
-                }
+
+            }
         }
         setisLoggingIn(false);
-    }
+    };
+
+    const handlePasswordReset = async () => {
+        try {
+            await doPasswordReset(resetEmail);
+            setMessage("Password reset email sent! Please check your inbox.");
+            setResetEmail("");
+            setErrorMessage("");
+        } catch (error) {
+            setErrorMessage("Error sending reset email: " + error.message);
+            setMessage("");
+        }
+    };
 
     useEffect(() => {
         if (validUser) {
+            console.log("checkpoint");
             navigation.navigate('Tab');
         }
     }, [validUser]);
+
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -150,7 +157,7 @@ export default function Login({ navigation }) {
           </View>
 
           {/* forgot password */}
-          <TouchableOpacity style={styles.forgotPasswordButton}>
+                  <TouchableOpacity style={styles.forgotPasswordButton} onPress={() => setModalVisible(true) }>
             <Text style={styles.forgotPasswordButtonText}>
               Forgot password?
             </Text>
@@ -185,7 +192,32 @@ export default function Login({ navigation }) {
                 Register now!
               </Text>
             </Text>
-          </TouchableOpacity>
+                  </TouchableOpacity>
+                  <Modal
+                      animationType="slide"
+                      transparent={true}
+                      visible={modalVisible}
+                      onRequestClose={() => setModalVisible(false)}
+                  >
+                      <View style={styles.modalContainer}>
+                          <View style={styles.modalContent}>
+                              <Text style={styles.modalTitle}>Reset Password</Text>
+                              {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
+                              {message ? <Text style={styles.success}>{message}</Text> : null}
+                              <TextInput
+                                  placeholder="Enter your email"
+                                  value={resetEmail}
+                                  onChangeText={setResetEmail}
+                              />
+                              <TouchableOpacity onPress={handlePasswordReset}>
+                                  <Text>Send Reset Email</Text>
+                              </TouchableOpacity>
+                              <TouchableOpacity onPress={() => setModalVisible(false)}>
+                                  <Text>Cancel</Text>
+                              </TouchableOpacity>
+                          </View>
+                      </View>
+                  </Modal>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -196,6 +228,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.blue,
+    },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    width: "80%",
+    padding: 20,
+    backgroundColor: Colors.ghost,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 18,
+    marginBottom: 10,
   },
   content: {
     paddingHorizontal: 30,

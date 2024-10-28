@@ -1,14 +1,17 @@
 import * as React from 'react';
 import useLocation from '../../backend/locationPerms/useLocation';
-import {StyleSheet, SafeAreaView, View, Image, Text, TouchableOpacity, TextInput} from 'react-native';
 import { useState } from 'react';
 import { Colors } from './Colors';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Modal} from "react-native";
+import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
+
 
 
 export default function Home({ navigation }) {
     const {latitude, longitude, errorMsg} = useLocation();
     console.log(latitude, longitude, errorMsg);
+    const {setMode, flavorProfiles} = React.useContext(FlavorPreferencesContext);
     const [open, setOpen] = useState(false);    // boolean if the dropdown is open or not
     const [value, setValue] = useState(null);   // holds the selected value (there is none initially)
     const [items, setItems] = useState([
@@ -20,7 +23,11 @@ export default function Home({ navigation }) {
     ]);     // array for all available options in dropdown
             // label (what user sees)
             // value (value associated with that label) - this will update as user click on other options
+    const handleMode = async (mode) => {
+        setMode(mode);
+        navigation.navigate('Question');
 
+    }
     return (
         <SafeAreaView style={styles.background}>
             {/* title */}
@@ -81,17 +88,17 @@ export default function Home({ navigation }) {
                 <View style={styles.buttonsContainer}>
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={() => navigation.navigate('Question')}>
+                        onPress={() => handleMode('short')}>
                         <Text style={styles.profileSubtitle}>Short</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={() => navigation.navigate('Question')}>
+                        onPress={() => handleMode('medium')}>
                         <Text style={styles.profileSubtitle}>Medium</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={() => navigation.navigate('Question')}>
+                        onPress={() => handleMode('long')}>
                         <Text style={styles.profileSubtitle}>Long</Text>
                     </TouchableOpacity>
                 </View>
