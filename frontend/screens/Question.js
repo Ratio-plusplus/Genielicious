@@ -3,18 +3,9 @@ import { useState, useCallback } from 'react';
 import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text, Modal } from 'react-native';
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
-import { BannerAd, BannerAdSize, TestIds, useForeground } from 'react-native-google-mobile-ads';
-import {
-    ADMOB_Key
-} from '@env';
-
-const adUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : ADMOB_Key;
 import {useAuth} from '../contexts/AuthContext';
 import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
 import { useFocusEffect } from '@react-navigation/native';
-
-
-
 
 export default function Question({ navigation }) {
     const [modalVisible, setModalVisible] = React.useState(false);
