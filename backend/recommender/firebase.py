@@ -70,7 +70,7 @@ def createNewUser(query):
         #     throw error;
         # });
 
-        db.reference(f"users/{uid}").set({'Username': username, 'photoURL': image, "distanceCache": "", "surveyCache": "", "budgetCache": "", "resultsCache": ""})
+        db.reference(f"users/{uid}").set({'Username': username, 'photoURL': image, "distanceCache": "", "surveyCache": "", "budgetCache": "", "resultsCache": "", "location" : {"latitude": 0, "longtitude": 0}})
         return jsonify({"uid": uid, "message": "User created successfully in database"}), 200
     except Exception as e:
         return jsonify(message=f"Error with code: {e}")
@@ -81,6 +81,7 @@ def getUser(uid):
         return jsonify({"info": info})
     except Exception as e:
         return jsonify(message=f"Error with code: {e}")
+
 
 def updateDatabaseUser(query, uid):
     try:
