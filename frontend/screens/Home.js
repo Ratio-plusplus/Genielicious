@@ -3,6 +3,8 @@ import useLocation from '../../backend/locationPerms/useLocation';
 import { useState } from 'react';
 import { Colors } from './Colors';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Modal} from "react-native";
+
 
 export default function Home({ navigation }) {
     const {latitude, longitude, errorMsg} = useLocation();

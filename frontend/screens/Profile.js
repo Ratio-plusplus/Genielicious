@@ -7,20 +7,22 @@ import { Colors } from './Colors';
 import { ProfileContext } from '../../backend/contexts/ProfileContext';
 import { doSignInWithEmailAndPassword } from '../../backend/firebase/auth';
 import { FlavorPreferencesContext } from '../../backend/contexts/FlavorPreferencesContext';
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+
 
 export default function Profile({ navigation }) {
     //using context to be able to change the variables from the other files
     const { pfp, username, fetchData } = React.useContext(ProfileContext);
-    const { resetPreferences, flavorProfiles, fetchProfiles } = React.useContext(FlavorPreferencesContext)
+    const { resetPreferences, flavorProfiles, fetchProfiles } = React.useContext(FlavorPreferencesContext);
+    console.log(username);
 
-    useEffect(() => {
-        async function loadData() {
-            await fetchData();
-            await fetchProfiles();
-        }
-        loadData();
-    }, []);
+    useFocusEffect(
+        useCallback(() => {
+            fetchData();
+            fetchProfiles();
+        }, [])
+    );
 
     const renderProfileItem = ({ item }) => (
         <TouchableOpacity
@@ -31,7 +33,7 @@ export default function Profile({ navigation }) {
             style={styles.profileIconImage}
         />
         <Text style={styles.profileIconText}>
-            {item.id || 'Unnamed Profile'}
+            {item.title || 'Unnamed Profile'}
         </Text>
     </TouchableOpacity>
     );

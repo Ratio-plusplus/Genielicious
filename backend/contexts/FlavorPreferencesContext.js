@@ -1,8 +1,9 @@
 // FlavorPreferencesContext.js
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 import { auth, database } from '../../backend/firebase/firebase';
 import { ref, set, push, onValue } from 'firebase/database';
 import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import {useAuth} from './AuthContext'
 
 export const FlavorPreferencesContext = createContext();
 
@@ -46,57 +47,58 @@ export const FlavorPreferencesProvider = ({ children }) => {
 
     const fetchProfiles = async () => {
         if (currentUser) {
-            idToken = await currentUser.getIdToken(true);
-            //const profilesRef = ref(database, 'users/' + user.uid + "/flavorProfiles");
-
-            //onValue(profilesRef, (snapshot) => {
-            //    const data = snapshot.val();
-            //    console.log("Data fetched from Firebase:", data);
-            //    if (data) {
-            //        const profilesArray = Object.keys(data).map((key) => ({
-            //            id: key,
-            //            ...data[key]
-            //        }));
-            //        console.log("Fetched profiles: ", profilesArray);
-            //        setFlavorProfiles(profilesArray);
-            //    } else {
-            //        console.log("No profiles found in database");
-            //        setFlavorProfiles([]);
-            //    }
-            //})
-            const response = await fetch('http://10.0.2.2:5000/database/get_user_profile',
-                {
-                    method: "POST",
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ idToken: idToken }),
-                });
-            const json = await response.json();  
-            const info = json["profiles"]
-            //const profilesArray = 
-            console.log("Response:", json);
-
+            const idToken = await currentUser.getIdToken(true);
+            const response = await fetch('http://10.0.2.2:5000/database/get_user_profile', {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${idToken}`
+                }
+            });
+            const json = await response.json();
+            const info = json["profiles"];
+            console.log("Response:", info);
+            const profilesArray = Object.keys(info).map((key) => ({
+                id: key,
+                ...info[key]
+            }));
+            console.log("Fetched profiles: ", profilesArray);
+            setFlavorProfiles(profilesArray);
         } else {
             console.log("No user is signed in.");
         }
     }
 
     const updateProfile = async (profileId, updatedData) => {
-        const user = auth.currentUser;
-        if(user) {
+        console.log(updatedData);
+        if(currentUser) {
             const profileRef = ref(database, `users/${user.uid}/flavorProfiles/${profileId}`);
             await set(profileRef, updatedData);
             console.log("Profile Updated successfully");
         } else {
             console.log("No user is signed in.");
         }
+        
+        if (currentUser) {
+            idToken = await currentUser.getIdToken(true);
+            const response = await fetch('http://10.0.2.2:5000/database/add_flavor_profile',
+                {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization' : idToken
+                    },
+                    body: JSON.stringify({ profileInfo: updatedData, profileId : profileId }),
+                });
+            const json = await response.json();
+        } else {
+            console.log("No user is signed in.");
+        }
     }
 
     const addToProfile = async (name, selectedImage) => {
-        const user = auth.currentUser
-        if (user) {
-            idToken = await user.getIdToken(true);
+        if (currentUser) {
+            idToken = await currentUser.getIdToken(true);
             const response = await fetch('http://10.0.2.2:5000/database/add_flavor_profile',
                 {
                     method: "POST",
@@ -106,39 +108,7 @@ export const FlavorPreferencesProvider = ({ children }) => {
                     },
                     body: JSON.stringify({ preferences: isChecked, name: name, photoURL: selectedImage }),
                 });
-            const json = await response.json();  
-            //const profileRef = ref(database, 'users/' + user.uid + "/flavorProfiles");
-            //const newProfileRef = push(profileRef)
-            //console.log("Is Checked:" , isChecked);
-            //await set(newProfileRef, {
-            //    Title: name,
-            //    Image: selectedImage,
-            //    tastePreferences: {
-            //        savory: isChecked.tastePreferences.savory,
-            //        sweet: isChecked.tastePreferences.sweet,
-            //        salty: isChecked.tastePreferences.salty,
-            //        spicy: isChecked.tastePreferences.spicy,
-            //        bitter: isChecked.tastePreferences.bitter,
-            //        sour: isChecked.tastePreferences.sour,
-            //        cool: isChecked.tastePreferences.cool,
-            //        hot: isChecked.tastePreferences.hot,
-            //    },
-            //    allergies: {
-            //        vegan: isChecked.allergies.vegan,
-            //        vegetarian: isChecked.allergies.vegetarian,
-            //        peanut: isChecked.allergies.peanut,
-            //        gluten: isChecked.allergies.gluten,
-            //        fish: isChecked.allergies.fish,
-            //        shellfish: isChecked.allergies.shellfish,
-            //        eggs: isChecked.allergies.eggs,
-            //        soy: isChecked.allergies.soy,
-            //        dairy: isChecked.allergies.dairy,
-            //        keto: isChecked.allergies.keto,
-            //    },
-            //    distance: isChecked.distance,
-            //    budget: isChecked.budget
-            //})
-
+            const json = await response.json();
         } else {
             console.log("No user is signed in.");
         }
@@ -148,8 +118,10 @@ export const FlavorPreferencesProvider = ({ children }) => {
         setIsChecked(defaultPreferences);
     }
     useEffect(() => {
+        console.log("Fetching...");
         if (!loading) {
-            fetchProfile(); // Only fetch data when loading is false
+            fetchProfiles(); // Only fetch data when loading is false
+            console.log("Fetched");
         }
     }, [loading, currentUser]); // Depend on loading and currentUser
 

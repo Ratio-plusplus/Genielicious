@@ -102,7 +102,7 @@ export default function AddPref2({ navigation }) {
         
         const profileData = {
             Title: name ?? existingProfileData.name,
-            Image: selectedImage ?? existingProfileData.image,
+            photoURL: selectedImage ?? existingProfileData.image,
             distance: selectedDistance ?? existingProfileData.distance,
             budget: selectedBudget ?? existingProfileData.budget,
             tastePreferences: isChecked.tastePreferences ?? existingProfileData.tastePreferences,

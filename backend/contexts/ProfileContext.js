@@ -7,13 +7,11 @@ import { getDatabase, ref, onValue } from 'firebase/database';
 export const ProfileContext = createContext();
 
 export const ProfileProvider = ({ children }) => {
-    const defaultPfp = Image.resolveAssetSource(require("../../frontend/assets/pfp.png")).uri;
-    const defaultUsername = "Ratio++";
 
-    const [pfp, setPfp] = useState(defaultPfp);
-    const [username, setUsername] = useState(defaultUsername);
+    const [pfp, setPfp] = useState("");
+    const [username, setUsername] = useState("");
     
-    const { currentUser, loading } = useAuth(); // Access currentUser and loading
+    const { currentUser, loading, userLoggedIn } = useAuth(); // Access currentUser and loading
 
     const fetchData = async () => {
         if (currentUser) {
@@ -26,6 +24,7 @@ export const ProfileProvider = ({ children }) => {
                 }
             });
             const json = await response.json();
+            console.log(json);
             const info = json["info"];
             setUsername(info["Username"]);
             setPfp(info["photoURL"]);
@@ -35,8 +34,12 @@ export const ProfileProvider = ({ children }) => {
     };
 
     useEffect(() => {
+        console.log("Fetching data")
         if (!loading) {
+            if (userLoggedIn) {
             fetchData(); // Only fetch data when loading is false
+            console.log("Data fetched")
+            }
         }
     }, [loading, currentUser]); // Depend on loading and currentUser
 

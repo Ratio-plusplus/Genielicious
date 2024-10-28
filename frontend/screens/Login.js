@@ -17,7 +17,7 @@ export default function Login({ navigation }) {
   const [isLoggingIn, setisLoggingIn] = React.useState(false);
   const [validUser, setvalidUser] = React.useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-    const { setUsername, setpfp } = useContext(ProfileContext);
+    const { setUsername, setPfp } = useContext(ProfileContext);
     //Reset Password States
     const [resetEmail, setResetEmail] = useState("");
     const [message, setMessage] = useState("");
@@ -39,10 +39,12 @@ export default function Login({ navigation }) {
                   const data = snapshot.val();
                   if (data) {
               //update context with fetched user data
-                      const username = data.username || "Ratio++"
-                      const pfp = data.photoURL || Image.resolveAssetSource(require("../assets/pfp.png").uri)
+                      const username = data.Username || "Ratio++"
+                      const pfp = data.photoURL || Image.resolveAssetSource(require("../assets/pfp.png").uri);
+                      console.log(pfp);
                       setUsername(username);
-                      setpfp(pfp);
+                      console.log(data.username);
+                      setPfp(pfp);
                   }
                   setvalidUser(true);
               });
@@ -104,6 +106,7 @@ export default function Login({ navigation }) {
 
     useEffect(() => {
         if (validUser) {
+            console.log("checkpoint");
             navigation.navigate('Tab');
         }
     }, [validUser]);

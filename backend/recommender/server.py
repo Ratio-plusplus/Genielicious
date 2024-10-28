@@ -1,5 +1,4 @@
 # testing Flask
-import flask
 from flask import Flask, redirect, url_for, request, abort
 import json
 import uuid
@@ -10,6 +9,7 @@ import results
 
 app = Flask(__name__)
 
+#region Backend recommender calls
 # clears all user related cache in the database
 @app.route("/client/clear_session")
 def clearSessionCache():
@@ -21,7 +21,7 @@ def clearSessionCache():
 
     # # # Validate Token
     id_token = auth_header.split(' ')[1]
-    user_id = verifyIDToken(id_token)
+    user_id = firebase.verify_id_token(id_token)
     if not user_id:
         abort(401,{'error': 'Invalid or expired token'})
 
@@ -39,7 +39,7 @@ def getResults():
 
     # # # Validate Token
     id_token = auth_header.split(' ')[1]
-    user_id = verifyIDToken(id_token)
+    user_id = firebase.verify_id_token(id_token)
     if not user_id:
         abort(401,{'error': 'Invalid or expired token'})
 
@@ -56,7 +56,7 @@ def sendQuestion(mode: str):
 
     # # # Validate Token
     id_token = auth_header.split(' ')[1]
-    user_id = verifyIDToken(id_token)
+    user_id = firebase.verify_id_token(id_token)
     if not user_id:
         abort(401,{'error': 'Invalid or expired token'})
 
@@ -79,7 +79,7 @@ def receiveAnswer(mode:str, methods=["POST"]):
 
     # # # Validate Token
     id_token = auth_header.split(' ')[1]
-    user_id = verifyIDToken(id_token)
+    user_id = firebase.verify_id_token(id_token)
     if not user_id:
         abort(401,{'error': 'Invalid or expired token'})
 
@@ -112,46 +112,10 @@ def receiveAnswer(mode:str, methods=["POST"]):
 #     print(query)
 #     return firebase.create_user(query)
 
-@app.route("/auth/verify_tokens", methods=['POST'])
-def verifyToken():
-    query = request.args
-    info = query.get("info", None)
+#endregion
 
-    if not info:
-        abort(400, "User info not provided")
-
-    info = json.loads(info)
-    return firebase.verify_id_token(info)
-
-@app.route("/database/get_user_info", methods=["GET"])
-def getUserInfo():
-    query = request.headers.get("Authorization")
-
-    if not query:
-        abort(400, "Information not provided")
-
-    return firebase.getUser(query)
-
-@app.route("/database/get_user_profile", methods=["GET"])
-def getUserProfile():
-    query = request.headers.get("Authorization")
-
-    if not query:
-        abort(400, "Information not provided")
-
-    return firebase.getProfile(query)
-
-@app.route("/database/add_flavor_profile", methods=["POST"])
-def addFlavorProfile():
-    query = request.get_json()
-    idToken = request.headers.get("Authorization")
-
-
-    if not query:
-        abort(400, "Information not provided")
-
-    return firebase.addFlavorProfile(query, idToken)
-
+#region Outer Region: Firebase Database calls
+#region Inner Region: User info
 @app.route("/database/create_user", methods=["POST"])
 def createUserInfo():
 
@@ -170,6 +134,76 @@ def updateUser():
         abort(400, "Data not provided")
 
     return firebase.updateDatabaseUser(query)
+
+@app.route("/database/get_user_info", methods=["GET"])
+def getUserInfo():
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer '):
+        abort(401,{'error': 'Missing authorization header'})
+
+    # # # Validate Token
+    id_token = auth_header.split(' ')[1]
+    user_id = firebase.verify_id_token(id_token)
+    if not user_id:
+        abort(401,{'error': 'Invalid or expired token'})
+
+    return firebase.getUser()
+
+#endregion Inner Region
+
+#region Inner Region: User Flavor Profiles
+@app.route("/database/get_user_profile", methods=["GET"])
+def getUserProfile():
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer '):
+        abort(401,{'error': 'Missing authorization header'})
+
+    # # # Validate Token
+    id_token = auth_header.split(' ')[1]
+    user_id = firebase.verify_id_token(id_token)
+    if not user_id:
+        abort(401,{'error': 'Invalid or expired token'})
+
+    return firebase.getProfile(user_id)
+
+@app.route("/database/add_flavor_profile", methods=["POST"])
+def addFlavorProfile():
+    query = request.get_json()
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer '):
+        abort(401,{'error': 'Missing authorization header'})
+
+    # # # Validate Token
+    id_token = auth_header.split(' ')[1]
+    user_id = firebase.verify_id_token(id_token)
+    if not user_id:
+        abort(401,{'error': 'Invalid or expired token'})
+
+    if not query:
+        abort(400, "Information not provided")
+
+    return firebase.addFlavorProfile(query, user_id)
+
+@app.route("/database/update_flavor_profile", methods=["POST"])
+def updateFlavorProfile():
+    query = request.get_json()
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer '):
+        abort(401,{'error': 'Missing authorization header'})
+
+    # # # Validate Token
+    id_token = auth_header.split(' ')[1]
+    user_id = firebase.verify_id_token(id_token)
+    if not user_id:
+        abort(401,{'error': 'Invalid or expired token'})
+
+    if not query:
+        abort(400, "Information not provided")
+
+    return firebase.updateFlavorProfile(query)
+#endregion Inner Region
+
+#endregion Outer Region
 
 if __name__ == "__main__":
     try:

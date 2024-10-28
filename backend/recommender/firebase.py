@@ -1,6 +1,5 @@
 # single script to handle connection/auth to database
 # !sudo pip install firebase-admin
-from asyncio.windows_events import NULL
 from enum import verify
 from firebase_admin import db, credentials, initialize_app, auth
 from dotenv import find_dotenv, load_dotenv
@@ -28,8 +27,53 @@ def verify_id_token(idToken):
     except Exception as e:
         print(f"Error verifying ID token: {str(e)}")
         return None
+
+#region Inner Region: Recommender Methods
 def getTestUser(user_id):
     return db.reference(f"test_users/{user_id}")
+
+# reference to data collection() in database
+def getDataRef():
+    return db.reference("/data")
+
+# reference to yelp data
+def getYelpDataRef():
+    return db.reference("/yelp_data")
+
+def changeTestUserID(this:str, that:str):
+    user = db.reference(f"test_users/{this}")
+    test_keys = db.reference(f"test_users/")
+
+    old_data = user.get()
+
+    test_keys.update({
+        that:old_data
+    })
+    user.delete()
+
+#endregion Inner Region
+
+#region Inner Region: User Info Methods
+def createNewUser(query):
+    try:
+        uid = query.get("uid")
+        username = query.get("username")
+        image = query.get("pfp")
+                #     await set(ref(database, 'users/' + user.uid), {
+        #     username: username,
+        #     email: email,
+        #     pfp: Image.resolveAssetSource("../../frontend/assets/pfp.png")
+        # }). then(() => {
+        #     console.log("Data saved successfully!");
+        # }).catch((error) => {
+        #     console.error("Error saving data:", error);
+        #     throw error;
+        # });
+
+        db.reference(f"users/{uid}").set({'Username': username, 'photoURL': image})
+        return jsonify({"uid": uid, "message": "User created successfully in database"}), 200
+    except Exception as e:
+        return jsonify(message=f"Error with code: {e}")
 
 def getUser(query):
     try:
@@ -44,13 +88,26 @@ def getUser(query):
             return jsonify({"error": "Invalid token"}), 401
     except Exception as e:
         return jsonify(message=f"Error with code: {e}")
-    
-def getProfile(query):
+
+def updateDatabaseUser(query):
     try:
-        idToken = query.split("Bearer ")[1]
-        print(idToken)
-        uid = verify_id_token(idToken)
-        print(uid)
+        token = query.get("idToken")
+        uid = verify_id_token(token)
+        if uid:
+            username = query.get("username")
+            photoURL = query.get("photoURL")
+            db.reference(f"users/{uid}").set({'Username': username, 'photoURL': photoURL})
+            return jsonify({"uid": uid, "message": "User updated successfully in database"}), 200
+        else:
+            return jsonify({"error": "Invalid token"}), 400
+    except Exception as e:
+        return jsonify({"Error": e}), 400
+
+#endregion Inner Region
+
+#region Inner Region: User Flavor Profile Methods
+def getProfile(uid):
+    try:
         if uid:
             info = db.reference(f"users/{uid}/flavorProfiles").get()
             return jsonify({"profiles": info})
@@ -70,27 +127,26 @@ def getProfile(query):
 #     })
 #     user.delete()
 
-def updateFlavorProfile(query):
+def updateFlavorProfile(query, uid):
     try:
         pass
     except Exception as e:
         pass
 
-def addFlavorProfile(query, idToken):
+def addFlavorProfile(query, uid):
     try:
-        uid = verify_id_token(idToken)
         if uid:
-            preferences = query.get("preferences")
-            tastePreferences = preferences["tastePreferences"]
-            allergies = preferences["allergies"]
-            distance = preferences["distance"]
-            budget = preferences["budget"]
-            name = query.get("name")
-            photoURL = query.get("photoURL")
+            profileInfo = query.get("profileInfo")
+            profileId = query.get("profileId")
+            tastePreferences = profileInfo["tastePreferences"]
+            allergies = profileInfo["allergies"]
+            distance = profileInfo["distance"]
+            budget = profileInfo["budget"]
+            name = profileInfo["Title"]
+            photoURL = profileInfo["photoURL"]
         
-            ref = db.reference(f"users/{uid}/flavorProfiles")
-            newref = ref.push()
-            newref.set({
+            ref = db.reference(f"users/{uid}/flavorProfiles/{profileId}")
+            ref.set({
                 "title" : name, 
                 "photoURL": photoURL, 
                 "tastePreferences" : {
@@ -123,60 +179,7 @@ def addFlavorProfile(query, idToken):
     except Exception as e:
         return jsonify(message=f"Error with code: {e}")
             
-
-def createNewUser(query):
-    try:
-        uid = query.get("uid")
-        username = query.get("username")
-        image = query.get("pfp")
-                #     await set(ref(database, 'users/' + user.uid), {
-        #     username: username,
-        #     email: email,
-        #     pfp: Image.resolveAssetSource("../../frontend/assets/pfp.png")
-        # }). then(() => {
-        #     console.log("Data saved successfully!");
-        # }).catch((error) => {
-        #     console.error("Error saving data:", error);
-        #     throw error;
-        # });
-
-        db.reference(f"users/{uid}").set({'Username': username, 'photoURL': image})
-        return jsonify({"uid": uid, "message": "User created successfully in database"}), 200
-    except Exception as e:
-        return jsonify(message=f"Error with code: {e}")
-
-def updateDatabaseUser(query):
-    try:
-        token = query.get("idToken")
-        uid = verify_id_token(token)
-        if uid:
-            username = query.get("username")
-            photoURL = query.get("photoURL")
-            db.reference(f"users/{uid}").set({'Username': username, 'photoURL': photoURL})
-            return jsonify({"uid": uid, "message": "User updated successfully in database"}), 200
-        else:
-            return jsonify({"error": "Invalid token"}), 400
-    except Exception as e:
-        return jsonify({"Error": e}), 400
-
-# reference to data collection() in database
-def getDataRef():
-    return db.reference("/data")
-
-# reference to yelp data
-def getYelpDataRef():
-    return db.reference("/yelp_data")
-
-def changeTestUserID(this:str, that:str):
-    user = db.reference(f"test_users/{this}")
-    test_keys = db.reference(f"test_users/")
-
-    old_data = user.get()
-
-    test_keys.update({
-        that:old_data
-    })
-    user.delete()
+#endregion Inner Region
 
 if __name__ == "__main__":
     import json

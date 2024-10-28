@@ -6,7 +6,7 @@ import Profile from './frontend/screens/Profile';
 import EditProfile from './frontend/screens/EditProfile';
 import { ProfileProvider } from './backend/contexts/ProfileContext';
 import { name as appName } from './app.json';
-import { AuthProvider } from './backend/contexts/AuthContext';
+import { AuthProvider, useAuth } from './backend/contexts/AuthContext';
 import { FlavorPreferencesContext, FlavorPreferencesProvider } from './backend/contexts/FlavorPreferencesContext';
 import AddPref1 from './frontend/screens/AddPref1';
 import AddPref2 from './frontend/screens/AddPref2';
@@ -17,12 +17,12 @@ function App() {
       <AuthProvider>
         <ProfileProvider>
             <FlavorPreferencesProvider>
-          <WelcomeContainer>
-            <AddPref1>
-              <AddPref2 />
-            </AddPref1>
-          </WelcomeContainer>
-          </FlavorPreferencesProvider>
+                <WelcomeContainer>
+                    <AddPref1>
+                        <AddPref2 />
+                    </AddPref1>
+                </WelcomeContainer>
+            </FlavorPreferencesProvider>
         </ProfileProvider>
       </AuthProvider>
     
@@ -30,6 +30,12 @@ function App() {
     
     
   );
+}
+
+function AppContent(){
+    const {userLoggedIn, loading} = useAuth();
+
+
 }
 
 // Register the app component
