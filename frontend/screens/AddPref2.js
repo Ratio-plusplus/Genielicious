@@ -339,24 +339,46 @@ export default function AddPref2({ navigation }) {
                 <View style={styles.selectContainer}>
                     <Text style={styles.sectionTitle}>Budget:</Text>
                     <RadioButton
-                        label="$20"
-                        isSelected={selectedBudget === "$20"}
+                        label="$10 or less"
+                        isSelected={selectedBudget === "$10 or less"}
                         onPress={() => {
-                            setSelectedBudget("$20");
+                            setSelectedBudget("$10 or less");
                             setIsChecked((prevState) => ({
                                 ...prevState,
-                                budget: 20
+                                budget: '$10 or less'
                             }))
                         }}       
                     />
                     <RadioButton
-                        label="$50"
-                        isSelected={selectedBudget === "$50"}
+                        label="$30 or less"
+                        isSelected={selectedBudget === "$30 or less"}
                         onPress={() => {
-                            setSelectedBudget("$50");
+                            setSelectedBudget("$30 or less");
                             setIsChecked((prevState) => ({
                                 ...prevState,
-                                budget: 50
+                                budget: '$30 or less'
+                            }))
+                        }}       
+                    />
+                    <RadioButton
+                        label="$60 or less"
+                        isSelected={selectedBudget === "$60 or less"}
+                        onPress={() => {
+                            setSelectedBudget("$60 or less");
+                            setIsChecked((prevState) => ({
+                                ...prevState,
+                                budget: '$60 or less'
+                            }))
+                        }}       
+                    />
+                    <RadioButton
+                        label="More than $60"
+                        isSelected={selectedBudget === "More than $60"}
+                        onPress={() => {
+                            setSelectedBudget("More than $60");
+                            setIsChecked((prevState) => ({
+                                ...prevState,
+                                budget: 'More than $60'
                             }))
                         }}
                     />

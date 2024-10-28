@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text, Modal } from 'react-native';
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
-import { AdMobBanner } from 'expo-ads-admob';
 
 export default function Answer({ navigation }) {
     const [modalVisible, setModalVisible] = React.useState(false);
@@ -120,12 +119,6 @@ export default function Answer({ navigation }) {
 
             {/* ad area */}
             <View style={styles.adContainer}>
-            <AdMobBanner
-                bannerSize="banner" 
-                adUnitID="ca-app-pub-3940256099942544/6300978111" // Replace with your real Ad Unit ID
-                servePersonalizedAds={true} // Set to false for non-personalized ads
-                onDidFailToReceiveAdWithError={(error) => console.log(error)}
-            />
                 <TouchableOpacity style={styles.adButton}
                     onPress={handleAdPress}>
                     <Text style={styles.adTitle}>Ad</Text>
