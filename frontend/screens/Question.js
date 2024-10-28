@@ -3,6 +3,12 @@ import { useState } from 'react';
 import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text, Modal } from 'react-native';
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
+import { BannerAd, BannerAdSize, TestIds, useForeground } from 'react-native-google-mobile-ads';
+import {
+    ADMOB_Key
+} from '@env';
+
+const adUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : ADMOB_Key;
 
 export default function Question({ navigation }) {
     const [modalVisible, setModalVisible] = React.useState(false);
@@ -131,6 +137,7 @@ export default function Question({ navigation }) {
             <View style={styles.adContainer}>
                 <TouchableOpacity style={styles.adButton}
                     onPress={handleAdPress}>
+                         <BannerAd ref={bannerRef} unitId={adUnitId} size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER} />
                     <Text style={styles.adTitle}>Ad</Text>
                 </TouchableOpacity>
             </View>
