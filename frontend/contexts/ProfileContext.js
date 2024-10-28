@@ -15,7 +15,7 @@ export const ProfileProvider = ({ children }) => {
 
     const fetchData = async () => {
         if (currentUser) {
-            const idToken = await currentUser.getIdToken(true);
+            const idToken = await currentUser.getIdToken();
             const response = await fetch('http://10.0.2.2:5000/database/get_user_info', {
                 method: "GET",
                 headers: {
@@ -24,7 +24,6 @@ export const ProfileProvider = ({ children }) => {
                 }
             });
             const json = await response.json();
-            console.log(json);
             const info = json["info"];
             setUsername(info["Username"]);
             setPfp(info["photoURL"]);
@@ -34,11 +33,9 @@ export const ProfileProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        console.log("Fetching data")
         if (!loading) {
             if (userLoggedIn) {
             fetchData(); // Only fetch data when loading is false
-            console.log("Data fetched")
             }
         }
     }, [loading, currentUser]); // Depend on loading and currentUser

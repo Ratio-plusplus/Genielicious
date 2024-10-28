@@ -1,24 +1,26 @@
-from firebase import getUser
+from firebase import getUser, updateDatabaseUser
 from yelp import getStore
 import json
 
 def clearCache(user_id):
     # user = getTestUser(user_id)
-    user = getUser(user_id)
-    user.update({
+    
+    updateDatabaseUser({
         "surveyCache" : "",
         "budgetCache" : "",
         "resultsCache": "",
         "distanceCache": ""
-    })
+    }, user_id)
 
     return f"Successfullly cleared cache from userID: {user_id}" # confirmation
 
 def getResults(user_id):
     # user = getTestUser(user_id) 
-    user = getUser(user_id)
+    response = getUser(user_id)
+    result = response.get_json();
+    info = result["info"]
     
-    results = user.child("resultsCache").get()
+    results = info["resultsCache"];
     if not results:
         return {"Error 401" : "No results compiled."}
     results = json.loads(results)

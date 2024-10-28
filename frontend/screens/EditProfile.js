@@ -4,15 +4,14 @@ import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useContext, useEffect, useState } from 'react';
 import { Colors } from './Colors';
-import { ProfileContext } from '../../backend/contexts/ProfileContext';
+import { ProfileContext } from '../contexts/ProfileContext';
 import { getActionFromState } from '@react-navigation/native';
 import { getAuth, updatePassword, updateProfile } from '@firebase/auth';
-import { getDatabase, ref, set } from 'firebase/database';
-import { database, auth } from '../../backend/firebase/firebase';
+import { database, auth } from '../firebase/firebase';
 
 
 export default function EditProfile({ navigation }) {
-    const { pfp, setpfp } = useContext(ProfileContext)
+    const { pfp, setPfp } = useContext(ProfileContext)
     const { username, setUsername} = useContext(ProfileContext)
     const [selectedImage, setSelectedImage] = React.useState(pfp);
     const [email, setEmail] = React.useState("")
@@ -89,14 +88,15 @@ export default function EditProfile({ navigation }) {
             {
                 method: "POST",
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${idToken}`
                 },
-                body: JSON.stringify({ idToken: idToken, username: username, photoURL: selectedImage}),
+                body: JSON.stringify({ username: username, photoURL: selectedImage}),
                 });
 
             //update context state
             setUsername(username);
-            setpfp(selectedImage);
+            setPfp(selectedImage);
             
         } catch (error) {
             console.error('Error updating profile:', error);

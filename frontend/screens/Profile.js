@@ -4,9 +4,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from './Colors';
-import { ProfileContext } from '../../backend/contexts/ProfileContext';
-import { doSignInWithEmailAndPassword } from '../../backend/firebase/auth';
-import { FlavorPreferencesContext } from '../../backend/contexts/FlavorPreferencesContext';
+import { ProfileContext } from '../contexts/ProfileContext';
+import { doSignInWithEmailAndPassword } from '../firebase/auth';
+import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
 import { useEffect, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -15,8 +15,6 @@ export default function Profile({ navigation }) {
     //using context to be able to change the variables from the other files
     const { pfp, username, fetchData } = React.useContext(ProfileContext);
     const { resetPreferences, flavorProfiles, fetchProfiles } = React.useContext(FlavorPreferencesContext);
-    console.log(username);
-
     useFocusEffect(
         useCallback(() => {
             fetchData();
@@ -29,7 +27,7 @@ export default function Profile({ navigation }) {
         style={styles.profileIconContainer}
         onPress={() => navigation.navigate('Add Preference 1', { profileData: item })}>
         <Image
-            source={item.Image ? {uri: item.Image } : Image.resolveAssetSource(require('../assets/pfp.png'))}
+            source={item.photoURL ? {uri: item.photoURL } : Image.resolveAssetSource(require('../assets/pfp.png'))}
             style={styles.profileIconImage}
         />
         <Text style={styles.profileIconText}>

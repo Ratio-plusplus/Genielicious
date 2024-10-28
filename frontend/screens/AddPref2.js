@@ -5,9 +5,9 @@ import * as ImagePicker from 'expo-image-picker';
 import React, {useState, useContext, useEffect} from 'react';
 import { Colors } from './Colors';
 import CheckBox from 'react-native-check-box';
-import { auth, database } from '../../backend/firebase/firebase';
+import { auth, database } from '../firebase/firebase';
 import { ref, set, push, get } from 'firebase/database';
-import { FlavorPreferencesContext } from '../../backend/contexts/FlavorPreferencesContext';
+import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
 import { useRoute } from '@react-navigation/native';
 
 export default function AddPref2({ navigation }) {
@@ -101,7 +101,7 @@ export default function AddPref2({ navigation }) {
         console.log("handleSaveProfile called"); // Debugging line
         
         const profileData = {
-            Title: name ?? existingProfileData.name,
+            title: name ?? existingProfileData.name,
             photoURL: selectedImage ?? existingProfileData.image,
             distance: selectedDistance ?? existingProfileData.distance,
             budget: selectedBudget ?? existingProfileData.budget,

@@ -1,6 +1,6 @@
 // FlavorPreferencesContext.js
 import React, { createContext, useState, useEffect } from 'react';
-import { auth, database } from '../../backend/firebase/firebase';
+import { auth, database } from '../firebase/firebase';
 import { ref, set, push, onValue } from 'firebase/database';
 import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import {useAuth} from './AuthContext'
@@ -44,10 +44,12 @@ export const FlavorPreferencesProvider = ({ children }) => {
 
     const [isChecked, setIsChecked] = useState(defaultPreferences);
     const [flavorProfiles, setFlavorProfiles] = useState([]);
+    const [mode, setMode] = useState("");
+
 
     const fetchProfiles = async () => {
         if (currentUser) {
-            const idToken = await currentUser.getIdToken(true);
+            const idToken = await currentUser.getIdToken();
             const response = await fetch('http://10.0.2.2:5000/database/get_user_profile', {
                 method: "GET",
                 headers: {
@@ -71,26 +73,19 @@ export const FlavorPreferencesProvider = ({ children }) => {
 
     const updateProfile = async (profileId, updatedData) => {
         console.log(updatedData);
-        if(currentUser) {
-            const profileRef = ref(database, `users/${user.uid}/flavorProfiles/${profileId}`);
-            await set(profileRef, updatedData);
-            console.log("Profile Updated successfully");
-        } else {
-            console.log("No user is signed in.");
-        }
-        
         if (currentUser) {
-            idToken = await currentUser.getIdToken(true);
-            const response = await fetch('http://10.0.2.2:5000/database/add_flavor_profile',
+            idToken = await currentUser.getIdToken();
+            const response = await fetch('http://10.0.2.2:5000/database/update_flavor_profile',
                 {
                     method: "POST",
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization' : idToken
+                        'Authorization' : `Bearer ${idToken}`
                     },
                     body: JSON.stringify({ profileInfo: updatedData, profileId : profileId }),
                 });
             const json = await response.json();
+            console.log(json)
         } else {
             console.log("No user is signed in.");
         }
@@ -98,13 +93,14 @@ export const FlavorPreferencesProvider = ({ children }) => {
 
     const addToProfile = async (name, selectedImage) => {
         if (currentUser) {
-            idToken = await currentUser.getIdToken(true);
+            idToken = await currentUser.getIdToken();
+            console.log(isChecked);
             const response = await fetch('http://10.0.2.2:5000/database/add_flavor_profile',
                 {
                     method: "POST",
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization' : idToken
+                        'Authorization' : `Bearer ${idToken}`
                     },
                     body: JSON.stringify({ preferences: isChecked, name: name, photoURL: selectedImage }),
                 });
@@ -118,10 +114,8 @@ export const FlavorPreferencesProvider = ({ children }) => {
         setIsChecked(defaultPreferences);
     }
     useEffect(() => {
-        console.log("Fetching...");
         if (!loading) {
             fetchProfiles(); // Only fetch data when loading is false
-            console.log("Fetched");
         }
     }, [loading, currentUser]); // Depend on loading and currentUser
 
@@ -134,6 +128,8 @@ export const FlavorPreferencesProvider = ({ children }) => {
             fetchProfiles, 
             flavorProfiles,
             updateProfile,
+            mode,
+            setMode
         }}>
             {children}
         </FlavorPreferencesContext.Provider>

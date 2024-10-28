@@ -1,12 +1,13 @@
 #!pip install -q -U google-generativeai
 # import requests
 import json
-from firebase import getTestUser, getDataRef
+from firebase import getTestUser, getDataRef, getUser, getProfile, updateDatabaseUser
 from dotenv import find_dotenv, load_dotenv
 # from yelp import cacheToJson # used in development
 import results
 import google.generativeai as genai
 import os
+
 dotenv_path = find_dotenv()
 load_dotenv(dotenv_path)
 
@@ -29,9 +30,11 @@ def getPrompt(mode):
 
 def submitAnswer(user_id,answer):
   # user = getTestUser(user_id) 
-  user = getUser(user_id)
+  response = getUser(user_id)
+  result = response.get_json();
+  info = result["info"]
 
-  surveyCache = user.child("surveyCache").get()
+  surveyCache = info["surveyCache"]
 
   if not surveyCache :
     return {"Error 401" : "No question provided yet."} 
@@ -41,28 +44,28 @@ def submitAnswer(user_id,answer):
     # Checks if distance/budget needs to be updated
     if "distance" in surveyCache:
       if answer == "10 miles or less":
-        user.update({"distanceCache": 16093}) # store distance in meters as an integer
+        updateDatabaseUser({"distanceCache": 16093}, user_id) # store distance in meters as an integer
       elif answer == "15 miles or less":
-        user.update({"distanceCache": 24140})
+        updateDatabaseUser({"distanceCache": 24140}, user_id)
       elif answer == "20 miles or less": 
-        user.update({"distanceCache": 32187})
+        updateDatabaseUser({"distanceCache": 32187}, user_id)
       elif answer == "25 miles or less":
-        user.update({"distanceCache": 40000})
+        updateDatabaseUser({"distanceCache": 40000}, user_id)
       else:
         return {"Error 401" : "Invalid answer."}
       return {"success": True, "results": False}
     elif "budget" in surveyCache:
       if answer == "$10 or less":
-        user.update({"budgetCache": 1}) # price intervals according to yelp api
+        updateDatabaseUser({"budgetCache": 1}, user_id) # price intervals according to yelp api
       elif answer == "$30 or less":
-        user.update({"budgetCache": 2})
+        updateDatabaseUser({"budgetCache": 2}, user_id)
       elif answer == "$60 or less": 
-        user.update({"budgetCache": 3})
+        updateDatabaseUser({"budgetCache": 3}, user_id)
       elif answer == "More than $60":
-        user.update({"budgetCache": 4})
+        updateDatabaseUser({"budgetCache": 4}, user_id)
       else:
         return {"Error 401" : "Invalid answer."}
-      user.update({"surveyCache":"",})
+      updateDatabaseUser({"surveyCache":"",}, user_id)
       return {"success": True, "results": False}
     elif surveyCache[-1]["role"] == "user": # if not user then the last response was model
       return {"Error 401" : "Client already answered question."}
@@ -73,31 +76,40 @@ def submitAnswer(user_id,answer):
   parts = str(answer)
   surveyCache.append({"role":"user","parts":parts})
   surveyCache = json.dumps(surveyCache) # converts cache to a single string
-  user.update({"surveyCache" : surveyCache})
+  updateDatabaseUser({"surveyCache" : surveyCache}, user_id)
 
   return {"success": True, "results": False} # returns value to confirm success
   
 
-def getNextQuestion(user_id:str, mode:str):
-  # user = getTestUser(user_id) 
-  user = getUser(user_id)
+def getNextQuestion(user_id:str, mode:str, profile_id:str = None):
+  # user = getTestUser(user_id)
+  response = getUser(user_id)
+  result = response.get_json();
+  info = result["info"]
+  profile = getProfile(user_id)
+  if profile_id is None:
+      budget = "" #activeProfile["budget"]
+      distance = "" #activeProfile["distance"]
+  else:
+      activeProfile = profile[profile_id]
+      budget = activeProfile["budget"]
+      distance = activeProfile["distance"]
 
-  surveyCache = user.child("surveyCache").get()
+  surveyCache = info["surveyCache"]
   # TODO: update distance/price questions once active profiles are set (next sprint)
   # provide distance/budget question if preference does not exist
-  distance = user.child("distance").get()
-  distanceCache = user.child("distanceCache").get()
-  budget = user.child("budget").get()
-  budgetCache = user.child("budgetCache").get()
+  distanceCache = info["distanceCache"]
+  
+  budgetCache = info["budgetCache"]
   print(not distance, not distanceCache)
   print(not budget, not budgetCache)
   if not distance and not distanceCache:
-    distance_question = {"question": "How far are you willing to travel?","answers":["10 miles or less", "15 miles or less", "20 miles or less", "25 miles or less"]}
-    user.update({"surveyCache":json.dumps({"distance":"need distance"})})
+    distance_question = {"question": "How far are you willing to travel?","answer_choices":["10 miles or less", "15 miles or less", "20 miles or less", "25 miles or less"]}
+    updateDatabaseUser({"surveyCache":json.dumps({"distance":"need distance"})}, user_id)
     return distance_question
   if not budget and not budgetCache:
-    budget_question = {"question": "How much money are you willing to spend?","answers":["$10 or less", "$30 or less", "$60 or less", "More than $60"]}
-    user.update({"surveyCache":json.dumps({"budget":"need budget"})})
+    budget_question = {"question": "How much money are you willing to spend?","answer_choices":["$10 or less", "$30 or less", "$60 or less", "More than $60"]}
+    updateDatabaseUser({"surveyCache":json.dumps({"budget":"need budget"})}, user_id)
     return budget_question
 
   if not surveyCache: # empty survey cache = new session
@@ -127,7 +139,7 @@ def getNextQuestion(user_id:str, mode:str):
   # cacheToJson("backend\\recommender\\tests\\surveryCache_history.json",surveyCache) # saves surverycache locally
 
   # converts cache to a single string for db
-  user.update({"surveyCache" : json.dumps(surveyCache)})
+  updateDatabaseUser({"surveyCache" : json.dumps(surveyCache)}, user_id)
 
   if "recommendations" in formatted_question: # ai outputs a json with recommendations field when it is done
     final_choices = formatted_question["recommendations"]

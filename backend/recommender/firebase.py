@@ -70,36 +70,27 @@ def createNewUser(query):
         #     throw error;
         # });
 
-        db.reference(f"users/{uid}").set({'Username': username, 'photoURL': image})
+        db.reference(f"users/{uid}").set({'Username': username, 'photoURL': image, "distanceCache": "", "surveyCache": "", "budgetCache": "", "resultsCache": ""})
         return jsonify({"uid": uid, "message": "User created successfully in database"}), 200
     except Exception as e:
         return jsonify(message=f"Error with code: {e}")
 
-def getUser(query):
+def getUser(uid):
     try:
-        idToken = query.split("Bearer ")[1]
-        print(idToken)
-        uid = verify_id_token(idToken)
-        print(uid)
-        if uid:
-            info = db.reference(f"users/{uid}").get()
-            return jsonify({"info": info})
-        else:
-            return jsonify({"error": "Invalid token"}), 401
+        info = db.reference(f"users/{uid}").get()
+        return jsonify({"info": info})
     except Exception as e:
         return jsonify(message=f"Error with code: {e}")
 
-def updateDatabaseUser(query):
+def updateDatabaseUser(query, uid):
     try:
-        token = query.get("idToken")
-        uid = verify_id_token(token)
-        if uid:
-            username = query.get("username")
-            photoURL = query.get("photoURL")
-            db.reference(f"users/{uid}").set({'Username': username, 'photoURL': photoURL})
-            return jsonify({"uid": uid, "message": "User updated successfully in database"}), 200
-        else:
-            return jsonify({"error": "Invalid token"}), 400
+        keys = query.keys()
+        print(keys)
+        for key in keys:
+            print(key)
+            print(query.get(key))
+            db.reference(f"users/{uid}").update({key: query.get(key) })
+        return jsonify({"uid": uid, "message": "User updated successfully in database"}), 200
     except Exception as e:
         return jsonify({"Error": e}), 400
 
@@ -129,24 +120,60 @@ def getProfile(uid):
 
 def updateFlavorProfile(query, uid):
     try:
-        pass
-    except Exception as e:
-        pass
-
-def addFlavorProfile(query, uid):
-    try:
-        if uid:
-            profileInfo = query.get("profileInfo")
-            profileId = query.get("profileId")
+            profileInfo = query.get("profileInfo");
             tastePreferences = profileInfo["tastePreferences"]
             allergies = profileInfo["allergies"]
             distance = profileInfo["distance"]
             budget = profileInfo["budget"]
-            name = profileInfo["Title"]
+            name = profileInfo["title"]
             photoURL = profileInfo["photoURL"]
-        
+            profileId = query.get("profileId")
             ref = db.reference(f"users/{uid}/flavorProfiles/{profileId}")
             ref.set({
+                "title" : name, 
+                "photoURL": photoURL, 
+                "tastePreferences" : {
+                        "savory": tastePreferences["savory"],
+                        "sweet": tastePreferences["sweet"],
+                        "salty": tastePreferences["salty"],
+                        "spicy": tastePreferences["spicy"],
+                        "bitter": tastePreferences["bitter"],
+                        "sour": tastePreferences["sour"],
+                        "cool": tastePreferences["cool"],
+                        "hot": tastePreferences["hot"],
+                    }, "allergies" : {
+                        "vegan" : allergies["vegan"],
+                        "vegetarian" : allergies["vegetarian"],
+                        "peanut": allergies["peanut"],
+                        "gluten": allergies["gluten"],
+                        "fish": allergies["fish"],
+                        "shellfish": allergies["shellfish"],
+                        "eggs": allergies["eggs"],
+                        "soy": allergies["soy"],
+                        "dairy": allergies["dairy"],
+                        "keto": allergies["keto"],
+                        }, 
+                "distance" : distance,
+                "budget" : budget
+                })
+            return jsonify({"uid": uid, "message": "User flavor profile successfully created in database"}), 200
+    except Exception as e:
+        return jsonify(message=f"Error with code: {e}")
+
+def addFlavorProfile(query, uid):
+    try:
+        if uid:
+            profileInfo = query.get("preferences")
+            tastePreferences = profileInfo["tastePreferences"]
+            allergies = profileInfo["allergies"]
+            distance = profileInfo["distance"]
+            budget = profileInfo["budget"]
+            name = query.get("name")
+            photoURL = query.get("photoURL")
+        
+            ref = db.reference(f"users/{uid}/flavorProfiles")
+            newref = ref.push();
+            newref.set({
                 "title" : name, 
                 "photoURL": photoURL, 
                 "tastePreferences" : {

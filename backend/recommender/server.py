@@ -66,11 +66,11 @@ def sendQuestion(mode: str):
         abort(400, {'error':"Invalid API url"})
 
     # question depending on mode
-    return gemini.getNextQuestion(user_id,mode)
+    return gemini.getNextQuestion(user_id,mode, None)
 
 # receives short question answer to process results and return yelp api results
-@app.route("/client/answer/<mode>")
-def receiveAnswer(mode:str, methods=["POST"]):
+@app.route("/client/answer/<mode>", methods=["POST"])
+def receiveAnswer(mode:str):
     # user_id = "3"     
     # # # check if auth header is given
     auth_header = request.headers.get('Authorization')
@@ -91,11 +91,11 @@ def receiveAnswer(mode:str, methods=["POST"]):
     # check for answer parameter
     # answers should be in this format: 
         #       query["answer"] = <answer>
-    query = request.args
+    query = request.get_json();
     answer = query.get("answer",None)
+    print(answer)
     if not answer:
         abort(400, "Parameter \"answer\" not provided.")
-    answer = json.loads(answer)
 
     # answer submission works the same in all modes
     return gemini.submitAnswer(user_id, answer)
@@ -130,10 +130,17 @@ def createUserInfo():
 def updateUser():
     query = request.get_json()
 
-    if not query:
-        abort(400, "Data not provided")
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer '):
+        abort(401,{'error': 'Missing authorization header'})
 
-    return firebase.updateDatabaseUser(query)
+    # # # Validate Token
+    id_token = auth_header.split(' ')[1]
+    user_id = firebase.verify_id_token(id_token)
+    if not user_id:
+        abort(401,{'error': 'Invalid or expired token'})
+
+    return firebase.updateDatabaseUser(query, user_id)
 
 @app.route("/database/get_user_info", methods=["GET"])
 def getUserInfo():
@@ -147,7 +154,7 @@ def getUserInfo():
     if not user_id:
         abort(401,{'error': 'Invalid or expired token'})
 
-    return firebase.getUser()
+    return firebase.getUser(user_id)
 
 #endregion Inner Region
 
@@ -200,7 +207,7 @@ def updateFlavorProfile():
     if not query:
         abort(400, "Information not provided")
 
-    return firebase.updateFlavorProfile(query)
+    return firebase.updateFlavorProfile(query, user_id)
 #endregion Inner Region
 
 #endregion Outer Region

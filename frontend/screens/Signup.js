@@ -4,12 +4,11 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
 import React, { useEffect, useState } from "react";
 import { Colors } from "./Colors";
-import { doCreateUserWithEmailAndPassword } from '../../backend/firebase/auth';
-import { ProfileContext } from "../../backend/contexts/ProfileContext";
+import { doCreateUserWithEmailAndPassword } from '../firebase/auth';
+import { ProfileContext } from "../contexts/ProfileContext";
 import { useContext } from "react";
 import { getDataConnect } from "firebase/data-connect";
-import { getDatabase, ref, get } from "firebase/database";
-import { useAuth } from '../../backend/contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 
 
 export default function Signup({navigation}) {
@@ -38,16 +37,6 @@ export default function Signup({navigation}) {
                         console.log("verified");
                         clearInterval(intervalId);
                         //fetch user data after signing up
-                        const userId = user.uid;
-                        const userRef = ref(getDatabase(), 'users/' + userId);
-                        const snapshot = await get(userRef);
-
-                        if (snapshot.exists()) {
-                            const userData = snapshot.val();
-                            //Update profilecontext with username and pfp
-                            setProfileUsername(userData.username || "Ratio++");
-                            setpfp(userData.pfp || Image.resolveAssetSource(require("../assets/pfp.png")).uri);
-                        }
                         navigation.navigate('Tab');
                     } else {
                         setErrorMessage('Please verify your email before logging in.');

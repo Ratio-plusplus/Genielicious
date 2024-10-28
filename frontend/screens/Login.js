@@ -3,10 +3,10 @@ import { Feather } from "@expo/vector-icons";
 import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Modal} from "react-native";
 import { Colors } from "./Colors";
 import React, { useContext, useEffect, useState } from "react";
-import { initializeUser, useAuth } from '../../backend/contexts/AuthContext';
-import { doSignInWithEmailAndPassword, doSignInWithGoogle, doPasswordReset } from '../../backend/firebase/auth';
-import { database } from '../../backend/firebase/firebase'
-import { ProfileContext } from "../../backend/contexts/ProfileContext";
+import { initializeUser, useAuth } from '../contexts/AuthContext';
+import { doSignInWithEmailAndPassword, doSignInWithGoogle, doPasswordReset } from '../firebase/auth';
+import { database } from '../firebase/firebase'
+import { ProfileContext } from "../contexts/ProfileContext";
 import { getDatabase, ref, onValue } from "firebase/database";
 import { getAuth, signInWithEmailAndPassword } from "@firebase/auth";
 
@@ -33,21 +33,7 @@ export default function Login({ navigation }) {
           const user = await doSignInWithEmailAndPassword(email, password);
         //fetch user data from database using uid
           if (user) {
-          const userRef = ref(database, 'users/' + user.uid);
-          //fetch data from firebase
-              onValue(userRef, (snapshot) => {
-                  const data = snapshot.val();
-                  if (data) {
-              //update context with fetched user data
-                      const username = data.Username || "Ratio++"
-                      const pfp = data.photoURL || Image.resolveAssetSource(require("../assets/pfp.png").uri);
-                      console.log(pfp);
-                      setUsername(username);
-                      console.log(data.username);
-                      setPfp(pfp);
-                  }
                   setvalidUser(true);
-              });
           }
       } catch (errorMessage) {
         if (errorMessage.code === 'auth/invalid-email') {

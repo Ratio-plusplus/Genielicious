@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Modal, Button, Pr
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Colors } from './Colors';
-import { doSignOut } from '../../backend/firebase/auth';
+import { doSignOut } from '../firebase/auth';
 
 export default function Settings({ navigation }) {
     const [modalVisible, setModalVisible] = React.useState(false)
