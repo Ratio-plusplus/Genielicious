@@ -1,12 +1,13 @@
 // FlavorPreferencesContext.js
 import React, { createContext, useState } from 'react';
-import {useAuth} from './AuthContext'
+import { auth, database } from '../../backend/firebase/firebase';
 import { ref, set, push, onValue } from 'firebase/database';
 import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 
 export const FlavorPreferencesContext = createContext();
 
 export const FlavorPreferencesProvider = ({ children }) => {
+        const { currentUser, loading } = useAuth(); // Access currentUser and loading
     const defaultPreferences = {
         tastePreferences: {
             savory: false, 
@@ -51,9 +52,8 @@ export const FlavorPreferencesProvider = ({ children }) => {
     const [flavorProfiles, setFlavorProfiles] = useState([]);
 
     const fetchProfiles = async () => {
-        const user = useAuth().currentUser;
-        if (user) {
-            idToken = await user.getIdToken(true);
+        if (currentUser) {
+            idToken = await currentUser.getIdToken(true);
             //const profilesRef = ref(database, 'users/' + user.uid + "/flavorProfiles");
 
             //onValue(profilesRef, (snapshot) => {
@@ -73,11 +73,11 @@ export const FlavorPreferencesProvider = ({ children }) => {
             //})
             const response = await fetch('http://10.0.2.2:5000/database/get_user_profile',
                 {
-                    method: "GET",
+                    method: "POST",
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${idToken}`
-                    }
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ idToken: idToken }),
                 });
             const json = await response.json();  
             const info = json["profiles"]
@@ -113,8 +113,39 @@ export const FlavorPreferencesProvider = ({ children }) => {
                     },
                     body: JSON.stringify({ preferences: isChecked, name: name, photoURL: selectedImage }),
                 });
-            const json = await response.json(); 
-            console.log(json);
+            const json = await response.json();  
+            //const profileRef = ref(database, 'users/' + user.uid + "/flavorProfiles");
+            //const newProfileRef = push(profileRef)
+            //console.log("Is Checked:" , isChecked);
+            //await set(newProfileRef, {
+            //    Title: name,
+            //    Image: selectedImage,
+            //    tastePreferences: {
+            //        savory: isChecked.tastePreferences.savory,
+            //        sweet: isChecked.tastePreferences.sweet,
+            //        salty: isChecked.tastePreferences.salty,
+            //        spicy: isChecked.tastePreferences.spicy,
+            //        bitter: isChecked.tastePreferences.bitter,
+            //        sour: isChecked.tastePreferences.sour,
+            //        cool: isChecked.tastePreferences.cool,
+            //        hot: isChecked.tastePreferences.hot,
+            //    },
+            //    allergies: {
+            //        vegan: isChecked.allergies.vegan,
+            //        vegetarian: isChecked.allergies.vegetarian,
+            //        peanut: isChecked.allergies.peanut,
+            //        gluten: isChecked.allergies.gluten,
+            //        fish: isChecked.allergies.fish,
+            //        shellfish: isChecked.allergies.shellfish,
+            //        eggs: isChecked.allergies.eggs,
+            //        soy: isChecked.allergies.soy,
+            //        dairy: isChecked.allergies.dairy,
+            //        keto: isChecked.allergies.keto,
+            //    },
+            //    distance: isChecked.distance,
+            //    budget: isChecked.budget
+            //})
+
         } else {
             console.log("No user is signed in.");
         }
@@ -123,6 +154,11 @@ export const FlavorPreferencesProvider = ({ children }) => {
     const resetPreferences = () => {
         setIsChecked(defaultPreferences);
     }
+    useEffect(() => {
+        if (!loading) {
+            fetchProfile(); // Only fetch data when loading is false
+        }
+    }, [loading, currentUser]); // Depend on loading and currentUser
 
     return (
         <FlavorPreferencesContext.Provider value={{ 
