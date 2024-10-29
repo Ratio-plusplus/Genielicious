@@ -104,7 +104,7 @@ export default function AddPref2({ navigation }) {
         };
     
         try {
-            if (existingProfileData !== undefined) {
+            if (existingProfileData && existingProfileData.id) {
                 // If editing an existing profile
                 await updateProfile(existingProfileData.id, profileData)
                 console.log("Profile updated successfully.");
@@ -127,6 +127,9 @@ export default function AddPref2({ navigation }) {
             setName(existingProfileData.name);
             setSelectedBudget(existingProfileData.budget)
             setSelectedDistance(existingProfileData.distance)
+            Dtitle = "Edit Preference"
+        } else {
+            Dtitle = "New Preference"
         }
     }, [existingProfileData]);
 
@@ -153,7 +156,7 @@ export default function AddPref2({ navigation }) {
                             color={Colors.ghost}
                         />
                     </TouchableOpacity>
-                    <Text style={{marginTop: 2, fontWeight: 600, fontSize: 22, color: Colors.ghost}}>New Preference</Text>
+                    <Text style={{marginTop: 2, fontWeight: 600, fontSize: 22, color: Colors.ghost}}>{Dtitle}</Text>
             </View>
             
             {/* button to use the camera */}
@@ -359,9 +362,7 @@ export default function AddPref2({ navigation }) {
                         onPress={() => {
                             handleSaveProfile();
                             fetchProfiles();
-                            navigation.navigate('Preference');
-                            // handleAddPreference();
-                            // navigation.navigate('Profile');
+                            navigation.navigate('Profile');
                         }}>
                         <Text style={styles.saveText}>Add Preference</Text>
                     </TouchableOpacity>
