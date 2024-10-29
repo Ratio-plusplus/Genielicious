@@ -34,8 +34,10 @@ const openMap = (address) => {
 };
 
 export default function History({ navigation }) {
+    // map all restaurant array to be false for heart
     const [favorites, setFavorites] = useState(restaurants.map(() => false));
 
+    // toggle each restaurant's heart
     const toggleFavorite = (index) => {
         const newFavorites = [...favorites];
         newFavorites[index] = !newFavorites[index];
@@ -48,6 +50,7 @@ export default function History({ navigation }) {
                 <View style={styles.nameContainer}>
                     <Text style={styles.restaurantName}>{item.name}</Text>
                     <TouchableOpacity onPress={() => toggleFavorite(index)}>
+                        {/* if favorite then pink, if not then white */}
                         <MaterialIcons
                             name={favorites[index] ? "favorite" : "favorite-border"}
                             size={24}
