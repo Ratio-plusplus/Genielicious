@@ -90,12 +90,6 @@ export default function AddPref2({ navigation }) {
         );
     };
 
-    const handleAddPreference = () => {
-        const prefName = name;
-        const prefImage = selectedImage;
-        addToProfile(prefName, prefImage);
-    }
-
     //firebase logic to add or update the profile
     const handleSaveProfile = async () => {
         console.log("handleSaveProfile called"); // Debugging line
@@ -304,7 +298,7 @@ export default function AddPref2({ navigation }) {
                             setSelectedDistance("10m");
                             setIsChecked((prevState) => ({
                                 ...prevState,
-                                distance: 10
+                                distance: "10m"
                             }))
                         }
                     }
@@ -316,7 +310,7 @@ export default function AddPref2({ navigation }) {
                             setSelectedDistance("15m");
                             setIsChecked((prevState) => ({
                                 ...prevState,
-                                distance: 15
+                                distance: "15m"
                             }))
                         }
                     }
@@ -328,7 +322,7 @@ export default function AddPref2({ navigation }) {
                             setSelectedDistance("20m");
                             setIsChecked((prevState) => ({
                                 ...prevState,
-                                distance: 20
+                                distance: "20m"
                             }))
                         }
                     }
@@ -345,7 +339,7 @@ export default function AddPref2({ navigation }) {
                             setSelectedBudget("$20");
                             setIsChecked((prevState) => ({
                                 ...prevState,
-                                budget: 20
+                                budget: "$20"
                             }))
                         }}       
                     />
@@ -356,7 +350,7 @@ export default function AddPref2({ navigation }) {
                             setSelectedBudget("$50");
                             setIsChecked((prevState) => ({
                                 ...prevState,
-                                budget: 50
+                                budget: "$50"
                             }))
                         }}
                     />
