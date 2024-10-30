@@ -1,40 +1,5 @@
-import React, {useState} from 'react';
-import {Text, StyleSheet, View, ScrollView, TouchableOpacity, TextInput} from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Colors } from './Colors';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialIcons } from '@expo/vector-icons';
-
-export default function DevicePermissions ({ navigation }) {
-    const PermsList = [
-        {icon: "person-outline", text: "Location Permissions", action: () => navigation.navigate('Edit Profile')},
-        //Change icon to better fit the screeen
-        {icon: "location-pin", text: "Camera Permissions", action: () => navigation.navigate('Camera Permissions')},
-    ];
-
-
-    {/* lists all permissions */}
-    return(
-        <SafeAreaView style={styles.background}>
-            {/* Back button and title screen */}
-            <View style={styles.container}>
-                    <TouchableOpacity 
-                        onPress={()=>navigation.navigate('Settings')}    //navigate back to profile page if back arrow is pressed
-                        style={{
-                            position: "absolute",
-                            left: 0
-                        }}>
-                        <MaterialIcons
-                            name="keyboard-arrow-left"
-                            size={33}
-                            color={Colors.ghost}
-                        />
-                    </TouchableOpacity>
-                    <Text style={styles.title}>Device Permissions</Text>
-            </View>
-
-        </SafeAreaView>
-    );
-}
 
 
 const styles = StyleSheet.create({

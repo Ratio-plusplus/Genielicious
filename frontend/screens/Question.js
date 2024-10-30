@@ -6,6 +6,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import {useAuth} from '../contexts/AuthContext';
 import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
 import { useFocusEffect } from '@react-navigation/native';
+import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
 
 export default function Question({ navigation }) {
     const [modalVisible, setModalVisible] = React.useState(false);
@@ -202,9 +203,12 @@ export default function Question({ navigation }) {
 
             {/* ad area */}
             <View style={styles.adContainer}>
+                <View>
+                    <BannerAd size={BannerAdSize.BANNER} unitId={TestIds.BANNER} />
+                </View>
                 <TouchableOpacity style={styles.adButton}
                     onPress={handleAdPress}>
-                         <BannerAd ref={bannerRef} unitId={adUnitId} size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER} />
+    
                     <Text style={styles.adTitle}>Ad</Text>
                 </TouchableOpacity>
             </View>
