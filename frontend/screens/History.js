@@ -10,19 +10,19 @@ const restaurants = [
         name: 'Wingstop',
         taste: 'Salty, Savory, Spicy',
         address: '4401 E Pacific Coast Hwy, Long Beach, CA 90804',
-        image: require('../../assets/restaurant1.png'),
+        image: require('../assets/restaurant1.png'),
     },
     {
         name: 'Buffalo Wild Wings',
         taste: 'Salty, Savory',
         address: '6314 Pacific Coast Hwy, Long Beach, CA 90803',
-        image: require('../../assets/restaurant2.png'),
+        image: require('../assets/restaurant2.png'),
     },
     {
         name: 'Fire Wings',
         taste: 'Spicy, Savory, Hot',
         address: '7565 Long Bch Towne Ctr, Long Beach, CA 90808',
-        image: require('../../assets/restaurant3.png'),
+        image: require('../assets/restaurant3.png'),
     },
 ];
 
