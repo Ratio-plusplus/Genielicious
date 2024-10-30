@@ -9,7 +9,7 @@ import { getDatabase, ref, set, get } from 'firebase/database';
 import { database, auth } from '../firebase/firebase';
 import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
 import { useRoute, route } from '@react-navigation/native';
-  
+
 export default function AddPref1 ({ navigation }) {
     const route = useRoute();
     
@@ -21,11 +21,11 @@ export default function AddPref1 ({ navigation }) {
         if (profileData) {
             // Populate the fields with the profileData
             setIsChecked(profileData);
-            Dtitle = "Edit Preference"
+            // Dtitle = "Edit Preference"
         } else {
             // If we aren't editing a pre-existing data then we go back to default
             resetPreferences();
-            Dtitle = "New Preference"
+            // Dtitle = "New Preference"
         }
     }, [profileData]);
 
@@ -41,7 +41,7 @@ export default function AddPref1 ({ navigation }) {
                         color={Colors.ghost}
                     />
                 </TouchableOpacity>
-                <Text style={styles.title}>{Dtitle}</Text>
+                <Text style={styles.title}>Add Preference</Text>
         </View>
 
         <ScrollView>

@@ -127,9 +127,9 @@ export default function AddPref2({ navigation }) {
             setName(existingProfileData.name);
             setSelectedBudget(existingProfileData.budget)
             setSelectedDistance(existingProfileData.distance)
-            Dtitle = "Edit Preference"
+            // Dtitle = "Edit Preference"
         } else {
-            Dtitle = "New Preference"
+            // Dtitle = "New Preference"
         }
     }, [existingProfileData]);
 
@@ -156,7 +156,7 @@ export default function AddPref2({ navigation }) {
                             color={Colors.ghost}
                         />
                     </TouchableOpacity>
-                    <Text style={{marginTop: 2, fontWeight: 600, fontSize: 22, color: Colors.ghost}}>{Dtitle}</Text>
+                    <Text style={{marginTop: 2, fontWeight: 600, fontSize: 22, color: Colors.ghost}}>Add Preference</Text>
             </View>
             
             {/* button to use the camera */}
