@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useCallback } from 'react';
-import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text, Modal } from 'react-native';
+import { StyleSheet, Dimensions, View, Image, SafeAreaView, TouchableOpacity, Text, Modal } from 'react-native';
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import {useAuth} from '../contexts/AuthContext';
@@ -204,13 +204,10 @@ export default function Question({ navigation }) {
             {/* ad area */}
             <View style={styles.adContainer}>
                 <View>
-                    <BannerAd size={BannerAdSize.BANNER} unitId={TestIds.BANNER} />
+                    <BannerAd 
+                    size={`480x100`}
+                    unitId={TestIds.BANNER} />
                 </View>
-                <TouchableOpacity style={styles.adButton}
-                    onPress={handleAdPress}>
-    
-                    <Text style={styles.adTitle}>Ad</Text>
-                </TouchableOpacity>
             </View>
 
             {/* confirmation modal for ad */}
