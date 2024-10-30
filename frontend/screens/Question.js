@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useContext } from 'react';
 import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text, Modal } from 'react-native';
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -25,9 +25,7 @@ export default function Question({ navigation }) {
 
     
     const handleQuestionnaire = async () => {
-        console.log("Inside Questionaire");
         const idToken = await currentUser.getIdToken();
-        console.log(idToken);
         const response = await fetch(`http://10.0.2.2:5000/client/questions/${mode}`, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -35,22 +33,16 @@ export default function Question({ navigation }) {
                 }
             });
             const json = await response.json();
-            console.log("Question Response:" , json);
             setQuestion(json["question"]);
             const answer = json["answer_choices" ];
             setAnswer1(answer[0]);
-            console.log(answer[0]);
             setAnswer2(answer[1]);
-            console.log(answer[1]);
             setAnswer3(answer[2]);
-            console.log(answer[2]);
             setAnswer4(answer[3]);
-            console.log(answer[3]);
             
     }
 
     const handleResults = async (answer) => {
-        console.log("Results", answer);
         const idToken = await currentUser.getIdToken();
         const response = await fetch(`http://10.0.2.2:5000/client/answer/${mode}`, {
                 method: "POST",
@@ -60,16 +52,17 @@ export default function Question({ navigation }) {
                 }, body : JSON.stringify({answer: answer})
             });
             const json = await response.json();
-            console.log("Response", json);
             if (json["results"] == false) {
                 if (json["success"] == true){
                 handleQuestionnaire();
             }
         }
+            else if (json["results"] == true){
+                navigation.navigate("Result");
+        }
     }
     const clearSession = async() =>{
         const idToken = await currentUser.getIdToken();
-        console.log(idToken);
         const response = await fetch('http://10.0.2.2:5000/client/clear_session', {
                 headers: {
                     'Content-Type': 'application/json',

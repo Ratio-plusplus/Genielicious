@@ -74,7 +74,7 @@ export const FlavorPreferencesProvider = ({ children }) => {
     const updateProfile = async (profileId, updatedData) => {
         console.log(updatedData);
         if (currentUser) {
-            idToken = await currentUser.getIdToken();
+            const idToken = await currentUser.getIdToken();
             const response = await fetch('http://10.0.2.2:5000/database/update_flavor_profile',
                 {
                     method: "POST",

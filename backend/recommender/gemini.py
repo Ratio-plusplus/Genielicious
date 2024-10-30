@@ -31,7 +31,7 @@ def getPrompt(mode):
 def submitAnswer(user_id,answer):
   # user = getTestUser(user_id) 
   response = getUser(user_id)
-  result = response.get_json();
+  result = response.get_json()
   info = result["info"]
 
   surveyCache = info["surveyCache"]
@@ -84,7 +84,7 @@ def submitAnswer(user_id,answer):
 def getNextQuestion(user_id:str, mode:str, profile_id:str = None):
   # user = getTestUser(user_id)
   response = getUser(user_id)
-  result = response.get_json();
+  result = response.get_json()
   info = result["info"]
   profile = getProfile(user_id)
   if profile_id is None:

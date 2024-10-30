@@ -1,41 +1,17 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text, ScrollView, Linking, Modal } from 'react-native';
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useAuth } from '../contexts/AuthContext';
+import { useFocusEffect } from '@react-navigation/native';
+
+
 
 // array for the different restaurant results
 // has the name, taste, address, distance, and image
-const restaurants = [
-    {
-        name: 'Wingstop',
-        taste: 'Salty, Savory, Spicy',
-        address: '4401 E Pacific Coast Hwy, Long Beach, CA 90804',
-        distance: '2.1 miles away',
-        image: require('../assets/restaurant1.png'),
-    },
-    {
-        name: 'Buffalo Wild Wings',
-        taste: 'Salty, Savory',
-        address: '6314 Pacific Coast Hwy, Long Beach, CA 90803',
-        distance: '3.2 miles away',
-        image: require('../assets/restaurant2.png'),
-    },
-    {
-        name: 'Fire Wings',
-        taste: 'Spicy, Savory, Hot',
-        address: '7565 Long Bch Towne Ctr, Long Beach, CA 90808',
-        distance: '4.5 miles away',
-        image: require('../assets/restaurant3.png'),
-    },
-    {
-        name: 'Fire Wings',
-        taste: 'Spicy, Savory, Hot',
-        address: '7565 Long Bch Towne Ctr, Long Beach, CA 90808',
-        distance: '4.5 miles away',
-        image: require('../assets/restaurant3.png'),
-    },
-];
+
+
 
 // map the name, taste, address, and distance (put it into text to show up in results)
 const renderRestaurantItem = ({ name, taste, address, distance }) => (
@@ -74,8 +50,32 @@ const openMap = (address) => {
     Linking.openURL(url); // Linking API allows user to open URLs
 };
 
+const getResults = async (currentUser) => {
+    const restaurants = [];
+    const idToken = await currentUser.getIdToken();
+    const response = await fetch('http://10.0.2.2:5000/database/get_result_cache', {
+        method: "GET",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${idToken}`
+        }
+    });
+    const json = await response.json();
+    const results = json["info"];
+    const obj = JSON.parse(results);
+    const businesses = obj.businesses;
+    for (i = 0; i < 4; i++) {
+        const testobj = businesses[i];
+        const push = { name: testobj.name, taste: testobj.categories[0].title, address: testobj.location.display_address.join(', '), distance: testobj.distance, image: testobj.image_url };
+        restaurants.push(push);
+    }
+    return restaurants;
+};
 export default function Result({ navigation }) {
+    const { currentUser, loading } = useAuth(); // Access currentUser and loading
     const [modalVisible, setModalVisible] = React.useState(false);
+    const [ready, setReady] = React.useState(false);
+    const [restaurants, setRestaurants] = useState([]);    
 
     const handleBackPress = () => {
         setModalVisible(true); //show the modal when pressed
@@ -83,12 +83,22 @@ export default function Result({ navigation }) {
 
     const handleConfirmYes = () => {
         setModalVisible(false);  // close the modal
-        navigation.navigate('Home');  // navigate back to the Home page
+        navigation.navigate('Tab');  // navigate back to the Home page
     };
 
     const handleConfirmNo = () => {
         setModalVisible(false);  // close the modal without navigating
     };
+    useEffect(() => {
+        const fetchResults = async () => {
+            const results = await getResults(currentUser);
+            setRestaurants(results);
+
+        };
+
+        fetchResults();
+    }, [currentUser]);
+
 
     return (
         <SafeAreaView style={styles.background}>
@@ -157,7 +167,7 @@ export default function Result({ navigation }) {
                     {restaurants.map((item, index) => (
                         <View key={index} style={styles.restaurantItem}>
                             <Image
-                                source={item.image}
+                                source={{ uri: item.image }}
                                 style={styles.restaurantImage}
                                 resizeMode="cover"
                             />

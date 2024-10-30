@@ -95,6 +95,10 @@ def updateDatabaseUser(query, uid):
     except Exception as e:
         return jsonify({"Error": e}), 400
 
+def getResultsCache(uid):
+    info = db.reference(f"users/{uid}")
+    print(info.child("resultsCache").get())
+    return jsonify({"info": info.child("resultsCache").get()})
 #endregion Inner Region
 
 #region Inner Region: User Flavor Profile Methods
