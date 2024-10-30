@@ -25,7 +25,7 @@ export default function Profile({ navigation }) {
     const renderProfileItem = ({ item }) => (
         <TouchableOpacity
         style={styles.profileIconContainer}
-        onPress={() => navigation.navigate('Add Preference 1', { profileData: item })}>
+        onPress={() => navigation.navigate('Preference', { profileData: item})}>
         <Image
             source={item.photoURL ? {uri: item.photoURL } : Image.resolveAssetSource(require('../assets/pfp.png'))}
             style={styles.profileIconImage}
@@ -35,6 +35,7 @@ export default function Profile({ navigation }) {
         </Text>
     </TouchableOpacity>
     );
+
 
     return (
         <SafeAreaView style={styles.background}>
