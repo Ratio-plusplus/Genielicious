@@ -97,7 +97,6 @@ def updateDatabaseUser(query, uid):
 
 def getResultsCache(uid):
     info = db.reference(f"users/{uid}")
-    print(info.child("resultsCache").get())
     return jsonify({"info": info.child("resultsCache").get()})
 #endregion Inner Region
 

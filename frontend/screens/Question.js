@@ -13,7 +13,7 @@ export default function Question({ navigation }) {
     const [modalVisibleAd, setModalVisibleAd] = React.useState(false);
     const {mode} = React.useContext(FlavorPreferencesContext);
     const { currentUser, loading } = useAuth(); // Access currentUser and loading
-    const [question, setQuestion] = React.useState("");
+    const [question, setQuestion] = React.useState("Loading Question...");
     const [answer1, setAnswer1] = React.useState("Yes");
     const [answer2, setAnswer2] = React.useState("No");
     const [answer3, setAnswer3] = React.useState("Maybe");

@@ -38,7 +38,7 @@ const renderRestaurantItem = ({ name, taste, address, distance }) => (
                 color={Colors.champagne}
                 style={styles.locationIcon}
             />
-            <Text style={styles.restaurantDistance}>{distance}</Text>
+            <Text style={styles.restaurantDistance}>{distance} miles away</Text>
         </View>
     </View>
 );
@@ -64,8 +64,9 @@ const getResults = async (currentUser) => {
     const results = json["info"];
     const obj = JSON.parse(results);
     const businesses = obj.businesses;
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < businesses.length; i++) {
         const testobj = businesses[i];
+        testobj.distance = Math.round((testobj.distance / 1609) * 100) / 100;
         const push = { name: testobj.name, taste: testobj.categories[0].title, address: testobj.location.display_address.join(', '), distance: testobj.distance, image: testobj.image_url };
         restaurants.push(push);
     }
@@ -76,13 +77,13 @@ export default function Result({ navigation }) {
     const [modalVisible, setModalVisible] = React.useState(false);
     const [ready, setReady] = React.useState(false);
     const [restaurants, setRestaurants] = useState([]);    
-
     const handleBackPress = () => {
         setModalVisible(true); //show the modal when pressed
     };
 
     const handleConfirmYes = () => {
-        setModalVisible(false);  // close the modal
+        setModalVisible(false);
+        setReady(false);// close the modal
         navigation.navigate('Tab');  // navigate back to the Home page
     };
 
@@ -90,14 +91,16 @@ export default function Result({ navigation }) {
         setModalVisible(false);  // close the modal without navigating
     };
     useEffect(() => {
-        const fetchResults = async () => {
-            const results = await getResults(currentUser);
-            setRestaurants(results);
-
-        };
-
+        if (!ready) {
+            setReady(true);
+            const fetchResults = async () => {
+                const results = await getResults(currentUser);
+                setRestaurants(results);
+            }
         fetchResults();
-    }, [currentUser]);
+        }
+    }, [ready]);
+    
 
 
     return (
@@ -233,10 +236,13 @@ const styles = StyleSheet.create({
         flex: 1,
         marginTop: -70, 
         paddingBottom: 10,
+        marginLeft: 0,
+
     },
     restaurantList: {
         flexGrow: 1,
-        paddingHorizontal: 10,
+        alignItems: 'center',
+
     },
     restaurantItem: {
         flexDirection: 'row',
@@ -246,9 +252,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderColor: Colors.raisin,
         borderWidth: 1,
-        alignItems: 'center',
         width: '90%',
-        left: '3.5%',
+        alignItems: 'center',
     },
     restaurantImage: {
         width: '40%',
