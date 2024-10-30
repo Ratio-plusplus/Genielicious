@@ -1103,4 +1103,6 @@ tester.py
 android
 ios
 confidential/
+serviceAccountKey.json
+AdmobInitialize.js
 unused/

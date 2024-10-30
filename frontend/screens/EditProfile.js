@@ -189,7 +189,7 @@ export default function EditProfile({ navigation }) {
                                 onChangeText={setEmail}
                                 value={email}
                                 color={Colors.ghost}
-                                editable={true}/>
+                                editable={false}/>
                         </View>
                     </View>
 

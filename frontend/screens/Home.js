@@ -7,6 +7,7 @@ import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, Touchable
 import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
 
 
+
 export default function Home({ navigation }) {
     const {latitude, longitude, errorMsg} = useLocation();
     console.log(latitude, longitude, errorMsg);

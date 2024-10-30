@@ -1,14 +1,12 @@
 import * as React from 'react';
 import { useState, useCallback, useContext } from 'react';
-import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text, Modal } from 'react-native';
+import { StyleSheet, Dimensions, View, Image, SafeAreaView, TouchableOpacity, Text, Modal } from 'react-native';
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import {useAuth} from '../contexts/AuthContext';
 import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
 import { useFocusEffect } from '@react-navigation/native';
-
-
-
+import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
 
 export default function Question({ navigation }) {
     const [modalVisible, setModalVisible] = React.useState(false);
@@ -198,10 +196,11 @@ export default function Question({ navigation }) {
 
             {/* ad area */}
             <View style={styles.adContainer}>
-                <TouchableOpacity style={styles.adButton}
-                    onPress={handleAdPress}>
-                    <Text style={styles.adTitle}>Ad</Text>
-                </TouchableOpacity>
+                <View>
+                    <BannerAd 
+                    size={`480x100`}
+                    unitId={TestIds.BANNER} />
+                </View>
             </View>
 
             {/* confirmation modal for ad */}
