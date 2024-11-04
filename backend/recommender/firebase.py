@@ -4,7 +4,7 @@ from enum import verify
 from firebase_admin import db, credentials, initialize_app, auth
 from dotenv import find_dotenv, load_dotenv
 import os
-from flask import Flask, request, jsonify   
+from flask import jsonify   
 
 dotenv_path = find_dotenv()
 load_dotenv(dotenv_path) # loads env vars into path
