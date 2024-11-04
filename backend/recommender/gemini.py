@@ -1,13 +1,14 @@
 #!pip install -q -U google-generativeai
 # import requests
 import json
-from firebase_init import getUser, getDataRef
-# from firebase_init import getTestUser
+from firebase import getDataRef, getUserCacheRef, getActiveFoodProfile
+# from firebase import getTestUser
 from dotenv import find_dotenv, load_dotenv
 # from yelp import cacheToJson # used in development
 import results
 import google.generativeai as genai
 import os
+
 dotenv_path = find_dotenv()
 load_dotenv(dotenv_path)
 
@@ -29,41 +30,39 @@ def getPrompt(mode):
   return prompt
 
 def submitAnswer(user_id,answer):
-  # user = getTestUser(user_id) 
-  user = getUser(user_id)
+  cache = getUserCacheRef(user_id)
 
-  surveyCache = user.child("surveyCache").get()
+  surveyCache = cache.child("surveyCache").get()
 
   if not surveyCache :
     return {"Error 401" : "No question provided yet."} 
   else:
     surveyCache = json.loads(surveyCache)
-    # TODO: update section after active profiles are set (next sprint)
     # Checks if distance/budget needs to be updated
     if "distance" in surveyCache:
       if answer == "10 miles or less":
-        user.update({"distanceCache": 16093}) # store distance in meters as an integer
+        cache.update({"distanceCache": 16093}) # store distance in meters as an integer
       elif answer == "15 miles or less":
-        user.update({"distanceCache": 24140})
+        cache.update({"distanceCache": 24140})
       elif answer == "20 miles or less": 
-        user.update({"distanceCache": 32187})
+        cache.update({"distanceCache": 32187})
       elif answer == "25 miles or less":
-        user.update({"distanceCache": 40000})
+        cache.update({"distanceCache": 40000})
       else:
         return {"Error 401" : "Invalid answer."}
       return {"success": True, "results": False}
     elif "budget" in surveyCache:
       if answer == "$10 or less":
-        user.update({"budgetCache": 1}) # price intervals according to yelp api
+        cache.update({"budgetCache": 1}) # price intervals according to yelp api
       elif answer == "$30 or less":
-        user.update({"budgetCache": 2})
+        cache.update({"budgetCache": 2})
       elif answer == "$60 or less": 
-        user.update({"budgetCache": 3})
+        cache.update({"budgetCache": 3})
       elif answer == "More than $60":
-        user.update({"budgetCache": 4})
+        cache.update({"budgetCache": 4})
       else:
         return {"Error 401" : "Invalid answer."}
-      user.update({"surveyCache":"",})
+      cache.update({"surveyCache":"",})
       return {"success": True, "results": False}
     elif surveyCache[-1]["role"] == "user": # if not user then the last response was model
       return {"Error 401" : "Client already answered question."}
@@ -74,31 +73,33 @@ def submitAnswer(user_id,answer):
   parts = str(answer)
   surveyCache.append({"role":"user","parts":parts})
   surveyCache = json.dumps(surveyCache) # converts cache to a single string
-  user.update({"surveyCache" : surveyCache})
+  cache.update({"surveyCache" : surveyCache})
 
   return {"success": True, "results": False} # returns value to confirm success
-  
 
 def getNextQuestion(user_id:str, mode:str):
-  # user = getTestUser(user_id) 
-  user = getUser(user_id)
+  cache = getUserCacheRef(user_id)
+  surveyCache = cache.child("surveyCache").get()
+  distanceCache = cache.child("distanceCache").get()
+  budgetCache = cache.child("budgetCache").get()
+  
+  activeProfile = getActiveFoodProfile(user_id)
 
-  surveyCache = user.child("surveyCache").get()
-  # TODO: update distance/price questions once active profiles are set (next sprint)
-  # provide distance/budget question if preference does not exist
-  distance = user.child("distance").get()
-  distanceCache = user.child("distanceCache").get()
-  budget = user.child("budget").get()
-  budgetCache = user.child("budgetCache").get()
-  print(not distance, not distanceCache)
-  print(not budget, not budgetCache)
+  if activeProfile:
+      budget = activeProfile["budget"]
+      distance = activeProfile["distance"]
+  else:
+      budget = "" 
+      distance = "" 
+
+  # provide distance/budget question if preference does not exist  
   if not distance and not distanceCache:
-    distance_question = {"question": "How far are you willing to travel?","answers":["10 miles or less", "15 miles or less", "20 miles or less", "25 miles or less"]}
-    user.update({"surveyCache":json.dumps({"distance":"need distance"})})
+    distance_question = {"question": "How far are you willing to travel?","answer_choices":["10 miles or less", "15 miles or less", "20 miles or less", "25 miles or less"]}
+    cache.update({"surveyCache":json.dumps({"distance":"need distance"})})
     return distance_question
   if not budget and not budgetCache:
-    budget_question = {"question": "How much money are you willing to spend?","answers":["$10 or less", "$30 or less", "$60 or less", "More than $60"]}
-    user.update({"surveyCache":json.dumps({"budget":"need budget"})})
+    budget_question = {"question": "How much money are you willing to spend?","answer_choices":["$10 or less", "$30 or less", "$60 or less", "More than $60"]}
+    cache.update({"surveyCache":json.dumps({"budget":"need budget"})})
     return budget_question
 
   if not surveyCache: # empty survey cache = new session
@@ -128,7 +129,7 @@ def getNextQuestion(user_id:str, mode:str):
   # cacheToJson("backend\\recommender\\tests\\surveryCache_history.json",surveyCache) # saves surverycache locally
 
   # converts cache to a single string for db
-  user.update({"surveyCache" : json.dumps(surveyCache)})
+  cache.update({"surveyCache" : json.dumps(surveyCache)})
 
   if "recommendations" in formatted_question: # ai outputs a json with recommendations field when it is done
     final_choices = formatted_question["recommendations"]
@@ -141,10 +142,10 @@ def getNextQuestion(user_id:str, mode:str):
   return formatted_question #return dict
 
 #formats the output from gemini api
+# returns json dictionary
 def formatStringToJson(s):
   data = str(s).replace('json', '').replace('\\n', '').replace('\\"', '"').replace('```', '').replace('\n', '').replace('\\', '')
-  
-  data = json.loads(data) # returns json dictionary
+  data = json.loads(data) 
   return data
 
 if __name__ == "__main__":
