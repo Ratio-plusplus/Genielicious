@@ -19,14 +19,14 @@ model = genai.GenerativeModel("gemini-1.5-flash") # model version we're using
 
 def getPrompt(mode):
   # TODO: -Add active food profile details to chosen prompt (next sprint)
-  data_ref = getDataRef()
+  dataRef = getDataRef()
 
   if mode == "short":
-    prompt = data_ref.child("short_prompt").get()
+    prompt = dataRef.child("short_prompt").get()
   elif mode == "medium":
-    prompt = data_ref.child("medium_prompt").get()
+    prompt = dataRef.child("medium_prompt").get()
   elif mode == "long":
-    prompt = data_ref.child("long_prompt").get()
+    prompt = dataRef.child("long_prompt").get()
   return prompt
 
 def submitAnswer(user_id,answer):
