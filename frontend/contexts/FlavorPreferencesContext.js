@@ -59,12 +59,10 @@ export const FlavorPreferencesProvider = ({ children }) => {
             });
             const json = await response.json();
             const info = json["profiles"];
-            console.log("Response:", info);
             const profilesArray = Object.keys(info).map((key) => ({
                 id: key,
                 ...info[key]
             }));
-            console.log("Fetched profiles: ", profilesArray);
             setFlavorProfiles(profilesArray);
         } else {
             console.log("No user is signed in.");

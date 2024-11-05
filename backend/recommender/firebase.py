@@ -1,8 +1,8 @@
 # single script to handle connection/auth to database
 # !sudo pip install firebase-admin
 from enum import verify
-from firebase_admin import db, credentials, initialize_app, auth
-from dotenv import find_dotenv, load_dotenv
+from firebase_admin import db, credentials, initialize_app, auth # type: ignore
+from dotenv import find_dotenv, load_dotenv # type: ignore
 import os
 from flask import Flask, request, jsonify   
 
@@ -209,7 +209,15 @@ def addFlavorProfile(query, uid):
             return jsonify({"error": "Invalid token"}), 400
     except Exception as e:
         return jsonify(message=f"Error with code: {e}")
-            
+
+def deleteFlavorProfile(user_id, profile_id):
+    try:
+        ref = db.reference(f"users/{user_id}/flavorProfiles/{profile_id}")
+        ref.delete()
+        return jsonify({"message": "Flavor profile deleted successfully"}), 200
+    except Exception as e:
+        return jsonify(message=f"Error with code: {e}"), 400
+
 #endregion Inner Region
 
 if __name__ == "__main__":

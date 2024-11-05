@@ -1,11 +1,14 @@
-import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { Colors } from './Colors';
+import { getDatabase, ref, remove } from 'firebase/database';
+import { auth } from '../firebase/firebase';
 
 export default function Preference({ navigation, route }) {
     const { profileData } = route.params;
+    const db = getDatabase();
 
     const [tasteProfile, setTasteProfile] = useState({
         title: profileData?.title || '',
@@ -25,6 +28,48 @@ export default function Preference({ navigation, route }) {
     const tastePreferencesString = getTrueKeysAsString(tasteProfile.tastePreferences);
     const allergiesString = getTrueKeysAsString(tasteProfile.allergies);
 
+    const handleDeleteProfile = () => {
+        Alert.alert(
+            "Delete Profile",
+            "Are you sure you want to delete this flavor profile?",
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel"
+                },
+                {
+                    text: "Delete",
+                    onPress: async () => {
+                        try {
+                            const idToken = await auth.currentUser.getIdToken();
+                            const response = await fetch('http://10.0.2.2:5000/database/delete_flavor_profile', {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${idToken}`
+                                },
+                                body: JSON.stringify({ profileId: profileData.id })
+                            });
+
+                            console.log("Response Status:", response.status);
+                            const responseText = await response.text();
+                            console.log("Response Text:", responseText);
+
+                            if (response.ok) {
+                                navigation.navigate('Profile');
+                            } else {
+                                console.error("Error deleting profile: ", responseText);
+                            }
+                        } catch (error) {
+                            console.error("Error deleting profile: ", error);
+                        }
+                    },
+                    style: "destructive"
+                }
+            ]
+        );
+    };
+
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: Colors.blue }}>
             <View style={{ marginHorizontal: 12, marginTop: 12, marginBottom: 12, flexDirection: "row", justifyContent: "center" }}>
@@ -38,6 +83,15 @@ export default function Preference({ navigation, route }) {
                     />
                 </TouchableOpacity>
                 <Text style={{ marginTop: 2, fontWeight: '600', fontSize: 22, color: Colors.ghost }}>{tasteProfile.title}</Text>
+                <TouchableOpacity
+                    onPress={handleDeleteProfile}
+                    style={{ position: "absolute", right: 0 }}>
+                    <MaterialIcons
+                        name="delete"
+                        size={28}
+                        color={Colors.ghost}
+                    />
+                </TouchableOpacity>
             </View>
 
             <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
