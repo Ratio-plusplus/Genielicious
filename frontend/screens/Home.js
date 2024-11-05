@@ -1,5 +1,5 @@
 import * as React from 'react';
-import useLocation from '../../backend/locationPerms/useLocation';
+import useLocation from '../locationPerms/useLocation';
 import { useState } from 'react';
 import { Colors } from './Colors';
 import DropDownPicker from 'react-native-dropdown-picker';
