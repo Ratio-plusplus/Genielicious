@@ -7,7 +7,7 @@ import os
 dotenv_path = find_dotenv()
 load_dotenv(dotenv_path) # loads env vars into path
 
-cred = credentials.Certificate("backend\\recommender\\confidential\\serviceAccountKey.json")
+cred = credentials.Certificate("confidential\\serviceAccountKey.json")
 db_url = {'databaseURL': os.getenv("DATABASE_URL")}
 
 genie_app = initialize_app(cred, db_url)
@@ -55,5 +55,5 @@ if __name__ == "__main__":
 
     yelp_data = db.reference("/data")
     yelp_data.update({
-        "medium_prompt" : json_ob["default_prompt"]
+        "long_prompt" : json_ob["default_prompt"]
     })
