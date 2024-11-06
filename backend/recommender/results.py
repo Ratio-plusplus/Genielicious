@@ -43,8 +43,8 @@ def compileResults(user_id, food_item:str):
         formatted_business["distance"] = business["distance"]
         formatted_business["categories"] = business["categories"]
         formatted_business["display_address"] = business["display_address"]
+        formatted_business["url"] = business["url"]
         formatted_results.append(formatted_business)
-
 
     clearCache(user_id)
     cache.update({"resultsCache" : json.dumps({"businesses":formatted_results})})
