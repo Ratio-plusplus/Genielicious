@@ -33,7 +33,18 @@ def compileResults(user_id, food_item:str):
         budget = int(cache.child("budgetCache").get())
 
     yelp_results = getStore(coords, term = food_item, price=budget, radius=distance)
-    # [OPTIONAL]: Parse Yelp results to not include unnecessary/extra fields
+
+    # Parsing Yelp results to not include unnecessary/extra fields
+    formatted_results = []
+    for business in yelp_results["businesses"]:
+        formatted_business = dict()
+        formatted_business["name"] = business["name"]
+        formatted_business["image_url"] = business["image_url"]
+        formatted_business["distance"] = business["distance"]
+        formatted_business["categories"] = business["categories"]
+        formatted_business["display_address"] = business["display_address"]
+        formatted_results.append(formatted_business)
+
 
     clearCache(user_id)
-    cache.update({"resultsCache" : json.dumps(yelp_results)})
+    cache.update({"resultsCache" : json.dumps({"businesses":formatted_results})})

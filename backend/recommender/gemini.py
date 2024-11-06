@@ -17,9 +17,9 @@ genai.configure(api_key=API_KEY)
 
 model = genai.GenerativeModel("gemini-1.5-flash") # model version we're using
 
-def getPrompt(mode):
-  # TODO: -Add active food profile details to chosen prompt (next sprint)
+def getPrompt(user_id, mode):
   dataRef = getDataRef()
+  activeFoodProfile = getActiveFoodProfile(user_id)      
 
   if mode == "short":
     prompt = dataRef.child("short_prompt").get()
@@ -27,6 +27,19 @@ def getPrompt(mode):
     prompt = dataRef.child("medium_prompt").get()
   elif mode == "long":
     prompt = dataRef.child("long_prompt").get()
+
+  # reference active food profile details
+  if activeFoodProfile:
+    allergies = activeFoodProfile["allergies"]["include"] # list of food allergy strings
+    includedPreferences = activeFoodProfile["tastePreferences"]["include"]
+    excludedPreferences = activeFoodProfile["tastePreferences"]["exclude"]
+    if allergies:
+      prompt += f"Do not consider food options that contain these food allergies: {', '.join(allergies)}."
+    if includedPreferences:
+      prompt += f"Food options with the following qualities are prefered: {', '.join(includedPreferences)}."
+    if excludedPreferences:
+      prompt += f"Food options with the following qualities are not prefered: {', '.join(excludedPreferences)}."
+
   return prompt
 
 def submitAnswer(user_id,answer):
@@ -104,7 +117,7 @@ def getNextQuestion(user_id:str, mode:str):
 
   if not surveyCache: # empty survey cache = new session
     # Default prompt may differ based on user/mode
-    prompt = getPrompt(mode)
+    prompt = getPrompt(user_id, mode)
 
     # Format of the Contents parameter for Gem API
     surveyCache = [{"role":"user","parts":[{"text": prompt}]},] 
