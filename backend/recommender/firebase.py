@@ -1,10 +1,10 @@
 # single script to handle connection/auth to database
 # !sudo pip install firebase-admin
 from enum import verify
-from firebase_admin import db, credentials, initialize_app, auth # type: ignore
-from dotenv import find_dotenv, load_dotenv # type: ignore
+from firebase_admin import db, credentials, initialize_app, auth
+from dotenv import find_dotenv, load_dotenv
 import os
-from flask import Flask, request, jsonify   
+from flask import jsonify   
 
 dotenv_path = find_dotenv()
 load_dotenv(dotenv_path) # loads env vars into path
@@ -31,20 +31,6 @@ def verify_id_token(idToken):
 #region Inner Region: Recommender Methods
 def getTestUser(user_id):
     return db.reference(f"test_users/{user_id}")
-
-
-# pulls user location from phone
-def setUserLocation(uid):
-    try:
-        keys = query.keys()
-        print(keys)
-        for key in keys:
-            print(key)
-            print(query.get(key))
-            db.reference(f"users/{uid}").update({key: query.get(key) })
-        return jsonify({"uid": uid, "message": "User updated successfully in database"}), 200
-    except Exception as e:
-        return jsonify({"Error": e}), 400
 
 # reference to data collection() in database
 def getDataRef():
@@ -88,6 +74,18 @@ def createNewUser(query):
         return jsonify({"uid": uid, "message": "User created successfully in database"}), 200
     except Exception as e:
         return jsonify(message=f"Error with code: {e}")
+    
+# gives tuple of user's preferred location coordinates    
+def getLocation(user_id):
+    latitude = db.reference(f"users/{user_id}/location/latitude").get()
+    longitude = db.reference(f"users/{user_id}/location/longitude").get()
+    return (latitude, longitude)
+
+def getUserRef(user_id):
+    return db.reference(f"users/{user_id}")
+
+def getUserCacheRef(user_id):
+    return db.reference(f"users/{user_id}/cache")
 
 def getUser(uid):
     try:
@@ -114,6 +112,17 @@ def getResultsCache(uid):
     return jsonify({"info": info.child("resultsCache").get()})
 #endregion Inner Region
 
+# return object (dict) of active food profile that contains all details and fields
+def getActiveFoodProfile(user_id):
+    activeID = db.reference(f"users/{user_id}/activeFoodProfileID").get()
+    if not activeID:
+        return None
+    profile = db.reference(f"users/{user_id}/flavorProfiles/{activeID}").get()
+    if profile:
+        return jsonify(profile)
+    else:
+        return None
+
 #region Inner Region: User Flavor Profile Methods
 def getProfile(uid):
     try:
@@ -125,20 +134,9 @@ def getProfile(uid):
     except Exception as e:
         return jsonify(message=f"Error with code: {e}")
 
-# def changeID(this, that):
-#     user = db.reference(f"test_users/{this}")
-#     test_keys = db.reference(f"test_users/")
-
-#     old_data = user.get()
-
-#     test_keys.update({
-#         that:old_data
-#     })
-#     user.delete()
-
 def updateFlavorProfile(query, uid):
     try:
-            profileInfo = query.get("profileInfo");
+            profileInfo = query.get("profileInfo")
             tastePreferences = profileInfo["tastePreferences"]
             allergies = profileInfo["allergies"]
             distance = profileInfo["distance"]
@@ -190,7 +188,7 @@ def addFlavorProfile(query, uid):
             photoURL = query.get("photoURL")
         
             ref = db.reference(f"users/{uid}/flavorProfiles")
-            newref = ref.push();
+            newref = ref.push()
             newref.set({
                 "title" : name, 
                 "photoURL": photoURL, 
@@ -223,43 +221,10 @@ def addFlavorProfile(query, uid):
             return jsonify({"error": "Invalid token"}), 400
     except Exception as e:
         return jsonify(message=f"Error with code: {e}")
-
-def deleteFlavorProfile(user_id, profile_id):
-    try:
-        ref = db.reference(f"users/{user_id}/flavorProfiles/{profile_id}")
-        ref.delete()
-        return jsonify({"message": "Flavor profile deleted successfully"}), 200
-    except Exception as e:
-        return jsonify(message=f"Error with code: {e}"), 400
-
+            
 #endregion Inner Region
 
 if __name__ == "__main__":
     import json
-
-    file_path = r"backend\recommender\unused\important_food_categories.json"
-
-    with open(file_path, "r") as file:
-        json_ob = json.load(file)
-
-    yelp_data = db.reference("/test_users/3")
-    yelp_data.update({
-        "flavorProfiles" : [
-            {
-                "image" : "some_image_idk",
-                "title" : "healthy",
-                "allergies" : {
-                    "dairy" : False,
-                    "eggs": False,
-                    "fish": False,
-                    "gluten":True,
-                    "keto" : False,
-                    "peanut": False,
-                    "shellfish": False,
-                    "soy": False,
-                    "vegan" : False,
-                    "vegetarian": True
-                }
-            }
-        ]
-    })
+    user = getTestUser("3")
+    print(user.child("flavorProfiles/0/title").get())
