@@ -1,41 +1,17 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text, ScrollView, Linking, Modal } from 'react-native';
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useAuth } from '../contexts/AuthContext';
+import { useFocusEffect } from '@react-navigation/native';
+
+
 
 // array for the different restaurant results
 // has the name, taste, address, distance, and image
-const restaurants = [
-    {
-        name: 'Wingstop',
-        taste: 'Salty, Savory, Spicy',
-        address: '4401 E Pacific Coast Hwy, Long Beach, CA 90804',
-        distance: '2.1 miles away',
-        image: require('../assets/restaurant1.png'),
-    },
-    {
-        name: 'Buffalo Wild Wings',
-        taste: 'Salty, Savory',
-        address: '6314 Pacific Coast Hwy, Long Beach, CA 90803',
-        distance: '3.2 miles away',
-        image: require('../assets/restaurant2.png'),
-    },
-    {
-        name: 'Fire Wings',
-        taste: 'Spicy, Savory, Hot',
-        address: '7565 Long Bch Towne Ctr, Long Beach, CA 90808',
-        distance: '4.5 miles away',
-        image: require('../assets/restaurant3.png'),
-    },
-    {
-        name: 'Fire Wings',
-        taste: 'Spicy, Savory, Hot',
-        address: '7565 Long Bch Towne Ctr, Long Beach, CA 90808',
-        distance: '4.5 miles away',
-        image: require('../assets/restaurant3.png'),
-    },
-];
+
+
 
 // map the name, taste, address, and distance (put it into text to show up in results)
 const renderRestaurantItem = ({ name, taste, address, distance }) => (
@@ -62,7 +38,7 @@ const renderRestaurantItem = ({ name, taste, address, distance }) => (
                 color={Colors.champagne}
                 style={styles.locationIcon}
             />
-            <Text style={styles.restaurantDistance}>{distance}</Text>
+            <Text style={styles.restaurantDistance}>{distance} miles away</Text>
         </View>
     </View>
 );
@@ -74,21 +50,58 @@ const openMap = (address) => {
     Linking.openURL(url); // Linking API allows user to open URLs
 };
 
+const getResults = async (currentUser) => {
+    const restaurants = [];
+    const idToken = await currentUser.getIdToken();
+    const response = await fetch('http://10.0.2.2:5000/database/get_result_cache', {
+        method: "GET",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${idToken}`
+        }
+    });
+    const json = await response.json();
+    const results = json["info"];
+    const obj = JSON.parse(results);
+    const businesses = obj.businesses;
+    for (i = 0; i < businesses.length; i++) {
+        const testobj = businesses[i];
+        testobj.distance = Math.round((testobj.distance / 1609) * 100) / 100;
+        const push = { name: testobj.name, taste: testobj.categories[0].title, address: testobj.location.display_address.join(', '), distance: testobj.distance, image: testobj.image_url };
+        restaurants.push(push);
+    }
+    return restaurants;
+};
 export default function Result({ navigation }) {
+    const { currentUser, loading } = useAuth(); // Access currentUser and loading
     const [modalVisible, setModalVisible] = React.useState(false);
-
+    const [ready, setReady] = React.useState(false);
+    const [restaurants, setRestaurants] = useState([]);    
     const handleBackPress = () => {
         setModalVisible(true); //show the modal when pressed
     };
 
     const handleConfirmYes = () => {
-        setModalVisible(false);  // close the modal
-        navigation.navigate('Home');  // navigate back to the Home page
+        setModalVisible(false);
+        setReady(false);// close the modal
+        navigation.navigate('Tab');  // navigate back to the Home page
     };
 
     const handleConfirmNo = () => {
         setModalVisible(false);  // close the modal without navigating
     };
+    useEffect(() => {
+        if (!ready) {
+            setReady(true);
+            const fetchResults = async () => {
+                const results = await getResults(currentUser);
+                setRestaurants(results);
+            }
+        fetchResults();
+        }
+    }, [ready]);
+    
+
 
     return (
         <SafeAreaView style={styles.background}>
@@ -157,7 +170,7 @@ export default function Result({ navigation }) {
                     {restaurants.map((item, index) => (
                         <View key={index} style={styles.restaurantItem}>
                             <Image
-                                source={item.image}
+                                source={{ uri: item.image }}
                                 style={styles.restaurantImage}
                                 resizeMode="cover"
                             />
@@ -223,10 +236,13 @@ const styles = StyleSheet.create({
         flex: 1,
         marginTop: -70, 
         paddingBottom: 10,
+        marginLeft: 0,
+
     },
     restaurantList: {
         flexGrow: 1,
-        paddingHorizontal: 10,
+        alignItems: 'center',
+
     },
     restaurantItem: {
         flexDirection: 'row',
@@ -236,9 +252,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderColor: Colors.raisin,
         borderWidth: 1,
-        alignItems: 'center',
         width: '90%',
-        left: '3.5%',
+        alignItems: 'center',
     },
     restaurantImage: {
         width: '40%',

@@ -91,7 +91,7 @@ export default function EditProfile({ navigation }) {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${idToken}`
                 },
-                body: JSON.stringify({ username: username, photoURL: selectedImage}),
+                body: JSON.stringify({ Username: username, photoURL: selectedImage}),
                 });
 
             //update context state
