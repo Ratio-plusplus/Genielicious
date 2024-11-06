@@ -296,36 +296,48 @@ export default function AddPref2({ navigation }) {
                     <Text style={styles.sectionTitle}>Distance:</Text>
                     <RadioButton
                         label="Within 10 miles"
-                        isSelected={selectedDistance === "10mi"}
+                        isSelected={selectedDistance === 16093}
                         onPress={() => {
-                            setSelectedDistance("10mi");
+                            setSelectedDistance(16093);
                             setIsChecked((prevState) => ({
                                 ...prevState,
-                                distance: "10mi"
+                                distance: 16093
                             }))
                         }
                     }
                     />
                     <RadioButton
                         label="Within 15 miles"
-                        isSelected={selectedDistance === "15mi"}
+                        isSelected={selectedDistance === 24140}
                         onPress={() => {
-                            setSelectedDistance("15mi");
+                            setSelectedDistance(24140);
                             setIsChecked((prevState) => ({
                                 ...prevState,
-                                distance: "15mi"
+                                distance: 24140
                             }))
                         }
                     }
                     />
                     <RadioButton
                         label="Within 20 miles"
-                        isSelected={selectedDistance === "20mi"}
+                        isSelected={selectedDistance === 32187}
                         onPress={() => {
-                            setSelectedDistance("20mi");
+                            setSelectedDistance(32187);
                             setIsChecked((prevState) => ({
                                 ...prevState,
-                                distance: "20mi"
+                                distance: 32187
+                            }))
+                        }
+                    }
+                    />
+                    <RadioButton
+                        label="Within 25 miles"
+                        isSelected={selectedDistance === 40000}
+                        onPress={() => {
+                            setSelectedDistance(40000);
+                            setIsChecked((prevState) => ({
+                                ...prevState,
+                                distance: 40000
                             }))
                         }
                     }
@@ -337,9 +349,9 @@ export default function AddPref2({ navigation }) {
                     <Text style={styles.sectionTitle}>Budget:</Text>
                     <RadioButton
                         label="$10 or less"
-                        isSelected={selectedBudget === "$10 or less"}
+                        isSelected={selectedBudget === 1}
                         onPress={() => {
-                            setSelectedBudget("$10 or less");
+                            setSelectedBudget(1);
                             setIsChecked((prevState) => ({
                                 ...prevState,
                                 budget: 1
@@ -348,9 +360,9 @@ export default function AddPref2({ navigation }) {
                     />
                     <RadioButton
                         label="$30 or less"
-                        isSelected={selectedBudget === "$30 or less"}
+                        isSelected={selectedBudget === 2}
                         onPress={() => {
-                            setSelectedBudget("$30 or less");
+                            setSelectedBudget(2);
                             setIsChecked((prevState) => ({
                                 ...prevState,
                                 budget: 2
@@ -359,9 +371,9 @@ export default function AddPref2({ navigation }) {
                     />
                     <RadioButton
                         label="$60 or less"
-                        isSelected={selectedBudget === "$60 or less"}
+                        isSelected={selectedBudget === 3}
                         onPress={() => {
-                            setSelectedBudget("$60 or less");
+                            setSelectedBudget(3);
                             setIsChecked((prevState) => ({
                                 ...prevState,
                                 budget: 3
@@ -370,9 +382,9 @@ export default function AddPref2({ navigation }) {
                     />
                     <RadioButton
                         label="More than $60"
-                        isSelected={selectedBudget === "More than $60"}
+                        isSelected={selectedBudget === 4}
                         onPress={() => {
-                            setSelectedBudget("More than $60");
+                            setSelectedBudget(4);
                             setIsChecked((prevState) => ({
                                 ...prevState,
                                 budget: 4
