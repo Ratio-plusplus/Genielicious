@@ -32,6 +32,20 @@ def verify_id_token(idToken):
 def getTestUser(user_id):
     return db.reference(f"test_users/{user_id}")
 
+
+# pulls user location from phone
+def setUserLocation(uid):
+    try:
+        keys = query.keys()
+        print(keys)
+        for key in keys:
+            print(key)
+            print(query.get(key))
+            db.reference(f"users/{uid}").update({key: query.get(key) })
+        return jsonify({"uid": uid, "message": "User updated successfully in database"}), 200
+    except Exception as e:
+        return jsonify({"Error": e}), 400
+
 # reference to data collection() in database
 def getDataRef():
     return db.reference("/data")

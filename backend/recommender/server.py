@@ -126,6 +126,16 @@ def createUserInfo():
 
     return firebase.createNewUser(query)
 
+@app.route("/database/get_location", methods=["POST"])
+def getUserLocation():
+
+    query = request.get_json()
+
+    if not query:
+        abort(400, "Information not provided")
+
+    return firebase.getUserLocation(query)
+
 @app.route("/database/update_user", methods=["POST"])
 def updateUser():
     query = request.get_json()

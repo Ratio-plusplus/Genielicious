@@ -296,36 +296,36 @@ export default function AddPref2({ navigation }) {
                     <Text style={styles.sectionTitle}>Distance:</Text>
                     <RadioButton
                         label="Within 10 miles"
-                        isSelected={selectedDistance === "10m"}
+                        isSelected={selectedDistance === "10mi"}
                         onPress={() => {
-                            setSelectedDistance("10m");
+                            setSelectedDistance("10mi");
                             setIsChecked((prevState) => ({
                                 ...prevState,
-                                distance: "10m"
+                                distance: "10mi"
                             }))
                         }
                     }
                     />
                     <RadioButton
                         label="Within 15 miles"
-                        isSelected={selectedDistance === "15m"}
+                        isSelected={selectedDistance === "15mi"}
                         onPress={() => {
-                            setSelectedDistance("15m");
+                            setSelectedDistance("15mi");
                             setIsChecked((prevState) => ({
                                 ...prevState,
-                                distance: "15m"
+                                distance: "15mi"
                             }))
                         }
                     }
                     />
                     <RadioButton
                         label="Within 20 miles"
-                        isSelected={selectedDistance === "20m"}
+                        isSelected={selectedDistance === "20mi"}
                         onPress={() => {
-                            setSelectedDistance("20m");
+                            setSelectedDistance("20mi");
                             setIsChecked((prevState) => ({
                                 ...prevState,
-                                distance: "20m"
+                                distance: "20mi"
                             }))
                         }
                     }
@@ -342,7 +342,7 @@ export default function AddPref2({ navigation }) {
                             setSelectedBudget("$10 or less");
                             setIsChecked((prevState) => ({
                                 ...prevState,
-                                budget: '$10 or less'
+                                budget: 1
                             }))
                         }}       
                     />
@@ -353,7 +353,7 @@ export default function AddPref2({ navigation }) {
                             setSelectedBudget("$30 or less");
                             setIsChecked((prevState) => ({
                                 ...prevState,
-                                budget: '$30 or less'
+                                budget: 2
                             }))
                         }}       
                     />
@@ -364,7 +364,7 @@ export default function AddPref2({ navigation }) {
                             setSelectedBudget("$60 or less");
                             setIsChecked((prevState) => ({
                                 ...prevState,
-                                budget: '$60 or less'
+                                budget: 3
                             }))
                         }}       
                     />
@@ -375,7 +375,7 @@ export default function AddPref2({ navigation }) {
                             setSelectedBudget("More than $60");
                             setIsChecked((prevState) => ({
                                 ...prevState,
-                                budget: 'More than $60'
+                                budget: 4
                             }))
                         }}
                     />
