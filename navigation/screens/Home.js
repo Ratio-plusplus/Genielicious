@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { useState } from 'react';
-import { StyleSheet, View, Image, Text, SafeAreaView, TouchableOpacity } from 'react-native';
+import { useState, useEffect } from 'react';
+import { StyleSheet, View, Image, Text, SafeAreaView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Colors } from './Colors';
+import * as Font from 'expo-font';
 import DropDownPicker from 'react-native-dropdown-picker';
 
 export default function Home({ navigation }) {
@@ -14,8 +15,24 @@ export default function Home({ navigation }) {
         { label: 'Gluten Free Desserts', value: 'gluten free desserts' },
         { label: 'Sweet and Sour', value: 'sweet and sour' },
     ]);     // array for all available options in dropdown
-            // label (what user sees)
-            // value (value associated with that label) - this will update as user click on other options
+    // label (what user sees)
+    // value (value associated with that label) - this will update as user click on other options
+
+    const [fontLoaded, setFontLoaded] = useState(false);
+
+    useEffect(() => {
+        async function loadFont() {
+            await Font.loadAsync({
+                'InknutAntiqua-Regular': require('../../assets/fonts/InknutAntiqua-Regular.ttf'),
+            });
+            setFontLoaded(true);
+        }
+        loadFont();
+    }, []);
+
+    if (!fontLoaded) {
+        return <ActivityIndicator size="large" color={Colors.champagne} />;
+    }
 
     return (
         <SafeAreaView style={styles.background}>
@@ -102,7 +119,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.blue,
     },
     titleContainer: {
-        flex: 0.1,
+        flex: 0.10,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -110,12 +127,16 @@ const styles = StyleSheet.create({
         fontSize: 35,
         fontWeight: 'bold',
         color: Colors.champagne,
+        fontFamily: 'InknutAntiqua-Regular',
+        flexShrink: 1,
+        textAlign: 'center',
+        lineHeight: 80
     },
     genieContainer: {
         flex: 0.63,
         justifyContent: 'center',
         alignItems: 'center',
-        zIndex: 0, 
+        zIndex: 0,
     },
     sparkle: {
         position: 'relative',
@@ -160,31 +181,31 @@ const styles = StyleSheet.create({
     modeContainer: {
         flex: 0.1,
         paddingTop: 40,
-        paddingLeft: 20, 
+        paddingLeft: 20,
     },
     modeText: {
         fontSize: 20,
         fontWeight: 'bold',
         color: Colors.champagne,
-        marginBottom: 10, 
+        marginBottom: 10,
     },
     buttonsContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between', 
-        width: '93%', 
-        alignItems: 'center', 
+        justifyContent: 'space-between',
+        width: '93%',
+        alignItems: 'center',
     },
     button: {
         alignItems: 'center',
         backgroundColor: Colors.gold,
         padding: 10,
-        width: '30%', 
+        width: '30%',
         borderRadius: 10,
         borderColor: Colors.raisin,
         borderWidth: 1
     },
     profileSubtitle: {
-        fontSize: 16, 
-        color: Colors.raisin, 
+        fontSize: 16,
+        color: Colors.raisin,
     },
 });

@@ -44,7 +44,7 @@ if (getRNMinorVersion() >= 75) {
   }
 }
 
-rootProject.name = 'NavigationTab'
+rootProject.name = 'Genielicious'
 
 dependencyResolutionManagement {
   versionCatalogs {

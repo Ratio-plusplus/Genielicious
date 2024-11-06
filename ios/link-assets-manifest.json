@@ -1,0 +1,13 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/InknutAntiqua-Regular.ttf",
+      "sha1": "55cac314b62522af19c4e7ba38186e087635612e"
+    },
+    {
+      "path": "assets/fonts/SpaceMono-Regular.ttf",
+      "sha1": "fae3a5a43b50e0408fd61e14383d94a023d332b0"
+    }
+  ]
+}

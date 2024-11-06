@@ -1,73 +1,80 @@
 import * as React from 'react';
-import { useState } from 'react';
-import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text, Modal } from 'react-native';
+import { useState, useEffect } from 'react';
+import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text, Modal, ActivityIndicator } from 'react-native';
 import { Colors } from './Colors';
+import * as Font from 'expo-font';
 import { MaterialIcons } from '@expo/vector-icons';
+import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 
 export default function Question({ navigation }) {
-    const [modalVisible, setModalVisible] = React.useState(false);
-    const [modalVisibleAd, setModalVisibleAd] = React.useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [modalVisibleAd, setModalVisibleAd] = useState(false);
+    const [pressedButton, setPressedButton] = useState(null);
 
-    const handleBackPress = () => {
-        setModalVisible(true); //show the modal when pressed
-    };
+    const handleBackPress = () => setModalVisible(true);
 
     const handleConfirmYes = () => {
-        setModalVisible(false);  // close the modal
-        navigation.navigate('Home');  // navigate back to the Home page
+        setModalVisible(false);
+        navigation.navigate('Home');
     };
 
-    const handleConfirmNo = () => {
-        setModalVisible(false);  // close the modal without navigating
-    };
-
-    const handleAdPress = () => {
-        setModalVisibleAd(true); 
-    };
+    const handleAdPress = () => setModalVisibleAd(true);
 
     const handleConfirmYesAd = () => {
-        setModalVisibleAd(false);  
-        navigation.navigate('History');  // navigate to ad (change when needed)
+        setModalVisibleAd(false);
+        navigation.navigate('History');
     };
 
-    const handleConfirmNoAd = () => {
-        setModalVisibleAd(false);  
-    };
+    const handleConfirmNo = () => setModalVisible(false);
+    const handleConfirmNoAd = () => setModalVisibleAd(false);
+
+    // button turns gold when you press on it
+    // id makes sure that each button is unique
+    // label is what the button says
+    const renderButton = (label, id) => (
+        <TouchableOpacity
+            style={[styles.button, { backgroundColor: pressedButton == id ? Colors.gold : Colors.champagne }]}
+            activeOpacity={1}
+            onPress={() => navigation.navigate('Answer')}
+            onPressIn={() => setPressedButton(id)}
+            onPressOut={() => setPressedButton(null)}>
+            <Text style={styles.profileSubtitle}>{label}</Text>
+        </TouchableOpacity>
+    );
+
+    const [fontLoaded, setFontLoaded] = useState(false);
+
+    useEffect(() => {
+        async function loadFont() {
+            await Font.loadAsync({
+                'InknutAntiqua-Regular': require('../../assets/fonts/InknutAntiqua-Regular.ttf'),
+            });
+            setFontLoaded(true);
+        }
+        loadFont();
+    }, []);
+
+    if (!fontLoaded) {
+        return <ActivityIndicator size="large" color={Colors.raisin} />;
+    }
 
     return (
         <SafeAreaView style={styles.background}>
-            {/* back arrow that opens the confirmation modal */}
             <View style={styles.header}>
-                <TouchableOpacity
-                    onPress={handleBackPress}
-                    style={styles.arrowButton}>
-                    <MaterialIcons
-                        name="keyboard-arrow-left"
-                        size={33}
-                        color={Colors.ghost}
-                    />
+                <TouchableOpacity onPress={handleBackPress} style={styles.arrowButton}>
+                    <MaterialIcons name="keyboard-arrow-left" size={33} color={Colors.ghost} />
                 </TouchableOpacity>
             </View>
 
-            {/* confirmation modal for back arrow */}
-            <Modal
-                animationType='fade'
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => setModalVisible(false)} // handle hardware back button
-            >
+            <Modal animationType='fade' transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContainer}>
                         <Text style={styles.modalText}>Are you sure you want to exit session?</Text>
                         <View style={styles.modalButtons}>
-                            <TouchableOpacity
-                                style={styles.modalYesButton}
-                                onPress={handleConfirmYes}>
+                            <TouchableOpacity style={styles.modalYesButton} onPress={handleConfirmYes}>
                                 <Text style={styles.buttonText}>Yes</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity
-                                style={styles.modalNoButton}
-                                onPress={handleConfirmNo}>
+                            <TouchableOpacity style={styles.modalNoButton} onPress={handleConfirmNo}>
                                 <Text style={styles.buttonText}>No</Text>
                             </TouchableOpacity>
                         </View>
@@ -75,85 +82,46 @@ export default function Question({ navigation }) {
                 </View>
             </Modal>
 
-            {/* images in the background */}
             <View style={styles.genieContainer}>
-                <Image
-                    source={require("../../assets/sparkle.png")}
-                    style={styles.sparkle}
-                    resizeMode="contain"
-                />
-                <Image
-                    source={require("../../assets/chef_content.png")}
-                    style={styles.genieImage}
-                    resizeMode="contain"
-                />
-                <Image
-                    source={require("../../assets/crystal_ball.png")}
-                    style={styles.crystalBall}
-                    resizeMode="contain"
-                />
+                <Image source={require("../../assets/sparkle.png")} style={styles.sparkle} resizeMode="contain" />
+                <Image source={require("../../assets/chef_content.png")} style={styles.genieImage} resizeMode="contain" />
+                <Image source={require("../../assets/crystal_ball.png")} style={styles.crystalBall} resizeMode="contain" />
             </View>
 
-            {/* question section */}
             <View style={styles.questionContainer}>
                 <View style={styles.questionButton}>
-                    <Text style={styles.questionText}>Are you craving spicy food?</Text>
+                    <Text style={styles.questionText}>Are you craving spicy ajdkjdhor sweet food?</Text>
                 </View>
             </View>
 
-            {/* responses section */}
             <View style={styles.responsesContainer}>
                 <View style={styles.buttonsContainer}>
-                    <TouchableOpacity
-                        style={styles.button}
-                        onPress={() => navigation.navigate('Answer')}>
-                        <Text style={styles.profileSubtitle}>Yes</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.button}
-                        onPress={() => navigation.navigate('Answer')}>
-                        <Text style={styles.profileSubtitle}>No</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.button}
-                        onPress={() => navigation.navigate('Answer')}>
-                        <Text style={styles.profileSubtitle}>Maybe</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.button}
-                        onPress={() => navigation.navigate('Answer')}>
-                        <Text style={styles.profileSubtitle}>Not Sure</Text>
-                    </TouchableOpacity>
+                    {renderButton("Yes", 1)}
+                    {renderButton("No", 2)}
+                    {renderButton("Maybe", 3)}
+                    {renderButton("Not Sure", 4)}
                 </View>
             </View>
 
-            {/* ad area */}
             <View style={styles.adContainer}>
-                <TouchableOpacity style={styles.adButton}
-                    onPress={handleAdPress}>
+                <TouchableOpacity style={styles.adButton} onPress={handleAdPress}>
                     <Text style={styles.adTitle}>Ad</Text>
                 </TouchableOpacity>
             </View>
 
-            {/* confirmation modal for ad */}
-            <Modal
-                animationType='fade'
-                transparent={true}
-                visible={modalVisibleAd}
-                onRequestClose={() => setModalVisibleAd(false)} // Handle hardware back button
-            >
+            <Modal 
+                animationType='fade' 
+                transparent={true} 
+                visible={modalVisibleAd} 
+                onRequestClose={() => setModalVisibleAd(false)}>
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContainer}>
                         <Text style={styles.modalText}>Are you sure you want to exit session?</Text>
                         <View style={styles.modalButtons}>
-                            <TouchableOpacity
-                                style={styles.modalYesButton}
-                                onPress={handleConfirmYesAd}>
+                            <TouchableOpacity style={styles.modalYesButton} onPress={handleConfirmYesAd}>
                                 <Text style={styles.buttonText}>Yes</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity
-                                style={styles.modalNoButton}
-                                onPress={handleConfirmNoAd}>
+                            <TouchableOpacity style={styles.modalNoButton} onPress={handleConfirmNoAd}>
                                 <Text style={styles.buttonText}>No</Text>
                             </TouchableOpacity>
                         </View>
@@ -209,6 +177,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         marginTop: -50,
+        paddingHorizontal: 10, // Ensure there’s horizontal padding to avoid clipping
     },
     questionButton: {
         backgroundColor: Colors.champagne,
@@ -216,11 +185,17 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderColor: Colors.raisin,
         borderWidth: 1,
+        width: '90%', // Limit the width to ensure it doesn’t stretch beyond the screen
     },
     questionText: {
         fontSize: 20,
         fontWeight: '600',
         color: Colors.raisin,
+        fontFamily: 'InknutAntiqua-Regular',
+        textAlign: 'center',
+        flexWrap: 'wrap', // Allow text to wrap to the next line
+        lineHeight: 21, // Adjust line height for readability if the text spans multiple lines
+        paddingHorizontal: 10, // Optional padding to add spacing inside the container
     },
     responsesContainer: {
         flex: 0.3,
