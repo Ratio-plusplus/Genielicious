@@ -22,7 +22,7 @@ def getResults(user_id):
 
 def compileResults(user_id, food_item:str):
     cache = getUserCacheRef(user_id)
-    coords = getLocation() # user location        
+    coords = getLocation(user_id) # user location        
 
     activeProfile = getActiveFoodProfile(user_id)
     if activeProfile:
@@ -36,13 +36,14 @@ def compileResults(user_id, food_item:str):
 
     # Parsing Yelp results to not include unnecessary/extra fields
     formatted_results = []
+    print(yelp_results["businesses"])
     for business in yelp_results["businesses"]:
         formatted_business = dict()
         formatted_business["name"] = business["name"]
         formatted_business["image_url"] = business["image_url"]
         formatted_business["distance"] = business["distance"]
         formatted_business["categories"] = business["categories"]
-        formatted_business["display_address"] = business["display_address"]
+        formatted_business["location"] = business["location"]
         formatted_business["url"] = business["url"]
         formatted_results.append(formatted_business)
 

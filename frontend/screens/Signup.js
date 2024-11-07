@@ -5,10 +5,7 @@ import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, Touchable
 import React, { useEffect, useState } from "react";
 import { Colors } from "./Colors";
 import { doCreateUserWithEmailAndPassword } from '../firebase/auth';
-import { ProfileContext } from "../contexts/ProfileContext";
-import { useContext } from "react";
-import { getDataConnect } from "firebase/data-connect";
-import { useAuth } from '../contexts/AuthContext';
+
 
 
 export default function Signup({navigation}) {
@@ -21,8 +18,6 @@ export default function Signup({navigation}) {
   const [confirmPasswordIsVisible, setConfirmPasswordIsVisible] = React.useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [createdUser, setcreatedUser] = useState(false);
-    const { setUsername: setProfileUsername, setpfp } = useContext(ProfileContext);
-    const { currentUser } = useAuth();
 
 
     //On Press Method

@@ -3,12 +3,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { Colors } from './Colors';
-import { getDatabase, ref, remove } from 'firebase/database';
-import { auth } from '../firebase/firebase';
 
 export default function Preference({ navigation, route }) {
     const { profileData } = route.params;
-    const db = getDatabase();
 
     const [tasteProfile, setTasteProfile] = useState({
         title: profileData?.title || '',

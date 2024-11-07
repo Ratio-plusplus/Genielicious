@@ -6,8 +6,6 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Modal} from "react-native";
 import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
 
-
-
 export default function Home({ navigation }) {
     const {latitude, longitude, errorMsg} = useLocation();
     console.log(latitude, longitude, errorMsg);
