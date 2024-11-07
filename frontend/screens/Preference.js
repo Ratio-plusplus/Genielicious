@@ -68,6 +68,33 @@ export default function Preference({ navigation, route }) {
         );
     };
 
+    const handleSetActiveProfile = async () => {
+        try {
+            const idToken = await auth.currentUser.getIdToken();
+            const response = await fetch('http://10.0.2.2:5000/database/set_active_profile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${idToken}`
+                },
+                body: JSON.stringify({ profileId: profileData.id })
+            });
+
+            console.log("printing response: ", response.ok)
+            console.log("printing profile id: ", profileData.id)
+
+            if (response.ok) {
+                console.log("Profile set as active successfully.");
+                navigation.navigate('Profile');
+            } else {
+                const errorText = await response.text();
+                console.error("Error setting active profile: ", errorText);
+            }
+        } catch (error) {
+            console.error("Error setting active profile: ", error);
+        }
+    };
+
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: Colors.blue }}>
             <View style={{ marginHorizontal: 12, marginTop: 12, marginBottom: 12, flexDirection: "row", justifyContent: "center" }}>
@@ -136,7 +163,7 @@ export default function Preference({ navigation, route }) {
                     onPress={() => navigation.navigate('Add Preference 1', { profileData: {...tasteProfile, id: profileData.id} })}>
                     <Text style={styles.buttonText}>Edit</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.activeButton}>
+                <TouchableOpacity style={styles.activeButton} onPress={handleSetActiveProfile}>
                     <Text style={styles.buttonText}>Set Active</Text>
                 </TouchableOpacity>
             </View>

@@ -235,6 +235,16 @@ def deleteFlavorProfile(user_id, profile_id):
 
 #endregion Inner Region
 
+def setActiveProfile(user_id, profile_id):
+    try:
+        user_ref = db.reference(f"users/{user_id}")
+        user_ref.update({
+            'activeFoodProfileID': profile_id
+        })
+        return jsonify({"message": "Active profile updated successfully"}), 200
+    except Exception as e:
+        return jsonify(message=f"Error with code: {e}"), 400
+
 if __name__ == "__main__":
     import json
     user = getTestUser("3")

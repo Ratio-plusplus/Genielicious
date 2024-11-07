@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from './Colors';
 import { ProfileContext } from '../contexts/ProfileContext';
@@ -9,11 +8,10 @@ import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
 import { useEffect, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 
-
 export default function Profile({ navigation }) {
-    //using context to be able to change the variables from the other files
     const { pfp, username, fetchData } = React.useContext(ProfileContext);
-    const { resetPreferences, flavorProfiles, fetchProfiles } = React.useContext(FlavorPreferencesContext);
+    const { resetPreferences, flavorProfiles, fetchProfiles, activeProfileId } = React.useContext(FlavorPreferencesContext);
+
     useFocusEffect(
         useCallback(() => {
             fetchData();
@@ -21,55 +19,56 @@ export default function Profile({ navigation }) {
         }, [])
     );
 
-    const renderProfileItem = ({ item }) => (
-        <TouchableOpacity
-        style={styles.profileIconContainer}
-        onPress={() => navigation.navigate('Preference', { profileData: item})}>
-        <Image
-            source={item.photoURL ? {uri: item.photoURL } : Image.resolveAssetSource(require('../assets/pfp.png'))}
-            style={styles.profileIconImage}
-        />
-        <Text style={styles.profileIconText}>
-            {item.title || 'Unnamed Profile'}
-        </Text>
-    </TouchableOpacity>
-    );
+    const renderProfileItem = ({ item }) => {
+        const isActiveProfile = item.id === activeProfileId; // Check if this profile is active
+        console.log(`Profile ID: ${item.id}, Active Profile ID: ${activeProfileId}, Is Active: ${isActiveProfile}`);
 
+        return (
+            <TouchableOpacity
+                style={[styles.profileIconContainer, isActiveProfile && styles.activeProfileIconContainer]}
+                onPress={() => navigation.navigate('Preference', { profileData: item, activeProfileId })}
+            >
+                <Image
+                    source={item.photoURL ? { uri: item.photoURL } : Image.resolveAssetSource(require('../assets/pfp.png'))}
+                    style={[styles.profileIconImage, isActiveProfile && styles.activeProfileIconImage]}
+                />
+                <Text style={styles.profileIconText}>
+                    {item.title || 'Unnamed Profile'}
+                </Text>
+            </TouchableOpacity>
+        );
+    };
 
     return (
         <SafeAreaView style={styles.background}>
             <View style={styles.container}>
-                {/* header section for settings icon */}
                 <View style={styles.header}>
-                    <TouchableOpacity 
-                        onPress={()=>navigation.navigate('Settings')}   //navigate to settings screen if button is pressed
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate('Settings')}
                         style={styles.settingsIcon}>
-                        <Ionicons 
+                        <Ionicons
                             name="settings-outline"
                             size={28}
-                            color={Colors.champagne}/>
+                            color={Colors.champagne} />
                     </TouchableOpacity>
                 </View>
 
-                {/* profile section */}
                 <View style={styles.profile}>
                     <View style={styles.profileTop}>
                         <View style={styles.avatar}>
                             <Image
-                            source={pfp ? {uri: pfp} : Image.resolveAssetSource(require('../assets/pfp.png'))} //using pfp from context
-                            resizeMode='contain'
-                            style={styles.avatarImg}/>
+                                source={pfp ? { uri: pfp } : Image.resolveAssetSource(require('../assets/pfp.png'))}
+                                resizeMode='contain'
+                                style={styles.avatarImg} />
                         </View>
 
-                        {/* name and add preference button */}
                         <View style={styles.profileBody}>
                             <Text style={styles.profileTitle}>{username}</Text>
-                            <TouchableOpacity style={styles.button} 
-                                onPress={()=> {
+                            <TouchableOpacity style={styles.button}
+                                onPress={() => {
                                     resetPreferences();
                                     navigation.navigate('Add Preference 1')
-                                }}>  
-                                
+                                }}>
                                 <Text style={styles.profileSubtitle}>Add Preference</Text>
                             </TouchableOpacity>
                         </View>
@@ -77,20 +76,19 @@ export default function Profile({ navigation }) {
                 </View>
             </View>
 
-            {/* flavor profiles section */}
             {flavorProfiles.length > 0 ? (
-                    <FlatList
+                <FlatList
                     data={flavorProfiles}
                     renderItem={renderProfileItem}
                     keyExtractor={(item) => item.id}
                     numColumns={3}
                     contentContainerStyle={styles.grid}
-                    style={{ flex: 1  }}
-                    />      
-            ): (
-                <Text style={{color: 'white' }}>No profiles found</Text>
+                    style={{ flex: 1 }}
+                />
+            ) : (
+                <Text style={{ color: 'white' }}>No profiles found</Text>
             )}
-            
+
         </SafeAreaView>
     );
 }
@@ -104,16 +102,6 @@ const styles = StyleSheet.create({
         paddingLeft: 20,
         paddingRight: 10,
         paddingVertical: 7,
-    },
-    lineContainer: {
-        flex: 1,
-        marginTop: -240
-    },
-    line: {
-        backgroundColor: Colors.champagne,
-        marginTop: 12,
-        height: 1.5,
-        width: 400,
     },
     header: {
         flexDirection: 'row',
@@ -168,7 +156,7 @@ const styles = StyleSheet.create({
         width: 150,
         borderRadius: 10,
         zIndex: 1
-    }, 
+    },
     grid: {
         justifyContent: 'center',
         paddingBottom: 20,
@@ -180,11 +168,19 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         width: "50%",
     },
+    activeProfileIconContainer: {
+        borderColor: Colors.gold, // Active profile border color
+        borderWidth: 20,
+    },
     profileIconImage: {
         width: 100,
         height: 100,
         borderRadius: 50,
         borderWidth: 1,
+    },
+    activeProfileIconImage: {
+        borderColor: Colors.gold, // Active profile image border color
+        borderWidth: 3,
     },
     profileIconText: {
         marginTop: 8,
