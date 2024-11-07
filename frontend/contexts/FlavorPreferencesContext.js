@@ -2,7 +2,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { auth, database } from '../firebase/firebase';
 import { ref, set, push, onValue } from 'firebase/database';
-import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { Image } from 'react-native';
 import {useAuth} from './AuthContext'
 
 export const FlavorPreferencesContext = createContext();
@@ -64,6 +64,7 @@ export const FlavorPreferencesProvider = ({ children }) => {
                 ...info[key]
             }));
             setFlavorProfiles(profilesArray);
+            console.log("profiles fetched");
         } else {
             console.log("No user is signed in.");
         }
@@ -103,6 +104,7 @@ export const FlavorPreferencesProvider = ({ children }) => {
                     body: JSON.stringify({ preferences: isChecked, name: name, photoURL: selectedImage }),
                 });
             const json = await response.json();
+            console.log(json);
         } else {
             console.log("No user is signed in.");
         }

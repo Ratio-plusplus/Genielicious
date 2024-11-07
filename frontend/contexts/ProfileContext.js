@@ -2,7 +2,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { Image } from 'react-native';
 import { useAuth } from './AuthContext'; // Import useAuth to get loading state and currentUser
-import { getDatabase, ref, onValue } from 'firebase/database';
 
 export const ProfileContext = createContext();
 
@@ -25,7 +24,7 @@ export const ProfileProvider = ({ children }) => {
             });
             const json = await response.json();
             const info = json["info"];
-            setUsername(info["Username"]);
+            setUsername(info["username"]);
             setPfp(info["photoURL"]);
         } else {
             console.log("No user is signed in.");

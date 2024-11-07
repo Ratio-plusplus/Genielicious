@@ -6,13 +6,8 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthContext';
 import { useFocusEffect } from '@react-navigation/native';
 
-
-
 // array for the different restaurant results
 // has the name, taste, address, distance, and image
-
-
-
 // map the name, taste, address, and distance (put it into text to show up in results)
 const renderRestaurantItem = ({ name, taste, address, distance }) => (
     <View style={styles.restaurantDetails}>

@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
-import { auth , database} from "./firebase";
+import { auth } from "./firebase";
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithEmailAndPassword, signInWithCredential, updatePassword, sendEmailVerification, sendPasswordResetEmail} from "firebase/auth";
-import { ref, set, getDatabase, get } from "firebase/database";
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { REACT_APP_WEBCLIENTID } from '@env';
 import { Image } from "react-native";

@@ -5,7 +5,6 @@ import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from './Colors';
 import { ProfileContext } from '../contexts/ProfileContext';
-import { doSignInWithEmailAndPassword } from '../firebase/auth';
 import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
 import { useEffect, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';

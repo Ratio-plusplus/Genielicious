@@ -5,8 +5,6 @@ import * as ImagePicker from 'expo-image-picker';
 import React, {useState, useContext, useEffect} from 'react';
 import { Colors } from './Colors';
 import CheckBox from 'react-native-check-box';
-import { auth, database } from '../firebase/firebase';
-import { ref, set, push, get } from 'firebase/database';
 import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
 import { useRoute } from '@react-navigation/native';
 
@@ -396,7 +394,6 @@ export default function AddPref2({ navigation }) {
                         onPress={() => {
                             handleSaveProfile();
                             fetchProfiles();
-                            navigation.navigate('Profile');
                         }}>
                         <Text style={styles.saveText}>Add Preference</Text>
                     </TouchableOpacity>
