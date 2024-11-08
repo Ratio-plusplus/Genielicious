@@ -8,19 +8,19 @@ import { MaterialIcons } from '@expo/vector-icons';
 const restaurants = [
     {
         name: 'Wingstop',
-        taste: 'Salty, Savory, Spicy',
+        aliases: 'Comfort Food, Finger Food',
         address: '4401 E Pacific Coast Hwy, Long Beach, CA 90804',
         image: require('../../assets/restaurant1.png'),
     },
     {
         name: 'Buffalo Wild Wings',
-        taste: 'Salty, Savory',
+        aliases: 'European, Meat-Centric',
         address: '6314 Pacific Coast Hwy, Long Beach, CA 90803',
         image: require('../../assets/restaurant2.png'),
     },
     {
         name: 'Fire Wings',
-        taste: 'Spicy, Savory, Hot',
+        aliases: 'North American, Quick Eats',
         address: '7565 Long Bch Towne Ctr, Long Beach, CA 90808',
         image: require('../../assets/restaurant3.png'),
     },
@@ -58,7 +58,7 @@ export default function History({ navigation }) {
                         />
                     </TouchableOpacity>
                 </View>
-                <Text style={styles.restaurantTaste}>{item.taste}</Text>
+                <Text style={styles.restaurantAliases}>{item.aliases}</Text>
                 <Text
                     style={styles.restaurantAddress}
                     onPress={() => openMap(item.address)} // make the address clickable
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
         color: Colors.gold,
         marginBottom: 5,
     },
-    restaurantTaste: {
+    restaurantAliases: {
         fontSize: 15,
         color: Colors.ghost,
         marginBottom: 5,
