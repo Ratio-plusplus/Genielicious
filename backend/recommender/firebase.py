@@ -232,7 +232,17 @@ def deleteFlavorProfile(user_id, profile_id):
         return jsonify({"message": "Flavor profile deleted successfully"}), 200
     except Exception as e:
         return jsonify(message=f"Error with code: {e}"), 400
-
+        
+def deleteUserData(uid):
+    try:
+        auth.delete_user(uid)
+        ref = db.reference(f"users/{uid}")
+        ref.delete()
+        return jsonify({"message": "User successfully deleted"}), 200
+    except Exception as e:
+        return jsonify(message=f"Error with code: {e}"), 400
+    except auth.AuthError as error:
+        return jsonify(message=f"Error with auth: {e}"), 400
 #endregion Inner Region
 
 if __name__ == "__main__":

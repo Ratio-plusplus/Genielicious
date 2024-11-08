@@ -231,6 +231,20 @@ def deleteFlavorProfile():
         abort(400, "Profile ID not provided")
 
     return firebase.deleteFlavorProfile(user_id, profile_id)
+
+@app.route("/database/delete_user", methods=["DELETE"])
+def deleteUser():
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer '):
+        abort(401, {'error': 'Missing authorization header'})
+
+    # Validate Token
+    id_token = auth_header.split(' ')[1]
+    user_id = firebase.verify_id_token(id_token)
+    if not user_id:
+        abort(401, {'error': 'Invalid or expired token'})
+
+    return firebase.deleteUserData(user_id)
 #endregion Inner Region
 
 #endregion Outer Region

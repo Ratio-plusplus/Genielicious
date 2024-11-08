@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Modal, Button, Pr
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Colors } from './Colors';
-import { doSignOut } from '../firebase/auth';
+import { doSignOut, deleteAccount } from '../firebase/auth';
 
 export default function Settings({ navigation }) {
     const [modalVisible, setModalVisible] = React.useState(false)
@@ -52,7 +52,13 @@ export default function Settings({ navigation }) {
             console.log("History Cleared")
         }
         else if (modalMessage === "Are you sure you want to delete your account?"){
-            console.log("Account Deleted")
+            try {
+                response = await deleteAccount();
+                navigation.navigate('Login');
+                console.log("Account Deleted")
+            } catch (error) {
+                console.error("Failed to log out", error)
+            }
         }
         else if (modalMessage === "Are you sure you want to log out?"){
             try{
