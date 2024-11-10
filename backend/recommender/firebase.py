@@ -61,6 +61,7 @@ def createNewUser(query):
         image = query.get("pfp")
         db.reference(f"users/{uid}").set({
             'username': username,
+            'history' : "",
             'activeFoodProfileID': "",
             "flavorProfiles" : {},
             'cache' : {
@@ -111,8 +112,36 @@ def updateDatabaseUser(query, uid):
         return jsonify({"Error": e}), 400
 
 def getResultsCache(uid):
-    info = db.reference(f"users/{uid}/cache")
-    return jsonify({"info": info.child("resultsCache").get()})
+    try:
+        info = db.reference(f"users/{uid}/cache")
+        return jsonify({"info": info.child("resultsCache").get()}), 200
+    except Exception as e:
+        return jsonify(message=f"Error with code: {e}")
+
+
+def addHistory(query, uid):
+    try:
+        restaurantsInfo = query.get("restaurantsInfo")
+        ref = db.reference(f"users/{uid}/history")
+        if ref.get() == "":
+            history = restaurantsInfo
+        else:
+            history = restaurantsInfo + ',' + ref.get()
+        ref.set(history)
+        return jsonify({"uid": uid, "message": "User added to history successfully added"}), 200
+    except Exception as e:
+        return jsonify(message=f"Error with code: {e}")
+
+def getHistory(uid):
+    try:
+        info = db.reference(f"users/{uid}/history")
+        return jsonify({"info": info.get()}), 200
+    except Exception as e:
+        return jsonify({"Error": e}), 400
+
+def deleteHistory(uid):
+    pass
+
 #endregion Inner Region
 
 # return object (dict) of active food profile that contains all details and fields
