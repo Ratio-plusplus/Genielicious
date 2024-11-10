@@ -59,18 +59,21 @@ def createNewUser(query):
         uid = query.get("uid")
         username = query.get("username")
         image = query.get("pfp")
-                #     await set(ref(database, 'users/' + user.uid), {
-        #     username: username,
-        #     email: email,
-        #     pfp: Image.resolveAssetSource("../../frontend/assets/pfp.png")
-        # }). then(() => {
-        #     console.log("Data saved successfully!");
-        # }).catch((error) => {
-        #     console.error("Error saving data:", error);
-        #     throw error;
-        # });
-
-        db.reference(f"users/{uid}").set({'Username': username, 'photoURL': image, "distanceCache": "", "surveyCache": "", "budgetCache": "", "resultsCache": "", "location" : {"latitude": 0, "longitude": 0}})
+        db.reference(f"users/{uid}").set({
+            'username': username,
+            'activeFoodProfileID': "",
+            "flavorProfiles" : {},
+            'cache' : {
+                "distanceCache": "",
+                "surveyCache": "",
+                "budgetCache": "",
+                "resultsCache": ""
+        },  "location" : {
+                "latitude": 0,
+                "longitude": 0
+        },
+            'photoURL': image
+        })
         return jsonify({"uid": uid, "message": "User created successfully in database"}), 200
     except Exception as e:
         return jsonify(message=f"Error with code: {e}")
@@ -108,7 +111,7 @@ def updateDatabaseUser(query, uid):
         return jsonify({"Error": e}), 400
 
 def getResultsCache(uid):
-    info = db.reference(f"users/{uid}")
+    info = db.reference(f"users/{uid}/cache")
     return jsonify({"info": info.child("resultsCache").get()})
 #endregion Inner Region
 
@@ -145,7 +148,7 @@ def updateFlavorProfile(query, uid):
             photoURL = profileInfo["photoURL"]
             profileId = query.get("profileId")
             ref = db.reference(f"users/{uid}/flavorProfiles/{profileId}")
-            ref.set({
+            ref.update({
                 "title" : name, 
                 "photoURL": photoURL, 
                 "tastePreferences" : {
@@ -221,7 +224,25 @@ def addFlavorProfile(query, uid):
             return jsonify({"error": "Invalid token"}), 400
     except Exception as e:
         return jsonify(message=f"Error with code: {e}")
-            
+
+def deleteFlavorProfile(user_id, profile_id):
+    try:
+        ref = db.reference(f"users/{user_id}/flavorProfiles/{profile_id}")
+        ref.delete()
+        return jsonify({"message": "Flavor profile deleted successfully"}), 200
+    except Exception as e:
+        return jsonify(message=f"Error with code: {e}"), 400
+        
+def deleteUserData(uid):
+    try:
+        auth.delete_user(uid)
+        ref = db.reference(f"users/{uid}")
+        ref.delete()
+        return jsonify({"message": "User successfully deleted"}), 200
+    except Exception as e:
+        return jsonify(message=f"Error with code: {e}"), 400
+    except auth.AuthError as error:
+        return jsonify(message=f"Error with auth: {e}"), 400
 #endregion Inner Region
 
 if __name__ == "__main__":

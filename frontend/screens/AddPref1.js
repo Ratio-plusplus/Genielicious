@@ -1,62 +1,32 @@
-import React, {useState} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {Text, StyleSheet, View, ScrollView, TouchableOpacity} from 'react-native';
 import CheckBox from 'react-native-check-box';
 import { Colors } from './Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
-//Initializing and connecting to backend + users 
-// import { initializeApp } from 'firebase/app';
-import { getAuth }  from '@firebase/auth';
-import { getDatabase, ref, set } from 'firebase/database';
-import { database, auth } from '../../backend/firebase/firebase';
-import { REACT_APP_FIREBASE_DATABASE_URL } from "@env";
+import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
+import { useRoute, route } from '@react-navigation/native';
 
-//manages state of each checkbox item, changed to global so I can push everything at once on the second screen
-const appSettings = {
-    databaseURL: REACT_APP_FIREBASE_DATABASE_URL
-}
-// const app = initializeApp(appSettings);
-// const database = getDatabase(app);
-  
 export default function AddPref1 ({ navigation }) {
+    const route = useRoute();
+    
     //list of flavor preferences 
-    const [isChecked, setIsChecked] = useState({
-        tastePreferences: {
-            savory: false, 
-            sweet: false, 
-            salty: false, 
-            spicy: false,
-            bitter: false, 
-            sour: false, 
-            cool: false, 
-            hot: false
-        },
-        allergies: {
-            vegan: false, 
-            vegetarian: false, 
-            peanut: false, 
-            gluten: false, 
-            fish: false,
-            shellfish: false, 
-            eggs: false, 
-            soy: false, 
-            dairy: false, 
-            keto: false
-        },
-    });
+    const { isChecked, setIsChecked, resetPreferences } = useContext(FlavorPreferencesContext);
+    const { profileData } = route.params || {}; //get profile data from navigation params
+    // if profile data is provided, set inital state from it
+    useEffect(() => {
+        if (profileData) {
+            // Populate the fields with the profileData
+            setIsChecked(profileData);
+            // Dtitle = "Edit Preference"
+        } else {
+            // If we aren't editing a pre-existing data then we go back to default
+            resetPreferences();
+            // Dtitle = "New Preference"
+        }
+    }, [profileData]);
 
-  //pushes flavor preferences to DBs
-  const addToProfile = () => {
-    const auth = getAuth();
-    const user = auth.currentUser;
-    const flavorProfileDB = ref(database, 'users/'+user.uid+"/flavorProfile");
-    set(flavorProfileDB, {
-        prefPage1: isChecked
-    });
-
-  }
-
-  return (
+    return (
     <SafeAreaView style={styles.background}>
         <View style={styles.container}>
                 <TouchableOpacity 
@@ -68,7 +38,7 @@ export default function AddPref1 ({ navigation }) {
                         color={Colors.ghost}
                     />
                 </TouchableOpacity>
-                <Text style={styles.title}>New Preference</Text>
+                <Text style={styles.title}>Add Preference</Text>
         </View>
 
         <ScrollView>
@@ -80,38 +50,68 @@ export default function AddPref1 ({ navigation }) {
 
                 {/* row 1: savory and sweet */}
                 <View style={styles.checkboxRow}>
-                    <CheckBox
-                        style={styles.checkbox}
-                        isChecked={isChecked.savory}    //current state
-                        onClick={()=>setIsChecked({...isChecked, savory: !isChecked.savory})}   //toggle state
-                        rightText='Savory'
-                        rightTextStyle={styles.checkboxText}
-                        uncheckedCheckBoxColor={Colors.ghost}
-                        checkedCheckBoxColor={Colors.gold}/>
-                    <CheckBox 
-                        style={styles.checkbox}
-                        isChecked={isChecked.sweet} 
-                        onClick={()=>setIsChecked({...isChecked, sweet: !isChecked.sweet})}
-                        rightText='Sweet'
-                        rightTextStyle={styles.checkboxText}
-                        uncheckedCheckBoxColor={Colors.ghost}
-                        checkedCheckBoxColor={Colors.gold}/>
+                    
+                        <CheckBox
+                            style={styles.checkbox}
+                            isChecked={isChecked.tastePreferences.savory}    //current state
+                            onClick={()=>setIsChecked({
+                                ...isChecked, 
+                                tastePreferences: {
+                                    ...isChecked.tastePreferences,
+                                    savory: !isChecked.tastePreferences.savory //update only savory
+                                }
+                            })}   //toggle state
+                            rightText='Savory'
+                            rightTextStyle={styles.checkboxText}
+                            uncheckedCheckBoxColor={Colors.ghost}
+                            checkedCheckBoxColor={Colors.gold}
+                        />
+                    
+                        <CheckBox 
+                            style={styles.checkbox}
+                            isChecked={isChecked.tastePreferences.sweet} 
+                            onClick={()=>setIsChecked({
+                                ...isChecked,
+                                tastePreferences: {
+                                    ...isChecked.tastePreferences,
+                                    sweet: !isChecked.tastePreferences.sweet 
+                                }
+                            })}
+                            rightText='Sweet'
+                            rightTextStyle={styles.checkboxText}
+                            uncheckedCheckBoxColor={Colors.ghost}
+                            checkedCheckBoxColor={Colors.gold}/>
                 </View>
-
+                        
                 {/* row 2: salty and spicy */}
                 <View style={styles.checkboxRow}>
+                    
+                        <CheckBox 
+                            style={styles.checkbox}
+                            isChecked={isChecked.tastePreferences.salty} 
+                            onClick={()=>setIsChecked({
+                                ...isChecked, 
+                                tastePreferences: {
+                                    ...isChecked.tastePreferences,
+                                    salty: !isChecked.tastePreferences.salty
+                                }
+                            })}
+                            rightText='Salty'
+                            rightTextStyle={styles.checkboxText}
+                            uncheckedCheckBoxColor={Colors.ghost}
+                            checkedCheckBoxColor={Colors.gold}/>
+
+                    
                     <CheckBox 
                         style={styles.checkbox}
-                        isChecked={isChecked.salty} 
-                        onClick={()=>setIsChecked({...isChecked, salty: !isChecked.salty})}
-                        rightText='Salty'
-                        rightTextStyle={styles.checkboxText}
-                        uncheckedCheckBoxColor={Colors.ghost}
-                        checkedCheckBoxColor={Colors.gold}/>
-                    <CheckBox 
-                        style={styles.checkbox}
-                        isChecked={isChecked.spicy} 
-                        onClick={()=>setIsChecked({...isChecked, spicy: !isChecked.spicy})}
+                        isChecked={isChecked.tastePreferences.spicy} 
+                        onClick={()=>setIsChecked({
+                            ...isChecked, 
+                            tastePreferences: {
+                                ...isChecked.tastePreferences,
+                                spicy: !isChecked.tastePreferences.spicy
+                            }
+                        })}
                         rightText='Spicy'
                         rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
@@ -120,42 +120,74 @@ export default function AddPref1 ({ navigation }) {
 
                 {/* row 3: bitter and sour */}
                 <View style={styles.checkboxRow}>
+
+                
                     <CheckBox 
                         style={styles.checkbox}
-                        isChecked={isChecked.bitter} 
-                        onClick={()=>setIsChecked({...isChecked, bitter: !isChecked.bitter})}
+                        isChecked={isChecked.tastePreferences.bitter} 
+                        onClick={()=>setIsChecked({
+                            ...isChecked,
+                            tastePreferences: {
+                                ...isChecked.tastePreferences,
+                                bitter: !isChecked.tastePreferences.bitter
+                            }
+                        })}
                         rightText='Bitter'
                         rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
-                    <CheckBox 
-                        style={styles.checkbox}
-                        isChecked={isChecked.sour} 
-                        onClick={()=>setIsChecked({...isChecked, sour: !isChecked.sour})}
-                        rightText='Sour'
-                        rightTextStyle={styles.checkboxText}
-                        uncheckedCheckBoxColor={Colors.ghost}
-                        checkedCheckBoxColor={Colors.gold}/>
-                </View>
+
+                    
+                        <CheckBox 
+                            style={styles.checkbox}
+                            isChecked={isChecked.tastePreferences.sour} 
+                            onClick={()=>setIsChecked({
+                                ...isChecked,
+                                tastePreferences: {
+                                    ...isChecked.tastePreferences,
+                                    sour: !isChecked.tastePreferences.sour
+                                }
+                            })}
+                            rightText='Sour'
+                            rightTextStyle={styles.checkboxText}
+                            uncheckedCheckBoxColor={Colors.ghost}
+                            checkedCheckBoxColor={Colors.gold}/>
+                    </View>
 
                 {/* row 4: cool and hot */}
                 <View style={styles.checkboxRow}>
+
+                    
+                        <CheckBox 
+                            style={styles.checkbox}
+                            isChecked={isChecked.tastePreferences.cool} 
+                            onClick={()=>setIsChecked({
+                                ...isChecked,
+                                tastePreferences: {
+                                    ...isChecked.tastePreferences,
+                                    cool: !isChecked.tastePreferences.cool
+                                }
+                            })}
+                            rightText='Cool'
+                            rightTextStyle={styles.checkboxText}
+                            uncheckedCheckBoxColor={Colors.ghost}
+                            checkedCheckBoxColor={Colors.gold}/>
+                        
                     <CheckBox 
                         style={styles.checkbox}
-                        isChecked={isChecked.cool} 
-                        onClick={()=>setIsChecked({...isChecked, cool: !isChecked.cool})}
-                        rightText='Cool'
-                        rightTextStyle={styles.checkboxText}
-                        uncheckedCheckBoxColor={Colors.ghost}
-                        checkedCheckBoxColor={Colors.gold}/>
-                    <CheckBox 
-                        style={styles.checkbox}
-                        isChecked={isChecked.hot} 
-                        onClick={()=>setIsChecked({...isChecked, hot: !isChecked.hot})}
+                        isChecked={isChecked.tastePreferences.hot} 
+                        onClick={()=>setIsChecked({
+                            ...isChecked,
+                            tastePreferences: {
+                                ...isChecked.tastePreferences,
+                                hot: !isChecked.tastePreferences.hot
+                            }
+                        })}
                         rightText='Hot'
                         rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
+
                 </View>
             </View>
 
@@ -169,16 +201,29 @@ export default function AddPref1 ({ navigation }) {
                 <View style={styles.checkboxRow}>
                     <CheckBox
                         style={styles.checkbox}
-                        isChecked={isChecked.vegan} 
-                        onClick={()=>setIsChecked({...isChecked, vegan: !isChecked.vegan})}
+                        isChecked={isChecked.allergies.vegan} 
+                        onClick={()=>setIsChecked({
+                            ...isChecked,
+                            allergies: {
+                                ...isChecked.allergies,
+                                vegan: !isChecked.allergies.vegan
+                            }
+                        })}
                         rightText='Vegan'
                         rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
+                    
                     <CheckBox 
                         style={styles.checkbox}
-                        isChecked={isChecked.vegetarian} 
-                        onClick={()=>setIsChecked({...isChecked, vegetarian: !isChecked.vegetarian})}
+                        isChecked={isChecked.allergies.vegetarian} 
+                        onClick={()=>setIsChecked({
+                            ...isChecked,
+                            allergies: {
+                                ...isChecked.allergies,
+                                vegetarian: !isChecked.allergies.vegetarian
+                            }
+                        })}
                         rightText='Vegetarian'
                         rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
@@ -187,18 +232,32 @@ export default function AddPref1 ({ navigation }) {
 
                 {/* row 2: peanut/tree nut and wheat/gluten */}
                 <View style={styles.checkboxRow}>
+                    
                     <CheckBox 
                         style={styles.checkbox}
-                        isChecked={isChecked.peanut} 
-                        onClick={()=>setIsChecked({...isChecked, peanut: !isChecked.peanut})}
+                        isChecked={isChecked.allergies.peanut} 
+                        onClick={()=>setIsChecked({
+                            ...isChecked,
+                            allergies: {
+                                ...isChecked.allergies,
+                                peanut: !isChecked.allergies.peanut
+                            }
+                        })}
                         rightText='Peanut/Tree Nut'
                         rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
+                    
                     <CheckBox 
                         style={styles.checkbox}
-                        isChecked={isChecked.gluten} 
-                        onClick={()=>setIsChecked({...isChecked, gluten: !isChecked.gluten})}
+                        isChecked={isChecked.allergies.gluten} 
+                        onClick={()=>setIsChecked({
+                            ...isChecked,
+                            allergies: {
+                                ...isChecked.allergies,
+                                gluten: !isChecked.allergies.gluten
+                            }
+                        })}
                         rightText='Wheat/Gluten'
                         rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
@@ -209,16 +268,30 @@ export default function AddPref1 ({ navigation }) {
                 <View style={styles.checkboxRow}>
                     <CheckBox 
                         style={styles.checkbox}
-                        isChecked={isChecked.fish} 
-                        onClick={()=>setIsChecked({...isChecked, fish: !isChecked.fish})}
+                        isChecked={isChecked.allergies.fish} 
+                        onClick={()=>setIsChecked({
+                            ...isChecked,
+                            allergies: {
+                                ...isChecked.allergies,
+                                fish: !isChecked.allergies.fish
+                            }
+                        })}
                         rightText='Fish'
                         rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
+
+                    
                     <CheckBox 
                         style={styles.checkbox}
-                        isChecked={isChecked.shellfish} 
-                        onClick={()=>setIsChecked({...isChecked, shellfish: !isChecked.shellfish})}
+                        isChecked={isChecked.allergies.shellfish} 
+                        onClick={()=>setIsChecked({
+                            ...isChecked,
+                            allergies: {
+                                ...isChecked.allergies,
+                                shellfish: !isChecked.allergies.shellfish
+                            }
+                        })}
                         rightText='Shellfish'
                         rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
@@ -229,16 +302,29 @@ export default function AddPref1 ({ navigation }) {
                 <View style={styles.checkboxRow}>
                     <CheckBox 
                         style={styles.checkbox}
-                        isChecked={isChecked.eggs} 
-                        onClick={()=>setIsChecked({...isChecked, eggs: !isChecked.eggs})}
+                        isChecked={isChecked.allergies.eggs} 
+                        onClick={()=>setIsChecked({
+                            ...isChecked,
+                            allergies: {
+                                ...isChecked.allergies,
+                                eggs: !isChecked.allergies.eggs
+                            }
+                        })}
                         rightText='Eggs'
                         rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
+
                     <CheckBox 
                         style={styles.checkbox}
-                        isChecked={isChecked.dairy} 
-                        onClick={()=>setIsChecked({...isChecked, dairy: !isChecked.dairy})}
+                        isChecked={isChecked.allergies.dairy} 
+                        onClick={()=>setIsChecked({
+                            ...isChecked,
+                            allergies: {
+                                ...isChecked.allergies,
+                                dairy: !isChecked.allergies.dairy
+                            }
+                        })}
                         rightText='Dairy'
                         rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
@@ -249,16 +335,30 @@ export default function AddPref1 ({ navigation }) {
                 <View style={styles.checkboxRow}>
                     <CheckBox 
                         style={styles.checkbox}
-                        isChecked={isChecked.soy} 
-                        onClick={()=>setIsChecked({...isChecked, soy: !isChecked.soy})}
+                        isChecked={isChecked.allergies.soy} 
+                        onClick={()=>setIsChecked({
+                            ...isChecked,
+                            allergies: {
+                                ...isChecked.allergies,
+                                soy: !isChecked.allergies.soy
+                            }
+                        })}
                         rightText='Soy'
                         rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
                         checkedCheckBoxColor={Colors.gold}/>
+
+                    
                     <CheckBox 
                         style={styles.checkbox}
-                        isChecked={isChecked.keto} 
-                        onClick={()=>setIsChecked({...isChecked, keto: !isChecked.keto})}
+                        isChecked={isChecked.allergies.keto} 
+                        onClick={()=>setIsChecked({
+                            ...isChecked,
+                            allergies: {
+                                ...isChecked.allergies,
+                                keto: !isChecked.allergies.keto
+                            }
+                        })}
                         rightText='Keto'
                         rightTextStyle={styles.checkboxText}
                         uncheckedCheckBoxColor={Colors.ghost}
@@ -270,7 +370,14 @@ export default function AddPref1 ({ navigation }) {
             <View style={styles.buttonContainer}>
                 <TouchableOpacity 
                     style={styles.continueButton} 
-                    onPress={()=>navigation.navigate('Add Preference 2')}>  
+                    onPress={()=>{
+                        try{
+                            navigation.navigate('Add Preference 2', { existingProfileData: profileData});           
+                        } catch (error) {
+                            console.error("Error during navigation: ", error);
+                        }
+                        
+                    }}>  
                     <Text style={styles.buttonText}>Continue</Text>
                 </TouchableOpacity>
             </View>
@@ -315,11 +422,17 @@ const styles = StyleSheet.create({
     checkboxRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 16,
+        marginBottom: 20,
+    },
+    checkboxItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        flex: 1,
+        marginRight: 20,
     },
     checkbox: {
         flex: 1,
-        marginRight: 20,
+        marginRight: 10,
     },
     checkboxText: {
         fontSize: 19, 

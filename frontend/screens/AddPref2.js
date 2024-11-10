@@ -2,9 +2,11 @@ import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, TextInput,
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import React, {useState} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import { Colors } from './Colors';
 import CheckBox from 'react-native-check-box';
+import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
+import { useRoute } from '@react-navigation/native';
 
 export default function AddPref2({ navigation }) {
     const initialpfp = Image.resolveAssetSource(require("../assets/pfp.png")).uri;
@@ -14,19 +16,10 @@ export default function AddPref2({ navigation }) {
     const [name, setName] = React.useState();
     const [selectedDistance, setSelectedDistance] = useState(null);
     const [selectedBudget, setSelectedBudget] = useState(null);
-    const [isChecked, setIsChecked] = useState({
-        distance: {
-            ten: false,
-            fifteen: false,
-            twenty: false,
-        },
-        budget: {
-            $20: false,
-            $50: false,
-        },
-    });
-    
+    const { isChecked, setIsChecked, addToProfile, updateProfile, fetchProfiles } = useContext(FlavorPreferencesContext) 
     const [showPresetImages, setShowPresetImages] = useState(false)
+    const route = useRoute();
+    const { existingProfileData } = route.params || {};
     const presetImages = [
         //add in path for any additional preset pictures
         require('../assets/images//Dessert.png'),
@@ -41,29 +34,6 @@ export default function AddPref2({ navigation }) {
         require('../assets/images//images (6).jpg'),
         
     ]
-
-    // Update selected option for Distance, ensuring only one is selected
-    // const handleDistanceSelection = (selectedDistance) => {
-    //     setIsChecked({
-    //         ...isChecked,
-    //         distance: {
-    //             ten: selectedDistance === 'ten',
-    //             fifteen: selectedDistance === 'fifteen',
-    //             twenty: selectedDistance === 'twenty',
-    //         },
-    //     });
-    // };
-
-    // Update selected option for Budget, ensuring only one is selected
-    const handleBudgetSelection = (selectedBudget) => {
-        setIsChecked({
-            ...isChecked,
-            budget: {
-                $20: selectedBudget === '$20',
-                $50: selectedBudget === '$50',
-            },
-        });
-    };
 
     // Allows user to pick an image on their phone
     const handleImageSelection = async() => {
@@ -118,6 +88,49 @@ export default function AddPref2({ navigation }) {
         );
     };
 
+    //firebase logic to add or update the profile
+    const handleSaveProfile = async () => {
+        console.log("handleSaveProfile called"); // Debugging line
+        
+        const profileData = {
+            title: name ?? existingProfileData.name,
+            photoURL: selectedImage ?? existingProfileData.image,
+            distance: selectedDistance ?? existingProfileData.distance,
+            budget: selectedBudget ?? existingProfileData.budget,
+            tastePreferences: isChecked.tastePreferences ?? existingProfileData.tastePreferences,
+            allergies: isChecked.allergies ?? existingProfileData.allergies,
+        };
+    
+        try {
+            if (existingProfileData && existingProfileData.id) {
+                // If editing an existing profile
+                await updateProfile(existingProfileData.id, profileData)
+                console.log("Profile updated successfully.");
+            } else {
+                // If adding a new profile
+                await addToProfile(name, selectedImage);
+                console.log("Profile added successfully");
+            }
+        } catch (error) {
+            console.error("Error saving profile:", error);
+        }
+
+        navigation.navigate('Profile');
+    };
+
+
+    useEffect(() => {
+        if(existingProfileData){
+            setSelectedImage(existingProfileData.image)
+            setName(existingProfileData.name);
+            setSelectedBudget(existingProfileData.budget)
+            setSelectedDistance(existingProfileData.distance)
+            // Dtitle = "Edit Preference"
+        } else {
+            // Dtitle = "New Preference"
+        }
+    }, [existingProfileData]);
+
     return (
         <SafeAreaView style={{
             flex: 1,
@@ -141,7 +154,7 @@ export default function AddPref2({ navigation }) {
                             color={Colors.ghost}
                         />
                     </TouchableOpacity>
-                    <Text style={{marginTop: 2, fontWeight: 600, fontSize: 22, color: Colors.ghost}}>New Preference</Text>
+                    <Text style={{marginTop: 2, fontWeight: 600, fontSize: 22, color: Colors.ghost}}>Add Preference</Text>
             </View>
             
             {/* button to use the camera */}
@@ -151,7 +164,7 @@ export default function AddPref2({ navigation }) {
                 </TouchableOpacity>
             </View>
 
-            {/* Visual changes for the perference profile picture */}
+            {/* Visual changes for the preference profile picture */}
             <ScrollView>
                 <View style={{
                     alignItems: "center",
@@ -159,15 +172,30 @@ export default function AddPref2({ navigation }) {
                     marginBottom: 20}}>
                     <TouchableOpacity
                         onPress={handleProfilePicturePress}>
-                        <Image 
-                            source={{uri:selectedImage}}
-                            style={{
-                                height: 130,
-                                width: 130,
-                                borderRadius: 85,
-                                borderWidth: 2,
-                                borderColor: "#000"
-                            }}/>
+                            {selectedImage ? (
+                                <Image 
+                                    source={{uri:selectedImage}}
+                                    style={{
+                                        height: 130,
+                                        width: 130,
+                                        borderRadius: 85,
+                                        borderWidth: 2,
+                                        borderColor: "#000"
+                                    }}
+                                />
+                            ) : (
+                                <Image 
+                                    source={{ uri: initialpfp }} // Fallback image if selectedImage is null
+                                    style={{
+                                        height: 130,
+                                        width: 130,
+                                        borderRadius: 85,
+                                        borderWidth: 2,
+                                        borderColor: "#000",
+                                    }}
+                                />
+                            )}
+
                         <View style={{
                             position: "absolute",
                             bottom: -5,
@@ -256,7 +284,7 @@ export default function AddPref2({ navigation }) {
                                 placeholderTextColor="#7C808D"
                                 color={Colors.ghost}
                                 onChangeText={setName}
-                                value={name}
+                                value={name || ''}
                                 editable={true}/>
                         </View>
                     </View>
@@ -266,18 +294,51 @@ export default function AddPref2({ navigation }) {
                     <Text style={styles.sectionTitle}>Distance:</Text>
                     <RadioButton
                         label="Within 10 miles"
-                        isSelected={selectedDistance === 'ten'}
-                        onPress={() => setSelectedDistance('ten')}
+                        isSelected={selectedDistance === 16093}
+                        onPress={() => {
+                            setSelectedDistance(16093);
+                            setIsChecked((prevState) => ({
+                                ...prevState,
+                                distance: 16093
+                            }))
+                        }
+                    }
                     />
                     <RadioButton
                         label="Within 15 miles"
-                        isSelected={selectedDistance === 'fifteen'}
-                        onPress={() => setSelectedDistance('fifteen')}
+                        isSelected={selectedDistance === 24140}
+                        onPress={() => {
+                            setSelectedDistance(24140);
+                            setIsChecked((prevState) => ({
+                                ...prevState,
+                                distance: 24140
+                            }))
+                        }
+                    }
                     />
                     <RadioButton
                         label="Within 20 miles"
-                        isSelected={selectedDistance === 'twenty'}
-                        onPress={() => setSelectedDistance('twenty')}
+                        isSelected={selectedDistance === 32187}
+                        onPress={() => {
+                            setSelectedDistance(32187);
+                            setIsChecked((prevState) => ({
+                                ...prevState,
+                                distance: 32187
+                            }))
+                        }
+                    }
+                    />
+                    <RadioButton
+                        label="Within 25 miles"
+                        isSelected={selectedDistance === 40000}
+                        onPress={() => {
+                            setSelectedDistance(40000);
+                            setIsChecked((prevState) => ({
+                                ...prevState,
+                                distance: 40000
+                            }))
+                        }
+                    }
                     />
                 </View>
 
@@ -285,17 +346,55 @@ export default function AddPref2({ navigation }) {
                 <View style={styles.selectContainer}>
                     <Text style={styles.sectionTitle}>Budget:</Text>
                     <RadioButton
-                        label="$20"
-                        isSelected={selectedBudget === '$20'}
-                        onPress={() => setSelectedBudget('$20')}
+                        label="$10 or less"
+                        isSelected={selectedBudget === 1}
+                        onPress={() => {
+                            setSelectedBudget(1);
+                            setIsChecked((prevState) => ({
+                                ...prevState,
+                                budget: 1
+                            }))
+                        }}       
                     />
                     <RadioButton
-                        label="$50"
-                        isSelected={selectedBudget === '$50'}
-                        onPress={() => setSelectedBudget('$50')}
+                        label="$30 or less"
+                        isSelected={selectedBudget === 2}
+                        onPress={() => {
+                            setSelectedBudget(2);
+                            setIsChecked((prevState) => ({
+                                ...prevState,
+                                budget: 2
+                            }))
+                        }}       
+                    />
+                    <RadioButton
+                        label="$60 or less"
+                        isSelected={selectedBudget === 3}
+                        onPress={() => {
+                            setSelectedBudget(3);
+                            setIsChecked((prevState) => ({
+                                ...prevState,
+                                budget: 3
+                            }))
+                        }}       
+                    />
+                    <RadioButton
+                        label="More than $60"
+                        isSelected={selectedBudget === 4}
+                        onPress={() => {
+                            setSelectedBudget(4);
+                            setIsChecked((prevState) => ({
+                                ...prevState,
+                                budget: 4
+                            }))
+                        }}
                     />
                 </View>
-                    <TouchableOpacity style={styles.saveButton}>
+                    <TouchableOpacity style={styles.saveButton}
+                        onPress={() => {
+                            handleSaveProfile();
+                            fetchProfiles();
+                        }}>
                         <Text style={styles.saveText}>Add Preference</Text>
                     </TouchableOpacity>
                 </View>

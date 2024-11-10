@@ -8,16 +8,28 @@ import Signup from './screens/Signup';
 import TabContainer from './TabContainer';
 import Settings from './screens/Settings';
 import EditProfile from './screens/EditProfile';
+import ProblemReport from './screens/ProblemReport';
 import AddPref1 from './screens/AddPref1';
 import AddPref2 from './screens/AddPref2';
+import Question from './screens/Question';
+import Result from './screens/Result';
+import DevicePermissions from './screens/DevicePermissions';
+import Preference from './screens/Preference';
+import Filter from './screens/Filter';
 
 const loginName = 'Login';
 const signupName = 'Signup';
 const tabName = 'Tab';
 const settingsName = 'Settings';
 const editName = 'Edit Profile';
+const problemReport = 'Report a Problem'
 const add1Name = "Add Preference 1";
 const add2Name = "Add Preference 2";
+const questionName = "Question";
+const resultName = "Result";
+const devicePerms = "DevicePermissions";
+const prefName = "Preference";
+const filterName = "Filter";
 
 const Stack = createNativeStackNavigator();
 
@@ -31,8 +43,14 @@ export default function WelcomeContainer() {
         <Stack.Screen name={tabName} component={TabContainer} />
         <Stack.Screen name={settingsName} component={Settings}/>
         <Stack.Screen name={editName} component={EditProfile}/>
+        <Stack.Screen name={problemReport} component={ProblemReport}/>
         <Stack.Screen name={add1Name} component={AddPref1}/>
         <Stack.Screen name={add2Name} component={AddPref2}/>
+        <Stack.Screen name={questionName} component={Question}/>
+        <Stack.Screen name={resultName} component={Result}/>
+        <Stack.Screen name={devicePerms} component={DevicePermissions}/>
+        <Stack.Screen name={prefName} component={Preference}/>
+        <Stack.Screen name={filterName} component={Filter}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

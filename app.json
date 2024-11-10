@@ -32,13 +32,25 @@
     },
     "plugins": [
       "expo-router",
-      
       [
         "expo-build-properties",
         {
           "ios": {
             "useFrameworks": "static"
           }
+        }
+      ],
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-8950189603855014~6583887580",
+          "iosAppId": "ca-app-pub-8950189603855014~9020385210"
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
         }
       ]
     ],

@@ -4,15 +4,14 @@ import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useContext, useEffect, useState } from 'react';
 import { Colors } from './Colors';
-import { ProfileContext } from '../../backend/contexts/ProfileContext';
+import { ProfileContext } from '../contexts/ProfileContext';
 import { getActionFromState } from '@react-navigation/native';
 import { getAuth, updatePassword, updateProfile } from '@firebase/auth';
-import { getDatabase, ref, set } from 'firebase/database';
-import { database, auth } from '../../backend/firebase/firebase';
+import { database, auth } from '../firebase/firebase';
 
 
 export default function EditProfile({ navigation }) {
-    const { pfp, setpfp } = useContext(ProfileContext)
+    const { pfp, setPfp } = useContext(ProfileContext)
     const { username, setUsername} = useContext(ProfileContext)
     const [selectedImage, setSelectedImage] = React.useState(pfp);
     const [email, setEmail] = React.useState("")
@@ -35,12 +34,8 @@ export default function EditProfile({ navigation }) {
             quality: 1
         });
 
-        console.log(result);
-
         if(!result.canceled){
             setSelectedImage(result.assets[0].uri)
-            console.log(pfp)
-            
         }
     };
 
@@ -80,30 +75,25 @@ export default function EditProfile({ navigation }) {
     const saveProfile = async () => {
         const auth = getAuth();
         const user = auth.currentUser;
+        const idToken = await user.getIdToken(true);
         
-        console.log("user UID:", user.uid);
-        console.log("Selected Image URI:", selectedImage);
-        console.log("Username:", username);
-        console.log("Email:", email);
 
         try {
-            // update Firebase Authentication profile
-            await updateProfile(user, {
-                username: username,
-                photoURL: selectedImage,
-            });
-            
             //save to Realtime Database
-            await set(ref(database, 'users/' + user.uid), {
-                username: username,
-                photoURL: selectedImage,
-            });
+            const response = await fetch('http://10.0.2.2:5000/database/update_user',
+            {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${idToken}`
+                },
+                body: JSON.stringify({ username: username, photoURL: selectedImage}),
+                });
 
-            console.log(pfp)
             //update context state
             setUsername(username);
-            setpfp(selectedImage);
-
+            setPfp(selectedImage);
+            
         } catch (error) {
             console.error('Error updating profile:', error);
             Alert.alert("Error", error.message);
@@ -195,7 +185,7 @@ export default function EditProfile({ navigation }) {
                                 onChangeText={setEmail}
                                 value={email}
                                 color={Colors.ghost}
-                                editable={true}/>
+                                editable={false}/>
                         </View>
                     </View>
 
