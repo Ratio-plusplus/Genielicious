@@ -9,7 +9,8 @@ from flask import jsonify
 dotenv_path = find_dotenv()
 load_dotenv(dotenv_path) # loads env vars into path
 
-cred = credentials.Certificate("confidential\\serviceAccountKey.json")
+#cred = credentials.Certificate("confidential\\serviceAccountKey.json")
+cred = credentials.Certificate("confidential/serviceAccountKey.json")
 db_url = {'databaseURL': os.getenv("REACT_APP_FIREBASE_DATABASE_URL")}
 initialize_app(cred, db_url)
 

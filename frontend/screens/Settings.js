@@ -10,31 +10,39 @@ export default function Settings({ navigation }) {
     const [modalMessage, setModalMessage] = React.useState("")
 
     const accountItems = [
-        {icon: "person-outline", text: "Edit Profile", action: () => navigation.navigate('Edit Profile')},
+        { icon: "person-outline", text: "Edit Profile", action: () => navigation.navigate('Edit Profile') },
         //Change icon to better fit the screeen
-        {icon: "location-pin", text: "Device Permissions", action: () => navigation.navigate('DevicePermissions')},
+        { icon: "location-pin", text: "Device Permissions", action: () => navigation.navigate('DevicePermissions') },
     ];
 
     const historyItems = [
-        {icon: "delete-outline", text: "Clear History", action: () =>{
-            setModalMessage("Are you sure you want to clear your history?")
-            setModalVisible(true);
-        }}
+        {
+            icon: "delete-outline", text: "Clear History", action: () => {
+                setModalMessage("Are you sure you want to clear your history?")
+                setModalVisible(true);
+            }
+        }
     ];
 
     const actionsItems = [
-        {icon: "outlined-flag", text: "Report a Problem", action:  () => {
-            navigation.navigate('Report a Problem')
-            console.log("Report")
-        }},
-        {icon: "logout", text: "Logout", action: () => {
-            setModalMessage("Are you sure you want to log out?")
-            setModalVisible(true)
-        }},
-        {icon: "backspace", text: "Delete Account", action: () => {
-            setModalMessage("Are you sure you want to delete your account?")
-            setModalVisible(true)
-        }}
+        {
+            icon: "outlined-flag", text: "Report a Problem", action: () => {
+                navigation.navigate('Report a Problem')
+                console.log("Report")
+            }
+        },
+        {
+            icon: "logout", text: "Logout", action: () => {
+                setModalMessage("Are you sure you want to log out?")
+                setModalVisible(true)
+            }
+        },
+        {
+            icon: "backspace", text: "Delete Account", action: () => {
+                setModalMessage("Are you sure you want to delete your account?")
+                setModalVisible(true)
+            }
+        }
     ];
 
     //render each setting item with the corresponding icon, text, and action 
@@ -42,16 +50,16 @@ export default function Settings({ navigation }) {
         <TouchableOpacity
             onPress={action}    //this action occurs when the setting item is pressed
             style={styles.settingItems}>
-            <MaterialIcons name={icon} size={24} color={Colors.raisin}/>
+            <MaterialIcons name={icon} size={24} color={Colors.raisin} />
             <Text style={styles.settingText}>{text}</Text>
         </TouchableOpacity>
     )
 
     const handleAction = async () => {
-        if (modalMessage === "Are you sure you want to clear your history?"){
+        if (modalMessage === "Are you sure you want to clear your history?") {
             console.log("History Cleared")
         }
-        else if (modalMessage === "Are you sure you want to delete your account?"){
+        else if (modalMessage === "Are you sure you want to delete your account?") {
             try {
                 response = await deleteAccount();
                 navigation.navigate('Login');
@@ -60,8 +68,8 @@ export default function Settings({ navigation }) {
                 console.error("Failed to log out", error)
             }
         }
-        else if (modalMessage === "Are you sure you want to log out?"){
-            try{
+        else if (modalMessage === "Are you sure you want to log out?") {
+            try {
                 await doSignOut();
                 navigation.navigate('Login');
                 console.log("Logged Out")
@@ -75,30 +83,30 @@ export default function Settings({ navigation }) {
     return (
         <SafeAreaView style={styles.background}>
             <View style={styles.container}>
-                    <TouchableOpacity 
-                        onPress={()=>navigation.navigate('Profile')}    //navigate back to profile page if back arrow is pressed
-                        style={{
-                            position: "absolute",
-                            left: 0
-                        }}>
-                        <MaterialIcons
-                            name="keyboard-arrow-left"
-                            size={33}
-                            color={Colors.ghost}
-                        />
-                    </TouchableOpacity>
-                    <Text style={styles.title}>Settings</Text>
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('Profile')}    //navigate back to profile page if back arrow is pressed
+                    style={{
+                        position: "absolute",
+                        left: 0
+                    }}>
+                    <MaterialIcons
+                        name="keyboard-arrow-left"
+                        size={33}
+                        color={Colors.ghost}
+                    />
+                </TouchableOpacity>
+                <Text style={styles.title}>Settings</Text>
             </View>
 
-            <ScrollView style={{marginHorizontal: 15}}>
+            <ScrollView style={{ marginHorizontal: 15 }}>
                 {/* account setting section */}
-                <View style={{marginBottom: 12}}>
+                <View style={{ marginBottom: 12 }}>
                     <Text style={styles.sectionTitle}>Account</Text>
                     <View style={styles.sectionBox}>
                         {
                             accountItems.map((item, index) => (
                                 //render each account setting item
-                                <React.Fragment key={index}> 
+                                <React.Fragment key={index}>
                                     {renderSettingItem(item)}
                                 </React.Fragment>
                             ))
@@ -107,7 +115,7 @@ export default function Settings({ navigation }) {
                 </View>
 
                 {/* user data setting section */}
-                <View style={{marginBottom: 12}}>
+                <View style={{ marginBottom: 12 }}>
                     <Text style={styles.sectionTitle}>User Data</Text>
                     <View style={styles.sectionBox}>
                         {
@@ -122,7 +130,7 @@ export default function Settings({ navigation }) {
                 </View>
 
                 {/* actions setting section */}
-                <View style={{marginBottom: 12}}>
+                <View style={{ marginBottom: 12 }}>
                     <Text style={styles.sectionTitle}>Actions</Text>
                     <View style={styles.sectionBox}>
                         {
@@ -139,34 +147,33 @@ export default function Settings({ navigation }) {
 
             {/* Modal for clear history confirmation */}
             <Modal
-                transparent = {true}
-                animationType ='fade'
-                visible = {modalVisible}
+                transparent={true}
+                animationType='fade'
+                visible={modalVisible}
                 onRequestClose={() => setModalVisible(false)}
             >
 
-            <View style = {styles.modalOverlay}></View>
-            
-            <View style={styles.modalContainer}>
-                <View style={styles.modalContent}>
-                    <Text style={styles.modalText}>{modalMessage}</Text>
-                    <View style={styles.buttonContainer}>
-                        {/* No Button */}
-                <Pressable
-                    style={[styles.modalButton, { backgroundColor: '#ED9A1C' }]} 
-                    onPress={() => setModalVisible(false)}>
-                    <Text style={[styles.buttonText, { color: '#000' }]}>No</Text>
-                </Pressable>
+                <View style={styles.modalOverlay}></View>
 
-                {/* Yes Button */}
-                <Pressable
-                    style={[styles.modalButton, { backgroundColor: '#EBEEFA' }]} 
-                    onPress={handleAction}>
-                    <Text style={[styles.buttonText, { color: '#000' }]}>Yes</Text>
-                </Pressable>
-            </View>
-        </View>
-    </View>
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <Text style={styles.modalText}>{modalMessage}</Text>
+                        <View style={styles.buttonContainer}>
+                            {/* Yes Button */}
+                            <TouchableOpacity
+                                style={[styles.modalButton, { backgroundColor: Colors.gold }]}
+                                onPress={handleAction}>
+                                <Text style={[styles.buttonText, { color: Colors.raisin }]}>Yes</Text>
+                            </TouchableOpacity>
+                            {/* No Button */}
+                            <TouchableOpacity
+                                style={[styles.modalButton, { backgroundColor: Colors.ghost }]}
+                                onPress={() => setModalVisible(false)}>
+                                <Text style={[styles.buttonText, { color: Colors.raisin }]}>No</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
             </Modal>
         </SafeAreaView>
     );
@@ -185,7 +192,7 @@ const styles = StyleSheet.create({
         fontSize: 16
     },
     background: {
-        flex: 1, 
+        flex: 1,
         backgroundColor: Colors.blue
     },
     container: {
@@ -196,16 +203,16 @@ const styles = StyleSheet.create({
         justifyContent: "center"
     },
     title: {
-        marginTop: 2, 
-        fontWeight: "bold", 
-        fontSize: 22, 
+        marginTop: 2,
+        fontWeight: "bold",
+        fontSize: 22,
         color: Colors.ghost
     },
     sectionTitle: {
-        marginTop: 20, 
-        marginVertical: 10, 
-        fontWeight: "bold", 
-        fontSize: 18, 
+        marginTop: 20,
+        marginVertical: 10,
+        fontWeight: "bold",
+        fontSize: 18,
         color: Colors.ghost
     },
     sectionBox: {
@@ -250,7 +257,7 @@ const styles = StyleSheet.create({
         width: '100%', // Use full width of modal
         marginTop: 10,
     },
-    modalButton:{
+    modalButton: {
         paddingVertical: 3,
         paddingHorizontal: 20,
         borderRadius: 5,
