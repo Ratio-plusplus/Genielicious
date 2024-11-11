@@ -21,11 +21,10 @@ export default function Profile({ navigation }) {
 
     const renderProfileItem = ({ item }) => {
         const isActiveProfile = item.id === activeProfileId; // Check if this profile is active
-        console.log(`Profile ID: ${item.id}, Active Profile ID: ${activeProfileId}, Is Active: ${isActiveProfile}`);
 
         return (
             <TouchableOpacity
-                style={[styles.profileIconContainer, isActiveProfile && styles.activeProfileIconContainer]}
+                style={[styles.profileIconContainer, isActiveProfile]}
                 onPress={() => navigation.navigate('Preference', { profileData: item, activeProfileId })}
             >
                 <Image
@@ -167,10 +166,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         width: "50%",
-    },
-    activeProfileIconContainer: {
-        borderColor: Colors.gold, // Active profile border color
-        borderWidth: 20,
     },
     profileIconImage: {
         width: 100,

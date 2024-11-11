@@ -1,4 +1,4 @@
-from firebase import getUserCacheRef, getActiveFoodProfile, getLocation
+from firebase import getUserCacheRef, getActiveProfileId, getLocation
 from yelp import getStore
 import json
 
@@ -24,7 +24,7 @@ def compileResults(user_id, food_item:str):
     cache = getUserCacheRef(user_id)
     coords = getLocation(user_id) # user location        
 
-    activeProfile = getActiveFoodProfile(user_id)
+    activeProfile = getActiveProfileId(user_id)
     if activeProfile:
         budget = activeProfile["budget"]
         distance = activeProfile["distance"]

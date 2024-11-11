@@ -1,12 +1,14 @@
 import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Colors } from './Colors';
 import { auth } from '../firebase/firebase';
+import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
 
 export default function Preference({ navigation, route }) {
     const { profileData } = route.params;
+    const { setActiveProfile } = useContext(FlavorPreferencesContext);
 
     const [tasteProfile, setTasteProfile] = useState({
         title: profileData?.title || '',
@@ -80,11 +82,9 @@ export default function Preference({ navigation, route }) {
                 body: JSON.stringify({ profileId: profileData.id })
             });
 
-            console.log("printing response: ", response.ok)
-            console.log("printing profile id: ", profileData.id)
-
             if (response.ok) {
                 console.log("Profile set as active successfully.");
+                setActiveProfile(profileData.id);
                 navigation.navigate('Profile');
             } else {
                 const errorText = await response.text();

@@ -1,7 +1,7 @@
 #!pip install -q -U google-generativeai
 # import requests
 import json
-from firebase import getDataRef, getUserCacheRef, getActiveFoodProfile
+from firebase import getDataRef, getUserCacheRef, getActiveProfileId
 # from firebase import getTestUser
 from dotenv import find_dotenv, load_dotenv
 # from yelp import cacheToJson # used in development
@@ -19,7 +19,7 @@ model = genai.GenerativeModel("gemini-1.5-flash") # model version we're using
 
 def getPrompt(user_id, mode):
   dataRef = getDataRef()
-  activeFoodProfile = getActiveFoodProfile(user_id)      
+  activeFoodProfile = getActiveProfileId(user_id)      
 
   if mode == "short":
     prompt = dataRef.child("short_prompt").get()
@@ -96,7 +96,7 @@ def getNextQuestion(user_id:str, mode:str):
   distanceCache = cache.child("distanceCache").get()
   budgetCache = cache.child("budgetCache").get()
   
-  activeProfile = getActiveFoodProfile(user_id)
+  activeProfile = getActiveProfileId(user_id)
 
   if activeProfile:
       budget = activeProfile["budget"]
