@@ -1102,3 +1102,5 @@ confidential/
 serviceAccountKey.json
 AdmobInitialize.js
 unused/
+.gcloudignore
+app.yaml
