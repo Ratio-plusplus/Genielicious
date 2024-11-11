@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Modal, Button, Pressable } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Colors } from './Colors';
@@ -10,7 +10,7 @@ export default function Settings({ navigation }) {
     const [modalMessage, setModalMessage] = React.useState("")
 
     const accountItems = [
-        { icon: "person-outline", text: "Edit Profile", action: () => navigation.navigate('Edit Profile') },
+        { icon: "person-outline", text: "Edit Account", action: () => navigation.navigate('Edit Profile') },
         //Change icon to better fit the screeen
         { icon: "location-pin", text: "Device Permissions", action: () => navigation.navigate('DevicePermissions') },
     ];
@@ -50,7 +50,7 @@ export default function Settings({ navigation }) {
         <TouchableOpacity
             onPress={action}    //this action occurs when the setting item is pressed
             style={styles.settingItems}>
-            <MaterialIcons name={icon} size={24} color={Colors.raisin} />
+            <MaterialIcons name={icon} size={28} color={Colors.raisin} />
             <Text style={styles.settingText}>{text}</Text>
         </TouchableOpacity>
     )
@@ -100,7 +100,7 @@ export default function Settings({ navigation }) {
 
             <ScrollView style={{ marginHorizontal: 15 }}>
                 {/* account setting section */}
-                <View style={{ marginBottom: 12 }}>
+                <View style={styles.sectionContainer}>
                     <Text style={styles.sectionTitle}>Account</Text>
                     <View style={styles.sectionBox}>
                         {
@@ -115,7 +115,7 @@ export default function Settings({ navigation }) {
                 </View>
 
                 {/* user data setting section */}
-                <View style={{ marginBottom: 12 }}>
+                <View style={styles.sectionContainer}>
                     <Text style={styles.sectionTitle}>User Data</Text>
                     <View style={styles.sectionBox}>
                         {
@@ -130,7 +130,7 @@ export default function Settings({ navigation }) {
                 </View>
 
                 {/* actions setting section */}
-                <View style={{ marginBottom: 12 }}>
+                <View style={styles.sectionContainer}>
                     <Text style={styles.sectionTitle}>Actions</Text>
                     <View style={styles.sectionBox}>
                         {
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
     settingText: {
         marginLeft: 36,
         fontWeight: '600',
-        fontSize: 16
+        fontSize: 18
     },
     background: {
         flex: 1,
@@ -208,11 +208,15 @@ const styles = StyleSheet.create({
         fontSize: 22,
         color: Colors.ghost
     },
+    sectionContainer: { 
+        marginBottom: 12, 
+        marginHorizontal: 8 
+    },
     sectionTitle: {
         marginTop: 20,
         marginVertical: 10,
         fontWeight: "bold",
-        fontSize: 18,
+        fontSize: 20,
         color: Colors.ghost
     },
     sectionBox: {

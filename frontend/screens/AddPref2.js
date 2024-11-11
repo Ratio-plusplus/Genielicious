@@ -154,7 +154,7 @@ export default function AddPref2({ navigation }) {
                             color={Colors.ghost}
                         />
                     </TouchableOpacity>
-                    <Text style={{marginTop: 2, fontWeight: 600, fontSize: 22, color: Colors.ghost}}>Add Preference</Text>
+                    <Text style={{marginTop: 2, fontWeight: 600, fontSize: 22, color: Colors.ghost}}>Add Taste Profile</Text>
             </View>
             
             {/* button to use camera
@@ -396,7 +396,7 @@ export default function AddPref2({ navigation }) {
                             handleSaveProfile();
                             fetchProfiles();
                         }}>
-                        <Text style={styles.saveText}>Add Preference</Text>
+                        <Text style={styles.saveText}>Add Taste Profile</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
@@ -436,7 +436,7 @@ const styles = StyleSheet.create({
     checkbox: {
         flex: 1,
         marginRight: 20,
-        marginBottom: 16,
+        marginBottom: 15,
     },
     checkboxText: {
         fontSize: 19, 
@@ -517,7 +517,7 @@ const styles = StyleSheet.create({
     radioButtonContainer: {
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: 16,
+        marginBottom: 15,
     },
     circle: {
         height: 20,
