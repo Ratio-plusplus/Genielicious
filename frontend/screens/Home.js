@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     titleText: {
-        fontSize: 35,
+        fontSize: 33,
         fontWeight: 'bold',
         color: Colors.champagne,
         fontFamily: 'InknutAntiqua-Regular',
