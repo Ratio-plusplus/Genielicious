@@ -384,7 +384,8 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         marginBottom: 20,
         color: Colors.ghost,
-        alignItems: 'center'
+        alignItems: 'center',
+        textAlign: 'center'
     },
     modalButtons: {
         flexDirection: 'row',
