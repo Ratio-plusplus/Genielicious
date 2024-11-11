@@ -153,24 +153,24 @@ export default function Settings({ navigation }) {
                 onRequestClose={() => setModalVisible(false)}
             >
 
-                <View style={styles.modalOverlay}></View>
-
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        <Text style={styles.modalText}>{modalMessage}</Text>
-                        <View style={styles.buttonContainer}>
-                            {/* Yes Button */}
-                            <TouchableOpacity
-                                style={[styles.modalButton, { backgroundColor: Colors.gold }]}
-                                onPress={handleAction}>
-                                <Text style={[styles.buttonText, { color: Colors.raisin }]}>Yes</Text>
-                            </TouchableOpacity>
-                            {/* No Button */}
-                            <TouchableOpacity
-                                style={[styles.modalButton, { backgroundColor: Colors.ghost }]}
-                                onPress={() => setModalVisible(false)}>
-                                <Text style={[styles.buttonText, { color: Colors.raisin }]}>No</Text>
-                            </TouchableOpacity>
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContainer}>
+                        <View style={styles.modalContent}>
+                            <Text style={styles.modalText}>{modalMessage}</Text>
+                            <View style={styles.buttonContainer}>
+                                {/* Yes Button */}
+                                <TouchableOpacity
+                                    style={[styles.modalButton, { backgroundColor: Colors.gold }]}
+                                    onPress={handleAction}>
+                                    <Text style={[styles.buttonText, { color: Colors.raisin }]}>Yes</Text>
+                                </TouchableOpacity>
+                                {/* No Button */}
+                                <TouchableOpacity
+                                    style={[styles.modalButton, { backgroundColor: Colors.ghost }]}
+                                    onPress={() => setModalVisible(false)}>
+                                    <Text style={[styles.buttonText, { color: Colors.raisin }]}>No</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
                 </View>
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     settingItems: {
         flexDirection: "row",
         alignItems: "center",
-        paddingVertical: 8,
+        paddingVertical: 13,
         paddingLeft: 12,
     },
     settingText: {
@@ -220,58 +220,55 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.champagne
     },
     modalContainer: {
+        width: '80%',
+        height: '20%',
         backgroundColor: Colors.blue,
-        borderRadius: 15,
-        padding: 45,
-        width: '80%', // Ensure it has proper width
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: Colors.ghost,
+        padding: 20,
+        marginHorizontal: 0,
         alignItems: 'center',
-        justifyContent: 'center',
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: [{ translateX: -0.4 * 450 }, { translateY: -0.4 * 450 }], // Center the modal perfectly on the screen
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
     },
     modalOverlay: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black for dim effect
-    },
-    modalTitle: {
-        fontSize: 18,
-        fontWeight: "bold",
-        marginBottom: 10,
-        color: Colors.ghost // Font color using project's color
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', 
     },
     modalText: {
-        fontSize: 20,
+        fontSize: 22,
+        fontWeight: '600',
         marginBottom: 20,
-        textAlign: "center",
-        color: Colors.ghost // Font color using project's color
+        color: Colors.ghost,
+        alignItems: 'center',
+        textAlign: 'center'
     },
     buttonContainer: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        width: '100%', // Use full width of modal
-        marginTop: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        width: '90%',
+        height: '38%',
+        marginTop: 1
     },
     modalButton: {
-        paddingVertical: 3,
-        paddingHorizontal: 20,
         borderRadius: 5,
-        flex: 1,
-        marginHorizontal: 5,
+        width: '40%',
         alignItems: 'center',
+        justifyContent: 'center'
     },
     buttonText: {
-        color: Colors.black, // Use project's font color
-        fontSize: 25,
-        padding: 10,
-        flex: 1, // Flex to take space
-        textAlign: "center", // Center text
-        marginHorizontal: 5 // Space between buttons
+        color: Colors.raisin,
+        fontWeight: '600',
+        fontSize: 22
     },
     clearButton: {
         color: Colors.ghost, // Change clear button color to red
