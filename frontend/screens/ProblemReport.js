@@ -5,18 +5,32 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 
 // const database = getDatabase(app);
+const handleProblemReport = async (title, urgency, description) => {
+    const idToken = await currentUser.getIdToken();
+    const response = await fetch(`http://10.0.2.2:5000/database/submit_bug_report`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${idToken}`
+            }, body : JSON.stringify({bugReportTitle: title, urgency: urgency, description: description})
+        });
+        const json = await response.json();
+        if (json["results"] == false) {
+            if (json["success"] == true){
+            handleQuestionnaire();
+        }
+    }
+        else if (json["results"] == true){
+            navigation.navigate("Settings");
+    }
+}
   
     export default function ProblemReport ({ navigation }) {
     //Variables to hold each call
     const [title, setTitle] = React.useState();
     const [problemUrgency, setProblemUrgency] = useState(null);
-    const [isChecked, setIsChecked] = useState({
-        urgencyLevel: {
-            low: false,
-            med: false,
-            high: false,
-        }
-    });
+    const [isChecked, setIsChecked] = useState(null);
+
     const [description, problemDescription] = useState();
 
     //custom radio button component
@@ -142,7 +156,7 @@ import { MaterialIcons } from '@expo/vector-icons';
             <View>
                 <TouchableOpacity style={styles.saveButton}
                         onPress={() =>{ 
-                            addToProfile();
+                            handleProblemReport(title, problemUrgency, description);
                             navigation.navigate('Profile');
                         }}>
                     <Text style={styles.saveText}>Submit</Text>

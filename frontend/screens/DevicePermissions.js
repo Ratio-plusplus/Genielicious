@@ -5,13 +5,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 
 export default function DevicePermissions ({ navigation }) {
-    const PermsList = [
-        {icon: "person-outline", text: "Location Permissions", action: () => navigation.navigate('Edit Profile')},
-        //Change icon to better fit the screeen
-        {icon: "location-pin", text: "Camera Permissions", action: () => navigation.navigate('Camera Permissions')},
-    ];
-
-
     {/* lists all permissions */}
     return(
         <SafeAreaView style={styles.background}>
@@ -30,6 +23,23 @@ export default function DevicePermissions ({ navigation }) {
                         />
                     </TouchableOpacity>
                     <Text style={styles.title}>Device Permissions</Text>
+                    
+            </View>
+
+            <View>
+                <Text style={styles.sectionText}>Location Permissions</Text>
+                    <Text>If you choose to allow location access:
+
+                        We may receive information about your precise location through things like: Your GPS location, bluetooth, and Wi-Fi connections. We will receive your location information from Location Services. Without this service, our Genie's accuracy will significantly lower.
+                    </Text>
+            </View>
+
+            <View>
+            <Text style={styles.sectionText}>Camera Permissions</Text>
+                <Text>If you choose to allow camera access:
+
+                    Genielicious is allowed to access this device's camera. This allows us to use your images should you want to change your profile picture or flavor Profiles. 
+                </Text>
             </View>
 
         </SafeAreaView>

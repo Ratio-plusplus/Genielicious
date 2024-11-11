@@ -34,15 +34,12 @@ def getTestUser(user_id):
 
 
 # pulls user location from phone
-def setUserLocation(uid):
+def setUserLocation(query, uid):
+    latitude = query.get("latitude")
+    longitude = query.get("longitude")
     try:
-        keys = query.keys()
-        print(keys)
-        for key in keys:
-            print(key)
-            print(query.get(key))
-            db.reference(f"users/{uid}").update({key: query.get(key) })
-        return jsonify({"uid": uid, "message": "User updated successfully in database"}), 200
+        db.reference(f"users/{uid}/location").set({'latitude': latitude, 'longitude': longitude})
+        return jsonify({"uid": uid, "message": "User location updated successfully in database"}), 200
     except Exception as e:
         return jsonify({"Error": e}), 400
 
@@ -138,7 +135,7 @@ def getProfile(uid):
 
 def updateFlavorProfile(query, uid):
     try:
-            profileInfo = query.get("profileInfo");
+            profileInfo = query.get("profileInfo")
             tastePreferences = profileInfo["tastePreferences"]
             allergies = profileInfo["allergies"]
             distance = profileInfo["distance"]
@@ -224,6 +221,22 @@ def addFlavorProfile(query, uid):
     except Exception as e:
         return jsonify(message=f"Error with code: {e}")
             
+def submitBugReport(query, uid):
+    try:
+            bugReport = query.get('bugReportTitle')
+            title = bugReport["bugReportTitle"]
+            urgency = bugReport["urgency"]
+            description = bugReport["description"]
+            ref = db.reference(f"BugReports/{uid}/Problem")
+            ref.set({
+                "title" : title, 
+                "urgency": urgency, 
+                "description" : description,
+            })
+            return jsonify({"uid": uid, "message": "User bug report successfully created in database"}), 200
+    except Exception as e:
+        return jsonify(message=f"Error with code: {e}")
+
 #endregion Inner Region
 
 if __name__ == "__main__":
