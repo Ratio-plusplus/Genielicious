@@ -55,6 +55,7 @@ const getResults = async (currentUser) => {
             'Authorization': `Bearer ${idToken}`
         }
     });
+    console.log(response);
     const json = await response.json();
     const results = json["info"];
     const businessList = JSON.parse(results).businesses;
@@ -71,7 +72,7 @@ const getResults = async (currentUser) => {
     const restaurant = JSON.stringify(restaurants);
     const slice1 = restaurant.replace("[", "");
     const history = slice1.replace("]", "");
-    const response1 = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/add_history', {
+    const response1 = await fetch('http://10.0.2.2:5000/database/add_history', {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
@@ -79,6 +80,7 @@ const getResults = async (currentUser) => {
         },
         body: JSON.stringify({ "restaurantsInfo": history })
     });
+    console.log(response1);
     const json1 = await response1.json();
     console.log(json1);
     return restaurants;

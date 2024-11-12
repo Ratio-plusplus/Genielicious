@@ -117,6 +117,7 @@ def getResultsCache(uid):
         info = db.reference(f"users/{uid}/cache")
         return jsonify({"info": info.child("resultsCache").get()}), 200
     except Exception as e:
+        print(e)
         return jsonify(message=f"Error with code: {e}")
 
 
@@ -131,6 +132,7 @@ def addHistory(query, uid):
         ref.set(history)
         return jsonify({"uid": uid, "message": "User added to history successfully added"}), 200
     except Exception as e:
+        print(e)
         return jsonify(message=f"Error with code: {e}")
 
 def getHistory(uid):
@@ -138,6 +140,7 @@ def getHistory(uid):
         info = db.reference(f"users/{uid}/history")
         return jsonify({"info": info.get()}), 200
     except Exception as e:
+        print(e)
         return jsonify({"Error": e}), 400
 
 def deleteHistory(uid):
