@@ -84,14 +84,13 @@ const getResults = async (currentUser) => {
     return restaurants;
 };
 export default function Result({ navigation }) {
-    const { currentUser, loading } = useAuth(); // Access currentUser and loading
+    const { currentUser } = useAuth(); // Access currentUser and loading
     const [modalVisible, setModalVisible] = React.useState(false);
     const [ready, setReady] = React.useState(false);
     const [restaurants, setRestaurants] = useState([]);    
     const handleBackPress = () => {
         setModalVisible(true); //show the modal when pressed
     };
-
     const handleConfirmYes = () => {
         setModalVisible(false);
         setReady(false);// close the modal

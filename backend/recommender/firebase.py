@@ -9,7 +9,8 @@ from flask import jsonify
 dotenv_path = find_dotenv()
 load_dotenv(dotenv_path) # loads env vars into path
 
-cred = credentials.Certificate("confidential\\serviceAccountKey.json")
+#cred = credentials.Certificate("confidential\\serviceAccountKey.json")
+cred = credentials.Certificate("confidential/serviceAccountKey.json")
 db_url = {'databaseURL': os.getenv("REACT_APP_FIREBASE_DATABASE_URL")}
 initialize_app(cred, db_url)
 
@@ -61,6 +62,7 @@ def createNewUser(query):
         image = query.get("pfp")
         db.reference(f"users/{uid}").set({
             'username': username,
+            'history' : "",
             'activeFoodProfileID': "",
             "flavorProfiles" : {},
             'cache' : {
@@ -111,8 +113,36 @@ def updateDatabaseUser(query, uid):
         return jsonify({"Error": e}), 400
 
 def getResultsCache(uid):
-    info = db.reference(f"users/{uid}/cache")
-    return jsonify({"info": info.child("resultsCache").get()})
+    try:
+        info = db.reference(f"users/{uid}/cache")
+        return jsonify({"info": info.child("resultsCache").get()}), 200
+    except Exception as e:
+        return jsonify(message=f"Error with code: {e}")
+
+
+def addHistory(query, uid):
+    try:
+        restaurantsInfo = query.get("restaurantsInfo")
+        ref = db.reference(f"users/{uid}/history")
+        if ref.get() == "":
+            history = restaurantsInfo
+        else:
+            history = restaurantsInfo + ',' + ref.get()
+        ref.set(history)
+        return jsonify({"uid": uid, "message": "User added to history successfully added"}), 200
+    except Exception as e:
+        return jsonify(message=f"Error with code: {e}")
+
+def getHistory(uid):
+    try:
+        info = db.reference(f"users/{uid}/history")
+        return jsonify({"info": info.get()}), 200
+    except Exception as e:
+        return jsonify({"Error": e}), 400
+
+def deleteHistory(uid):
+    pass
+
 #endregion Inner Region
 
 # return object (dict) of active food profile that contains all details and fields
@@ -224,7 +254,25 @@ def addFlavorProfile(query, uid):
             return jsonify({"error": "Invalid token"}), 400
     except Exception as e:
         return jsonify(message=f"Error with code: {e}")
-            
+
+def deleteFlavorProfile(user_id, profile_id):
+    try:
+        ref = db.reference(f"users/{user_id}/flavorProfiles/{profile_id}")
+        ref.delete()
+        return jsonify({"message": "Flavor profile deleted successfully"}), 200
+    except Exception as e:
+        return jsonify(message=f"Error with code: {e}"), 400
+        
+def deleteUserData(uid):
+    try:
+        auth.delete_user(uid)
+        ref = db.reference(f"users/{uid}")
+        ref.delete()
+        return jsonify({"message": "User successfully deleted"}), 200
+    except Exception as e:
+        return jsonify(message=f"Error with code: {e}"), 400
+    except auth.AuthError as error:
+        return jsonify(message=f"Error with auth: {e}"), 400
 #endregion Inner Region
 
 if __name__ == "__main__":

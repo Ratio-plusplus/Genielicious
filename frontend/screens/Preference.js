@@ -3,8 +3,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { Colors } from './Colors';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Preference({ navigation, route }) {
+    const { currentUser, loading } = useAuth(); // Access currentUser and loading
     const { profileData } = route.params;
 
     const [tasteProfile, setTasteProfile] = useState({

@@ -123,7 +123,7 @@ export default function Login({ navigation }) {
             </View>
             <TextInput
               style={styles.input}
-              placeholder="Email or Username"
+              placeholder="Email"
               placeholderTextColor="#7C808D"
               color={Colors.ghost}
               onChangeText={setEmail}   //updates email state when user types
