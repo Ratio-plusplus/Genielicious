@@ -46,7 +46,7 @@ export default function Profile({ navigation }) {
                         style={styles.settingsIcon}>
                         <Ionicons 
                             name="settings-outline"
-                            size={28}
+                            size={30}
                             color={Colors.champagne}/>
                     </TouchableOpacity>
                 </View>
@@ -61,7 +61,7 @@ export default function Profile({ navigation }) {
                             style={styles.avatarImg}/>
                         </View>
 
-                        {/* name and add preference button */}
+                        {/* name and add taste profile button */}
                         <View style={styles.profileBody}>
                             <Text style={styles.profileTitle}>{username}</Text>
                             <TouchableOpacity style={styles.button} 
@@ -70,11 +70,15 @@ export default function Profile({ navigation }) {
                                     navigation.navigate('Add Preference 1')
                                 }}>  
                                 
-                                <Text style={styles.profileSubtitle}>Add Preference</Text>
+                                <Text style={styles.profileSubtitle}>Add Taste Profile</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
                 </View>
+            </View>
+
+            <View style={styles.lineContainer}>
+                <View style={styles.line}/>
             </View>
 
             {/* flavor profiles section */}
@@ -88,7 +92,7 @@ export default function Profile({ navigation }) {
                     style={{ flex: 1  }}
                     />      
             ): (
-                <Text style={{color: 'white' }}>No profiles found</Text>
+                <Text style={styles.noProfileText}>No taste profile found. Add one now!</Text>
             )}
             
         </SafeAreaView>
@@ -143,13 +147,21 @@ const styles = StyleSheet.create({
     profileTitle: {
         fontSize: 30,
         fontWeight: 'bold',
-        lineHeight: 32,
         color: Colors.champagne,
         marginTop: 8
     },
     profileSubtitle: {
-        fontSize: 17,
+        fontSize: 18,
         fontWeight: '600',
+    },
+    lineContainer: {
+        flex: 1,
+        marginTop: 10
+    },
+    line: {
+        backgroundColor: Colors.ghost,
+        height: '8%',
+        width: '100%',
     },
     avatar: {
         position: 'relative',
@@ -163,9 +175,9 @@ const styles = StyleSheet.create({
     button: {
         alignItems: 'center',
         backgroundColor: Colors.gold,
-        padding: 10,
-        marginTop: 20,
-        width: 150,
+        padding: 13,
+        marginTop: 15,
+        width: '70%',
         borderRadius: 10,
         zIndex: 1
     }, 
@@ -191,4 +203,10 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: Colors.champagne,
     },
+    noProfileText: {
+        color: Colors.ghost, 
+        fontSize: 20, 
+        height: '68%', 
+        marginLeft: 20 
+    }
 });

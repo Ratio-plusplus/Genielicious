@@ -154,15 +154,16 @@ export default function AddPref2({ navigation }) {
                             color={Colors.ghost}
                         />
                     </TouchableOpacity>
-                    <Text style={{marginTop: 2, fontWeight: 600, fontSize: 22, color: Colors.ghost}}>Add Preference</Text>
+                    <Text style={{marginTop: 2, fontWeight: 600, fontSize: 22, color: Colors.ghost}}>Add Taste Profile</Text>
             </View>
             
-            {/* button to use the camera */}
+            {/* button to use camera
             <View style = {{alignItems: 'center', marginBottom: 15, marginTop: 15 }}>
                 <TouchableOpacity onPress = {handleCameraCapture} style = {styles.cameraButton}>
                     <Text style = {styles.cameraButtonText}>Take a Picture</Text>
                 </TouchableOpacity>
             </View>
+            */}
 
             {/* Visual changes for the preference profile picture */}
             <ScrollView>
@@ -176,8 +177,8 @@ export default function AddPref2({ navigation }) {
                                 <Image 
                                     source={{uri:selectedImage}}
                                     style={{
-                                        height: 130,
-                                        width: 130,
+                                        height: 125,
+                                        width: 125,
                                         borderRadius: 85,
                                         borderWidth: 2,
                                         borderColor: "#000"
@@ -187,8 +188,8 @@ export default function AddPref2({ navigation }) {
                                 <Image 
                                     source={{ uri: initialpfp }} // Fallback image if selectedImage is null
                                     style={{
-                                        height: 130,
-                                        width: 130,
+                                        height: 125,
+                                        width: 125,
                                         borderRadius: 85,
                                         borderWidth: 2,
                                         borderColor: "#000",
@@ -204,7 +205,7 @@ export default function AddPref2({ navigation }) {
                         }}>
                             <MaterialIcons
                                 name="photo-camera"
-                                size={32}
+                                size={28}
                                 color={Colors.ghost}/>
                         </View>
                     </TouchableOpacity>
@@ -343,7 +344,7 @@ export default function AddPref2({ navigation }) {
                 </View>
 
                 {/* Budget Circle Select */}
-                <View style={styles.selectContainer}>
+                <View style={styles.checkboxContainer}>
                     <Text style={styles.sectionTitle}>Budget:</Text>
                     <RadioButton
                         label="$10 or less"
@@ -395,7 +396,7 @@ export default function AddPref2({ navigation }) {
                             handleSaveProfile();
                             fetchProfiles();
                         }}>
-                        <Text style={styles.saveText}>Add Preference</Text>
+                        <Text style={styles.saveText}>Add Taste Profile</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
@@ -409,7 +410,7 @@ const styles = StyleSheet.create({
         fontSize: 22,
         fontWeight: "bold",
         marginLeft: 15,
-        marginBottom: 10,
+        marginBottom: 5,
         color: Colors.ghost
     },
     inputContainers: {
@@ -425,11 +426,6 @@ const styles = StyleSheet.create({
     },
     checkboxContainer: {
         paddingLeft: 22,
-        paddingTop: 10,
-    },
-    selectContainer: {
-        paddingLeft: 22,
-        paddingTop: 10,
     },
     sectionTitle: {
         fontSize: 22, 
@@ -440,7 +436,7 @@ const styles = StyleSheet.create({
     checkbox: {
         flex: 1,
         marginRight: 20,
-        marginBottom: 16,
+        marginBottom: 15,
     },
     checkboxText: {
         fontSize: 19, 
@@ -449,16 +445,15 @@ const styles = StyleSheet.create({
     saveButton: {
         backgroundColor: Colors.gold,
         marginLeft: 60,
-        marginTop: 20,
-        marginBottom: 35,
-        height: 50,
+        marginTop: 10,
+        height: '9%',
         width: "67%",
         borderRadius: 6,
         alignItems: "center",
         justifyContent: "center"
     },
     saveText: {
-        fontSize: 20,
+        fontSize: 22,
         fontWeight: "bold",
         color: Colors.raisin
     },
@@ -522,7 +517,7 @@ const styles = StyleSheet.create({
     radioButtonContainer: {
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: 16,
+        marginBottom: 15,
     },
     circle: {
         height: 20,

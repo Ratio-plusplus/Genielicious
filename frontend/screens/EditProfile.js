@@ -116,7 +116,7 @@ export default function EditProfile({ navigation }) {
                             color={Colors.ghost}
                         />
                     </TouchableOpacity>
-                    <Text style={styles.title}>Edit Profile</Text>
+                    <Text style={styles.title}>Edit Account</Text>
             </View>
 
             {/* button to use the camera */}

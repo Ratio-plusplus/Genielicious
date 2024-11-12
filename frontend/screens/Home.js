@@ -1,12 +1,25 @@
 import * as React from 'react';
 import useLocation from '../constants/useLocation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Colors } from './Colors';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Modal} from "react-native";
+import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Modal, ActivityIndicator} from "react-native";
 import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
+import * as Font from 'expo-font';
 
 export default function Home({ navigation }) {
+    // load custom font
+    const [fontLoaded, setFontLoaded] = useState(false);
+    useEffect(() => {
+        async function loadFont() {
+            await Font.loadAsync({
+                'InknutAntiqua-Regular': require('../assets/fonts/InknutAntiqua-Regular.ttf'),
+            });
+            setFontLoaded(true);
+        }
+        loadFont();
+    }, []);
+
     const {latitude, longitude, errorMsg} = useLocation();
     console.log(latitude, longitude, errorMsg);
     const {setMode, flavorProfiles} = React.useContext(FlavorPreferencesContext);
@@ -24,8 +37,8 @@ export default function Home({ navigation }) {
     const handleMode = async (mode) => {
         setMode(mode);
         navigation.navigate('Question');
-
     }
+    
     return (
         <SafeAreaView style={styles.background}>
             {/* title */}
@@ -116,9 +129,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     titleText: {
-        fontSize: 35,
+        fontSize: 33,
         fontWeight: 'bold',
         color: Colors.champagne,
+        fontFamily: 'InknutAntiqua-Regular',
     },
     genieContainer: {
         flex: 0.63,

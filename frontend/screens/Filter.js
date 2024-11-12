@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingLeft: 22,
         paddingTop: 20,
-        marginBottom: 16
+        marginBottom: 15
     },
     circle: {
         height: 21,
@@ -323,12 +323,12 @@ const styles = StyleSheet.create({
         fontSize: 22,
         fontWeight: "bold",
         color: Colors.ghost,
-        marginBottom: 20,
+        marginBottom: 15,
     },
     checkboxRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 16,
+        marginBottom: 15,
     },
     checkbox: {
         flex: 1,
@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
     resetButton: {
         backgroundColor: Colors.ghost,
         width: "40%",
-        height: "44%",
+        height: "38%",
         borderRadius: 10,
         borderWidth: 1,
         borderColor: Colors.raisin,
@@ -356,7 +356,7 @@ const styles = StyleSheet.create({
     applyButton: {
         backgroundColor: Colors.gold,
         width: "40%",
-        height: "44%",
+        height: "38%",
         borderRadius: 10,
         borderWidth: 1,
         borderColor: Colors.raisin,

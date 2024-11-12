@@ -38,7 +38,7 @@ export default function AddPref1 ({ navigation }) {
                         color={Colors.ghost}
                     />
                 </TouchableOpacity>
-                <Text style={styles.title}>Add Preference</Text>
+                <Text style={styles.title}>Add Taste Profile</Text>
         </View>
 
         <ScrollView>

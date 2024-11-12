@@ -1,8 +1,11 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text, ScrollView, Linking } from 'react-native';
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useAuth } from '../contexts/AuthContext';
+import { useFocusEffect } from '@react-navigation/native';
+
 
 // array for the different restaurant results
 const restaurants = [
@@ -26,6 +29,31 @@ const restaurants = [
     },
 ];
 
+const getHistory = async (currentUser) => {
+    const restaurants = [];
+    const idToken = await currentUser.getIdToken();
+    const response = await fetch('http://10.0.2.2:5000/database/get_history', {
+        method: "GET",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${idToken}`
+        }
+    });
+    const json = await response.json();
+    const results = json["info"];
+    console.log(results);
+    // Add brackets around the string
+    const jsonDataArray = `[${results}]`;
+    console.log(jsonDataArray);
+    // Parse the JSON string into an array of objects
+    const restaurant = JSON.parse(jsonDataArray);
+    for (i = 0; i < restaurant.length; i++) {
+        const restaurantInfo = restaurant[i];
+        const push = { name: restaurantInfo.name, taste: restaurantInfo.taste, address: restaurantInfo.address, distance: restaurantInfo.distance, image: restaurantInfo.image };
+        restaurants.push(push);
+    }
+    return restaurants
+};
 // put the address into a URL that will open it in Google Maps
 const openMap = (address) => {
     const formattedAddress = encodeURIComponent(address);
@@ -35,7 +63,12 @@ const openMap = (address) => {
 
 export default function History({ navigation }) {
     // map all restaurant array to be false for heart
+    const [restaurants, setRestaurants] = useState([]);   
     const [favorites, setFavorites] = useState(restaurants.map(() => false));
+     
+    const [ready, setReady] = React.useState(false);
+    const { currentUser } = useAuth(); // Access currentUser and loading
+
 
     // toggle each restaurant's heart
     const toggleFavorite = (index) => {
@@ -58,7 +91,7 @@ export default function History({ navigation }) {
                         />
                     </TouchableOpacity>
                 </View>
-                <Text style={styles.restaurantAliases}>{item.aliases}</Text>
+                <Text style={styles.restaurantAliases}>{item.taste}</Text>
                 <Text
                     style={styles.restaurantAddress}
                     onPress={() => openMap(item.address)} // make the address clickable
@@ -68,6 +101,26 @@ export default function History({ navigation }) {
             </View>
         </View>
     );
+
+    useFocusEffect(
+        useCallback(() => {
+            const fetchHistory = async () => {
+                        const results = await getHistory(currentUser);
+                        setRestaurants(results);
+                    }
+                    fetchHistory();
+        }, [])
+    );
+    //useEffect(() => {
+    //    if (!ready) {
+    //        setReady(true);
+    //        const fetchHistory = async () => {
+    //            const results = await getHistory(currentUser);
+    //            setRestaurants(results);
+    //        }
+    //        fetchHistory();
+    //    }
+    //}, [ready]);
 
     return (
         <SafeAreaView style={styles.background}>
@@ -88,7 +141,7 @@ export default function History({ navigation }) {
                     {restaurants.map((item, index) => (
                         <View key={index} style={styles.restaurantItem}>
                             <Image
-                                source={item.image}
+                                source={{ uri: item.image }}
                                 style={styles.restaurantImage}
                                 resizeMode="cover"
                             />
@@ -119,10 +172,11 @@ const styles = StyleSheet.create({
     restaurantListContainer: {
         flex: 1,
         paddingBottom: 10,
+        paddingRight: 10,
     },
     restaurantList: {
         flexGrow: 1,
-        paddingHorizontal: 10,
+        alignItems: 'center',
     },
     restaurantItem: {
         flexDirection: 'row',
@@ -134,7 +188,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         alignItems: 'center',
         width: '90%',
-        left: '3%',
     },
     restaurantImage: {
         width: '40%',

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useCallback, useContext } from 'react';
+import { useState, useCallback, useContext, useEffect } from 'react';
 import { StyleSheet, Dimensions, View, Image, SafeAreaView, TouchableOpacity, Text, Modal } from 'react-native';
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -7,8 +7,21 @@ import {useAuth} from '../contexts/AuthContext';
 import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
 import { useFocusEffect } from '@react-navigation/native';
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
+import * as Font from 'expo-font';
 
 export default function Question({ navigation }) {
+    // load custom font
+    const [fontLoaded, setFontLoaded] = useState(false);
+    useEffect(() => {
+        async function loadFont() {
+            await Font.loadAsync({
+                'InknutAntiqua-Regular': require('../assets/fonts/InknutAntiqua-Regular.ttf'),
+            });
+            setFontLoaded(true);
+        }
+        loadFont();
+    }, []);
+
     const [modalVisible, setModalVisible] = React.useState(false);
     const [modalVisibleAd, setModalVisibleAd] = React.useState(false);
     const {mode} = React.useContext(FlavorPreferencesContext);
@@ -19,9 +32,8 @@ export default function Question({ navigation }) {
     const [answer3, setAnswer3] = React.useState("Maybe");
     const [answer4, setAnswer4] = React.useState("Not Sure");
 
+    const [selectedAnswer, setSelectedAnswer] = useState(null);
 
-
-    
     const handleQuestionnaire = async () => {
         const idToken = await currentUser.getIdToken();
         const response = await fetch(`http://10.0.2.2:5000/client/questions/${mode}`, {
@@ -41,6 +53,7 @@ export default function Question({ navigation }) {
     }
 
     const handleResults = async (answer) => {
+        setSelectedAnswer(answer);      // for assigning each answer's color
         const idToken = await currentUser.getIdToken();
         const response = await fetch(`http://10.0.2.2:5000/client/answer/${mode}`, {
                 method: "POST",
@@ -172,24 +185,24 @@ export default function Question({ navigation }) {
             <View style={styles.responsesContainer}>
                 <View style={styles.buttonsContainer}>
                     <TouchableOpacity
-                        style={styles.button}
+                        style={styles.button} // selectedAnswer === answer1 && { backgroundColor: Colors.gold }
                         onPress={() => handleResults(answer1)}>
-                        <Text style={styles.profileSubtitle}>{answer1}</Text>
+                        <Text style={styles.answerText}>{answer1}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.button}
                         onPress={() => handleResults(answer2)}>
-                        <Text style={styles.profileSubtitle}>{answer2}</Text>
+                        <Text style={styles.answerText}>{answer2}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.button}
                         onPress={() => handleResults(answer3)}>
-                        <Text style={styles.profileSubtitle}>{answer3}</Text>
+                        <Text style={styles.answerText}>{answer3}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.button}
                         onPress={() => handleResults(answer4)}>
-                        <Text style={styles.profileSubtitle}>{answer4}</Text>
+                        <Text style={styles.answerText}>{answer4}</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -289,6 +302,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: '600',
         color: Colors.raisin,
+        //fontFamily: 'InknutAntiqua-Regular',
     },
     responsesContainer: {
         flex: 0.3,
@@ -303,7 +317,7 @@ const styles = StyleSheet.create({
     },
     button: {
         alignItems: 'center',
-        backgroundColor: Colors.gold,
+        backgroundColor: Colors.champagne,
         padding: 10,
         width: '40%',
         borderRadius: 10,
@@ -311,7 +325,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         marginVertical: 5,
     },
-    profileSubtitle: {
+    answerText: {
         fontSize: 16,
         fontWeight: '500',
         color: Colors.raisin,
@@ -370,7 +384,8 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         marginBottom: 20,
         color: Colors.ghost,
-        alignItems: 'center'
+        alignItems: 'center',
+        textAlign: 'center'
     },
     modalButtons: {
         flexDirection: 'row',
