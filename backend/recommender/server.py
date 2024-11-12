@@ -107,15 +107,25 @@ def receiveAnswer(mode:str):
 
 #region Outer Region: Firebase Database calls
 #region Inner Region: User info
-@app.route("/database/create_user", methods=["POST"])
-def createUserInfo():
+
+@app.route("/database/get_location", methods=["POST"])
+def getUserLocation():
 
     query = request.get_json()
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer '):
+        abort(401,{'error': 'Missing authorization header'})
+
+    # # # Validate Token
+    id_token = auth_header.split(' ')[1]
+    user_id = firebase.verify_id_token(id_token)
+    if not user_id:
+        abort(401,{'error': 'Invalid or expired token'})
 
     if not query:
         abort(400, "Information not provided")
 
-    return firebase.createNewUser(query)
+    return firebase.setUserLocation(query, user_id)
 
 @app.route("/database/update_user", methods=["POST"])
 def updateUser():
@@ -280,6 +290,25 @@ def deleteUser():
 #endregion Inner Region
 
 #endregion Outer Region
+
+# Bug Report forms:
+@app.route("/database/submit_bug_report", methods=["POST"])
+def submitBugReport():
+    query = request.get_json()
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer '):
+        abort(401,{'error': 'Missing authorization header'})
+
+    # # # Validate Token
+    id_token = auth_header.split(' ')[1]
+    user_id = firebase.verify_id_token(id_token)
+    if not user_id:
+        abort(401,{'error': 'Invalid or expired token'})
+
+    if not query:
+        abort(400, "Information not provided")
+
+    return firebase.submitBugReport(query, user_id)
 
 if __name__ == "__main__":
     try:

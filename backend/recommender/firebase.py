@@ -33,6 +33,17 @@ def verify_id_token(idToken):
 def getTestUser(user_id):
     return db.reference(f"test_users/{user_id}")
 
+
+# pulls user location from phone
+def setUserLocation(query, uid):
+    latitude = query.get("latitude")
+    longitude = query.get("longitude")
+    try:
+        db.reference(f"users/{uid}/location").set({'latitude': latitude, 'longitude': longitude})
+        return jsonify({"uid": uid, "message": "User location updated successfully in database"}), 200
+    except Exception as e:
+        return jsonify({"Error": e}), 400
+
 # reference to data collection() in database
 def getDataRef():
     return db.reference("/data")
@@ -276,6 +287,23 @@ def deleteUserData(uid):
         return jsonify(message=f"Error with code: {e}"), 400
     except auth.AuthError as error:
         return jsonify(message=f"Error with auth: {e}"), 400
+            
+def submitBugReport(query, uid):
+    try:
+            bugReport = query.get('bugReportTitle')
+            title = bugReport["bugReportTitle"]
+            urgency = bugReport["urgency"]
+            description = bugReport["description"]
+            ref = db.reference(f"BugReports/{uid}/Problem")
+            ref.set({
+                "title" : title, 
+                "urgency": urgency, 
+                "description" : description,
+            })
+            return jsonify({"uid": uid, "message": "User bug report successfully created in database"}), 200
+    except Exception as e:
+        return jsonify(message=f"Error with code: {e}")
+
 #endregion Inner Region
 
 if __name__ == "__main__":
