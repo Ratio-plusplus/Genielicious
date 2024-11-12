@@ -5,7 +5,6 @@ import results
 
 app = Flask(__name__)
 
-#region Backend recommender calls
 # clears all user related cache in the database
 @app.route("/client/clear_session")
 def clearSessionCache():
@@ -91,22 +90,6 @@ def receiveAnswer(mode:str):
     # answer submission works the same in all modes
     return gemini.submitAnswer(user_id, answer)
 
-# @app.route("/auth/create_user", methods=['POST'])
-# def createUser():
-#     query = request.get_json()
-
-#     if not query:
-#         abort(400, "User info not provided")
-
-   
-#     #info = json.loads(info)
-#     print(query)
-#     return firebase.create_user(query)
-
-#endregion
-
-#region Outer Region: Firebase Database calls
-#region Inner Region: User info
 @app.route("/database/create_user", methods=["POST"])
 def createUserInfo():
 
@@ -160,9 +143,39 @@ def getResultCache():
         abort(401,{'error': 'Invalid or expired token'})
 
     return firebase.getResultsCache(user_id)
-#endregion Inner Region
 
-#region Inner Region: User Flavor Profiles
+@app.route("/database/add_history", methods=["POST"])
+def addHistory():
+    query = request.get_json()
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer '):
+        abort(401,{'error': 'Missing authorization header'})
+
+    # # # Validate Token
+    id_token = auth_header.split(' ')[1]
+    user_id = firebase.verify_id_token(id_token)
+    if not user_id:
+        abort(401,{'error': 'Invalid or expired token'})
+
+    if not query:
+        abort(400, "Information not provided")
+
+    return firebase.addHistory(query, user_id)
+
+@app.route("/database/get_history", methods=["GET"])
+def getHistory():
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer '):
+        abort(401,{'error': 'Missing authorization header'})
+
+    # # # Validate Token
+    id_token = auth_header.split(' ')[1]
+    user_id = firebase.verify_id_token(id_token)
+    if not user_id:
+        abort(401,{'error': 'Invalid or expired token'})
+
+    return firebase.getHistory(user_id)
+
 @app.route("/database/get_user_profile", methods=["GET"])
 def getUserProfile():
     auth_header = request.headers.get('Authorization')
