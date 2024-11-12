@@ -26,6 +26,33 @@ const restaurants = [
     },
 ];
 
+const getHistory = async (currentUser) => {
+    const restaurants = [];
+    const idToken = await currentUser.getIdToken();
+    const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/get_history', {
+        method: "GET",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${idToken}`
+        }
+    });
+    console.log(response);
+    const json = await response.json();
+    console.log(json);
+    const results = json["info"];
+    console.log(results);
+    // Add brackets around the string
+    const jsonDataArray = `[${results}]`;
+    console.log(jsonDataArray);
+    // Parse the JSON string into an array of objects
+    const restaurant = JSON.parse(jsonDataArray);
+    for (i = 0; i < restaurant.length; i++) {
+        const restaurantInfo = restaurant[i];
+        const push = { name: restaurantInfo.name, taste: restaurantInfo.taste, address: restaurantInfo.address, distance: restaurantInfo.distance, image: restaurantInfo.image };
+        restaurants.push(push);
+    }
+    return restaurants
+};
 // put the address into a URL that will open it in Google Maps
 const openMap = (address) => {
     const formattedAddress = encodeURIComponent(address);

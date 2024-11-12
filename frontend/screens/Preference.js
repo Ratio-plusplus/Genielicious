@@ -38,8 +38,9 @@ export default function Preference({ navigation, route }) {
                     text: "Delete",
                     onPress: async () => {
                         try {
-                            const idToken = await auth.currentUser.getIdToken();
-                            const response = await fetch('http://10.0.2.2:5000/database/delete_flavor_profile', {
+                            const idToken = await currentUser.getIdToken();
+                            console.log(profileData.id);
+                            const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/delete_flavor_profile', {
                                 method: 'DELETE',
                                 headers: {
                                     'Content-Type': 'application/json',

@@ -74,7 +74,7 @@ export const FlavorPreferencesProvider = ({ children }) => {
         console.log(updatedData);
         if (currentUser) {
             const idToken = await currentUser.getIdToken();
-            const response = await fetch('http://10.0.2.2:5000/database/update_flavor_profile',
+            const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/update_flavor_profile',
                 {
                     method: "POST",
                     headers: {
@@ -94,7 +94,7 @@ export const FlavorPreferencesProvider = ({ children }) => {
         if (currentUser) {
             idToken = await currentUser.getIdToken();
             console.log(isChecked);
-            const response = await fetch('http://10.0.2.2:5000/database/add_flavor_profile',
+            const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/add_flavor_profile',
                 {
                     method: "POST",
                     headers: {

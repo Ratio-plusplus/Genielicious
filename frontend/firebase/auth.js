@@ -15,7 +15,7 @@ export const doCreateUserWithEmailAndPassword = async (email, password, username
     
     //Save user information to database through backend
     const pfp = Image.resolveAssetSource(require("../assets/pfp.png"));
-    const response = await fetch('http://10.0.2.2:5000/database/create_user',
+    const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/create_user',
         {
             method: "POST",
             headers: {
@@ -55,5 +55,19 @@ export const doSignOut = () => {
 
 export const doPasswordChange = (password) => {
     return updatePassword(auth.currentUser, password);
+};
+
+export const deleteAccount = async () => {
+    idToken = await auth.currentUser.getIdToken();
+    const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/delete_user',
+        {
+            method: "DELETE",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${idToken}`
+            },
+        });
+    const json = await response.json();
+    return json
 };
 

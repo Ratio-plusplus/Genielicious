@@ -24,7 +24,7 @@ export default function Question({ navigation }) {
     
     const handleQuestionnaire = async () => {
         const idToken = await currentUser.getIdToken();
-        const response = await fetch(`http://10.0.2.2:5000/client/questions/${mode}`, {
+        const response = await fetch(`https://genielicious-1229a.wl.r.appspot.com/client/questions/${mode}`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${idToken}`
@@ -42,7 +42,7 @@ export default function Question({ navigation }) {
 
     const handleResults = async (answer) => {
         const idToken = await currentUser.getIdToken();
-        const response = await fetch(`http://10.0.2.2:5000/client/answer/${mode}`, {
+        const response = await fetch(`https://genielicious-1229a.wl.r.appspot.com/client/answer/${mode}`, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
@@ -61,7 +61,7 @@ export default function Question({ navigation }) {
     }
     const clearSession = async() =>{
         const idToken = await currentUser.getIdToken();
-        const response = await fetch('http://10.0.2.2:5000/client/clear_session', {
+        const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/client/clear_session', {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${idToken}`

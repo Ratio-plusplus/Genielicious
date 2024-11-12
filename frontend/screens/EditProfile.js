@@ -84,7 +84,7 @@ export default function EditProfile({ navigation }) {
 
         try {
             //save to Realtime Database
-            const response = await fetch('http://10.0.2.2:5000/database/update_user',
+            const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/update_user',
             {
                 method: "POST",
                 headers: {
