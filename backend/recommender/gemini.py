@@ -1,16 +1,14 @@
-#!pip install -q -U google-generativeai
-# import requests
 import json
 from firebase import getDataRef, getUserCacheRef, getActiveFoodProfile
-# from firebase import getTestUser
-from dotenv import find_dotenv, load_dotenv
+# from firebase import getTestUserCacheRef
+# from dotenv import find_dotenv, load_dotenv
 # from yelp import cacheToJson # used in development
 import results
 import google.generativeai as genai
 import os
 
-dotenv_path = find_dotenv()
-load_dotenv(dotenv_path)
+# dotenv_path = find_dotenv()
+# load_dotenv(dotenv_path)
 
 API_KEY = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key=API_KEY)
@@ -19,7 +17,7 @@ model = genai.GenerativeModel("gemini-1.5-flash") # model version we're using
 
 def getPrompt(user_id, mode):
   dataRef = getDataRef()
-  activeFoodProfile = getActiveFoodProfile(user_id)      
+  activeFoodProfile = getActiveFoodProfile(user_id)     
 
   if mode == "short":
     prompt = dataRef.child("short_prompt").get()
@@ -44,7 +42,6 @@ def getPrompt(user_id, mode):
 
 def submitAnswer(user_id,answer):
   cache = getUserCacheRef(user_id)
-
   surveyCache = cache.child("surveyCache").get()
 
   if not surveyCache :

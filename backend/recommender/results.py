@@ -1,4 +1,5 @@
 from firebase import getUserCacheRef, getActiveFoodProfile, getLocation
+# from firebase import getTestUserCacheRef, getTestLocation
 from yelp import getStore
 import json
 
@@ -36,7 +37,6 @@ def compileResults(user_id, food_item:str):
 
     # Parsing Yelp results to not include unnecessary/extra fields
     formatted_results = []
-    print(yelp_results["businesses"])
     for business in yelp_results["businesses"]:
         formatted_business = dict()
         formatted_business["name"] = business["name"]

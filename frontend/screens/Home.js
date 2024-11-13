@@ -12,6 +12,7 @@ import { useAuth } from '../contexts/AuthContext'
 
 
 export default function Home({ navigation }) {
+    const { latitude, longitude, errorMsg } = useLocation();
     // load custom font
     const [fontLoaded, setFontLoaded] = useState(false);
     const [location, setLocation] = useState("");
@@ -27,19 +28,36 @@ export default function Home({ navigation }) {
         loadFont();
     }, []);
 
+    const { setMode, flavorProfiles, activeProfileId, updateActiveProfileInFirebase } = React.useContext(FlavorPreferencesContext);
+    const [open, setOpen] = useState(false);
+    const [value, setValue] = useState(null);
+    const [items, setItems] = useState([]);
 
-    const {setMode, flavorProfiles} = React.useContext(FlavorPreferencesContext);
-    const [open, setOpen] = useState(false);    // boolean if the dropdown is open or not
-    const [value, setValue] = useState(null);   // holds the selected value (there is none initially)
-    const [items, setItems] = useState([
-        { label: 'Vegetarian', value: 'vegetarian' },
-        { label: 'Spicy Savory', value: 'spicy savory' },
-        { label: 'Spicy Vegan', value: 'spicy vegan' },
-        { label: 'Gluten Free Desserts', value: 'gluten free desserts' },
-        { label: 'Sweet and Sour', value: 'sweet and sour' },
-    ]);     // array for all available options in dropdown
-            // label (what user sees)
-            // value (value associated with that label) - this will update as user click on other options
+    useEffect(() => {
+        // Map flavorProfiles to the format required by DropDownPicker
+        const profileItems = flavorProfiles.map(profile => ({
+            label: profile.title,
+            value: profile.id
+        }));
+        setItems(profileItems);
+
+        // Set the active profile ID when it changes
+        if (activeProfileId && profileItems.length > 0) {
+            setValue(activeProfileId);
+        }
+    }, [flavorProfiles, activeProfileId]);
+
+    const handleValueChange = (newValue) => {
+        console.log("handleValueChange called with:", newValue);
+        if (newValue && newValue !== value) { // Ensure it's a new selection
+            console.log("Updating active profile to:", newValue);
+            setValue(newValue);
+            updateActiveProfileInFirebase(newValue);
+        } else {
+            console.log("No change in profile ID or no profile selected.");
+        }
+    };
+
     const handleMode = async (mode) => {
         setMode(mode);
         navigation.navigate('Question');
@@ -129,7 +147,7 @@ export default function Home({ navigation }) {
                         value={value}
                         items={items}
                         setOpen={setOpen}
-                        setValue={setValue}
+                        onSelectItem={(item) => handleValueChange(item.value)}
                         setItems={setItems}
                         placeholder={'Select a Taste Profile'}
                         zIndex={10000}
@@ -139,6 +157,10 @@ export default function Home({ navigation }) {
                             zIndex: 10000,
                         }}
                         dropDownDirection='TOP'
+                        listMode="SCROLLVIEW"
+                        scrollViewProps={{
+                            nestedScrollEnabled: true,
+                        }}
                     />
                 </View>
             </View>
@@ -188,7 +210,7 @@ const styles = StyleSheet.create({
         flex: 0.63,
         justifyContent: 'center',
         alignItems: 'center',
-        zIndex: 0, 
+        zIndex: 0,
     },
     sparkle: {
         position: 'relative',
@@ -233,31 +255,31 @@ const styles = StyleSheet.create({
     modeContainer: {
         flex: 0.1,
         paddingTop: 40,
-        paddingLeft: 20, 
+        paddingLeft: 20,
     },
     modeText: {
         fontSize: 20,
         fontWeight: 'bold',
         color: Colors.champagne,
-        marginBottom: 10, 
+        marginBottom: 10,
     },
     buttonsContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between', 
-        width: '93%', 
-        alignItems: 'center', 
+        justifyContent: 'space-between',
+        width: '93%',
+        alignItems: 'center',
     },
     button: {
         alignItems: 'center',
         backgroundColor: Colors.gold,
         padding: 10,
-        width: '30%', 
+        width: '30%',
         borderRadius: 10,
         borderColor: Colors.raisin,
         borderWidth: 1
     },
     profileSubtitle: {
-        fontSize: 16, 
-        color: Colors.raisin, 
+        fontSize: 16,
+        color: Colors.raisin,
     },
 });

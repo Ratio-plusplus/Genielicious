@@ -2,17 +2,17 @@
 # !sudo pip install firebase-admin
 from enum import verify
 from firebase_admin import db, credentials, initialize_app, auth
-from dotenv import find_dotenv, load_dotenv
+# from dotenv import find_dotenv, load_dotenv
 import os
 from flask import jsonify   
 
-dotenv_path = find_dotenv()
-load_dotenv(dotenv_path) # loads env vars into path
+# dotenv_path = find_dotenv()
+# load_dotenv(dotenv_path) # loads env vars into path
 
-#cred = credentials.Certificate("confidential\\serviceAccountKey.json")
-cred = credentials.Certificate("confidential/serviceAccountKey.json")
-db_url = {'databaseURL': os.getenv("REACT_APP_FIREBASE_DATABASE_URL")}
-initialize_app(cred, db_url)
+# cred = credentials.Certificate("confidential\\serviceAccountKey.json")
+
+db_url = {'databaseURL': os.getenv("DATABASE_URL")}
+initialize_app(credentials.ApplicationDefault(), db_url)
 
 def verify_id_token(idToken):
     try:
@@ -43,6 +43,9 @@ def setUserLocation(query, uid):
         return jsonify({"uid": uid, "message": "User location updated successfully in database"}), 200
     except Exception as e:
         return jsonify({"Error": e}), 400
+        
+def getTestUserCacheRef(user_id):
+    return db.reference(f"test_users/{user_id}/cache")
 
 # reference to data collection() in database
 def getDataRef():
@@ -95,6 +98,11 @@ def createNewUser(query):
 def getLocation(user_id):
     latitude = db.reference(f"users/{user_id}/location/latitude").get()
     longitude = db.reference(f"users/{user_id}/location/longitude").get()
+    return (latitude, longitude)
+
+def getTestLocation(user_id):
+    latitude = db.reference(f"test_users/{user_id}/location/latitude").get()
+    longitude = db.reference(f"test_users/{user_id}/location/longitude").get()
     return (latitude, longitude)
 
 def getUserRef(user_id):
@@ -169,17 +177,6 @@ def deleteHistory(uid):
     pass
 
 #endregion Inner Region
-
-# return object (dict) of active food profile that contains all details and fields
-def getActiveFoodProfile(user_id):
-    activeID = db.reference(f"users/{user_id}/activeFoodProfileID").get()
-    if not activeID:
-        return None
-    profile = db.reference(f"users/{user_id}/flavorProfiles/{activeID}").get()
-    if profile:
-        return jsonify(profile)
-    else:
-        return None
 
 #region Inner Region: User Flavor Profile Methods
 def getProfile(uid):
@@ -315,6 +312,37 @@ def submitBugReport(query, uid):
         return jsonify(message=f"Error with code: {e}")
 
 #endregion Inner Region
+
+def setActiveProfile(user_id, profile_id):
+    try:
+        user_ref = db.reference(f"users/{user_id}")
+        user_ref.update({
+            'activeFoodProfileID': profile_id
+        })
+        return jsonify({"message": "Active profile updated successfully"}), 200
+    except Exception as e:
+        return jsonify(message=f"Error with code: {e}"), 400
+
+# return object (dict) of active food profile that contains all details and fields
+def getActiveFoodProfile(user_id):
+    activeID = db.reference(f"users/{user_id}/activeFoodProfileID").get()
+    if not activeID:
+        return None
+    profile = db.reference(f"users/{user_id}/flavorProfiles/{activeID}").get()
+    if profile:
+        return jsonify(profile)
+    else:
+        return None
+    
+def getActiveProfileId(user_id):
+    try:
+        active_profile_id = db.reference(f"users/{user_id}/activeFoodProfileID").get()
+        if active_profile_id:
+            return jsonify({"activeProfileId": active_profile_id}), 200
+        else:
+            return jsonify({"error": "No active profile found"}), 404
+    except Exception as e:
+        return jsonify(message=f"Error with code: {e}"), 400
 
 if __name__ == "__main__":
     import json
