@@ -9,6 +9,8 @@ from flask import jsonify
 # dotenv_path = find_dotenv()
 # load_dotenv(dotenv_path) # loads env vars into path
 
+# cred = credentials.Certificate("confidential\\serviceAccountKey.json")
+
 db_url = {'databaseURL': os.getenv("DATABASE_URL")}
 initialize_app(credentials.ApplicationDefault(), db_url)
 
@@ -30,6 +32,9 @@ def verify_id_token(idToken):
 #region Inner Region: Recommender Methods
 def getTestUser(user_id):
     return db.reference(f"test_users/{user_id}")
+
+def getTestUserCacheRef(user_id):
+    return db.reference(f"test_users/{user_id}/cache")
 
 # reference to data collection() in database
 def getDataRef():
@@ -82,6 +87,11 @@ def createNewUser(query):
 def getLocation(user_id):
     latitude = db.reference(f"users/{user_id}/location/latitude").get()
     longitude = db.reference(f"users/{user_id}/location/longitude").get()
+    return (latitude, longitude)
+
+def getTestLocation(user_id):
+    latitude = db.reference(f"test_users/{user_id}/location/latitude").get()
+    longitude = db.reference(f"test_users/{user_id}/location/longitude").get()
     return (latitude, longitude)
 
 def getUserRef(user_id):
@@ -272,6 +282,17 @@ def setActiveProfile(user_id, profile_id):
     except Exception as e:
         return jsonify(message=f"Error with code: {e}"), 400
 
+# return object (dict) of active food profile that contains all details and fields
+def getActiveFoodProfile(user_id):
+    activeID = db.reference(f"users/{user_id}/activeFoodProfileID").get()
+    if not activeID:
+        return None
+    profile = db.reference(f"users/{user_id}/flavorProfiles/{activeID}").get()
+    if profile:
+        return jsonify(profile)
+    else:
+        return None
+    
 def getActiveProfileId(user_id):
     try:
         active_profile_id = db.reference(f"users/{user_id}/activeFoodProfileID").get()
