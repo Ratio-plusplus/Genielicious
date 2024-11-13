@@ -9,10 +9,10 @@ import { MaterialIcons } from '@expo/vector-icons';
 export default function Filter({ navigation }) {
     //const { isChecked, setIsChecked, resetPreferences } = useContext(FlavorPreferencesContext);
     const [isChecked, setIsChecked] = useState({
-        savory: false, sweet: false, salty: false, spicy: false,
-        bitter: false, sour: false, cool: false, hot: false,
-        vegan: false, vegetarian: false, peanut: false, gluten: false, fish: false,
-        shellfish: false, eggs: false, soy: false, dairy: false, keto: false
+        african: false, breakfast: false, comfortFood: false, desserts: false,
+        eastAsian: false, european: false, fingerFood: false, healthConscious: false,
+        latinAmerican: false, lightMeals: false, meatCentric: false, middleEastern: false, northAmerican: false,
+        quickEats: false, southAsian: false, specialty: false, vegan: false
     });
 
     const [selectedFavorites, setSelectedFavorites] = useState(false);
@@ -28,8 +28,8 @@ export default function Filter({ navigation }) {
 
     const resetCheckbox = () => {
         // lines 30-34 can possibly be replaced with "resetPreferences()" from FlavorPreferencesContext
-        // (test it out bc i cannot test it on my end, but it should work regardless)
         // if you wanna try it out, get rid of the comments and delete lines 11-16
+        // update: since aliases are now added, you would need to add it in FlavorPreferencesContext
         setIsChecked(prevState => {
             const newState = { ...prevState };
             Object.keys(newState).forEach(key => newState[key] = false);
@@ -38,6 +38,7 @@ export default function Filter({ navigation }) {
         setSelectedFavorites(false);
     };
 
+    // once applied, it'll go back to history with the filters 
     const applyFilter = () => {
         navigation.navigate('History'); 
     };
@@ -64,24 +65,24 @@ export default function Filter({ navigation }) {
                 
                 <View style={styles.checkboxContainer}>
                     <Text style={styles.sectionTitle}>
-                        Taste Preference:
+                        Cuisine:
                     </Text>
 
                     {/* Row 1 */}
                     <View style={styles.checkboxRow}>
                         <CheckBox
                             style={styles.checkbox}
-                            isChecked={isChecked.savory}
-                            onClick={() => setIsChecked({ ...isChecked, savory: !isChecked.savory })}
-                            rightText='Savory'
+                            isChecked={isChecked.african}
+                            onClick={() => setIsChecked({ ...isChecked, african: !isChecked.african })}
+                            rightText='African'
                             rightTextStyle={styles.checkboxText}
                             uncheckedCheckBoxColor={Colors.ghost}
                             checkedCheckBoxColor={Colors.gold} />
                         <CheckBox
                             style={styles.checkbox}
-                            isChecked={isChecked.sweet}
-                            onClick={() => setIsChecked({ ...isChecked, sweet: !isChecked.sweet })}
-                            rightText='Sweet'
+                            isChecked={isChecked.middleEastern}
+                            onClick={() => setIsChecked({ ...isChecked, middleEastern: !isChecked.middleEastern })}
+                            rightText='Middle Eastern'
                             rightTextStyle={styles.checkboxText}
                             uncheckedCheckBoxColor={Colors.ghost}
                             checkedCheckBoxColor={Colors.gold} />
@@ -91,17 +92,17 @@ export default function Filter({ navigation }) {
                     <View style={styles.checkboxRow}>
                         <CheckBox
                             style={styles.checkbox}
-                            isChecked={isChecked.salty}
-                            onClick={() => setIsChecked({ ...isChecked, salty: !isChecked.salty })}
-                            rightText='Salty'
+                            isChecked={isChecked.eastAsian}
+                            onClick={() => setIsChecked({ ...isChecked, eastAsian: !isChecked.eastAsian })}
+                            rightText='East Asian'
                             rightTextStyle={styles.checkboxText}
                             uncheckedCheckBoxColor={Colors.ghost}
                             checkedCheckBoxColor={Colors.gold} />
                         <CheckBox
                             style={styles.checkbox}
-                            isChecked={isChecked.spicy}
-                            onClick={() => setIsChecked({ ...isChecked, spicy: !isChecked.spicy })}
-                            rightText='Spicy'
+                            isChecked={isChecked.southAsian}
+                            onClick={() => setIsChecked({ ...isChecked, southAsian: !isChecked.southAsian })}
+                            rightText='South Asian'
                             rightTextStyle={styles.checkboxText}
                             uncheckedCheckBoxColor={Colors.ghost}
                             checkedCheckBoxColor={Colors.gold} />
@@ -111,17 +112,17 @@ export default function Filter({ navigation }) {
                     <View style={styles.checkboxRow}>
                         <CheckBox
                             style={styles.checkbox}
-                            isChecked={isChecked.bitter}
-                            onClick={() => setIsChecked({ ...isChecked, bitter: !isChecked.bitter })}
-                            rightText='Bitter'
+                            isChecked={isChecked.latinAmerican}
+                            onClick={() => setIsChecked({ ...isChecked, latinAmerican: !isChecked.latinAmerican })}
+                            rightText='Latin American'
                             rightTextStyle={styles.checkboxText}
                             uncheckedCheckBoxColor={Colors.ghost}
                             checkedCheckBoxColor={Colors.gold} />
                         <CheckBox
                             style={styles.checkbox}
-                            isChecked={isChecked.sour}
-                            onClick={() => setIsChecked({ ...isChecked, sour: !isChecked.sour })}
-                            rightText='Sour'
+                            isChecked={isChecked.northAmerican}
+                            onClick={() => setIsChecked({ ...isChecked, northAmerican: !isChecked.northAmerican })}
+                            rightText='North American'
                             rightTextStyle={styles.checkboxText}
                             uncheckedCheckBoxColor={Colors.ghost}
                             checkedCheckBoxColor={Colors.gold} />
@@ -131,17 +132,9 @@ export default function Filter({ navigation }) {
                     <View style={styles.checkboxRow}>
                         <CheckBox
                             style={styles.checkbox}
-                            isChecked={isChecked.cool}
-                            onClick={() => setIsChecked({ ...isChecked, cool: !isChecked.cool })}
-                            rightText='Cool'
-                            rightTextStyle={styles.checkboxText}
-                            uncheckedCheckBoxColor={Colors.ghost}
-                            checkedCheckBoxColor={Colors.gold} />
-                        <CheckBox
-                            style={styles.checkbox}
-                            isChecked={isChecked.hot}
-                            onClick={() => setIsChecked({ ...isChecked, hot: !isChecked.hot })}
-                            rightText='Hot'
+                            isChecked={isChecked.european}
+                            onClick={() => setIsChecked({ ...isChecked, european: !isChecked.european })}
+                            rightText='European'
                             rightTextStyle={styles.checkboxText}
                             uncheckedCheckBoxColor={Colors.ghost}
                             checkedCheckBoxColor={Colors.gold} />
@@ -150,7 +143,7 @@ export default function Filter({ navigation }) {
 
                 <View style={styles.checkboxContainer}>
                     <Text style={styles.sectionTitle}>
-                        Dietary Restrictions/Allergies:
+                        Restrictions:
                     </Text>
 
                     {/* Row 1 */}
@@ -165,9 +158,35 @@ export default function Filter({ navigation }) {
                             checkedCheckBoxColor={Colors.gold} />
                         <CheckBox
                             style={styles.checkbox}
-                            isChecked={isChecked.vegetarian}
-                            onClick={() => setIsChecked({ ...isChecked, vegetarian: !isChecked.vegetarian })}
-                            rightText='Vegetarian'
+                            isChecked={isChecked.healthConscious}
+                            onClick={() => setIsChecked({ ...isChecked, healthConscious: !isChecked.healthConscious })}
+                            rightText='Health-Conscious'
+                            rightTextStyle={styles.checkboxText}
+                            uncheckedCheckBoxColor={Colors.ghost}
+                            checkedCheckBoxColor={Colors.gold} />
+                    </View>
+                </View>
+
+                <View style={styles.checkboxContainer}>
+                    <Text style={styles.sectionTitle}>
+                        Meal Time:
+                    </Text>
+
+                    {/* Row 1 */}
+                    <View style={styles.checkboxRow}>
+                        <CheckBox
+                            style={styles.checkbox}
+                            isChecked={isChecked.breakfast}
+                            onClick={() => setIsChecked({ ...isChecked, breakfast: !isChecked.breakfast })}
+                            rightText='Breakfast'
+                            rightTextStyle={styles.checkboxText}
+                            uncheckedCheckBoxColor={Colors.ghost}
+                            checkedCheckBoxColor={Colors.gold} />
+                        <CheckBox
+                            style={styles.checkbox}
+                            isChecked={isChecked.desserts}
+                            onClick={() => setIsChecked({ ...isChecked, desserts: !isChecked.desserts })}
+                            rightText='Desserts'
                             rightTextStyle={styles.checkboxText}
                             uncheckedCheckBoxColor={Colors.ghost}
                             checkedCheckBoxColor={Colors.gold} />
@@ -177,17 +196,17 @@ export default function Filter({ navigation }) {
                     <View style={styles.checkboxRow}>
                         <CheckBox
                             style={styles.checkbox}
-                            isChecked={isChecked.peanut}
-                            onClick={() => setIsChecked({ ...isChecked, peanut: !isChecked.peanut })}
-                            rightText='Peanut/Tree Nut'
+                            isChecked={isChecked.lightMeals}
+                            onClick={() => setIsChecked({ ...isChecked, lightMeals: !isChecked.lightMeals })}
+                            rightText='Light Meals'
                             rightTextStyle={styles.checkboxText}
                             uncheckedCheckBoxColor={Colors.ghost}
                             checkedCheckBoxColor={Colors.gold} />
                         <CheckBox
                             style={styles.checkbox}
-                            isChecked={isChecked.gluten}
-                            onClick={() => setIsChecked({ ...isChecked, gluten: !isChecked.gluten })}
-                            rightText='Wheat/Gluten'
+                            isChecked={isChecked.quickEats}
+                            onClick={() => setIsChecked({ ...isChecked, quickEats: !isChecked.quickEats })}
+                            rightText='Quick Eats'
                             rightTextStyle={styles.checkboxText}
                             uncheckedCheckBoxColor={Colors.ghost}
                             checkedCheckBoxColor={Colors.gold} />
@@ -197,17 +216,17 @@ export default function Filter({ navigation }) {
                     <View style={styles.checkboxRow}>
                         <CheckBox
                             style={styles.checkbox}
-                            isChecked={isChecked.fish}
-                            onClick={() => setIsChecked({ ...isChecked, fish: !isChecked.fish })}
-                            rightText='Fish'
+                            isChecked={isChecked.comfortFood}
+                            onClick={() => setIsChecked({ ...isChecked, comfortFood: !isChecked.comfortFood })}
+                            rightText='Comfort Food'
                             rightTextStyle={styles.checkboxText}
                             uncheckedCheckBoxColor={Colors.ghost}
                             checkedCheckBoxColor={Colors.gold} />
                         <CheckBox
                             style={styles.checkbox}
-                            isChecked={isChecked.shellfish}
-                            onClick={() => setIsChecked({ ...isChecked, shellfish: !isChecked.shellfish })}
-                            rightText='Shellfish'
+                            isChecked={isChecked.specialty}
+                            onClick={() => setIsChecked({ ...isChecked, specialty: !isChecked.specialty })}
+                            rightText='Specialty'
                             rightTextStyle={styles.checkboxText}
                             uncheckedCheckBoxColor={Colors.ghost}
                             checkedCheckBoxColor={Colors.gold} />
@@ -217,42 +236,23 @@ export default function Filter({ navigation }) {
                     <View style={styles.checkboxRow}>
                         <CheckBox
                             style={styles.checkbox}
-                            isChecked={isChecked.eggs}
-                            onClick={() => setIsChecked({ ...isChecked, eggs: !isChecked.eggs })}
-                            rightText='Eggs'
+                            isChecked={isChecked.fingerFood}
+                            onClick={() => setIsChecked({ ...isChecked, fingerFood: !isChecked.fingerFood })}
+                            rightText='Finger Food'
                             rightTextStyle={styles.checkboxText}
                             uncheckedCheckBoxColor={Colors.ghost}
                             checkedCheckBoxColor={Colors.gold} />
                         <CheckBox
                             style={styles.checkbox}
-                            isChecked={isChecked.dairy}
-                            onClick={() => setIsChecked({ ...isChecked, dairy: !isChecked.dairy })}
-                            rightText='Dairy'
-                            rightTextStyle={styles.checkboxText}
-                            uncheckedCheckBoxColor={Colors.ghost}
-                            checkedCheckBoxColor={Colors.gold} />
-                    </View>
-
-                    {/* Row 5 */}
-                    <View style={styles.checkboxRow}>
-                        <CheckBox
-                            style={styles.checkbox}
-                            isChecked={isChecked.soy}
-                            onClick={() => setIsChecked({ ...isChecked, soy: !isChecked.soy })}
-                            rightText='Soy'
-                            rightTextStyle={styles.checkboxText}
-                            uncheckedCheckBoxColor={Colors.ghost}
-                            checkedCheckBoxColor={Colors.gold} />
-                        <CheckBox
-                            style={styles.checkbox}
-                            isChecked={isChecked.keto}
-                            onClick={() => setIsChecked({ ...isChecked, keto: !isChecked.keto })}
-                            rightText='Keto'
+                            isChecked={isChecked.meatCentric}
+                            onClick={() => setIsChecked({ ...isChecked, meatCentric: !isChecked.meatCentric })}
+                            rightText='Meat-Centric'
                             rightTextStyle={styles.checkboxText}
                             uncheckedCheckBoxColor={Colors.ghost}
                             checkedCheckBoxColor={Colors.gold} />
                     </View>
                 </View>
+
                 {/* Continue Button */}
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingLeft: 22,
         paddingTop: 20,
-        marginBottom: 16
+        marginBottom: 15
     },
     circle: {
         height: 21,
@@ -323,12 +323,12 @@ const styles = StyleSheet.create({
         fontSize: 22,
         fontWeight: "bold",
         color: Colors.ghost,
-        marginBottom: 20,
+        marginBottom: 15,
     },
     checkboxRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 16,
+        marginBottom: 15,
     },
     checkbox: {
         flex: 1,
@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
     resetButton: {
         backgroundColor: Colors.ghost,
         width: "40%",
-        height: "44%",
+        height: "38%",
         borderRadius: 10,
         borderWidth: 1,
         borderColor: Colors.raisin,
@@ -356,7 +356,7 @@ const styles = StyleSheet.create({
     applyButton: {
         backgroundColor: Colors.gold,
         width: "40%",
-        height: "44%",
+        height: "38%",
         borderRadius: 10,
         borderWidth: 1,
         borderColor: Colors.raisin,

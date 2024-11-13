@@ -5,8 +5,10 @@ import React, { useState, useContext } from 'react';
 import { Colors } from './Colors';
 import { auth } from '../firebase/firebase';
 import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Preference({ navigation, route }) {
+    const { currentUser, loading } = useAuth(); // Access currentUser and loading
     const { profileData } = route.params;
     const { setActiveProfile } = useContext(FlavorPreferencesContext);
 
@@ -41,7 +43,8 @@ export default function Preference({ navigation, route }) {
                     text: "Delete",
                     onPress: async () => {
                         try {
-                            const idToken = await auth.currentUser.getIdToken();
+                            const idToken = await currentUser.getIdToken();
+                            console.log(profileData.id);
                             const response = await fetch('http://10.0.2.2:5000/database/delete_flavor_profile', {
                                 method: 'DELETE',
                                 headers: {

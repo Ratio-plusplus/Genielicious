@@ -3,11 +3,24 @@ import useLocation from '../constants/useLocation';
 import { useState, useEffect } from 'react';
 import { Colors } from './Colors';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Modal} from "react-native";
+import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Modal, ActivityIndicator} from "react-native";
 import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
+import * as Font from 'expo-font';
 
 export default function Home({ navigation }) {
     const { latitude, longitude, errorMsg } = useLocation();
+    // load custom font
+    const [fontLoaded, setFontLoaded] = useState(false);
+    useEffect(() => {
+        async function loadFont() {
+            await Font.loadAsync({
+                'InknutAntiqua-Regular': require('../assets/fonts/InknutAntiqua-Regular.ttf'),
+            });
+            setFontLoaded(true);
+        }
+        loadFont();
+    }, []);
+
     console.log(latitude, longitude, errorMsg);
     const { setMode, flavorProfiles, activeProfileId, updateActiveProfileInFirebase } = React.useContext(FlavorPreferencesContext);
     const [open, setOpen] = useState(false);
@@ -44,6 +57,7 @@ export default function Home({ navigation }) {
         navigation.navigate('Question');
     }
 
+    
     return (
         <SafeAreaView style={styles.background}>
             {/* title */}
@@ -138,9 +152,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     titleText: {
-        fontSize: 35,
+        fontSize: 33,
         fontWeight: 'bold',
         color: Colors.champagne,
+        fontFamily: 'InknutAntiqua-Regular',
     },
     genieContainer: {
         flex: 0.63,

@@ -34,12 +34,8 @@ export default function EditProfile({ navigation }) {
             quality: 1
         });
 
-        console.log(result);
-
         if(!result.canceled){
             setSelectedImage(result.assets[0].uri)
-            console.log(pfp)
-            
         }
     };
 
@@ -80,7 +76,7 @@ export default function EditProfile({ navigation }) {
         const auth = getAuth();
         const user = auth.currentUser;
         const idToken = await user.getIdToken(true);
-
+        
 
         try {
             //save to Realtime Database
@@ -120,7 +116,7 @@ export default function EditProfile({ navigation }) {
                             color={Colors.ghost}
                         />
                     </TouchableOpacity>
-                    <Text style={styles.title}>Edit Profile</Text>
+                    <Text style={styles.title}>Edit Account</Text>
             </View>
 
             {/* button to use the camera */}
