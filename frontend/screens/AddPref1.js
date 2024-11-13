@@ -4,9 +4,6 @@ import CheckBox from 'react-native-check-box';
 import { Colors } from './Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
-import { getAuth, updateProfile }  from '@firebase/auth';
-import { getDatabase, ref, set, get } from 'firebase/database';
-import { database, auth } from '../firebase/firebase';
 import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
 import { useRoute, route } from '@react-navigation/native';
 
@@ -41,7 +38,7 @@ export default function AddPref1 ({ navigation }) {
                         color={Colors.ghost}
                     />
                 </TouchableOpacity>
-                <Text style={styles.title}>Add Preference</Text>
+                <Text style={styles.title}>Add Taste Profile</Text>
         </View>
 
         <ScrollView>

@@ -2,7 +2,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { Image } from 'react-native';
 import { useAuth } from './AuthContext'; // Import useAuth to get loading state and currentUser
-import { getDatabase, ref, onValue } from 'firebase/database';
 
 export const ProfileContext = createContext();
 
@@ -16,7 +15,7 @@ export const ProfileProvider = ({ children }) => {
     const fetchData = async () => {
         if (currentUser) {
             const idToken = await currentUser.getIdToken();
-            const response = await fetch('http://10.0.2.2:5000/database/get_user_info', {
+            const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/get_user_info', {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',
@@ -25,7 +24,7 @@ export const ProfileProvider = ({ children }) => {
             });
             const json = await response.json();
             const info = json["info"];
-            setUsername(info["Username"]);
+            setUsername(info["username"]);
             setPfp(info["photoURL"]);
         } else {
             console.log("No user is signed in.");

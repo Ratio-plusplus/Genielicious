@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useCallback, useContext } from 'react';
+import { useState, useCallback, useContext, useEffect } from 'react';
 import { StyleSheet, Dimensions, View, Image, SafeAreaView, TouchableOpacity, Text, Modal } from 'react-native';
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -7,8 +7,21 @@ import {useAuth} from '../contexts/AuthContext';
 import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
 import { useFocusEffect } from '@react-navigation/native';
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
+import * as Font from 'expo-font';
 
 export default function Question({ navigation }) {
+    // load custom font
+    const [fontLoaded, setFontLoaded] = useState(false);
+    useEffect(() => {
+        async function loadFont() {
+            await Font.loadAsync({
+                'InknutAntiqua-Regular': require('../assets/fonts/InknutAntiqua-Regular.ttf'),
+            });
+            setFontLoaded(true);
+        }
+        loadFont();
+    }, []);
+
     const [modalVisible, setModalVisible] = React.useState(false);
     const [modalVisibleAd, setModalVisibleAd] = React.useState(false);
     const {mode} = React.useContext(FlavorPreferencesContext);
@@ -19,12 +32,11 @@ export default function Question({ navigation }) {
     const [answer3, setAnswer3] = React.useState("Maybe");
     const [answer4, setAnswer4] = React.useState("Not Sure");
 
+    const [selectedAnswer, setSelectedAnswer] = useState(null);
 
-
-    
     const handleQuestionnaire = async () => {
         const idToken = await currentUser.getIdToken();
-        const response = await fetch(`http://10.0.2.2:5000/client/questions/${mode}`, {
+        const response = await fetch(`https://genielicious-1229a.wl.r.appspot.com/client/questions/${mode}`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${idToken}`
@@ -41,8 +53,9 @@ export default function Question({ navigation }) {
     }
 
     const handleResults = async (answer) => {
+        setSelectedAnswer(answer);      // for assigning each answer's color
         const idToken = await currentUser.getIdToken();
-        const response = await fetch(`http://10.0.2.2:5000/client/answer/${mode}`, {
+        const response = await fetch(`https://genielicious-1229a.wl.r.appspot.com/client/answer/${mode}`, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
@@ -61,7 +74,7 @@ export default function Question({ navigation }) {
     }
     const clearSession = async() =>{
         const idToken = await currentUser.getIdToken();
-        const response = await fetch('http://10.0.2.2:5000/client/clear_session', {
+        const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/client/clear_session', {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${idToken}`
@@ -172,24 +185,24 @@ export default function Question({ navigation }) {
             <View style={styles.responsesContainer}>
                 <View style={styles.buttonsContainer}>
                     <TouchableOpacity
-                        style={styles.button}
+                        style={[styles.button, selectedAnswer === answer1 && { backgroundColor: Colors.gold }]} 
                         onPress={() => handleResults(answer1)}>
-                        <Text style={styles.profileSubtitle}>{answer1}</Text>
+                        <Text style={styles.answerText}>{answer1}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={styles.button}
+                        style={[styles.button, selectedAnswer === answer2 && { backgroundColor: Colors.gold }]}
                         onPress={() => handleResults(answer2)}>
-                        <Text style={styles.profileSubtitle}>{answer2}</Text>
+                        <Text style={styles.answerText}>{answer2}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={styles.button}
+                        style={[styles.button, selectedAnswer === answer3 && { backgroundColor: Colors.gold }]}
                         onPress={() => handleResults(answer3)}>
-                        <Text style={styles.profileSubtitle}>{answer3}</Text>
+                        <Text style={styles.answerText}>{answer3}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={styles.button}
+                        style={[styles.button, selectedAnswer === answer4 && { backgroundColor: Colors.gold }]}
                         onPress={() => handleResults(answer4)}>
-                        <Text style={styles.profileSubtitle}>{answer4}</Text>
+                        <Text style={styles.answerText}>{answer4}</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -273,10 +286,11 @@ const styles = StyleSheet.create({
         right: '-55%'
     },
     questionContainer: {
-        flex: 0.1,
+        flexGrow: 0.1,
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: -50,
+        marginTop: -70,
+        marginHorizontal: 20
     },
     questionButton: {
         backgroundColor: Colors.champagne,
@@ -289,32 +303,35 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: '600',
         color: Colors.raisin,
+        textAlign: 'center'
+        //fontFamily: 'InknutAntiqua-Regular',
     },
     responsesContainer: {
         flex: 0.3,
-        paddingLeft: 20,
-        paddingTop: 10
+        alignItems: 'center',
+        marginTop: -20
     },
     buttonsContainer: {
         flexDirection: 'column',
         justifyContent: 'center',
-        width: '93%',
+        width: '100%',
         alignItems: 'center',
     },
     button: {
         alignItems: 'center',
-        backgroundColor: Colors.gold,
+        backgroundColor: Colors.champagne,
         padding: 10,
-        width: '40%',
+        width: '55%',
         borderRadius: 10,
         borderColor: Colors.raisin,
         borderWidth: 1,
         marginVertical: 5,
     },
-    profileSubtitle: {
+    answerText: {
         fontSize: 16,
         fontWeight: '500',
         color: Colors.raisin,
+        textAlign: 'center'
     },
     adContainer: {
         position: 'absolute',
@@ -370,7 +387,8 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         marginBottom: 20,
         color: Colors.ghost,
-        alignItems: 'center'
+        alignItems: 'center',
+        textAlign: 'center'
     },
     modalButtons: {
         flexDirection: 'row',

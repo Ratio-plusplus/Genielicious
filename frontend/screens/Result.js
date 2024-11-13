@@ -6,13 +6,8 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthContext';
 import { useFocusEffect } from '@react-navigation/native';
 
-
-
 // array for the different restaurant results
 // has the name, taste, address, distance, and image
-
-
-
 // map the name, taste, address, and distance (put it into text to show up in results)
 const renderRestaurantItem = ({ name, taste, address, distance }) => (
     <View style={styles.restaurantDetails}>
@@ -53,7 +48,7 @@ const openMap = (address) => {
 const getResults = async (currentUser) => {
     const restaurants = [];
     const idToken = await currentUser.getIdToken();
-    const response = await fetch('http://10.0.2.2:5000/database/get_result_cache', {
+    const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/get_result_cache', {
         method: "GET",
         headers: {
             'Content-Type': 'application/json',
@@ -62,25 +57,40 @@ const getResults = async (currentUser) => {
     });
     const json = await response.json();
     const results = json["info"];
-    const obj = JSON.parse(results);
-    const businesses = obj.businesses;
-    for (i = 0; i < businesses.length; i++) {
-        const testobj = businesses[i];
-        testobj.distance = Math.round((testobj.distance / 1609) * 100) / 100;
-        const push = { name: testobj.name, taste: testobj.categories[0].title, address: testobj.location.display_address.join(', '), distance: testobj.distance, image: testobj.image_url };
+    const businessList = JSON.parse(results).businesses;
+    for (i = 0; i < businessList.length; i++) {
+        const restaurantInfo = businessList[i];
+        restaurantInfo.distance = Math.round((restaurantInfo.distance / 1609) * 100) / 100;
+        aliases = [];
+        for (x = 0; x < restaurantInfo.categories.length; x++) {
+            aliases.push(restaurantInfo.categories[x].title);
+        }
+        const push = { name: restaurantInfo.name, taste: aliases.join(', '), address: restaurantInfo.location.display_address.join(', '), distance: restaurantInfo.distance, image: restaurantInfo.image_url };
         restaurants.push(push);
     }
+    const restaurant = JSON.stringify(restaurants);
+    const slice1 = restaurant.replace("[", "");
+    const history = slice1.replace("]", "");
+    const response1 = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/add_history', {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${idToken}`
+        },
+        body: JSON.stringify({ "restaurantsInfo": history })
+    });
+    const json1 = await response1.json();
+    console.log(json1);
     return restaurants;
 };
 export default function Result({ navigation }) {
-    const { currentUser, loading } = useAuth(); // Access currentUser and loading
+    const { currentUser } = useAuth(); // Access currentUser and loading
     const [modalVisible, setModalVisible] = React.useState(false);
     const [ready, setReady] = React.useState(false);
     const [restaurants, setRestaurants] = useState([]);    
     const handleBackPress = () => {
         setModalVisible(true); //show the modal when pressed
     };
-
     const handleConfirmYes = () => {
         setModalVisible(false);
         setReady(false);// close the modal

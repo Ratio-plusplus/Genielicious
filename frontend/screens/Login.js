@@ -3,12 +3,9 @@ import { Feather } from "@expo/vector-icons";
 import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Modal} from "react-native";
 import { Colors } from "./Colors";
 import React, { useContext, useEffect, useState } from "react";
-import { initializeUser, useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 import { doSignInWithEmailAndPassword, doSignInWithGoogle, doPasswordReset } from '../firebase/auth';
-import { database } from '../firebase/firebase'
 import { ProfileContext } from "../contexts/ProfileContext";
-import { getDatabase, ref, onValue } from "firebase/database";
-import { getAuth, signInWithEmailAndPassword } from "@firebase/auth";
 
 export default function Login({ navigation }) {
   const [email, setEmail] = React.useState("");
@@ -23,6 +20,12 @@ export default function Login({ navigation }) {
     const [message, setMessage] = useState("");
     const [modalVisible, setModalVisible] = useState(false);
 
+    const { userLoggedIn } = useAuth()
+    useEffect(() => {
+        if (userLoggedIn) {
+            navigation.navigate('Tab');
+        }
+    }, []);
 
     const handleLogin = async () => {
       setErrorMessage('');
@@ -33,7 +36,7 @@ export default function Login({ navigation }) {
           const user = await doSignInWithEmailAndPassword(email, password);
         //fetch user data from database using uid
           if (user) {
-                  setvalidUser(true);
+              setvalidUser(true);
           }
       } catch (errorMessage) {
         if (errorMessage.code === 'auth/invalid-email') {
@@ -93,11 +96,10 @@ export default function Login({ navigation }) {
     useEffect(() => {
         if (validUser) {
             console.log("checkpoint");
+            setvalidUser(false);
             navigation.navigate('Tab');
         }
     }, [validUser]);
-
-
 
   return (
     <SafeAreaView style={styles.container}>
@@ -121,7 +123,7 @@ export default function Login({ navigation }) {
             </View>
             <TextInput
               style={styles.input}
-              placeholder="Email or Username"
+              placeholder="Email"
               placeholderTextColor="#7C808D"
               color={Colors.ghost}
               onChangeText={setEmail}   //updates email state when user types

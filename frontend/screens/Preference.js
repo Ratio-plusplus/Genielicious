@@ -1,11 +1,16 @@
-import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Colors } from './Colors';
+import { auth } from '../firebase/firebase';
+import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Preference({ navigation, route }) {
+    const { currentUser, loading } = useAuth(); // Access currentUser and loading
     const { profileData } = route.params;
+    const { setActiveProfile } = useContext(FlavorPreferencesContext);
 
     const [tasteProfile, setTasteProfile] = useState({
         title: profileData?.title || '',
@@ -25,6 +30,74 @@ export default function Preference({ navigation, route }) {
     const tastePreferencesString = getTrueKeysAsString(tasteProfile.tastePreferences);
     const allergiesString = getTrueKeysAsString(tasteProfile.allergies);
 
+    const handleDeleteProfile = () => {
+        Alert.alert(
+            "Delete Profile",
+            "Are you sure you want to delete this flavor profile?",
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel"
+                },
+                {
+                    text: "Delete",
+                    onPress: async () => {
+                        try {
+                            const idToken = await currentUser.getIdToken();
+                            console.log(profileData.id);
+                            const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/delete_flavor_profile', {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${idToken}`
+                                },
+                                body: JSON.stringify({ profileId: profileData.id })
+                            });
+
+                            console.log("Response Status:", response.status);
+                            const responseText = await response.text();
+                            console.log("Response Text:", responseText);
+
+                            if (response.ok) {
+                                navigation.navigate('Profile');
+                            } else {
+                                console.error("Error deleting profile: ", responseText);
+                            }
+                        } catch (error) {
+                            console.error("Error deleting profile: ", error);
+                        }
+                    },
+                    style: "destructive"
+                }
+            ]
+        );
+    };
+
+    const handleSetActiveProfile = async () => {
+        try {
+            const idToken = await auth.currentUser.getIdToken();
+            const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/set_active_profile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${idToken}`
+                },
+                body: JSON.stringify({ profileId: profileData.id })
+            });
+
+            if (response.ok) {
+                console.log("Profile set as active successfully.");
+                setActiveProfile(profileData.id);
+                navigation.navigate('Profile');
+            } else {
+                const errorText = await response.text();
+                console.error("Error setting active profile: ", errorText);
+            }
+        } catch (error) {
+            console.error("Error setting active profile: ", error);
+        }
+    };
+
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: Colors.blue }}>
             <View style={{ marginHorizontal: 12, marginTop: 12, marginBottom: 12, flexDirection: "row", justifyContent: "center" }}>
@@ -38,6 +111,15 @@ export default function Preference({ navigation, route }) {
                     />
                 </TouchableOpacity>
                 <Text style={{ marginTop: 2, fontWeight: '600', fontSize: 22, color: Colors.ghost }}>{tasteProfile.title}</Text>
+                <TouchableOpacity
+                    onPress={handleDeleteProfile}
+                    style={{ position: "absolute", right: 0 }}>
+                    <MaterialIcons
+                        name="delete"
+                        size={28}
+                        color={Colors.ghost}
+                    />
+                </TouchableOpacity>
             </View>
 
             <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
@@ -84,7 +166,7 @@ export default function Preference({ navigation, route }) {
                     onPress={() => navigation.navigate('Add Preference 1', { profileData: {...tasteProfile, id: profileData.id} })}>
                     <Text style={styles.buttonText}>Edit</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.activeButton}>
+                <TouchableOpacity style={styles.activeButton} onPress={handleSetActiveProfile}>
                     <Text style={styles.buttonText}>Set Active</Text>
                 </TouchableOpacity>
             </View>
@@ -139,7 +221,7 @@ const styles = StyleSheet.create({
     buttonRow: {
         flexDirection: "row",
         justifyContent: "space-evenly",
-        marginBottom: 20,
+        height: '10%'
     },
     editButton: {
         backgroundColor: Colors.ghost,
@@ -149,11 +231,12 @@ const styles = StyleSheet.create({
         borderColor: Colors.raisin,
         alignItems: "center",
         justifyContent: "center",
-        height: 90
+        marginBottom: 10,
     },
     activeButton: {
         backgroundColor: Colors.gold,
         width: "40%",
+        marginBottom: 10,
         borderRadius: 10,
         borderWidth: 1,
         borderColor: Colors.raisin,
@@ -161,7 +244,7 @@ const styles = StyleSheet.create({
         justifyContent: "center"
     },
     buttonText: {
-        fontSize: 20,
+        fontSize: 22,
         fontWeight: "bold",
         color: Colors.raisin
     }

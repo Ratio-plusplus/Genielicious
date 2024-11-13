@@ -12,7 +12,6 @@ import ProblemReport from './screens/ProblemReport';
 import AddPref1 from './screens/AddPref1';
 import AddPref2 from './screens/AddPref2';
 import Question from './screens/Question';
-import Answer from './screens/Answer';
 import Result from './screens/Result';
 import DevicePermissions from './screens/DevicePermissions';
 import Preference from './screens/Preference';
@@ -27,7 +26,6 @@ const problemReport = 'Report a Problem'
 const add1Name = "Add Preference 1";
 const add2Name = "Add Preference 2";
 const questionName = "Question";
-const answerName = "Answer";
 const resultName = "Result";
 const devicePerms = "DevicePermissions";
 const prefName = "Preference";
@@ -49,7 +47,6 @@ export default function WelcomeContainer() {
         <Stack.Screen name={add1Name} component={AddPref1}/>
         <Stack.Screen name={add2Name} component={AddPref2}/>
         <Stack.Screen name={questionName} component={Question}/>
-        <Stack.Screen name={answerName} component={Answer}/>
         <Stack.Screen name={resultName} component={Result}/>
         <Stack.Screen name={devicePerms} component={DevicePermissions}/>
         <Stack.Screen name={prefName} component={Preference}/>

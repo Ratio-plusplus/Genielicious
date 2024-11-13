@@ -34,12 +34,8 @@ export default function EditProfile({ navigation }) {
             quality: 1
         });
 
-        console.log(result);
-
         if(!result.canceled){
             setSelectedImage(result.assets[0].uri)
-            console.log(pfp)
-            
         }
     };
 
@@ -80,18 +76,18 @@ export default function EditProfile({ navigation }) {
         const auth = getAuth();
         const user = auth.currentUser;
         const idToken = await user.getIdToken(true);
-
+        
 
         try {
             //save to Realtime Database
-            const response = await fetch('http://10.0.2.2:5000/database/update_user',
+            const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/update_user',
             {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${idToken}`
                 },
-                body: JSON.stringify({ Username: username, photoURL: selectedImage}),
+                body: JSON.stringify({ username: username, photoURL: selectedImage}),
                 });
 
             //update context state
@@ -120,7 +116,7 @@ export default function EditProfile({ navigation }) {
                             color={Colors.ghost}
                         />
                     </TouchableOpacity>
-                    <Text style={styles.title}>Edit Profile</Text>
+                    <Text style={styles.title}>Edit Account</Text>
             </View>
 
             {/* button to use the camera */}
