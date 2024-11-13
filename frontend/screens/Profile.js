@@ -170,15 +170,14 @@ const styles = StyleSheet.create({
         zIndex: 1
     },
     grid: {
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         paddingBottom: 20,
     },
     profileIconContainer: {
-        flex: 1,
         marginBottom: 10,
         alignItems: 'center',
         justifyContent: 'center',
-        width: "50%",
+        width: "33.33%",
     },
     profileIconImage: {
         width: '100%',
