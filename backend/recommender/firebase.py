@@ -143,17 +143,6 @@ def deleteHistory(uid):
 
 #endregion Inner Region
 
-# return object (dict) of active food profile that contains all details and fields
-def getActiveFoodProfile(user_id):
-    activeID = db.reference(f"users/{user_id}/activeFoodProfileID").get()
-    if not activeID:
-        return None
-    profile = db.reference(f"users/{user_id}/flavorProfiles/{activeID}").get()
-    if profile:
-        return jsonify(profile)
-    else:
-        return None
-
 #region Inner Region: User Flavor Profile Methods
 def getProfile(uid):
     try:
@@ -272,6 +261,26 @@ def deleteUserData(uid):
     except auth.AuthError as error:
         return jsonify(message=f"Error with auth: {e}"), 400
 #endregion Inner Region
+
+def setActiveProfile(user_id, profile_id):
+    try:
+        user_ref = db.reference(f"users/{user_id}")
+        user_ref.update({
+            'activeFoodProfileID': profile_id
+        })
+        return jsonify({"message": "Active profile updated successfully"}), 200
+    except Exception as e:
+        return jsonify(message=f"Error with code: {e}"), 400
+
+def getActiveProfileId(user_id):
+    try:
+        active_profile_id = db.reference(f"users/{user_id}/activeFoodProfileID").get()
+        if active_profile_id:
+            return jsonify({"activeProfileId": active_profile_id}), 200
+        else:
+            return jsonify({"error": "No active profile found"}), 404
+    except Exception as e:
+        return jsonify(message=f"Error with code: {e}"), 400
 
 if __name__ == "__main__":
     import json

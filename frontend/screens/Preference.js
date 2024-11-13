@@ -1,13 +1,16 @@
 import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Colors } from './Colors';
+import { auth } from '../firebase/firebase';
+import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function Preference({ navigation, route }) {
     const { currentUser, loading } = useAuth(); // Access currentUser and loading
     const { profileData } = route.params;
+    const { setActiveProfile } = useContext(FlavorPreferencesContext);
 
     const [tasteProfile, setTasteProfile] = useState({
         title: profileData?.title || '',
@@ -68,6 +71,31 @@ export default function Preference({ navigation, route }) {
                 }
             ]
         );
+    };
+
+    const handleSetActiveProfile = async () => {
+        try {
+            const idToken = await auth.currentUser.getIdToken();
+            const response = await fetch('http://10.0.2.2:5000/database/set_active_profile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${idToken}`
+                },
+                body: JSON.stringify({ profileId: profileData.id })
+            });
+
+            if (response.ok) {
+                console.log("Profile set as active successfully.");
+                setActiveProfile(profileData.id);
+                navigation.navigate('Profile');
+            } else {
+                const errorText = await response.text();
+                console.error("Error setting active profile: ", errorText);
+            }
+        } catch (error) {
+            console.error("Error setting active profile: ", error);
+        }
     };
 
     return (
@@ -138,7 +166,7 @@ export default function Preference({ navigation, route }) {
                     onPress={() => navigation.navigate('Add Preference 1', { profileData: {...tasteProfile, id: profileData.id} })}>
                     <Text style={styles.buttonText}>Edit</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.activeButton}>
+                <TouchableOpacity style={styles.activeButton} onPress={handleSetActiveProfile}>
                     <Text style={styles.buttonText}>Set Active</Text>
                 </TouchableOpacity>
             </View>

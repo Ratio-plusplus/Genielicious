@@ -44,6 +44,7 @@ export const FlavorPreferencesProvider = ({ children }) => {
 
     const [isChecked, setIsChecked] = useState(defaultPreferences);
     const [flavorProfiles, setFlavorProfiles] = useState([]);
+    const [activeProfileId, setActiveProfileId] = useState(null);
     const [mode, setMode] = useState("");
 
 
@@ -59,18 +60,12 @@ export const FlavorPreferencesProvider = ({ children }) => {
             });
             const json = await response.json();
             const info = json["profiles"];
-            if (info) {
-                const profilesArray = Object.keys(info).map((key) => ({
-                    id: key,
-                    ...info[key]
-                }));
-                setFlavorProfiles(profilesArray);
-                console.log("profiles fetched");
-            }
-            else {
-                setFlavorProfiles([]);
-                console.log("No flavor profile")
-            }
+            const profilesArray = Object.keys(info).map((key) => ({
+                id: key,
+                ...info[key]
+            }));
+            setFlavorProfiles(profilesArray);
+            console.log("profiles fetched");
         } else {
             console.log("No user is signed in.");
         }
@@ -119,11 +114,78 @@ export const FlavorPreferencesProvider = ({ children }) => {
     const resetPreferences = () => {
         setIsChecked(defaultPreferences);
     }
-    useEffect(() => {
-        if (!loading) {
-            fetchProfiles(); // Only fetch data when loading is false
+
+    const fetchActiveProfileId = async () => {
+        if (currentUser) {
+            const idToken = await currentUser.getIdToken();
+            try {
+                const response = await fetch('http://10.0.2.2:5000/database/get_active_profile', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${idToken}`
+                    }
+                });
+
+                console.log('Getting response: ', response.ok);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setActiveProfileId(data.activeProfileId); // Set the active profile ID
+                } else {
+                    const errorText = await response.text();
+                    console.error("Error fetching active profile ID: ", errorText);
+                }
+            } catch (error) {
+                console.error("Error fetching active profile ID: ", error);
+            }
+        } else {
+            console.log("No user is signed in.");
         }
-    }, [loading, currentUser]); // Depend on loading and currentUser
+    };
+
+    useEffect(() => {
+        if (!loading && currentUser) {
+            console.log("Fetching profiles and active profile ID");
+            const initializeData = async () => {
+                await fetchProfiles();
+                await fetchActiveProfileId();
+            };
+            initializeData();
+        }
+    }, [loading, currentUser]);
+
+    const setActiveProfile = (profileId) => {
+        setActiveProfileId(profileId);
+    }
+
+    const updateActiveProfileInFirebase = async (profileId) => {
+        if (currentUser) {
+            const idToken = await currentUser.getIdToken();
+            try {
+                const response = await fetch('http://10.0.2.2:5000/database/set_active_profile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${idToken}`
+                    },
+                    body: JSON.stringify({ profileId })
+                });
+
+                if (response.ok) {
+                    console.log("Active profile updated in Firebase successfully.");
+                    setActiveProfileId(profileId); // Update local state
+                } else {
+                    const errorText = await response.text();
+                    console.error("Error updating active profile in Firebase: ", errorText);
+                }
+            } catch (error) {
+                console.error("Error updating active profile in Firebase: ", error);
+            }
+        } else {
+            console.log("No user is signed in.");
+        }
+    };
 
     return (
         <FlavorPreferencesContext.Provider value={{ 
@@ -135,7 +197,10 @@ export const FlavorPreferencesProvider = ({ children }) => {
             flavorProfiles,
             updateProfile,
             mode,
-            setMode
+            setMode,
+            activeProfileId,
+            setActiveProfile,
+            updateActiveProfileInFirebase
         }}>
             {children}
         </FlavorPreferencesContext.Provider>
