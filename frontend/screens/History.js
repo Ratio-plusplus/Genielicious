@@ -42,6 +42,8 @@ const getHistory = async (currentUser) => {
         }
     });
     const json = await response.json();
+    console.log(json)
+
     const results = json["info"];
     // Add brackets around the string
     const jsonDataArray = `[${results}]`;

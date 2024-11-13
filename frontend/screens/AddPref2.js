@@ -166,7 +166,7 @@ export default function AddPref2({ navigation }) {
             */}
 
             {/* Visual changes for the preference profile picture */}
-            <ScrollView>
+            {/* <ScrollView> */}
                 <View style={{
                     alignItems: "center",
                     marginTop: 10,
@@ -399,7 +399,7 @@ export default function AddPref2({ navigation }) {
                         <Text style={styles.saveText}>Add Taste Profile</Text>
                     </TouchableOpacity>
                 </View>
-            </ScrollView>
+            {/* </ScrollView> */}
         </SafeAreaView>
     )
 }

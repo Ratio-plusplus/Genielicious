@@ -58,7 +58,7 @@ export default function Filter({ navigation }) {
                 <Text style={styles.title}>Filter</Text>
             </View>
 
-            <ScrollView>
+            {/* <ScrollView> */}
                 <RadioButton
                     label="Favorites"
                     onPress={() => setSelectedFavorites(!selectedFavorites)} />
@@ -266,7 +266,7 @@ export default function Filter({ navigation }) {
                         <Text style={styles.buttonText}>Apply Filter</Text>
                     </TouchableOpacity>
                 </View>
-            </ScrollView>
+            {/* </ScrollView> */}
         </SafeAreaView>
     );
 };

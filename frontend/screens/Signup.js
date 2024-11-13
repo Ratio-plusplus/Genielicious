@@ -225,22 +225,6 @@ export default function Signup({navigation}) {
             <Text style={styles.signupButtonText}>Sign Up</Text>
           </TouchableOpacity>
 
-          {/* separator between signup methods */}
-          <View style={styles.orContainer}>
-            <View style={styles.orLine} />
-            <Text style={styles.orText}>OR</Text>
-            <View style={styles.orLine} />
-          </View>
-
-          {/* sign up with Google button */}
-          <TouchableOpacity style={styles.googleButton}>
-            <Image
-              style={styles.googleLogo}
-              source={require("../../frontend/assets/google-logo.png")}
-            />
-            <Text style={styles.googleButtonText}>Sign up with Google</Text>
-          </TouchableOpacity>
-
           {/* navigate to Login screen */}
           <TouchableOpacity style={styles.loginButton}>
             <Text style={styles.loginButtonText}>
