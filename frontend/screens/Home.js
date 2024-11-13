@@ -82,7 +82,7 @@ export default function Home({ navigation }) {
             });
             console.log('User location is: ', location);
             const idToken = await currentUser.getIdToken();
-            const response = await fetch(`http://10.0.2.2:5000/database/get_location`, {
+            const response = await fetch(`https://genielicious-1229a.wl.r.appspot.com/database/get_location`, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',

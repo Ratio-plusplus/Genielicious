@@ -76,7 +76,7 @@ export default function History({ navigation }) {
         const slice1 = restaurant.replace("[", "");
         const history = slice1.replace("]", "");
         const idToken = await currentUser.getIdToken();
-        const response = await fetch('http://10.0.2.2:5000/database/update_history', {
+        const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/update_history', {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',

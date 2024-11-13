@@ -1,10 +1,10 @@
 import requests
 import json
 import os
-from dotenv import find_dotenv, load_dotenv
+#from dotenv import find_dotenv, load_dotenv
 
-dotenv_path = find_dotenv()
-load_dotenv(dotenv_path)
+#dotenv_path = find_dotenv()
+#load_dotenv(dotenv_path)
 
 API_KEY = os.getenv("YELP_API_KEY")
 

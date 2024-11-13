@@ -8,7 +8,7 @@ import { useAuth } from '../contexts/AuthContext'
 // const database = getDatabase(app);
 const handleProblemReport = async (currentUser, title, urgency, description) => {
     const idToken = await currentUser.getIdToken();
-    const response = await fetch(`http://10.0.2.2:5000/database/submit_bug_report`, {
+    const response = await fetch(`https://genielicious-1229a.wl.r.appspot.com/submit_bug_report`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
