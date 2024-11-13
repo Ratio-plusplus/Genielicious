@@ -40,7 +40,7 @@ export default function Filter({ navigation }) {
 
     // once applied, it'll go back to history with the filters 
     const applyFilter = () => {
-        navigation.navigate('History'); 
+        navigation.navigate('History');
     };
 
     return (
@@ -61,8 +61,8 @@ export default function Filter({ navigation }) {
             <ScrollView>
                 <RadioButton
                     label="Favorites"
-                    onPress={() => setSelectedFavorites(!selectedFavorites)}/>
-                
+                    onPress={() => setSelectedFavorites(!selectedFavorites)} />
+
                 <View style={styles.checkboxContainer}>
                     <Text style={styles.sectionTitle}>
                         Cuisine:
@@ -257,7 +257,7 @@ export default function Filter({ navigation }) {
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity
                         style={styles.resetButton}
-                        onPress={resetCheckbox}>  
+                        onPress={resetCheckbox}>
                         <Text style={styles.buttonText}>Reset</Text>
                     </TouchableOpacity>
                     <TouchableOpacity

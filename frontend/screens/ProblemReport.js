@@ -3,29 +3,30 @@ import {Text, StyleSheet, View, ScrollView, TouchableOpacity, TextInput} from 'r
 import { Colors } from './Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useAuth } from '../contexts/AuthContext'
 
 // const database = getDatabase(app);
-const handleProblemReport = async (title, urgency, description) => {
+const handleProblemReport = async (currentUser, title, urgency, description) => {
     const idToken = await currentUser.getIdToken();
-    const response = await fetch(`http://10.0.2.2:5000/database/submit_bug_report`, {
+    const response = await fetch(`https://genielicious-1229a.wl.r.appspot.com/submit_bug_report`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${idToken}`
             }, body : JSON.stringify({bugReportTitle: title, urgency: urgency, description: description})
-        });
+    });
+    if (response.ok) {
         const json = await response.json();
-        if (json["results"] == false) {
-            if (json["success"] == true){
-            handleQuestionnaire();
-        }
-    }
-        else if (json["results"] == true){
-            navigation.navigate("Settings");
+        console.log(json);
+    } else {
+        const json = await response.text();
+        console.log(json);
     }
 }
   
-    export default function ProblemReport ({ navigation }) {
+export default function ProblemReport({ navigation }) {
+    const { currentUser } = useAuth(); // Access currentUser and loading
+
     //Variables to hold each call
     const [title, setTitle] = React.useState();
     const [problemUrgency, setProblemUrgency] = useState(null);
@@ -156,7 +157,7 @@ const handleProblemReport = async (title, urgency, description) => {
             <View>
                 <TouchableOpacity style={styles.saveButton}
                         onPress={() =>{ 
-                            handleProblemReport(title, problemUrgency, description);
+                            handleProblemReport(currentUser, title, problemUrgency, description);
                             navigation.navigate('Profile');
                         }}>
                     <Text style={styles.saveText}>Submit</Text>

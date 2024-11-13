@@ -41,15 +41,22 @@ export default function Question({ navigation }) {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${idToken}`
                 }
-            });
+        });
+        if (response.ok) {
             const json = await response.json();
             setQuestion(json["question"]);
-            const answer = json["answer_choices" ];
+            const answer = json["answer_choices"];
             setAnswer1(answer[0]);
             setAnswer2(answer[1]);
             setAnswer3(answer[2]);
             setAnswer4(answer[3]);
-            
+            console.log(json);
+        }
+        else {
+            const json = await response.text();
+            console.log(json);
+
+        }  
     }
 
     const handleResults = async (answer) => {
@@ -61,17 +68,24 @@ export default function Question({ navigation }) {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${idToken}`
                 }, body : JSON.stringify({answer: answer})
-            });
+        });
+        if (response.ok) {
             const json = await response.json();
             if (json["results"] == false) {
-                if (json["success"] == true){
-                handleQuestionnaire();
+                if (json["success"] == true) {
+                    handleQuestionnaire();
+                }
+            }
+            else if (json["results"] == true) {
+                navigation.navigate("Result");
             }
         }
-            else if (json["results"] == true){
-                navigation.navigate("Result");
+        else {
+            const json = await response.text();
+            console.log(json);
         }
     }
+            
     const clearSession = async() =>{
         const idToken = await currentUser.getIdToken();
         const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/client/clear_session', {
@@ -80,7 +94,6 @@ export default function Question({ navigation }) {
                     'Authorization': `Bearer ${idToken}`
                 }
             });
-            const json = await response.json();
     }
     useFocusEffect(
         useCallback(() => {

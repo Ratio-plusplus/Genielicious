@@ -2,17 +2,17 @@
 # !sudo pip install firebase-admin
 from enum import verify
 from firebase_admin import db, credentials, initialize_app, auth
-from dotenv import find_dotenv, load_dotenv
+#from dotenv import find_dotenv, load_dotenv
 import os
 from flask import jsonify   
 
-dotenv_path = find_dotenv()
-load_dotenv(dotenv_path) # loads env vars into path
+#dotenv_path = find_dotenv()
+#load_dotenv(dotenv_path) # loads env vars into path
 
 #cred = credentials.Certificate("confidential\\serviceAccountKey.json")
-cred = credentials.Certificate("confidential/serviceAccountKey.json")
-db_url = {'databaseURL': os.getenv("REACT_APP_FIREBASE_DATABASE_URL")}
-initialize_app(cred, db_url)
+
+db_url = {'databaseURL': os.getenv("DATABASE_URL")}
+initialize_app(credentials.ApplicationDefault(), db_url)
 
 def verify_id_token(idToken):
     try:
@@ -32,6 +32,20 @@ def verify_id_token(idToken):
 #region Inner Region: Recommender Methods
 def getTestUser(user_id):
     return db.reference(f"test_users/{user_id}")
+
+
+# pulls user location from phone
+def setUserLocation(query, uid):
+    latitude = query.get("latitude")
+    longitude = query.get("longitude")
+    try:
+        db.reference(f"users/{uid}/location").set({'latitude': latitude, 'longitude': longitude})
+        return jsonify({"uid": uid, "message": "User location updated successfully in database"}), 200
+    except Exception as e:
+        return jsonify({"Error": e}), 400
+        
+def getTestUserCacheRef(user_id):
+    return db.reference(f"test_users/{user_id}/cache")
 
 # reference to data collection() in database
 def getDataRef():
@@ -86,6 +100,11 @@ def getLocation(user_id):
     longitude = db.reference(f"users/{user_id}/location/longitude").get()
     return (latitude, longitude)
 
+def getTestLocation(user_id):
+    latitude = db.reference(f"test_users/{user_id}/location/latitude").get()
+    longitude = db.reference(f"test_users/{user_id}/location/longitude").get()
+    return (latitude, longitude)
+
 def getUserRef(user_id):
     return db.reference(f"users/{user_id}")
 
@@ -117,6 +136,7 @@ def getResultsCache(uid):
         info = db.reference(f"users/{uid}/cache")
         return jsonify({"info": info.child("resultsCache").get()}), 200
     except Exception as e:
+        print(e)
         return jsonify(message=f"Error with code: {e}")
 
 
@@ -131,6 +151,7 @@ def addHistory(query, uid):
         ref.set(history)
         return jsonify({"uid": uid, "message": "User added to history successfully added"}), 200
     except Exception as e:
+        print(e)
         return jsonify(message=f"Error with code: {e}")
 
 def getHistory(uid):
@@ -138,7 +159,19 @@ def getHistory(uid):
         info = db.reference(f"users/{uid}/history")
         return jsonify({"info": info.get()}), 200
     except Exception as e:
+        print(e)
         return jsonify({"Error": e}), 400
+
+def updateHistory(query, uid):
+    try:
+        restaurantsInfo = query.get("restaurantsInfo")
+        print(restaurantsInfo)
+        ref = db.reference(f"users/{uid}/history")
+        ref.set(restaurantsInfo)
+        return jsonify({"uid": uid, "message": "User added to history successfully added"}), 200
+    except Exception as e:
+        print(e)
+        return jsonify(message=f"Error with code: {e}")
 
 def deleteHistory(uid):
     pass
@@ -262,6 +295,22 @@ def deleteUserData(uid):
         return jsonify(message=f"Error with code: {e}"), 400
     except auth.AuthError as error:
         return jsonify(message=f"Error with auth: {e}"), 400
+            
+def submitBugReport(query, uid):
+    try:
+            title = query.get('bugReportTitle')
+            urgency = query.get("urgency")
+            description = query.get("description")
+            ref = db.reference(f"bugReports/{uid}/problem")
+            ref.set({
+                "title" : title, 
+                "urgency": urgency, 
+                "description" : description,
+            })
+            return jsonify({"uid": uid, "message": "User bug report successfully created in database"}), 200
+    except Exception as e:
+        return jsonify(message=f"Error with code: {e}")
+
 #endregion Inner Region
 
 def setActiveProfile(user_id, profile_id):
@@ -274,6 +323,17 @@ def setActiveProfile(user_id, profile_id):
     except Exception as e:
         return jsonify(message=f"Error with code: {e}"), 400
 
+# return object (dict) of active food profile that contains all details and fields
+def getActiveFoodProfile(user_id):
+    activeID = db.reference(f"users/{user_id}/activeFoodProfileID").get()
+    if not activeID:
+        return None
+    profile = db.reference(f"users/{user_id}/flavorProfiles/{activeID}").get()
+    if profile:
+        return profile
+    else:
+        return None
+    
 def getActiveProfileId(user_id):
     try:
         active_profile_id = db.reference(f"users/{user_id}/activeFoodProfileID").get()

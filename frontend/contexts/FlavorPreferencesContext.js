@@ -1,7 +1,5 @@
 // FlavorPreferencesContext.js
 import React, { createContext, useState, useEffect } from 'react';
-import { auth, database } from '../firebase/firebase';
-import { ref, set, push, onValue } from 'firebase/database';
 import { Image } from 'react-native';
 import {useAuth} from './AuthContext'
 
@@ -44,9 +42,8 @@ export const FlavorPreferencesProvider = ({ children }) => {
 
     const [isChecked, setIsChecked] = useState(defaultPreferences);
     const [flavorProfiles, setFlavorProfiles] = useState([]);
-    const [activeProfileId, setActiveProfileId] = useState(null);
     const [mode, setMode] = useState("");
-
+    const [activeProfileId, setActiveProfileId] = useState(null);
 
     const fetchProfiles = async () => {
         if (currentUser) {
@@ -60,12 +57,18 @@ export const FlavorPreferencesProvider = ({ children }) => {
             });
             const json = await response.json();
             const info = json["profiles"];
-            const profilesArray = Object.keys(info).map((key) => ({
-                id: key,
-                ...info[key]
-            }));
-            setFlavorProfiles(profilesArray);
-            console.log("profiles fetched");
+            if (info) {
+                const profilesArray = Object.keys(info).map((key) => ({
+                    id: key,
+                    ...info[key]
+                }));
+                setFlavorProfiles(profilesArray);
+                console.log("profiles fetched");
+            }
+            else {
+                setFlavorProfiles([]);
+                console.log("No flavor profile")
+            }
         } else {
             console.log("No user is signed in.");
         }
@@ -85,7 +88,7 @@ export const FlavorPreferencesProvider = ({ children }) => {
                     body: JSON.stringify({ profileInfo: updatedData, profileId : profileId }),
                 });
             const json = await response.json();
-            console.log(json)
+            console.log("Hi", json);
         } else {
             console.log("No user is signed in.");
         }
@@ -105,7 +108,7 @@ export const FlavorPreferencesProvider = ({ children }) => {
                     body: JSON.stringify({ preferences: isChecked, name: name, photoURL: selectedImage }),
                 });
             const json = await response.json();
-            console.log(json);
+            console.log("Hi", json);
         } else {
             console.log("No user is signed in.");
         }
@@ -186,6 +189,12 @@ export const FlavorPreferencesProvider = ({ children }) => {
             console.log("No user is signed in.");
         }
     };
+
+    useEffect(() => {
+        if (!loading) {
+            fetchProfiles(); // Only fetch data when loading is false
+        }
+    }, [loading, currentUser]); // Depend on loading and currentUser
 
     return (
         <FlavorPreferencesContext.Provider value={{ 
