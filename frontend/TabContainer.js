@@ -28,8 +28,8 @@ export default function TabContainer() {
                 tabBarActiveTintColor: Colors.raisin,
                 tabBarInactiveTintColor: Colors.champagne,
                 tabBarLabelStyle: {fontSize: 12},
-                tabBarStyle: { height: '10%',  backgroundColor: Colors.blue, borderTopColor: Colors.champagne},
-                tabBarItemStyle: {paddingVertical: 5, borderRadius: 20},
+                tabBarStyle: { height: 90,  backgroundColor: Colors.blue, borderTopColor: Colors.champagne},
+                tabBarItemStyle: {paddingVertical: 8, borderRadius: 20},
                 tabBarActiveBackgroundColor: Colors.gold,
                 headerShown: false,
                 tabBarIcon: ({focused, color, size}) => {

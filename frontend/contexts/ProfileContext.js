@@ -15,7 +15,7 @@ export const ProfileProvider = ({ children }) => {
     const fetchData = async () => {
         if (currentUser) {
             const idToken = await currentUser.getIdToken();
-            const response = await fetch('http://10.0.2.2:5000/database/get_user_info', {
+            const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/get_user_info', {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',

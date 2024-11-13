@@ -32,7 +32,7 @@ const restaurants = [
 const getHistory = async (currentUser) => {
     const restaurants = [];
     const idToken = await currentUser.getIdToken();
-    const response = await fetch('http://10.0.2.2:5000/database/get_history', {
+    const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/get_history', {
         method: "GET",
         headers: {
             'Content-Type': 'application/json',

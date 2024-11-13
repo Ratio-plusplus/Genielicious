@@ -51,7 +51,7 @@ export const FlavorPreferencesProvider = ({ children }) => {
     const fetchProfiles = async () => {
         if (currentUser) {
             const idToken = await currentUser.getIdToken();
-            const response = await fetch('http://10.0.2.2:5000/database/get_user_profile', {
+            const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/get_user_profile', {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',
@@ -75,7 +75,7 @@ export const FlavorPreferencesProvider = ({ children }) => {
         console.log(updatedData);
         if (currentUser) {
             const idToken = await currentUser.getIdToken();
-            const response = await fetch('http://10.0.2.2:5000/database/update_flavor_profile',
+            const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/update_flavor_profile',
                 {
                     method: "POST",
                     headers: {
@@ -95,7 +95,7 @@ export const FlavorPreferencesProvider = ({ children }) => {
         if (currentUser) {
             idToken = await currentUser.getIdToken();
             console.log(isChecked);
-            const response = await fetch('http://10.0.2.2:5000/database/add_flavor_profile',
+            const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/add_flavor_profile',
                 {
                     method: "POST",
                     headers: {
@@ -119,7 +119,7 @@ export const FlavorPreferencesProvider = ({ children }) => {
         if (currentUser) {
             const idToken = await currentUser.getIdToken();
             try {
-                const response = await fetch('http://10.0.2.2:5000/database/get_active_profile', {
+                const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/get_active_profile', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -163,7 +163,7 @@ export const FlavorPreferencesProvider = ({ children }) => {
         if (currentUser) {
             const idToken = await currentUser.getIdToken();
             try {
-                const response = await fetch('http://10.0.2.2:5000/database/set_active_profile', {
+                const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/set_active_profile', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

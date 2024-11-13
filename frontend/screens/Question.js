@@ -36,7 +36,7 @@ export default function Question({ navigation }) {
 
     const handleQuestionnaire = async () => {
         const idToken = await currentUser.getIdToken();
-        const response = await fetch(`http://10.0.2.2:5000/client/questions/${mode}`, {
+        const response = await fetch(`https://genielicious-1229a.wl.r.appspot.com/client/questions/${mode}`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${idToken}`
@@ -55,7 +55,7 @@ export default function Question({ navigation }) {
     const handleResults = async (answer) => {
         setSelectedAnswer(answer);      // for assigning each answer's color
         const idToken = await currentUser.getIdToken();
-        const response = await fetch(`http://10.0.2.2:5000/client/answer/${mode}`, {
+        const response = await fetch(`https://genielicious-1229a.wl.r.appspot.com/client/answer/${mode}`, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
@@ -74,7 +74,7 @@ export default function Question({ navigation }) {
     }
     const clearSession = async() =>{
         const idToken = await currentUser.getIdToken();
-        const response = await fetch('http://10.0.2.2:5000/client/clear_session', {
+        const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/client/clear_session', {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${idToken}`
@@ -185,22 +185,22 @@ export default function Question({ navigation }) {
             <View style={styles.responsesContainer}>
                 <View style={styles.buttonsContainer}>
                     <TouchableOpacity
-                        style={styles.button} // selectedAnswer === answer1 && { backgroundColor: Colors.gold }
+                        style={[styles.button, selectedAnswer === answer1 && { backgroundColor: Colors.gold }]} 
                         onPress={() => handleResults(answer1)}>
                         <Text style={styles.answerText}>{answer1}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={styles.button}
+                        style={[styles.button, selectedAnswer === answer2 && { backgroundColor: Colors.gold }]}
                         onPress={() => handleResults(answer2)}>
                         <Text style={styles.answerText}>{answer2}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={styles.button}
+                        style={[styles.button, selectedAnswer === answer3 && { backgroundColor: Colors.gold }]}
                         onPress={() => handleResults(answer3)}>
                         <Text style={styles.answerText}>{answer3}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={styles.button}
+                        style={[styles.button, selectedAnswer === answer4 && { backgroundColor: Colors.gold }]}
                         onPress={() => handleResults(answer4)}>
                         <Text style={styles.answerText}>{answer4}</Text>
                     </TouchableOpacity>
@@ -286,10 +286,11 @@ const styles = StyleSheet.create({
         right: '-55%'
     },
     questionContainer: {
-        flex: 0.1,
+        flexGrow: 0.1,
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: -50,
+        marginTop: -70,
+        marginHorizontal: 20
     },
     questionButton: {
         backgroundColor: Colors.champagne,
@@ -302,24 +303,25 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: '600',
         color: Colors.raisin,
+        textAlign: 'center'
         //fontFamily: 'InknutAntiqua-Regular',
     },
     responsesContainer: {
         flex: 0.3,
-        paddingLeft: 20,
-        paddingTop: 10
+        alignItems: 'center',
+        marginTop: -20
     },
     buttonsContainer: {
         flexDirection: 'column',
         justifyContent: 'center',
-        width: '93%',
+        width: '100%',
         alignItems: 'center',
     },
     button: {
         alignItems: 'center',
         backgroundColor: Colors.champagne,
         padding: 10,
-        width: '40%',
+        width: '55%',
         borderRadius: 10,
         borderColor: Colors.raisin,
         borderWidth: 1,
@@ -329,6 +331,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '500',
         color: Colors.raisin,
+        textAlign: 'center'
     },
     adContainer: {
         position: 'absolute',
