@@ -97,6 +97,7 @@ export const FlavorPreferencesProvider = ({ children }) => {
     const addToProfile = async (name, selectedImage) => {
         if (currentUser) {
             idToken = await currentUser.getIdToken();
+            console.log(isChecked);
             const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/add_flavor_profile',
                 {
                     method: "POST",
@@ -121,7 +122,7 @@ export const FlavorPreferencesProvider = ({ children }) => {
         if (currentUser) {
             const idToken = await currentUser.getIdToken();
             try {
-                const response = await fetch('http://10.0.2.2:5000/database/get_active_profile', {
+                const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/get_active_profile', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -165,7 +166,7 @@ export const FlavorPreferencesProvider = ({ children }) => {
         if (currentUser) {
             const idToken = await currentUser.getIdToken();
             try {
-                const response = await fetch('http://10.0.2.2:5000/database/set_active_profile', {
+                const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/set_active_profile', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
