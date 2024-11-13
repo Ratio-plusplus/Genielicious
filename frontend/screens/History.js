@@ -5,6 +5,8 @@ import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthContext';
 import { useFocusEffect } from '@react-navigation/native';
+import { ProfileContext } from '../contexts/ProfileContext';
+
 
 
 // array for the different restaurant results
@@ -61,9 +63,10 @@ const openMap = (address) => {
 
 export default function History({ navigation }) {
     // map all restaurant array to be false for heart
+    const { pfp, username, fetchData, filter, setFilter, filterFavs, setFilterFavs } = React.useContext(ProfileContext);
     const [restaurants, setRestaurants] = useState([]);   
     //const [favorites, setFavorites] = useState(restaurants.map(() => false));
-     
+    
     const [ready, setReady] = React.useState(false);
     const { currentUser } = useAuth(); // Access currentUser and loading
 
@@ -126,20 +129,10 @@ export default function History({ navigation }) {
                         const results = await getHistory(currentUser);
                         setRestaurants(results);
                     }
-                    fetchHistory();
+            fetchHistory();
+            //setFilterFavs(true);
         }, [])
     );
-    //useEffect(() => {
-    //    if (!ready) {
-    //        setReady(true);
-    //        const fetchHistory = async () => {
-    //            const results = await getHistory(currentUser);
-    //            setRestaurants(results);
-    //        }
-    //        fetchHistory();
-    //    }
-    //}, [ready]);
-
     return (
         <SafeAreaView style={styles.background}>
             <View style={styles.header}>

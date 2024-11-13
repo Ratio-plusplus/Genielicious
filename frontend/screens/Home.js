@@ -1,5 +1,4 @@
 import * as React from 'react';
-import useLocation from '../constants/useLocation';
 import { useState, useEffect, useCallback } from 'react';
 import { Colors } from './Colors';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -12,10 +11,8 @@ import { useAuth } from '../contexts/AuthContext'
 
 
 export default function Home({ navigation }) {
-    const { latitude, longitude, errorMsg } = useLocation();
     // load custom font
     const [fontLoaded, setFontLoaded] = useState(false);
-    const [location, setLocation] = useState("");
     const { currentUser } = useAuth(); // Access currentUser and loading
     
     useEffect(() => {

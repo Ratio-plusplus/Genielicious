@@ -43,7 +43,7 @@ export const FlavorPreferencesProvider = ({ children }) => {
     const [isChecked, setIsChecked] = useState(defaultPreferences);
     const [flavorProfiles, setFlavorProfiles] = useState([]);
     const [mode, setMode] = useState("");
-
+    const [activeProfileId, setActiveProfileId] = useState(null);
 
     const fetchProfiles = async () => {
         if (currentUser) {
