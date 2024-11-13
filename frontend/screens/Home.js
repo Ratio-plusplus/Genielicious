@@ -1,15 +1,22 @@
 import * as React from 'react';
 import useLocation from '../constants/useLocation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Colors } from './Colors';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Modal, ActivityIndicator} from "react-native";
 import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
 import * as Font from 'expo-font';
+import * as Location from "expo-location";
+import { useFocusEffect } from '@react-navigation/native';
+import { useAuth } from '../contexts/AuthContext'
+
 
 export default function Home({ navigation }) {
     // load custom font
     const [fontLoaded, setFontLoaded] = useState(false);
+    const [location, setLocation] = useState("");
+    const { currentUser } = useAuth(); // Access currentUser and loading
+    
     useEffect(() => {
         async function loadFont() {
             await Font.loadAsync({
@@ -20,8 +27,7 @@ export default function Home({ navigation }) {
         loadFont();
     }, []);
 
-    const {latitude, longitude, errorMsg} = useLocation();
-    console.log(latitude, longitude, errorMsg);
+
     const {setMode, flavorProfiles} = React.useContext(FlavorPreferencesContext);
     const [open, setOpen] = useState(false);    // boolean if the dropdown is open or not
     const [value, setValue] = useState(null);   // holds the selected value (there is none initially)
@@ -38,7 +44,51 @@ export default function Home({ navigation }) {
         setMode(mode);
         navigation.navigate('Question');
     }
-    
+
+    const getUserLocation = async () => {
+        // Just uses expo-location to grab location and print it as coordinates
+        let { status } = await Location.requestForegroundPermissionsAsync();
+
+        if (status !== 'granted') {
+            setErrorMsg('Permission to location not granted')
+            console.log('Perms not granted!')
+            return;
+        }
+
+        // Once permissions are grabbed, get coords but in a tuple
+        let { coords } = await Location.getCurrentPositionAsync();
+
+        if (coords) {
+            const { latitude, longitude } = coords;
+            console.log('lat and long: ', latitude, longitude);
+            let location = await Location.reverseGeocodeAsync({
+                latitude,
+                longitude,
+            });
+            console.log('User location is: ', location);
+            const idToken = await currentUser.getIdToken();
+            const response = await fetch(`http://10.0.2.2:5000/database/get_location`, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${idToken}`
+                }, body: JSON.stringify({ latitude: latitude, longitude: longitude })
+            });
+            if (response.ok) {
+                const json = await response.json();
+                console.log(json);
+            } else {
+                const json = await response.text();
+                console.log(json);
+            }
+            
+        };
+    };
+    useFocusEffect(
+        useCallback(() => {
+            getUserLocation();
+        }, [])
+    );
     return (
         <SafeAreaView style={styles.background}>
             {/* title */}

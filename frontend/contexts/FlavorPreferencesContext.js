@@ -1,7 +1,5 @@
 // FlavorPreferencesContext.js
 import React, { createContext, useState, useEffect } from 'react';
-import { auth, database } from '../firebase/firebase';
-import { ref, set, push, onValue } from 'firebase/database';
 import { Image } from 'react-native';
 import {useAuth} from './AuthContext'
 
@@ -50,7 +48,6 @@ export const FlavorPreferencesProvider = ({ children }) => {
     const fetchProfiles = async () => {
         if (currentUser) {
             const idToken = await currentUser.getIdToken();
-            console.log(idToken);
             const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/get_user_profile', {
                 method: "GET",
                 headers: {
@@ -58,9 +55,7 @@ export const FlavorPreferencesProvider = ({ children }) => {
                     'Authorization': `Bearer ${idToken}`
                 }
             });
-            console.log(response);
             const json = await response.json();
-            
             const info = json["profiles"];
             if (info) {
                 const profilesArray = Object.keys(info).map((key) => ({
@@ -93,7 +88,7 @@ export const FlavorPreferencesProvider = ({ children }) => {
                     body: JSON.stringify({ profileInfo: updatedData, profileId : profileId }),
                 });
             const json = await response.json();
-            console.log(json)
+            console.log("Hi", json);
         } else {
             console.log("No user is signed in.");
         }
@@ -102,7 +97,6 @@ export const FlavorPreferencesProvider = ({ children }) => {
     const addToProfile = async (name, selectedImage) => {
         if (currentUser) {
             idToken = await currentUser.getIdToken();
-            console.log(isChecked);
             const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/add_flavor_profile',
                 {
                     method: "POST",
@@ -113,7 +107,7 @@ export const FlavorPreferencesProvider = ({ children }) => {
                     body: JSON.stringify({ preferences: isChecked, name: name, photoURL: selectedImage }),
                 });
             const json = await response.json();
-            console.log(json);
+            console.log("Hi", json);
         } else {
             console.log("No user is signed in.");
         }

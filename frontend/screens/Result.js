@@ -48,6 +48,7 @@ const openMap = (address) => {
 const getResults = async (currentUser) => {
     const restaurants = [];
     const idToken = await currentUser.getIdToken();
+    //Call to API to retrieve result cache in Realtime Database
     const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/get_result_cache', {
         method: "GET",
         headers: {
@@ -55,8 +56,9 @@ const getResults = async (currentUser) => {
             'Authorization': `Bearer ${idToken}`
         }
     });
-    console.log(response);
+    //Turns response into a json
     const json = await response.json();
+    //Gets the string stored in info
     const results = json["info"];
     const businessList = JSON.parse(results).businesses;
     for (i = 0; i < businessList.length; i++) {
@@ -72,7 +74,7 @@ const getResults = async (currentUser) => {
     const restaurant = JSON.stringify(restaurants);
     const slice1 = restaurant.replace("[", "");
     const history = slice1.replace("]", "");
-    const response1 = await fetch('http://10.0.2.2:5000/database/add_history', {
+    const response1 = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/add_history', {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
@@ -80,9 +82,7 @@ const getResults = async (currentUser) => {
         },
         body: JSON.stringify({ "restaurantsInfo": history })
     });
-    console.log(response1);
     const json1 = await response1.json();
-    console.log(json1);
     return restaurants;
 };
 export default function Result({ navigation }) {

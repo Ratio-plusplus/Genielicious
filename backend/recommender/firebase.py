@@ -154,6 +154,17 @@ def getHistory(uid):
         print(e)
         return jsonify({"Error": e}), 400
 
+def updateHistory(query, uid):
+    try:
+        restaurantsInfo = query.get("restaurantsInfo")
+        print(restaurantsInfo)
+        ref = db.reference(f"users/{uid}/history")
+        ref.set(restaurantsInfo)
+        return jsonify({"uid": uid, "message": "User added to history successfully added"}), 200
+    except Exception as e:
+        print(e)
+        return jsonify(message=f"Error with code: {e}")
+
 def deleteHistory(uid):
     pass
 
@@ -290,11 +301,10 @@ def deleteUserData(uid):
             
 def submitBugReport(query, uid):
     try:
-            bugReport = query.get('bugReportTitle')
-            title = bugReport["bugReportTitle"]
-            urgency = bugReport["urgency"]
-            description = bugReport["description"]
-            ref = db.reference(f"BugReports/{uid}/Problem")
+            title = query.get('bugReportTitle')
+            urgency = query.get("urgency")
+            description = query.get("description")
+            ref = db.reference(f"bugReports/{uid}/problem")
             ref.set({
                 "title" : title, 
                 "urgency": urgency, 
