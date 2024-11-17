@@ -272,6 +272,7 @@ const styles = StyleSheet.create({
     },
     arrowButton: {
         zIndex: 100000,
+        paddingTop: '8%'
     },
     genieContainer: {
         flex: 0.5,

@@ -15,7 +15,7 @@ export const doCreateUserWithEmailAndPassword = async (email, password, username
     
     //Save user information to database through backend
     const pfp = Image.resolveAssetSource(require("../assets/pfp.png"));
-    const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/create_user',
+    const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/auth/create_user',
         {
             method: "POST",
             headers: {
