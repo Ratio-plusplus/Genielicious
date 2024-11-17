@@ -32,10 +32,14 @@ export default function Home({ navigation }) {
 
     useEffect(() => {
         // Map flavorProfiles to the format required by DropDownPicker
-        const profileItems = flavorProfiles.map(profile => ({
-            label: profile.title,
-            value: profile.id
-        }));
+        const profileItems = [
+            { label: 'None', value: 'None' }, // Add "None" option
+            ...flavorProfiles.map(profile => ({
+                label: profile.title,
+                value: profile.id
+            }))
+        ];
+
         setItems(profileItems);
 
         // Set the active profile ID when it changes
@@ -46,10 +50,10 @@ export default function Home({ navigation }) {
 
     const handleValueChange = (newValue) => {
         console.log("handleValueChange called with:", newValue);
-        if (newValue && newValue !== value) { // Ensure it's a new selection
+        if (newValue !== value) { // Ensure it's a new selection
             console.log("Updating active profile to:", newValue);
             setValue(newValue);
-            updateActiveProfileInFirebase(newValue);
+            updateActiveProfileInFirebase(newValue === '' ? '' : newValue); // Send empty string for "None"
         } else {
             console.log("No change in profile ID or no profile selected.");
         }
