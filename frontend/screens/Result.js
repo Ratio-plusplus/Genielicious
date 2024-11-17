@@ -212,12 +212,14 @@ const styles = StyleSheet.create({
     },
     arrowButton: {
         zIndex: 100000,
+        paddingTop: '8%'
     },
     title: {
         fontWeight: "bold",
         fontSize: 25,
         color: Colors.champagne,
-        right: 50,
+        paddingRight: '18%',
+        paddingTop: '8%'
     },
     genieContainer: {
         height: '48%',  
