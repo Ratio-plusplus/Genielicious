@@ -11,10 +11,7 @@ export const doCreateUserWithEmailAndPassword = async (email, password, username
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     //Send Email Verifcation to use
-    const test = await sendEmailVerification(user);
-    console.log(test);
-    console.log("Email verified");
-    
+    const test = await sendEmailVerification(user);    
     //Save user information to database through backend
     const pfp = Image.resolveAssetSource(require("../assets/pfp.png"));
     const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/auth/create_user',
@@ -25,9 +22,7 @@ export const doCreateUserWithEmailAndPassword = async (email, password, username
             },
             body: JSON.stringify({ uid: user.uid, username: username, email: email, pfp: pfp.uri}),
         });
-    console.log(response);
     const json = await response.json();
-    console.log(json);
     return user;
 };
 

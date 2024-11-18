@@ -62,6 +62,7 @@ export const FlavorPreferencesProvider = ({ children }) => {
                     id: key,
                     ...info[key]
                 }));
+                console.log(profilesArray);
                 setFlavorProfiles(profilesArray);
                 console.log("profiles fetched");
             }

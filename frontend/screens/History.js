@@ -42,19 +42,25 @@ const getHistory = async (currentUser) => {
         }
     });
     const json = await response.json();
-    console.log(json)
 
-    const results = json["info"];
-    // Add brackets around the string
-    const jsonDataArray = `[${results}]`;
-    // Parse the JSON string into an array of objects
-    const restaurant = JSON.parse(jsonDataArray);
-    for (i = 0; i < restaurant.length; i++) {
-        const restaurantInfo = restaurant[i];
-        const push = { name: restaurantInfo.name, taste: restaurantInfo.taste, address: restaurantInfo.address, distance: restaurantInfo.distance, image: restaurantInfo.image, favorite: restaurantInfo.favorite };
-        restaurants.push(push);
+    const info = json["info"];
+    if (info) {
+        const profilesArray = Object.keys(info).map((key) => ({
+            id: key,
+            ...info[key]
+        }));
+        console.log(profilesArray);
+        return profilesArray
     }
-    return restaurants
+    else {
+        return None
+    }
+    //for (const key in results) {
+    //    const restaurantInfo = results[key];
+    //    //const push = { name: restaurantInfo.name, taste: restaurantInfo.taste, address: restaurantInfo.address, distance: restaurantInfo.distance, image: restaurantInfo.image, favorite: restaurantInfo.favorite };
+    //    restaurants.push(restaurantInfo);
+    //}
+    //console.log(restaurants);
 };
 // put the address into a URL that will open it in Google Maps
 const openMap = (address) => {
@@ -66,17 +72,13 @@ const openMap = (address) => {
 export default function History({ navigation }) {
     // map all restaurant array to be false for heart
     const { pfp, username, fetchData, filter, setFilter, filterFavs, setFilterFavs } = React.useContext(ProfileContext);
-    const [restaurants, setRestaurants] = useState([]);   
+    const [restaurants, setRestaurants] = useState([]);
     //const [favorites, setFavorites] = useState(restaurants.map(() => false));
     
     const [ready, setReady] = React.useState(false);
     const { currentUser } = useAuth(); // Access currentUser and loading
 
-    const saveFavorites = async (currentUser) => {
-        const restaurant = JSON.stringify(restaurants);
-        console.log(restaurants);
-        const slice1 = restaurant.replace("[", "");
-        const history = slice1.replace("]", "");
+    const saveFavorites = async (index) => {
         const idToken = await currentUser.getIdToken();
         const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/update_history', {
             method: "POST",
@@ -84,10 +86,9 @@ export default function History({ navigation }) {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${idToken}`
             },
-            body: JSON.stringify({ "restaurantsInfo": history })
+            body: JSON.stringify({ restaurantsInfo: restaurants[index], restaurantId: restaurants[index].id })
         });
         const json = await response.json();
-        console.log(json)
     };
 
     // toggle each restaurant's heart
@@ -97,7 +98,7 @@ export default function History({ navigation }) {
         newRestaurants[index].favorite = !newRestaurants[index].favorite;
         setRestaurants(newRestaurants);
         console.log("After: ", newRestaurants);
-        saveFavorites(currentUser);
+        saveFavorites(index);
     };
 
     const renderRestaurantItem = (item, index) => (
