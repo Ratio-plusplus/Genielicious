@@ -4,12 +4,13 @@ import CheckBox from 'react-native-check-box';
 import { Colors } from './Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 //import { FlavorPreferencesContext } from '../../backend/contexts/FlavorPreferencesContext';
 
 export default function Filter({ navigation }) {
     //const { isChecked, setIsChecked, resetPreferences } = useContext(FlavorPreferencesContext);
     const [isChecked, setIsChecked] = useState({
-        african: false, breakfast: false, comfortFood: false, desserts: false,
+        French: false, breakfast: false, comfortFood: false, desserts: false,
         eastAsian: false, european: false, fingerFood: false, healthConscious: false,
         latinAmerican: false, lightMeals: false, meatCentric: false, middleEastern: false, northAmerican: false,
         quickEats: false, southAsian: false, specialty: false, vegan: false
@@ -40,7 +41,13 @@ export default function Filter({ navigation }) {
 
     // once applied, it'll go back to history with the filters 
     const applyFilter = () => {
-        navigation.navigate('History');
+        // Create an object to hold the selected filters
+        const selectedFilters = {
+            favorites: selectedFavorites,
+            cuisines: Object.keys(isChecked).filter(key => isChecked[key]),
+        };
+        // Navigate back to History and pass the selected filters
+        navigation.navigate('History', { filters: selectedFilters });
     };
 
     return (
@@ -72,9 +79,9 @@ export default function Filter({ navigation }) {
                     <View style={styles.checkboxRow}>
                         <CheckBox
                             style={styles.checkbox}
-                            isChecked={isChecked.african}
-                            onClick={() => setIsChecked({ ...isChecked, african: !isChecked.african })}
-                            rightText='African'
+                            isChecked={isChecked.French}
+                            onClick={() => setIsChecked({ ...isChecked, French: !isChecked.French })}
+                            rightText='French'
                             rightTextStyle={styles.checkboxText}
                             uncheckedCheckBoxColor={Colors.ghost}
                             checkedCheckBoxColor={Colors.gold} />

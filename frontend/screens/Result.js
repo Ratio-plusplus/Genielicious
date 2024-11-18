@@ -70,7 +70,7 @@ const getResults = async (currentUser) => {
             //console.log(restaurantInfo.categories[x]);
             aliases.push(restaurantInfo.categories[x].alias);
         }
-        const push = { name: restaurantInfo.name, taste: aliases.join(', '), address: restaurantInfo.location.display_address.join(', '), distance: restaurantInfo.distance, image: restaurantInfo.image_url, favorite: false};
+        const push = { name: restaurantInfo.name, taste: aliases.join(', '), address: restaurantInfo.location.display_address.join(', '), distance: restaurantInfo.distance, image: restaurantInfo.image_url, favorite: false, url: restaurantInfo.url };
         restaurants.push(push);
     }
     const restaurant = JSON.stringify(restaurants);
@@ -216,10 +216,13 @@ const styles = StyleSheet.create({
     },
     title: {
         fontWeight: "bold",
-        fontSize: 25,
+        fontSize: 22,
         color: Colors.champagne,
-        paddingRight: '18%',
-        paddingTop: '8%'
+        paddingRight: '10%',
+        paddingTop: '5%',
+        fontFamily: 'InknutAntiqua-Regular',
+        textAlign: 'center',
+        justifyContent: 'center'
     },
     genieContainer: {
         height: '48%',  
@@ -335,7 +338,8 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         marginBottom: 20,
         color: Colors.ghost,
-        alignItems: 'center'
+        alignItems: 'center',
+        textAlign: 'center'
     },
     modalButtons: {
         flexDirection: 'row',

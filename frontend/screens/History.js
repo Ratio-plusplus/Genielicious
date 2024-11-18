@@ -1,13 +1,10 @@
-
 import React, { useState, useCallback, useEffect } from 'react';
 import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text, ScrollView, Linking } from 'react-native';
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthContext';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useRoute } from '@react-navigation/native';
 import { ProfileContext } from '../contexts/ProfileContext';
-
-
 
 // array for the different restaurant results
 const restaurants = [
@@ -69,6 +66,10 @@ const openMap = (address) => {
     Linking.openURL(url);
 };
 
+const openYelp = (url) => {
+    Linking.openURL(url);
+};
+
 export default function History({ navigation }) {
     // map all restaurant array to be false for heart
     const { pfp, username, fetchData, filter, setFilter, filterFavs, setFilterFavs } = React.useContext(ProfileContext);
@@ -77,6 +78,8 @@ export default function History({ navigation }) {
     
     const [ready, setReady] = React.useState(false);
     const { currentUser } = useAuth(); // Access currentUser and loading
+    const route = useRoute();
+    const { filters } = route.params || {}; // Get filters from navigation params
 
     const saveFavorites = async (index) => {
         const idToken = await currentUser.getIdToken();
@@ -101,27 +104,51 @@ export default function History({ navigation }) {
         saveFavorites(index);
     };
 
+    // Function to filter restaurants based on selected filters
+    const filterRestaurants = (restaurants) => {
+        if (!filters) return restaurants; // If no filters, return all restaurants
+
+        return restaurants.filter(restaurant => {
+            const matchesCuisine = filters.cuisines.length === 0 || filters.cuisines.includes(restaurant.taste);
+            const matchesFavorites = !filters.favorites || restaurant.favorite; // Assuming 'favorite' is a boolean in restaurant data
+            return matchesCuisine && matchesFavorites;
+        });
+    };
+
     const renderRestaurantItem = (item, index) => (
         <View style={styles.restaurantDetails}>
             <View style={styles.restaurantTextContainer}>
                 <View style={styles.nameContainer}>
                     <Text style={styles.restaurantName}>{item.name}</Text>
-                    <TouchableOpacity onPress={() => toggleFavorite(index)}>
-                        {/* if favorite then pink, if not then white */}
-                        <MaterialIcons
-                            name={restaurants[index].favorite ? "favorite" : "favorite-border"}
-                            size={24}
-                            color={restaurants[index].favorite ? "pink" : "white"}
-                        />
-                    </TouchableOpacity>
+                    <View style={styles.endIcons}>
+                        <TouchableOpacity onPress={() => toggleFavorite(index)}>
+                            {/* if favorite then pink, if not then white */}
+                            <MaterialIcons
+                                name={restaurants[index].favorite ? "favorite" : "favorite-border"}
+                                size={24}
+                                color={restaurants[index].favorite ? "#FCA7BE" : "white"}
+                            />
+                        </TouchableOpacity>
+                    </View>
                 </View>
                 <Text style={styles.restaurantAliases}>{item.taste}</Text>
-                <Text
-                    style={styles.restaurantAddress}
-                    onPress={() => openMap(item.address)} // make the address clickable
-                >
-                    {item.address}
-                </Text>
+                <View style={styles.nameContainer}>
+                    <Text
+                        style={styles.restaurantAddress}
+                        onPress={() => openMap(item.address)} // make the address clickable
+                    >
+                        {item.address}
+                    </Text>
+                    <View style={styles.endIcons}>
+                        <TouchableOpacity onPress={() => openYelp(item.url)}>
+                            <Image
+                                source={require('../assets/yelpLogo.png')} // Add Yelp logo image
+                                style={styles.yelpLogo}
+                                resizeMode="contain"
+                            />
+                        </TouchableOpacity>
+                    </View>
+                </View>
             </View>
         </View>
     );
@@ -129,12 +156,12 @@ export default function History({ navigation }) {
     useFocusEffect(
         useCallback(() => {
             const fetchHistory = async () => {
-                        const results = await getHistory(currentUser);
-                        setRestaurants(results);
-                    }
+                const results = await getHistory(currentUser);
+                const filteredResults = filterRestaurants(results); // Apply filters
+                setRestaurants(filteredResults);
+            };
             fetchHistory();
-            //setFilterFavs(true);
-        }, [])
+        }, [filters]) // Re-fetch when filters change
     );
     return (
         <SafeAreaView style={styles.background}>
@@ -201,8 +228,9 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderColor: Colors.ghost,
         borderWidth: 1,
-        alignItems: 'center',
+        alignItems: 'flex-start',
         width: '90%',
+        height: 150
     },
     restaurantImage: {
         width: '40%',
@@ -212,23 +240,30 @@ const styles = StyleSheet.create({
     },
     restaurantDetails: {
         flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
+        flexDirection: 'column',
+        height: '100%'
     },
     restaurantTextContainer: {
         flex: 1,
+        justifyContent: "space-between",
+        height: '100%'
     },
     nameContainer: {
         flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'flex-start',
     },
     restaurantName: {
         fontSize: 16,
         fontWeight: 'bold',
         color: Colors.gold,
         marginBottom: 5,
+        marginRight: 30,
+    },
+    endIcons: {
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        zIndex: 1, 
     },
     restaurantAliases: {
         fontSize: 15,
@@ -239,5 +274,10 @@ const styles = StyleSheet.create({
         fontSize: 15,
         color: Colors.gold,
         marginBottom: 5,
+        marginRight: 35
     },
+    yelpLogo: {
+        width: 30,
+        height: 30
+    }
 });

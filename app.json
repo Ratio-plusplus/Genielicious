@@ -52,6 +52,14 @@
         {
           "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
         }
+      ],
+      [
+        "expo-font",
+      {
+        "fonts": [
+          "./frontend/assets/fonts/InknutAntiqua-Regular.ttf"
+        ]
+      }
       ]
     ],
     "experiments": {

@@ -55,20 +55,6 @@ export default function AddPref2({ navigation }) {
         }
     };
 
-    const handleCameraCapture = async () => {
-        let result = await ImagePicker.launchCameraAsync({
-            allowsEditing: true,
-            aspect: [4, 4],
-            quality: 1
-        })
-        
-        console.log(result)
-
-        if (!result.canceled){
-            setSelectedImage(result.assets[0].uri)
-        }
-    };
-
     const handleProfilePicturePress = () => {
         setModalVisible(true)
     }
@@ -80,7 +66,7 @@ export default function AddPref2({ navigation }) {
         setPresetModalVisible(false)
     }
 
-    //custom radio button component
+    //custom radio button component for the budget and distance
     const RadioButton = ({ isSelected, onPress, label }) => {
         return (
             <TouchableOpacity onPress={onPress} style={styles.radioButtonContainer}>
@@ -94,6 +80,7 @@ export default function AddPref2({ navigation }) {
     const handleSaveProfile = async () => {
         console.log("handleSaveProfile called"); // Debugging line
         
+        // We first check to see if there is any pre=existing data and store those values
         const profileData = {
             title: name ?? existingProfileData.name,
             photoURL: selectedImage ?? existingProfileData.image,
@@ -103,6 +90,7 @@ export default function AddPref2({ navigation }) {
             allergies: isChecked.allergies ?? existingProfileData.allergies,
         };
     
+        // If there is pre-existing data then we edit/update, if not we add a new profile
         try {
             if (existingProfileData && existingProfileData.id) {
                 // If editing an existing profile
@@ -120,7 +108,7 @@ export default function AddPref2({ navigation }) {
         navigation.navigate('Profile');
     };
 
-
+    // set the values after we figure out if we have any pre-existing data
     useEffect(() => {
         if(existingProfileData){
             setSelectedImage(existingProfileData.image)
@@ -140,6 +128,7 @@ export default function AddPref2({ navigation }) {
             flex: 1,
             backgroundColor: Colors.blue,
         }}>
+            {/* Back button to go back to the 1st Preference page */}
             <View style={{
                 marginHorizontal: 12,
                 marginTop: 12,
@@ -160,14 +149,6 @@ export default function AddPref2({ navigation }) {
                     </TouchableOpacity>
                     <Text style={{marginTop: 2, fontWeight: 600, fontSize: 22, color: Colors.ghost}}>{pageTitle}</Text>
             </View>
-            
-            {/* button to use camera
-            <View style = {{alignItems: 'center', marginBottom: 15, marginTop: 15 }}>
-                <TouchableOpacity onPress = {handleCameraCapture} style = {styles.cameraButton}>
-                    <Text style = {styles.cameraButtonText}>Take a Picture</Text>
-                </TouchableOpacity>
-            </View>
-            */}
 
             {/* Visual changes for the preference profile picture */}
             {/* <ScrollView> */}
@@ -454,7 +435,8 @@ const styles = StyleSheet.create({
         width: "67%",
         borderRadius: 6,
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
+        textAlign: "center"
     },
     saveText: {
         fontSize: 22,

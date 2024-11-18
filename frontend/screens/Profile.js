@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.gold,
         padding: 13,
         marginTop: 15,
-        width: '70%',
+        width: '75%',
         borderRadius: 10,
         zIndex: 1
     },
