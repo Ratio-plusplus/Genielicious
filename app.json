@@ -23,7 +23,11 @@
         "foregroundImage": "./frontend/assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.ratioplusplus.genielicious"
+      "package": "com.ratioplusplus.genielicious",
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -56,6 +60,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "735cfb9f-ab40-4c7d-a6fd-f57643b8d3c3"
+      }
     }
   }
 }
