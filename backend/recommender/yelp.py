@@ -1,16 +1,12 @@
-# The point of this file is to explore yelp api capabilities and compile data
-
 import requests
 import json
 import os
-from dotenv import find_dotenv, load_dotenv
+#from dotenv import find_dotenv, load_dotenv
 
-dotenv_path = find_dotenv()
-load_dotenv(dotenv_path)
+#dotenv_path = find_dotenv()
+#load_dotenv(dotenv_path)
 
-# # # DO NOT add .env file to version control
 API_KEY = os.getenv("YELP_API_KEY")
-# # #
 
 # func to get yelp results on specialized queries
 def getStore(coordinates, term = None, categories = "restaurants", radius=16000, sort_by = "rating", checkOpen = False, price = None):

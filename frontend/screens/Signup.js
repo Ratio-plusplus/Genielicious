@@ -26,6 +26,7 @@ export default function Signup({navigation}) {
         try{
           const user = await createUser();
             if (user) {
+                console.log("In the thick of it");
                 const intervalId = setInterval(async () => {
                     await user.reload();
                     if (user.emailVerified) {
@@ -35,6 +36,7 @@ export default function Signup({navigation}) {
                         navigation.navigate('Tab');
                     } else {
                         setErrorMessage('Please verify your email before logging in.');
+                        console.log("Waiting for verification");
                     }
                 }, 1000);
             
@@ -72,6 +74,7 @@ export default function Signup({navigation}) {
                 //Check if passwords match
                 if (validate(email)){
                     if (password == confirmPassword) {
+                        console.log(username);
                         return await doCreateUserWithEmailAndPassword(email, password, username)
                     }
                 }
@@ -223,22 +226,6 @@ export default function Signup({navigation}) {
           {/* signup button */}
           <TouchableOpacity style={styles.signupButton} onPress={() => handleSignup()}>
             <Text style={styles.signupButtonText}>Sign Up</Text>
-          </TouchableOpacity>
-
-          {/* separator between signup methods */}
-          <View style={styles.orContainer}>
-            <View style={styles.orLine} />
-            <Text style={styles.orText}>OR</Text>
-            <View style={styles.orLine} />
-          </View>
-
-          {/* sign up with Google button */}
-          <TouchableOpacity style={styles.googleButton}>
-            <Image
-              style={styles.googleLogo}
-              source={require("../../frontend/assets/google-logo.png")}
-            />
-            <Text style={styles.googleButtonText}>Sign up with Google</Text>
           </TouchableOpacity>
 
           {/* navigate to Login screen */}

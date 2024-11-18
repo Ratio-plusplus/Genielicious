@@ -65,11 +65,11 @@ export default function Filter({ navigation }) {
                 <Text style={styles.title}>Filter</Text>
             </View>
 
-            <ScrollView>
+            {/* <ScrollView> */}
                 <RadioButton
                     label="Favorites"
-                    onPress={() => setSelectedFavorites(!selectedFavorites)}/>
-                
+                    onPress={() => setSelectedFavorites(!selectedFavorites)} />
+
                 <View style={styles.checkboxContainer}>
                     <Text style={styles.sectionTitle}>
                         Cuisine:
@@ -264,7 +264,7 @@ export default function Filter({ navigation }) {
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity
                         style={styles.resetButton}
-                        onPress={resetCheckbox}>  
+                        onPress={resetCheckbox}>
                         <Text style={styles.buttonText}>Reset</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
@@ -273,7 +273,7 @@ export default function Filter({ navigation }) {
                         <Text style={styles.buttonText}>Apply Filter</Text>
                     </TouchableOpacity>
                 </View>
-            </ScrollView>
+            {/* </ScrollView> */}
         </SafeAreaView>
     );
 };

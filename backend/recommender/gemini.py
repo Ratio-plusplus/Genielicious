@@ -1,16 +1,14 @@
-#!pip install -q -U google-generativeai
-# import requests
 import json
-from firebase import getDataRef, getUserCacheRef, getActiveProfileId
-# from firebase import getTestUser
-from dotenv import find_dotenv, load_dotenv
+from firebase import getDataRef, getUserCacheRef, getActiveFoodProfile
+#from firebase import getTestUserCacheRef
+# from dotenv import find_dotenv, load_dotenv
 # from yelp import cacheToJson # used in development
 import results
 import google.generativeai as genai
 import os
 
-dotenv_path = find_dotenv()
-load_dotenv(dotenv_path)
+# dotenv_path = find_dotenv()
+# load_dotenv(dotenv_path)
 
 API_KEY = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key=API_KEY)
@@ -19,7 +17,7 @@ model = genai.GenerativeModel("gemini-1.5-flash") # model version we're using
 
 def getPrompt(user_id, mode):
   dataRef = getDataRef()
-  activeFoodProfile = getActiveProfileId(user_id)      
+  activeFoodProfile = getActiveFoodProfile(user_id)     
 
   if mode == "short":
     prompt = dataRef.child("short_prompt").get()
@@ -30,9 +28,21 @@ def getPrompt(user_id, mode):
 
   # reference active food profile details
   if activeFoodProfile:
-    allergies = activeFoodProfile["allergies"]["include"] # list of food allergy strings
-    includedPreferences = activeFoodProfile["tastePreferences"]["include"]
-    excludedPreferences = activeFoodProfile["tastePreferences"]["exclude"]
+    allergies = []
+    for i in activeFoodProfile["allergies"]:
+        if activeFoodProfile["allergies"][i] == True:
+            allergies.append(i)
+    print(allergies)
+    #allergies = activeFoodProfile["allergies"]["include"] # list of food allergy strings
+    includedPreferences = []
+    excludedPreferences = []
+    for i in activeFoodProfile["tastePreferences"]:
+        if activeFoodProfile["tastePreferences"][i] == True:
+            includedPreferences.append(i)
+        else:
+            excludedPreferences.append(i)
+    #includedPreferences = activeFoodProfile["tastePreferences"]["include"]
+    #excludedPreferences = activeFoodProfile["tastePreferences"]["exclude"]
     if allergies:
       prompt += f"Do not consider food options that contain these food allergies: {', '.join(allergies)}."
     if includedPreferences:
@@ -44,7 +54,6 @@ def getPrompt(user_id, mode):
 
 def submitAnswer(user_id,answer):
   cache = getUserCacheRef(user_id)
-
   surveyCache = cache.child("surveyCache").get()
 
   if not surveyCache :
@@ -96,8 +105,8 @@ def getNextQuestion(user_id:str, mode:str):
   distanceCache = cache.child("distanceCache").get()
   budgetCache = cache.child("budgetCache").get()
   
-  activeProfile = getActiveProfileId(user_id)
-
+  activeProfile = getActiveFoodProfile(user_id)
+  print(activeProfile)
   if activeProfile:
       budget = activeProfile["budget"]
       distance = activeProfile["distance"]
@@ -162,6 +171,19 @@ def formatStringToJson(s):
   return data
 
 if __name__ == "__main__":
-  print(getNextQuestion("3"))
+  with open(r"backend\recommender\unused\survey.json", "r") as file:
+    prompt = json.load(file)["prompt"] 
+
+  surveyCache = [{"role":"user","parts":[{"text": prompt}]},]
+  response = model.generate_content(
+      surveyCache, # "contents" parameter
+      generation_config=genai.types.GenerationConfig(
+          temperature=1.0, # "randomness" of model
+      ),
+  )
+  # cacheToJson(r"backend\recommender\unused\res.json",response.text)
+  # cacheToJson(r"backend\recommender\unused\res_out.json",formatStringToJson(response.text))
+
+  # print(getNextQuestion("3"))
   # submitAnswer("3", "yes")
   # print(getPrompt("medium"))

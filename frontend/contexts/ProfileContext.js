@@ -9,13 +9,14 @@ export const ProfileProvider = ({ children }) => {
 
     const [pfp, setPfp] = useState("");
     const [username, setUsername] = useState("");
-    
+    const [filter, setFilter] = useState({});
+    const [filterFavs, setFilterFavs] = useState(false);
     const { currentUser, loading, userLoggedIn } = useAuth(); // Access currentUser and loading
 
     const fetchData = async () => {
         if (currentUser) {
             const idToken = await currentUser.getIdToken();
-            const response = await fetch('http://10.0.2.2:5000/database/get_user_info', {
+            const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/get_user_info', {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',
@@ -26,6 +27,7 @@ export const ProfileProvider = ({ children }) => {
             const info = json["info"];
             setUsername(info["username"]);
             setPfp(info["photoURL"]);
+            console.log("Success");
         } else {
             console.log("No user is signed in.");
         }
@@ -40,7 +42,7 @@ export const ProfileProvider = ({ children }) => {
     }, [loading, currentUser]); // Depend on loading and currentUser
 
     return (
-        <ProfileContext.Provider value={{ pfp, setPfp, username, setUsername, fetchData }}>
+        <ProfileContext.Provider value={{ pfp, setPfp, username, setUsername, fetchData, filter, setFilter, filterFavs, setFilterFavs }}>
             {children}
         </ProfileContext.Provider>
     );

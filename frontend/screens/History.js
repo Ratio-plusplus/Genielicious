@@ -33,7 +33,7 @@ const restaurants = [
 const getHistory = async (currentUser) => {
     const restaurants = [];
     const idToken = await currentUser.getIdToken();
-    const response = await fetch('http://10.0.2.2:5000/database/get_history', {
+    const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/get_history', {
         method: "GET",
         headers: {
             'Content-Type': 'application/json',
@@ -41,16 +41,16 @@ const getHistory = async (currentUser) => {
         }
     });
     const json = await response.json();
+    console.log(json)
+
     const results = json["info"];
-    console.log(results);
     // Add brackets around the string
     const jsonDataArray = `[${results}]`;
-    console.log(jsonDataArray);
     // Parse the JSON string into an array of objects
     const restaurant = JSON.parse(jsonDataArray);
     for (i = 0; i < restaurant.length; i++) {
         const restaurantInfo = restaurant[i];
-        const push = { name: restaurantInfo.name, taste: restaurantInfo.taste, address: restaurantInfo.address, distance: restaurantInfo.distance, image: restaurantInfo.image };
+        const push = { name: restaurantInfo.name, taste: restaurantInfo.taste, address: restaurantInfo.address, distance: restaurantInfo.distance, image: restaurantInfo.image, favorite: restaurantInfo.favorite };
         restaurants.push(push);
     }
     return restaurants
@@ -64,20 +64,41 @@ const openMap = (address) => {
 
 export default function History({ navigation }) {
     // map all restaurant array to be false for heart
+    const { pfp, username, fetchData, filter, setFilter, filterFavs, setFilterFavs } = React.useContext(ProfileContext);
     const [restaurants, setRestaurants] = useState([]);   
-    const [favorites, setFavorites] = useState(restaurants.map(() => false));
-     
+    //const [favorites, setFavorites] = useState(restaurants.map(() => false));
+    
     const [ready, setReady] = React.useState(false);
     const { currentUser } = useAuth(); // Access currentUser and loading
     const route = useRoute();
     const { filters } = route.params || {}; // Get filters from navigation params
 
+    const saveFavorites = async (currentUser) => {
+        const restaurant = JSON.stringify(restaurants);
+        console.log(restaurants);
+        const slice1 = restaurant.replace("[", "");
+        const history = slice1.replace("]", "");
+        const idToken = await currentUser.getIdToken();
+        const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/update_history', {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${idToken}`
+            },
+            body: JSON.stringify({ "restaurantsInfo": history })
+        });
+        const json = await response.json();
+        console.log(json)
+    };
 
     // toggle each restaurant's heart
     const toggleFavorite = (index) => {
-        const newFavorites = [...favorites];
-        newFavorites[index] = !newFavorites[index];
-        setFavorites(newFavorites);
+        const newRestaurants = [...restaurants];
+        console.log("Before: ", newRestaurants[index]);
+        newRestaurants[index].favorite = !newRestaurants[index].favorite;
+        setRestaurants(newRestaurants);
+        console.log("After: ", newRestaurants);
+        saveFavorites(currentUser);
     };
 
     // Function to filter restaurants based on selected filters
@@ -99,9 +120,9 @@ export default function History({ navigation }) {
                     <TouchableOpacity onPress={() => toggleFavorite(index)}>
                         {/* if favorite then pink, if not then white */}
                         <MaterialIcons
-                            name={favorites[index] ? "favorite" : "favorite-border"}
+                            name={restaurants[index].favorite ? "favorite" : "favorite-border"}
                             size={24}
-                            color={favorites[index] ? "pink" : "white"}
+                            color={restaurants[index].favorite ? "pink" : "white"}
                         />
                     </TouchableOpacity>
                 </View>
@@ -126,17 +147,6 @@ export default function History({ navigation }) {
             fetchHistory();
         }, [filters]) // Re-fetch when filters change
     );
-    //useEffect(() => {
-    //    if (!ready) {
-    //        setReady(true);
-    //        const fetchHistory = async () => {
-    //            const results = await getHistory(currentUser);
-    //            setRestaurants(results);
-    //        }
-    //        fetchHistory();
-    //    }
-    //}, [ready]);
-
     return (
         <SafeAreaView style={styles.background}>
             <View style={styles.header}>
@@ -182,7 +192,8 @@ const styles = StyleSheet.create({
     },
     filterButton: {
         zIndex: 10000,
-        padding: 5
+        padding: 5,
+        paddingTop: '8%'
     },
     restaurantListContainer: {
         flex: 1,

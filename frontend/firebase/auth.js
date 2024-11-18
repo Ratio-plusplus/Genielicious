@@ -11,11 +11,13 @@ export const doCreateUserWithEmailAndPassword = async (email, password, username
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     //Send Email Verifcation to use
-    await sendEmailVerification(user);
+    const test = await sendEmailVerification(user);
+    console.log(test);
+    console.log("Email verified");
     
     //Save user information to database through backend
     const pfp = Image.resolveAssetSource(require("../assets/pfp.png"));
-    const response = await fetch('http://10.0.2.2:5000/database/create_user',
+    const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/auth/create_user',
         {
             method: "POST",
             headers: {
@@ -23,7 +25,9 @@ export const doCreateUserWithEmailAndPassword = async (email, password, username
             },
             body: JSON.stringify({ uid: user.uid, username: username, email: email, pfp: pfp.uri}),
         });
+    console.log(response);
     const json = await response.json();
+    console.log(json);
     return user;
 };
 
@@ -59,7 +63,7 @@ export const doPasswordChange = (password) => {
 
 export const deleteAccount = async () => {
     idToken = await auth.currentUser.getIdToken();
-    const response = await fetch('http://10.0.2.2:5000/database/delete_user',
+    const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/delete_user',
         {
             method: "DELETE",
             headers: {

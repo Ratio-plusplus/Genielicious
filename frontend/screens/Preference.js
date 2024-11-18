@@ -59,7 +59,7 @@ export default function Preference({ navigation, route }) {
                         try {
                             const idToken = await currentUser.getIdToken();
                             console.log(profileData.id);
-                            const response = await fetch('http://10.0.2.2:5000/database/delete_flavor_profile', {
+                            const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/delete_flavor_profile', {
                                 method: 'DELETE',
                                 headers: {
                                     'Content-Type': 'application/json',
@@ -90,7 +90,7 @@ export default function Preference({ navigation, route }) {
     const handleSetActiveProfile = async () => {
         try {
             const idToken = await auth.currentUser.getIdToken();
-            const response = await fetch('http://10.0.2.2:5000/database/set_active_profile', {
+            const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/set_active_profile', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
     buttonRow: {
         flexDirection: "row",
         justifyContent: "space-evenly",
-        marginBottom: 20,
+        height: '10%'
     },
     editButton: {
         backgroundColor: Colors.ghost,
@@ -249,11 +249,12 @@ const styles = StyleSheet.create({
         borderColor: Colors.raisin,
         alignItems: "center",
         justifyContent: "center",
-        height: 90
+        marginBottom: 10,
     },
     activeButton: {
         backgroundColor: Colors.gold,
         width: "40%",
+        marginBottom: 10,
         borderRadius: 10,
         borderWidth: 1,
         borderColor: Colors.raisin,
@@ -261,7 +262,7 @@ const styles = StyleSheet.create({
         justifyContent: "center"
     },
     buttonText: {
-        fontSize: 20,
+        fontSize: 22,
         fontWeight: "bold",
         color: Colors.raisin
     }

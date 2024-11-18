@@ -20,6 +20,8 @@ export default function AddPref2({ navigation }) {
     const [showPresetImages, setShowPresetImages] = useState(false)
     const route = useRoute();
     const { existingProfileData } = route.params || {};
+    const [pageTitle, setPageTitle] = useState("Add New Preference");
+    const [buttonTitle, setButtonTitle] = useState("Add Taste Profile");
     const presetImages = [
         //add in path for any additional preset pictures
         require('../assets/images//Dessert.png'),
@@ -110,12 +112,14 @@ export default function AddPref2({ navigation }) {
     useEffect(() => {
         if(existingProfileData){
             setSelectedImage(existingProfileData.image)
-            setName(existingProfileData.name);
+            setName(existingProfileData.title);
             setSelectedBudget(existingProfileData.budget)
             setSelectedDistance(existingProfileData.distance)
-            // Dtitle = "Edit Preference"
+            setPageTitle("Edit Preference")
+            setButtonTitle("Update Taste Profile")
         } else {
-            // Dtitle = "New Preference"
+            setPageTitle("Add New Preference")
+            setButtonTitle("Add Taste Profile")
         }
     }, [existingProfileData]);
 
@@ -143,11 +147,11 @@ export default function AddPref2({ navigation }) {
                             color={Colors.ghost}
                         />
                     </TouchableOpacity>
-                    <Text style={{marginTop: 2, fontWeight: 600, fontSize: 22, color: Colors.ghost}}>Add Taste Profile</Text>
+                    <Text style={{marginTop: 2, fontWeight: 600, fontSize: 22, color: Colors.ghost}}>{pageTitle}</Text>
             </View>
 
             {/* Visual changes for the preference profile picture */}
-            <ScrollView>
+            {/* <ScrollView> */}
                 <View style={{
                     alignItems: "center",
                     marginTop: 10,
@@ -377,10 +381,10 @@ export default function AddPref2({ navigation }) {
                             handleSaveProfile();
                             fetchProfiles();
                         }}>
-                        <Text style={styles.saveText}>Add Taste Profile</Text>
+                        <Text style={styles.saveText}>{buttonTitle}</Text>
                     </TouchableOpacity>
                 </View>
-            </ScrollView>
+            {/* </ScrollView> */}
         </SafeAreaView>
     )
 }
