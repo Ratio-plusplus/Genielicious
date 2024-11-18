@@ -18,15 +18,16 @@ export default function Signup({navigation}) {
   const [confirmPasswordIsVisible, setConfirmPasswordIsVisible] = React.useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [createdUser, setcreatedUser] = useState(false);
+    const [isEditable, setIsEditable] = useState(true);
 
 
     //On Press Method
     const handleSignup = async () => {
+        setIsEditable(false);
         //Check if passwords match
         try{
           const user = await createUser();
             if (user) {
-                console.log("In the thick of it");
                 const intervalId = setInterval(async () => {
                     await user.reload();
                     if (user.emailVerified) {
@@ -148,7 +149,8 @@ export default function Signup({navigation}) {
               style={styles.input}
               placeholder="Username"
               placeholderTextColor="#7C808D"
-              color={Colors.ghost}
+                            color={Colors.ghost}
+                            disabled={!isEditable }
               onChangeText={setUsername}    //updates username state
               value={username}    //current username state
             />
@@ -163,7 +165,8 @@ export default function Signup({navigation}) {
               style={styles.input}
               placeholder="Email"
               placeholderTextColor="#7C808D"
-              color={Colors.ghost}
+                            color={Colors.ghost}
+                            disabled={!isEditable}
               onChangeText={(text) => validate(text)}     //updates email state
               value={email}     //current email state
             />
@@ -176,7 +179,8 @@ export default function Signup({navigation}) {
             </View>
             <TextInput
               style={styles.input}
-              placeholder="Password"
+                            placeholder="Password"
+                            disabled={!isEditable}
               secureTextEntry={!passwordIsVisible}
               placeholderTextColor="#7C808D"
               color={Colors.ghost}
@@ -206,7 +210,8 @@ export default function Signup({navigation}) {
               placeholder="Confirm Password"
               secureTextEntry={!confirmPasswordIsVisible}
               placeholderTextColor="#7C808D"
-              color={Colors.ghost}
+                            color={Colors.ghost}
+                            disabled={!isEditable}
               onChangeText={setConfirmPassword}
               value={confirmPassword}
             />
@@ -214,10 +219,12 @@ export default function Signup({navigation}) {
             {/* toggle password visibility */}
             <TouchableOpacity
               style={styles.passwordVisibleButton}
+                            disabled={!isEditable}
               onPress={() => setConfirmPasswordIsVisible(!confirmPasswordIsVisible)}>
               <Feather
                 name={confirmPasswordIsVisible ? "eye" : "eye-off"}
-                size={22}
+                                size={22}
+                
                 color="#7C808D"
               />
             </TouchableOpacity>

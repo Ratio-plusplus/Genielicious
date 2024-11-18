@@ -78,7 +78,7 @@ def createNewUser(query):
         image = query.get("pfp")
         db.reference(f"users/{uid}").set({
             'username': username,
-            'history' : "",
+            'history' : {},
             'activeFoodProfileID': "None",
             "flavorProfiles" : {},
             'cache' : {

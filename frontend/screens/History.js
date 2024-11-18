@@ -29,7 +29,6 @@ const restaurants = [
 ];
 
 const getHistory = async (currentUser) => {
-    const restaurants = [];
     const idToken = await currentUser.getIdToken();
     const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/get_history', {
         method: "GET",
@@ -39,7 +38,6 @@ const getHistory = async (currentUser) => {
         }
     });
     const json = await response.json();
-
     const info = json["info"];
     if (info) {
         const profilesArray = Object.keys(info).map((key) => ({
@@ -50,14 +48,9 @@ const getHistory = async (currentUser) => {
         return profilesArray
     }
     else {
-        return None
+
+        return [];
     }
-    //for (const key in results) {
-    //    const restaurantInfo = results[key];
-    //    //const push = { name: restaurantInfo.name, taste: restaurantInfo.taste, address: restaurantInfo.address, distance: restaurantInfo.distance, image: restaurantInfo.image, favorite: restaurantInfo.favorite };
-    //    restaurants.push(restaurantInfo);
-    //}
-    //console.log(restaurants);
 };
 // put the address into a URL that will open it in Google Maps
 const openMap = (address) => {
@@ -74,7 +67,6 @@ export default function History({ navigation }) {
     // map all restaurant array to be false for heart
     const { pfp, username, fetchData, filter, setFilter, filterFavs, setFilterFavs } = React.useContext(ProfileContext);
     const [restaurants, setRestaurants] = useState([]);
-    //const [favorites, setFavorites] = useState(restaurants.map(() => false));
     
     const [ready, setReady] = React.useState(false);
     const { currentUser } = useAuth(); // Access currentUser and loading
@@ -109,7 +101,17 @@ export default function History({ navigation }) {
         if (!filters) return restaurants; // If no filters, return all restaurants
 
         return restaurants.filter(restaurant => {
-            const matchesCuisine = filters.cuisines.length === 0 || filters.cuisines.includes(restaurant.taste);
+            const split = restaurant.taste.split(", ");
+            const tastes = split.map(str =>
+                str
+                    .toLowerCase()                       // Convert the entire string to lowercase
+                    .replace(/[\s,-]+(.)/g, (_, char) => char.toUpperCase())  // Capitalize letters after spaces, commas, and hyphens
+                    .replace(/[^a-zA-Z0-9]+/g, '')  // Remove any non-alphanumeric characters (including spaces, commas, hyphens)
+            );
+            let matchesCuisine;
+            for (const i in tastes) {
+                matchesCuisine = filters.cuisines.length === 0 || filters.cuisines.includes(tastes[i]);
+            }
             const matchesFavorites = !filters.favorites || restaurant.favorite; // Assuming 'favorite' is a boolean in restaurant data
             return matchesCuisine && matchesFavorites;
         });

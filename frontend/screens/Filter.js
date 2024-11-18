@@ -10,7 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 export default function Filter({ navigation }) {
     //const { isChecked, setIsChecked, resetPreferences } = useContext(FlavorPreferencesContext);
     const [isChecked, setIsChecked] = useState({
-        French: false, breakfast: false, comfortFood: false, desserts: false,
+        french: false, breakfast: false, comfortFood: false, desserts: false,
         eastAsian: false, european: false, fingerFood: false, healthConscious: false,
         latinAmerican: false, lightMeals: false, meatCentric: false, middleEastern: false, northAmerican: false,
         quickEats: false, southAsian: false, specialty: false, vegan: false
@@ -46,6 +46,7 @@ export default function Filter({ navigation }) {
             favorites: selectedFavorites,
             cuisines: Object.keys(isChecked).filter(key => isChecked[key]),
         };
+        console.log(selectedFilters);
         // Navigate back to History and pass the selected filters
         navigation.navigate('History', { filters: selectedFilters });
     };

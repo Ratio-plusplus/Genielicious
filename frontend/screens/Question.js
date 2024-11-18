@@ -31,6 +31,7 @@ export default function Question({ navigation }) {
     const [answer2, setAnswer2] = React.useState("No");
     const [answer3, setAnswer3] = React.useState("Maybe");
     const [answer4, setAnswer4] = React.useState("Not Sure");
+    const [isButtonDisabled, setIsButtonDisabled] = React.useState(false);
 
     const [selectedAnswer, setSelectedAnswer] = useState(null);
 
@@ -60,6 +61,8 @@ export default function Question({ navigation }) {
     }
 
     const handleResults = async (answer) => {
+        setIsButtonDisabled(true);
+        setQuestion("Loading Question...");
         setSelectedAnswer(answer);      // for assigning each answer's color
         setTimeout(() => {
             setSelectedAnswer(null);
@@ -131,6 +134,13 @@ export default function Question({ navigation }) {
         setModalVisibleAd(false);  
     };
 
+    useEffect(() => {
+        if (question === "Loading Question...") {
+            setIsButtonDisabled(true);
+        } else {
+            setIsButtonDisabled(false);
+        }
+    }, [question]);
     return (
         <SafeAreaView style={styles.background}>
             {/* back arrow that opens the confirmation modal */}
@@ -204,24 +214,28 @@ export default function Question({ navigation }) {
                     <TouchableOpacity
                         style={[styles.button, { backgroundColor: selectedAnswer === answer1 ? Colors.gold : Colors.champagne }]}
                         activeOpacity={1}
+                        disabled={isButtonDisabled }
                         onPress={() => handleResults(answer1)}>
                         <Text style={styles.answerText}>{answer1}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={[styles.button, { backgroundColor: selectedAnswer === answer2 ? Colors.gold : Colors.champagne }]}
                         activeOpacity={1}
+                        disabled={isButtonDisabled}
                         onPress={() => handleResults(answer2)}>
                         <Text style={styles.answerText}>{answer2}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={[styles.button, { backgroundColor: selectedAnswer === answer3 ? Colors.gold : Colors.champagne }]}
                         activeOpacity={1}
+                        disabled={isButtonDisabled}
                         onPress={() => handleResults(answer3)}>
                         <Text style={styles.answerText}>{answer3}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={[styles.button, { backgroundColor: selectedAnswer === answer4 ? Colors.gold : Colors.champagne }]}
                         activeOpacity={1}
+                        disabled={isButtonDisabled}
                         onPress={() => handleResults(answer4)}>
                         <Text style={styles.answerText}>{answer4}</Text>
                     </TouchableOpacity>
