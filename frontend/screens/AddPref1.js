@@ -9,7 +9,8 @@ import { useRoute, route } from '@react-navigation/native';
 
 export default function AddPref1 ({ navigation }) {
     const route = useRoute();
-    
+    const [Dtitle, setDtitle] = useState("New Preference");
+
     //list of flavor preferences 
     const { isChecked, setIsChecked, resetPreferences } = useContext(FlavorPreferencesContext);
     const { profileData } = route.params || {}; //get profile data from navigation params
@@ -18,11 +19,11 @@ export default function AddPref1 ({ navigation }) {
         if (profileData) {
             // Populate the fields with the profileData
             setIsChecked(profileData);
-            // Dtitle = "Edit Preference"
+            setDtitle("Edit Preference")
         } else {
             // If we aren't editing a pre-existing data then we go back to default
             resetPreferences();
-            // Dtitle = "New Preference"
+            setDtitle("New Preference")
         }
     }, [profileData]);
 
@@ -38,7 +39,7 @@ export default function AddPref1 ({ navigation }) {
                         color={Colors.ghost}
                     />
                 </TouchableOpacity>
-                <Text style={styles.title}>Add Taste Profile</Text>
+                <Text style={styles.title}>{Dtitle}</Text>
         </View>
 
         <ScrollView>
