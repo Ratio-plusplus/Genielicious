@@ -454,7 +454,8 @@ const styles = StyleSheet.create({
         width: "67%",
         borderRadius: 6,
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
+        textAlign: "center"
     },
     saveText: {
         fontSize: 22,

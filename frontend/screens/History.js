@@ -7,8 +7,6 @@ import { useAuth } from '../contexts/AuthContext';
 import { useFocusEffect } from '@react-navigation/native';
 import { ProfileContext } from '../contexts/ProfileContext';
 
-
-
 // array for the different restaurant results
 const restaurants = [
     {
@@ -51,7 +49,7 @@ const getHistory = async (currentUser) => {
     const restaurant = JSON.parse(jsonDataArray);
     for (i = 0; i < restaurant.length; i++) {
         const restaurantInfo = restaurant[i];
-        const push = { name: restaurantInfo.name, taste: restaurantInfo.taste, address: restaurantInfo.address, distance: restaurantInfo.distance, image: restaurantInfo.image, favorite: restaurantInfo.favorite };
+        const push = { name: restaurantInfo.name, taste: restaurantInfo.taste, address: restaurantInfo.address, distance: restaurantInfo.distance, image: restaurantInfo.image, favorite: restaurantInfo.favorite, url: restaurantInfo.url };
         restaurants.push(push);
     }
     return restaurants
@@ -60,6 +58,10 @@ const getHistory = async (currentUser) => {
 const openMap = (address) => {
     const formattedAddress = encodeURIComponent(address);
     const url = `https://www.google.com/maps/search/?api=1&query=${formattedAddress}`;
+    Linking.openURL(url);
+};
+
+const openYelp = (url) => {
     Linking.openURL(url);
 };
 
@@ -105,22 +107,35 @@ export default function History({ navigation }) {
             <View style={styles.restaurantTextContainer}>
                 <View style={styles.nameContainer}>
                     <Text style={styles.restaurantName}>{item.name}</Text>
-                    <TouchableOpacity onPress={() => toggleFavorite(index)}>
-                        {/* if favorite then pink, if not then white */}
-                        <MaterialIcons
-                            name={restaurants[index].favorite ? "favorite" : "favorite-border"}
-                            size={24}
-                            color={restaurants[index].favorite ? "pink" : "white"}
-                        />
-                    </TouchableOpacity>
+                    <View style={styles.endIcons}>
+                        <TouchableOpacity onPress={() => toggleFavorite(index)}>
+                            {/* if favorite then pink, if not then white */}
+                            <MaterialIcons
+                                name={restaurants[index].favorite ? "favorite" : "favorite-border"}
+                                size={24}
+                                color={restaurants[index].favorite ? "#FCA7BE" : "white"}
+                            />
+                        </TouchableOpacity>
+                    </View>
                 </View>
                 <Text style={styles.restaurantAliases}>{item.taste}</Text>
-                <Text
-                    style={styles.restaurantAddress}
-                    onPress={() => openMap(item.address)} // make the address clickable
-                >
-                    {item.address}
-                </Text>
+                <View style={styles.nameContainer}>
+                    <Text
+                        style={styles.restaurantAddress}
+                        onPress={() => openMap(item.address)} // make the address clickable
+                    >
+                        {item.address}
+                    </Text>
+                    <View style={styles.endIcons}>
+                        <TouchableOpacity onPress={() => openYelp(item.url)}>
+                            <Image
+                                source={require('../assets/yelpLogo.png')} // Add Yelp logo image
+                                style={styles.yelpLogo}
+                                resizeMode="contain"
+                            />
+                        </TouchableOpacity>
+                    </View>
+                </View>
             </View>
         </View>
     );
@@ -200,8 +215,9 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderColor: Colors.ghost,
         borderWidth: 1,
-        alignItems: 'center',
+        alignItems: 'flex-start',
         width: '90%',
+        height: 150
     },
     restaurantImage: {
         width: '40%',
@@ -211,23 +227,30 @@ const styles = StyleSheet.create({
     },
     restaurantDetails: {
         flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
+        flexDirection: 'column',
+        height: '100%'
     },
     restaurantTextContainer: {
         flex: 1,
+        justifyContent: "space-between",
+        height: '100%'
     },
     nameContainer: {
         flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'flex-start',
     },
     restaurantName: {
         fontSize: 16,
         fontWeight: 'bold',
         color: Colors.gold,
         marginBottom: 5,
+        marginRight: 30,
+    },
+    endIcons: {
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        zIndex: 1, 
     },
     restaurantAliases: {
         fontSize: 15,
@@ -238,5 +261,10 @@ const styles = StyleSheet.create({
         fontSize: 15,
         color: Colors.gold,
         marginBottom: 5,
+        marginRight: 35
     },
+    yelpLogo: {
+        width: 30,
+        height: 30
+    }
 });

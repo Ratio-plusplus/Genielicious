@@ -122,7 +122,7 @@ export default function Preference({ navigation, route }) {
                 </TouchableOpacity>
             </View>
 
-            <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
+            {/* <ScrollView contentContainerStyle={{ paddingBottom: 20 }}> */}
                 <View style={{ alignItems: "center", marginTop: 10, marginBottom: 20 }}>
                     <Image
                         source={{ uri: tasteProfile.image }}
@@ -159,7 +159,7 @@ export default function Preference({ navigation, route }) {
                         </View>
                     </View>
                 </View>
-            </ScrollView>
+            {/* </ScrollView> */}
 
             <View style={styles.buttonRow}>
                 <TouchableOpacity style={styles.editButton}
@@ -221,7 +221,8 @@ const styles = StyleSheet.create({
     buttonRow: {
         flexDirection: "row",
         justifyContent: "space-evenly",
-        height: '10%'
+        height: '9%',
+        marginTop: -15
     },
     editButton: {
         backgroundColor: Colors.ghost,
@@ -231,12 +232,10 @@ const styles = StyleSheet.create({
         borderColor: Colors.raisin,
         alignItems: "center",
         justifyContent: "center",
-        marginBottom: 10,
     },
     activeButton: {
         backgroundColor: Colors.gold,
         width: "40%",
-        marginBottom: 10,
         borderRadius: 10,
         borderWidth: 1,
         borderColor: Colors.raisin,

@@ -4,27 +4,13 @@ import { Colors } from './Colors';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Modal, ActivityIndicator} from "react-native";
 import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
-import * as Font from 'expo-font';
 import * as Location from "expo-location";
 import { useFocusEffect } from '@react-navigation/native';
 import { useAuth } from '../contexts/AuthContext'
 
 
 export default function Home({ navigation }) {
-    // load custom font
-    const [fontLoaded, setFontLoaded] = useState(false);
     const { currentUser } = useAuth(); // Access currentUser and loading
-    
-    useEffect(() => {
-        async function loadFont() {
-            await Font.loadAsync({
-                'InknutAntiqua-Regular': require('../assets/fonts/InknutAntiqua-Regular.ttf'),
-            });
-            setFontLoaded(true);
-        }
-        loadFont();
-    }, []);
-
     const { setMode, flavorProfiles, activeProfileId, updateActiveProfileInFirebase } = React.useContext(FlavorPreferencesContext);
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
@@ -203,7 +189,7 @@ const styles = StyleSheet.create({
         paddingTop: '8%'
     },
     titleText: {
-        fontSize: 33,
+        fontSize: 30,
         fontWeight: 'bold',
         color: Colors.champagne,
         fontFamily: 'InknutAntiqua-Regular',
