@@ -1,10 +1,9 @@
-
 import React, { useState, useCallback, useEffect } from 'react';
 import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text, ScrollView, Linking } from 'react-native';
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthContext';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useRoute } from '@react-navigation/native';
 import { ProfileContext } from '../contexts/ProfileContext';
 
 // array for the different restaurant results
@@ -73,6 +72,8 @@ export default function History({ navigation }) {
     
     const [ready, setReady] = React.useState(false);
     const { currentUser } = useAuth(); // Access currentUser and loading
+    const route = useRoute();
+    const { filters } = route.params || {}; // Get filters from navigation params
 
     const saveFavorites = async (currentUser) => {
         const restaurant = JSON.stringify(restaurants);
@@ -100,6 +101,17 @@ export default function History({ navigation }) {
         setRestaurants(newRestaurants);
         console.log("After: ", newRestaurants);
         saveFavorites(currentUser);
+    };
+
+    // Function to filter restaurants based on selected filters
+    const filterRestaurants = (restaurants) => {
+        if (!filters) return restaurants; // If no filters, return all restaurants
+
+        return restaurants.filter(restaurant => {
+            const matchesCuisine = filters.cuisines.length === 0 || filters.cuisines.includes(restaurant.taste);
+            const matchesFavorites = !filters.favorites || restaurant.favorite; // Assuming 'favorite' is a boolean in restaurant data
+            return matchesCuisine && matchesFavorites;
+        });
     };
 
     const renderRestaurantItem = (item, index) => (
@@ -143,12 +155,12 @@ export default function History({ navigation }) {
     useFocusEffect(
         useCallback(() => {
             const fetchHistory = async () => {
-                        const results = await getHistory(currentUser);
-                        setRestaurants(results);
-                    }
+                const results = await getHistory(currentUser);
+                const filteredResults = filterRestaurants(results); // Apply filters
+                setRestaurants(filteredResults);
+            };
             fetchHistory();
-            //setFilterFavs(true);
-        }, [])
+        }, [filters]) // Re-fetch when filters change
     );
     return (
         <SafeAreaView style={styles.background}>
