@@ -180,7 +180,8 @@ const styles = StyleSheet.create({
     },
     filterButton: {
         zIndex: 10000,
-        padding: 5
+        padding: 5,
+        paddingTop: '8%'
     },
     restaurantListContainer: {
         flex: 1,

@@ -1,14 +1,14 @@
 import json
 from firebase import getDataRef, getUserCacheRef, getActiveFoodProfile
 #from firebase import getTestUserCacheRef
-#from dotenv import find_dotenv, load_dotenv
-#from yelp import cacheToJson # used in development
+# from dotenv import find_dotenv, load_dotenv
+# from yelp import cacheToJson # used in development
 import results
 import google.generativeai as genai
 import os
 
-#dotenv_path = find_dotenv()
-#load_dotenv(dotenv_path)
+# dotenv_path = find_dotenv()
+# load_dotenv(dotenv_path)
 
 API_KEY = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key=API_KEY)
@@ -171,6 +171,19 @@ def formatStringToJson(s):
   return data
 
 if __name__ == "__main__":
-  print(getNextQuestion("3"))
+  with open(r"backend\recommender\unused\survey.json", "r") as file:
+    prompt = json.load(file)["prompt"] 
+
+  surveyCache = [{"role":"user","parts":[{"text": prompt}]},]
+  response = model.generate_content(
+      surveyCache, # "contents" parameter
+      generation_config=genai.types.GenerationConfig(
+          temperature=1.0, # "randomness" of model
+      ),
+  )
+  # cacheToJson(r"backend\recommender\unused\res.json",response.text)
+  # cacheToJson(r"backend\recommender\unused\res_out.json",formatStringToJson(response.text))
+
+  # print(getNextQuestion("3"))
   # submitAnswer("3", "yes")
   # print(getPrompt("medium"))

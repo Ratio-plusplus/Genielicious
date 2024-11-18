@@ -122,7 +122,7 @@ export default function AddPref2({ navigation }) {
     useEffect(() => {
         if(existingProfileData){
             setSelectedImage(existingProfileData.image)
-            setName(existingProfileData.name);
+            setName(existingProfileData.title);
             setSelectedBudget(existingProfileData.budget)
             setSelectedDistance(existingProfileData.distance)
             // Dtitle = "Edit Preference"
