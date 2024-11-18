@@ -77,7 +77,7 @@ def createNewUser(query):
         db.reference(f"users/{uid}").set({
             'username': username,
             'history' : "",
-            'activeFoodProfileID': "",
+            'activeFoodProfileID': "None",
             "flavorProfiles" : {},
             'cache' : {
                 "distanceCache": "",
@@ -340,7 +340,7 @@ def getActiveProfileId(user_id):
         if active_profile_id:
             return jsonify({"activeProfileId": active_profile_id}), 200
         else:
-            return jsonify({"error": "No active profile found"}), 404
+            return jsonify({"error": "No active profile found"}), 400
     except Exception as e:
         return jsonify(message=f"Error with code: {e}"), 400
 
