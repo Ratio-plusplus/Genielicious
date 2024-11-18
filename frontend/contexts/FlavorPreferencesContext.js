@@ -62,6 +62,7 @@ export const FlavorPreferencesProvider = ({ children }) => {
                     id: key,
                     ...info[key]
                 }));
+                console.log(profilesArray);
                 setFlavorProfiles(profilesArray);
                 console.log("profiles fetched");
             }
@@ -129,15 +130,16 @@ export const FlavorPreferencesProvider = ({ children }) => {
                         'Authorization': `Bearer ${idToken}`
                     }
                 });
-
+                console.log(response);
                 console.log('Getting response: ', response.ok);
 
                 if (response.ok) {
                     const data = await response.json();
                     setActiveProfileId(data.activeProfileId); // Set the active profile ID
                 } else {
-                    const errorText = await response.text();
-                    console.error("Error fetching active profile ID: ", errorText);
+                    console.log("No active profile currently set.")
+                    // const errorText = await response.text();
+                    // console.error("Error fetching active profile ID: ", errorText);
                 }
             } catch (error) {
                 console.error("Error fetching active profile ID: ", error);
@@ -172,10 +174,10 @@ export const FlavorPreferencesProvider = ({ children }) => {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${idToken}`
                     },
-                    body: JSON.stringify({ profileId })
+                    body: JSON.stringify({ profileId: profileId })
                 });
 
-                if (response.ok) {
+                if (response.ok || profileId === '') {
                     console.log("Active profile updated in Firebase successfully.");
                     setActiveProfileId(profileId); // Update local state
                 } else {

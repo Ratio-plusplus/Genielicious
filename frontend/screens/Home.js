@@ -4,27 +4,13 @@ import { Colors } from './Colors';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Modal, ActivityIndicator} from "react-native";
 import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
-import * as Font from 'expo-font';
 import * as Location from "expo-location";
 import { useFocusEffect } from '@react-navigation/native';
 import { useAuth } from '../contexts/AuthContext'
 
 
 export default function Home({ navigation }) {
-    // load custom font
-    const [fontLoaded, setFontLoaded] = useState(false);
     const { currentUser } = useAuth(); // Access currentUser and loading
-    
-    useEffect(() => {
-        async function loadFont() {
-            await Font.loadAsync({
-                'InknutAntiqua-Regular': require('../assets/fonts/InknutAntiqua-Regular.ttf'),
-            });
-            setFontLoaded(true);
-        }
-        loadFont();
-    }, []);
-
     const { setMode, flavorProfiles, activeProfileId, updateActiveProfileInFirebase } = React.useContext(FlavorPreferencesContext);
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
@@ -32,10 +18,14 @@ export default function Home({ navigation }) {
 
     useEffect(() => {
         // Map flavorProfiles to the format required by DropDownPicker
-        const profileItems = flavorProfiles.map(profile => ({
-            label: profile.title,
-            value: profile.id
-        }));
+        const profileItems = [
+            { label: 'None', value: 'None' }, // Add "None" option
+            ...flavorProfiles.map(profile => ({
+                label: profile.title,
+                value: profile.id
+            }))
+        ];
+
         setItems(profileItems);
 
         // Set the active profile ID when it changes
@@ -46,10 +36,10 @@ export default function Home({ navigation }) {
 
     const handleValueChange = (newValue) => {
         console.log("handleValueChange called with:", newValue);
-        if (newValue && newValue !== value) { // Ensure it's a new selection
+        if (newValue !== value) { // Ensure it's a new selection
             console.log("Updating active profile to:", newValue);
             setValue(newValue);
-            updateActiveProfileInFirebase(newValue);
+            updateActiveProfileInFirebase(newValue === '' ? '' : newValue); // Send empty string for "None"
         } else {
             console.log("No change in profile ID or no profile selected.");
         }
@@ -196,9 +186,10 @@ const styles = StyleSheet.create({
         flex: 0.1,
         justifyContent: 'center',
         alignItems: 'center',
+        paddingTop: '8%'
     },
     titleText: {
-        fontSize: 33,
+        fontSize: 30,
         fontWeight: 'bold',
         color: Colors.champagne,
         fontFamily: 'InknutAntiqua-Regular',

@@ -3,11 +3,13 @@ import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Modal } from 'rea
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Colors } from './Colors';
-import { doSignOut, deleteAccount } from '../firebase/auth';
+import { doSignOut, deleteAccount, deleteUserHistory } from '../firebase/auth';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Settings({ navigation }) {
     const [modalVisible, setModalVisible] = React.useState(false)
     const [modalMessage, setModalMessage] = React.useState("")
+    const { currentUser } = useAuth();
 
     const accountItems = [
         { icon: "person-outline", text: "Edit Account", action: () => navigation.navigate('Edit Profile') },
@@ -57,7 +59,13 @@ export default function Settings({ navigation }) {
 
     const handleAction = async () => {
         if (modalMessage === "Are you sure you want to clear your history?") {
-            console.log("History Cleared")
+            try {
+                response = await deleteUserHistory();
+                navigation.navigate('Profile');
+                console.log("History Deleted")
+            } catch (error) {
+                console.log("Failed to delete history", error)
+            }
         }
         else if (modalMessage === "Are you sure you want to delete your account?") {
             try {
@@ -79,6 +87,21 @@ export default function Settings({ navigation }) {
         }
         setModalVisible(false)
     }
+
+    // Function to save the updated history
+    const saveHistory = async (currentUser, restaurants) => {
+        const idToken = await currentUser.getIdToken();
+        const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/update_history', {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${idToken}`
+            },
+            body: JSON.stringify({ "restaurantsInfo": JSON.stringify(restaurants) })
+        });
+        const json = await response.json();
+        console.log(json);
+    };
 
     return (
         <SafeAreaView style={styles.background}>

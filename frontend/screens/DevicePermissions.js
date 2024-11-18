@@ -1,10 +1,12 @@
 import React from 'react';
-import { Text, StyleSheet, View, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
+import { Text, StyleSheet, View, TouchableOpacity, SafeAreaView, ScrollView, StatusBar } from 'react-native';
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 
 export default function DevicePermissions({ navigation }) {
     return (
+        <>
+        <StatusBar/>
         <SafeAreaView style={styles.background}>
             {/* Back button and title screen */}
             <View style={styles.container}>
@@ -55,6 +57,7 @@ export default function DevicePermissions({ navigation }) {
                 </View>
             </ScrollView>
         </SafeAreaView>
+        </>
     );
 }
 
@@ -65,7 +68,7 @@ const styles = StyleSheet.create({
     },
     container: {
         marginHorizontal: 12,
-        marginTop: 12,
+        marginTop: '8%',
         marginBottom: 12,
         flexDirection: "row",
         justifyContent: "center"

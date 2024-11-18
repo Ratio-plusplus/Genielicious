@@ -21,6 +21,20 @@ export default function Preference({ navigation, route }) {
         image: profileData?.photoURL || require("../assets/pfp.png"),
     });
 
+    const budgetLabels = {
+        1: "$10 or less",
+        2: "$30 or less",
+        3: "$60 or less",
+        4: "More than $60"
+    };
+
+    const distanceLabels = {
+        16093: "Within 10 mile",
+        24140: "Within 15 miles",
+        32187: "Within 20 miles",
+        40000: "Within 25 miles"
+    };
+
     const getTrueKeysAsString = (obj) => {
         return Object.keys(obj)
             .filter(key => obj[key])
@@ -122,7 +136,7 @@ export default function Preference({ navigation, route }) {
                 </TouchableOpacity>
             </View>
 
-            <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
+            {/* <ScrollView contentContainerStyle={{ paddingBottom: 20 }}> */}
                 <View style={{ alignItems: "center", marginTop: 10, marginBottom: 20 }}>
                     <Image
                         source={{ uri: tasteProfile.image }}
@@ -148,18 +162,22 @@ export default function Preference({ navigation, route }) {
                     <View style={[styles.boxSection, styles.absoluteBox, { top: 240 }]}>
                         <Text style={styles.sectionText}>Distance:</Text>
                         <View style={styles.boxContainer}>
-                            <Text style={styles.boxText}>{tasteProfile.distance}</Text>
+                            <Text style={styles.boxText}>
+                                {tasteProfile.distance ? distanceLabels[tasteProfile.distance] : 'Not specified'}
+                            </Text>
                         </View>
                     </View>
 
                     <View style={[styles.boxSection, styles.absoluteBox, { top: 360 }]}>
                         <Text style={styles.sectionText}>Budget:</Text>
                         <View style={styles.boxContainer}>
-                            <Text style={styles.boxText}>{tasteProfile.budget || 'Not specified'}</Text>
+                            <Text style={styles.boxText}>
+                                {tasteProfile.budget ? budgetLabels[tasteProfile.budget] : 'Not specified'}
+                            </Text>
                         </View>
                     </View>
                 </View>
-            </ScrollView>
+            {/* </ScrollView> */}
 
             <View style={styles.buttonRow}>
                 <TouchableOpacity style={styles.editButton}
@@ -221,7 +239,8 @@ const styles = StyleSheet.create({
     buttonRow: {
         flexDirection: "row",
         justifyContent: "space-evenly",
-        height: '10%'
+        height: '9%',
+        marginTop: -15
     },
     editButton: {
         backgroundColor: Colors.ghost,
@@ -231,12 +250,10 @@ const styles = StyleSheet.create({
         borderColor: Colors.raisin,
         alignItems: "center",
         justifyContent: "center",
-        marginBottom: 10,
     },
     activeButton: {
         backgroundColor: Colors.gold,
         width: "40%",
-        marginBottom: 10,
         borderRadius: 10,
         borderWidth: 1,
         borderColor: Colors.raisin,

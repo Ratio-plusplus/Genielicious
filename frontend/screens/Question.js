@@ -31,6 +31,7 @@ export default function Question({ navigation }) {
     const [answer2, setAnswer2] = React.useState("No");
     const [answer3, setAnswer3] = React.useState("Maybe");
     const [answer4, setAnswer4] = React.useState("Not Sure");
+    const [isButtonDisabled, setIsButtonDisabled] = React.useState(false);
 
     const [selectedAnswer, setSelectedAnswer] = useState(null);
 
@@ -54,13 +55,19 @@ export default function Question({ navigation }) {
         }
         else {
             const json = await response.text();
-            console.log(json);
+            console.error(json);
 
         }  
     }
 
     const handleResults = async (answer) => {
+        setIsButtonDisabled(true);
+        setQuestion("Loading Question...");
         setSelectedAnswer(answer);      // for assigning each answer's color
+        setTimeout(() => {
+            setSelectedAnswer(null);
+        }, 400);
+
         const idToken = await currentUser.getIdToken();
         const response = await fetch(`https://genielicious-1229a.wl.r.appspot.com/client/answer/${mode}`, {
                 method: "POST",
@@ -82,7 +89,7 @@ export default function Question({ navigation }) {
         }
         else {
             const json = await response.text();
-            console.log(json);
+            console.error(json);
         }
     }
             
@@ -127,6 +134,13 @@ export default function Question({ navigation }) {
         setModalVisibleAd(false);  
     };
 
+    useEffect(() => {
+        if (question === "Loading Question...") {
+            setIsButtonDisabled(true);
+        } else {
+            setIsButtonDisabled(false);
+        }
+    }, [question]);
     return (
         <SafeAreaView style={styles.background}>
             {/* back arrow that opens the confirmation modal */}
@@ -198,22 +212,30 @@ export default function Question({ navigation }) {
             <View style={styles.responsesContainer}>
                 <View style={styles.buttonsContainer}>
                     <TouchableOpacity
-                        style={[styles.button, selectedAnswer === answer1 && { backgroundColor: Colors.gold }]} 
+                        style={[styles.button, { backgroundColor: selectedAnswer === answer1 ? Colors.gold : Colors.champagne }]}
+                        activeOpacity={1}
+                        disabled={isButtonDisabled }
                         onPress={() => handleResults(answer1)}>
                         <Text style={styles.answerText}>{answer1}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={[styles.button, selectedAnswer === answer2 && { backgroundColor: Colors.gold }]}
+                        style={[styles.button, { backgroundColor: selectedAnswer === answer2 ? Colors.gold : Colors.champagne }]}
+                        activeOpacity={1}
+                        disabled={isButtonDisabled}
                         onPress={() => handleResults(answer2)}>
                         <Text style={styles.answerText}>{answer2}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={[styles.button, selectedAnswer === answer3 && { backgroundColor: Colors.gold }]}
+                        style={[styles.button, { backgroundColor: selectedAnswer === answer3 ? Colors.gold : Colors.champagne }]}
+                        activeOpacity={1}
+                        disabled={isButtonDisabled}
                         onPress={() => handleResults(answer3)}>
                         <Text style={styles.answerText}>{answer3}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={[styles.button, selectedAnswer === answer4 && { backgroundColor: Colors.gold }]}
+                        style={[styles.button, { backgroundColor: selectedAnswer === answer4 ? Colors.gold : Colors.champagne }]}
+                        activeOpacity={1}
+                        disabled={isButtonDisabled}
                         onPress={() => handleResults(answer4)}>
                         <Text style={styles.answerText}>{answer4}</Text>
                     </TouchableOpacity>
@@ -272,15 +294,17 @@ const styles = StyleSheet.create({
     },
     arrowButton: {
         zIndex: 100000,
+        paddingTop: '8%'
     },
     genieContainer: {
-        flex: 0.5,
+        height: '50%',
         justifyContent: 'center',
         alignItems: 'center',
         zIndex: 0,
+        flexShrink: 0
     },
     sparkle: {
-        position: 'relative',
+        position: 'absolute',
         width: '100%',
         height: '100%',
         transform: [{ scale: 1.85 }]
@@ -299,11 +323,12 @@ const styles = StyleSheet.create({
         right: '-55%'
     },
     questionContainer: {
-        flexGrow: 0.1,
+        flexGrow: 0.2,
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: -70,
-        marginHorizontal: 20
+        marginTop: '-30%',
+        marginHorizontal: 20,
+        marginVertical: '10%'
     },
     questionButton: {
         backgroundColor: Colors.champagne,
@@ -316,7 +341,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: '600',
         color: Colors.raisin,
-        textAlign: 'center'
+        textAlign: 'center',
         //fontFamily: 'InknutAntiqua-Regular',
     },
     responsesContainer: {

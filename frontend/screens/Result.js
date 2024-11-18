@@ -9,7 +9,7 @@ import { useFocusEffect } from '@react-navigation/native';
 // array for the different restaurant results
 // has the name, taste, address, distance, and image
 // map the name, taste, address, and distance (put it into text to show up in results)
-const renderRestaurantItem = ({ name, taste, address, distance }) => (
+const renderRestaurantItem = ({ name, taste, address, distance, url }) => (
     <View style={styles.restaurantDetails}>
         <Text 
             style={styles.restaurantName} 
@@ -65,22 +65,22 @@ const getResults = async (currentUser) => {
         const restaurantInfo = businessList[i];
         restaurantInfo.distance = Math.round((restaurantInfo.distance / 1609) * 100) / 100;
         aliases = [];
+        console.log(restaurantInfo.url);
         for (x = 0; x < restaurantInfo.categories.length; x++) {
-            aliases.push(restaurantInfo.categories[x].title);
+            //console.log(restaurantInfo.categories[x]);
+            aliases.push(restaurantInfo.categories[x].alias);
         }
-        const push = { name: restaurantInfo.name, taste: aliases.join(', '), address: restaurantInfo.location.display_address.join(', '), distance: restaurantInfo.distance, image: restaurantInfo.image_url, favorite: false };
+        const push = { name: restaurantInfo.name, taste: aliases.join(', '), address: restaurantInfo.location.display_address.join(', '), distance: restaurantInfo.distance, image: restaurantInfo.image_url, favorite: false, url: restaurantInfo.url };
         restaurants.push(push);
     }
     const restaurant = JSON.stringify(restaurants);
-    const slice1 = restaurant.replace("[", "");
-    const history = slice1.replace("]", "");
-    const response1 = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/add_history', {
+    const response1 = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/add_history', { //https://genielicious-1229a.wl.r.appspot.com
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${idToken}`
         },
-        body: JSON.stringify({ "restaurantsInfo": history })
+        body: JSON.stringify({ "restaurantsInfo": restaurant })
     });
     const json1 = await response1.json();
     return restaurants;
@@ -212,12 +212,17 @@ const styles = StyleSheet.create({
     },
     arrowButton: {
         zIndex: 100000,
+        paddingTop: '8%'
     },
     title: {
         fontWeight: "bold",
-        fontSize: 25,
+        fontSize: 22,
         color: Colors.champagne,
-        right: 50,
+        paddingRight: '10%',
+        paddingTop: '5%',
+        fontFamily: 'InknutAntiqua-Regular',
+        textAlign: 'center',
+        justifyContent: 'center'
     },
     genieContainer: {
         height: '48%',  
@@ -333,7 +338,8 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         marginBottom: 20,
         color: Colors.ghost,
-        alignItems: 'center'
+        alignItems: 'center',
+        textAlign: 'center'
     },
     modalButtons: {
         flexDirection: 'row',

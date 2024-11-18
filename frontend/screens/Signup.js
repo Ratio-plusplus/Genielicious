@@ -18,10 +18,12 @@ export default function Signup({navigation}) {
   const [confirmPasswordIsVisible, setConfirmPasswordIsVisible] = React.useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [createdUser, setcreatedUser] = useState(false);
+    const [isEditable, setIsEditable] = useState(true);
 
 
     //On Press Method
     const handleSignup = async () => {
+        setIsEditable(false);
         //Check if passwords match
         try{
           const user = await createUser();
@@ -35,6 +37,7 @@ export default function Signup({navigation}) {
                         navigation.navigate('Tab');
                     } else {
                         setErrorMessage('Please verify your email before logging in.');
+                        console.log("Waiting for verification");
                     }
                 }, 1000);
             
@@ -72,6 +75,7 @@ export default function Signup({navigation}) {
                 //Check if passwords match
                 if (validate(email)){
                     if (password == confirmPassword) {
+                        console.log(username);
                         return await doCreateUserWithEmailAndPassword(email, password, username)
                     }
                 }
@@ -145,7 +149,8 @@ export default function Signup({navigation}) {
               style={styles.input}
               placeholder="Username"
               placeholderTextColor="#7C808D"
-              color={Colors.ghost}
+                            color={Colors.ghost}
+                            disabled={!isEditable }
               onChangeText={setUsername}    //updates username state
               value={username}    //current username state
             />
@@ -160,7 +165,8 @@ export default function Signup({navigation}) {
               style={styles.input}
               placeholder="Email"
               placeholderTextColor="#7C808D"
-              color={Colors.ghost}
+                            color={Colors.ghost}
+                            disabled={!isEditable}
               onChangeText={(text) => validate(text)}     //updates email state
               value={email}     //current email state
             />
@@ -173,7 +179,8 @@ export default function Signup({navigation}) {
             </View>
             <TextInput
               style={styles.input}
-              placeholder="Password"
+                            placeholder="Password"
+                            disabled={!isEditable}
               secureTextEntry={!passwordIsVisible}
               placeholderTextColor="#7C808D"
               color={Colors.ghost}
@@ -203,7 +210,8 @@ export default function Signup({navigation}) {
               placeholder="Confirm Password"
               secureTextEntry={!confirmPasswordIsVisible}
               placeholderTextColor="#7C808D"
-              color={Colors.ghost}
+                            color={Colors.ghost}
+                            disabled={!isEditable}
               onChangeText={setConfirmPassword}
               value={confirmPassword}
             />
@@ -211,10 +219,12 @@ export default function Signup({navigation}) {
             {/* toggle password visibility */}
             <TouchableOpacity
               style={styles.passwordVisibleButton}
+                            disabled={!isEditable}
               onPress={() => setConfirmPasswordIsVisible(!confirmPasswordIsVisible)}>
               <Feather
                 name={confirmPasswordIsVisible ? "eye" : "eye-off"}
-                size={22}
+                                size={22}
+                
                 color="#7C808D"
               />
             </TouchableOpacity>
@@ -223,22 +233,6 @@ export default function Signup({navigation}) {
           {/* signup button */}
           <TouchableOpacity style={styles.signupButton} onPress={() => handleSignup()}>
             <Text style={styles.signupButtonText}>Sign Up</Text>
-          </TouchableOpacity>
-
-          {/* separator between signup methods */}
-          <View style={styles.orContainer}>
-            <View style={styles.orLine} />
-            <Text style={styles.orText}>OR</Text>
-            <View style={styles.orLine} />
-          </View>
-
-          {/* sign up with Google button */}
-          <TouchableOpacity style={styles.googleButton}>
-            <Image
-              style={styles.googleLogo}
-              source={require("../../frontend/assets/google-logo.png")}
-            />
-            <Text style={styles.googleButtonText}>Sign up with Google</Text>
           </TouchableOpacity>
 
           {/* navigate to Login screen */}
