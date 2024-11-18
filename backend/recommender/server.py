@@ -90,17 +90,17 @@ def receiveAnswer(mode:str):
     # answer submission works the same in all modes
     return gemini.submitAnswer(user_id, answer)
 
-# @app.route("/auth/create_user", methods=['POST'])
-# def createUser():
-#     query = request.get_json()
+@app.route("/auth/create_user", methods=['POST'])
+def createUser():
+    query = request.get_json()
 
-#     if not query:
-#         abort(400, "User info not provided")
+    if not query:
+        abort(400, "User info not provided")
 
    
-#     #info = json.loads(info)
-#     print(query)
-#     return firebase.create_user(query)
+    #info = json.loads(info)
+    print(query)
+    return firebase.createNewUser(query)
 
 #endregion
 
@@ -360,7 +360,7 @@ def getActiveProfile():
 
 if __name__ == "__main__":
     try:
-        app.run(debug=False)
+        app.run(debug=True)
     except Exception as e:
         print(f"Error: {e}")
 

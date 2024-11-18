@@ -129,7 +129,7 @@ export const FlavorPreferencesProvider = ({ children }) => {
                         'Authorization': `Bearer ${idToken}`
                     }
                 });
-
+                console.log(response);
                 console.log('Getting response: ', response.ok);
 
                 if (response.ok) {

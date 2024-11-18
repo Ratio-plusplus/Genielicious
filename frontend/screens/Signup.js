@@ -26,6 +26,7 @@ export default function Signup({navigation}) {
         try{
           const user = await createUser();
             if (user) {
+                console.log("In the thick of it");
                 const intervalId = setInterval(async () => {
                     await user.reload();
                     if (user.emailVerified) {
@@ -35,6 +36,7 @@ export default function Signup({navigation}) {
                         navigation.navigate('Tab');
                     } else {
                         setErrorMessage('Please verify your email before logging in.');
+                        console.log("Waiting for verification");
                     }
                 }, 1000);
             
@@ -72,6 +74,7 @@ export default function Signup({navigation}) {
                 //Check if passwords match
                 if (validate(email)){
                     if (password == confirmPassword) {
+                        console.log(username);
                         return await doCreateUserWithEmailAndPassword(email, password, username)
                     }
                 }

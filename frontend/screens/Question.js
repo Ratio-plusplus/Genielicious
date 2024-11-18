@@ -54,7 +54,7 @@ export default function Question({ navigation }) {
         }
         else {
             const json = await response.text();
-            console.log(json);
+            console.error(json);
 
         }  
     }
@@ -82,7 +82,7 @@ export default function Question({ navigation }) {
         }
         else {
             const json = await response.text();
-            console.log(json);
+            console.error(json);
         }
     }
             
