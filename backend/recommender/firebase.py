@@ -174,7 +174,13 @@ def updateHistory(query, uid):
         return jsonify(message=f"Error with code: {e}")
 
 def deleteHistory(uid):
-    pass
+    try:
+        ref = db.reference(f"users/{uid}/history")
+        ref.delete() 
+        return jsonify({"uid": uid, "message": "User history deleted successfully"}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"Error": e}), 400
 
 #endregion Inner Region
 

@@ -75,3 +75,31 @@ export const deleteAccount = async () => {
     return json
 };
 
+export const deleteUserHistory = async () => {
+    try {
+        const idToken = await auth.currentUser.getIdToken();
+        const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/delete_history', {
+            method: "DELETE",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${idToken}`
+            },
+        });
+
+        console.log("Checking response: ", response.ok)
+
+        const json = await response.json(); // Parse the response as JSON
+
+        console.log("Response Data:", json)
+
+        if (!response.ok) {
+            throw new Error(responseData.message || 'Failed to delete history');
+        }
+
+        return json; // Return the response data
+    } catch (error) {
+        console.error("Error deleting user history:", error);
+        throw error; // Rethrow the error for handling in the calling function
+    }
+};
+

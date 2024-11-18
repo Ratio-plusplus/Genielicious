@@ -10,7 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 export default function Filter({ navigation }) {
     //const { isChecked, setIsChecked, resetPreferences } = useContext(FlavorPreferencesContext);
     const [isChecked, setIsChecked] = useState({
-        african: false, breakfast: false, comfortFood: false, desserts: false,
+        French: false, breakfast: false, comfortFood: false, desserts: false,
         eastAsian: false, european: false, fingerFood: false, healthConscious: false,
         latinAmerican: false, lightMeals: false, meatCentric: false, middleEastern: false, northAmerican: false,
         quickEats: false, southAsian: false, specialty: false, vegan: false
@@ -79,9 +79,9 @@ export default function Filter({ navigation }) {
                     <View style={styles.checkboxRow}>
                         <CheckBox
                             style={styles.checkbox}
-                            isChecked={isChecked.african}
-                            onClick={() => setIsChecked({ ...isChecked, african: !isChecked.african })}
-                            rightText='African'
+                            isChecked={isChecked.French}
+                            onClick={() => setIsChecked({ ...isChecked, French: !isChecked.French })}
+                            rightText='French'
                             rightTextStyle={styles.checkboxText}
                             uncheckedCheckBoxColor={Colors.ghost}
                             checkedCheckBoxColor={Colors.gold} />
