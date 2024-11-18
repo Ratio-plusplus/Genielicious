@@ -337,10 +337,7 @@ def getActiveFoodProfile(user_id):
 def getActiveProfileId(user_id):
     try:
         active_profile_id = db.reference(f"users/{user_id}/activeFoodProfileID").get()
-        if active_profile_id:
-            return jsonify({"activeProfileId": active_profile_id}), 200
-        else:
-            return jsonify({"error": "No active profile found"}), 400
+        return jsonify({"activeProfileId": active_profile_id}), 200
     except Exception as e:
         return jsonify(message=f"Error with code: {e}"), 400
 
