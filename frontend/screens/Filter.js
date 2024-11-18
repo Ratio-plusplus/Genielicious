@@ -4,6 +4,7 @@ import CheckBox from 'react-native-check-box';
 import { Colors } from './Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 //import { FlavorPreferencesContext } from '../../backend/contexts/FlavorPreferencesContext';
 
 export default function Filter({ navigation }) {
@@ -40,7 +41,13 @@ export default function Filter({ navigation }) {
 
     // once applied, it'll go back to history with the filters 
     const applyFilter = () => {
-        navigation.navigate('History'); 
+        // Create an object to hold the selected filters
+        const selectedFilters = {
+            favorites: selectedFavorites,
+            cuisines: Object.keys(isChecked).filter(key => isChecked[key]),
+        };
+        // Navigate back to History and pass the selected filters
+        navigation.navigate('History', { filters: selectedFilters });
     };
 
     return (
