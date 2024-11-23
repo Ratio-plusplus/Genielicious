@@ -13,13 +13,20 @@ const renderRestaurantItem = ({ name, taste, address, distance, url }) => (
     <View style={styles.restaurantDetails}>
         <Text 
             style={styles.restaurantName} 
+            numberOfLines={2}
+            adjustsFontSizeToFit
             onPress={() => openMap(address)} // make the name clickable
         >
             {name}
         </Text>
-        <Text style={styles.restaurantTaste}>{taste}</Text>
+        <Text 
+            style={styles.restaurantTaste}
+            numberOfLines={1}
+            adjustsFontSizeToFit>{taste}</Text>
         <Text 
             style={styles.restaurantAddress} 
+            numberOfLines={2}
+            adjustsFontSizeToFit
             onPress={() => openMap(address)} // make the address clickable
         >
             {address}
@@ -30,10 +37,13 @@ const renderRestaurantItem = ({ name, taste, address, distance, url }) => (
             <MaterialIcons
                 name="location-on"
                 size={16}
-                color={Colors.champagne}
+                color={Colors.blue}
                 style={styles.locationIcon}
             />
-            <Text style={styles.restaurantDistance}>{distance} miles away</Text>
+            <Text 
+                style={styles.restaurantDistance}
+                numberOfLines={1}
+                adjustsFontSizeToFit>{distance} miles away</Text>
         </View>
     </View>
 );
@@ -43,6 +53,10 @@ const openMap = (address) => {
     const formattedAddress = encodeURIComponent(address); // format the address for a Google Maps URL
     const url = `https://www.google.com/maps/search/?api=1&query=${formattedAddress}`;
     Linking.openURL(url); // Linking API allows user to open URLs
+};
+
+const openYelp = (url) => {
+    Linking.openURL(url);
 };
 
 const getResults = async (currentUser) => {
@@ -181,11 +195,20 @@ export default function Result({ navigation }) {
                 <ScrollView contentContainerStyle={styles.restaurantList}>
                     {restaurants.map((item, index) => (
                         <View key={index} style={styles.restaurantItem}>
-                            <Image
-                                source={{ uri: item.image }}
-                                style={styles.restaurantImage}
-                                resizeMode="cover"
-                            />
+                            <View style={styles.imagesContainer}>
+                                <Image
+                                    source={{ uri: item.image }}
+                                    style={styles.restaurantImage}
+                                    resizeMode="cover"
+                                />
+                                <TouchableOpacity onPress={() => openYelp(item.url)}>
+                                    <Image
+                                        source={require('../assets/yelp.png')} // Add Yelp logo image
+                                        style={styles.yelpLogo}
+                                        resizeMode="contain"
+                                    />
+                                </TouchableOpacity>
+                            </View>
                             <React.Fragment key={index}>
                                 {renderRestaurantItem(item)}
                             </React.Fragment>
@@ -254,48 +277,55 @@ const styles = StyleSheet.create({
         marginTop: -70, 
         paddingBottom: 10,
         marginLeft: 0,
-
     },
     restaurantList: {
         flexGrow: 1,
         alignItems: 'center',
-
     },
     restaurantItem: {
         flexDirection: 'row',
-        backgroundColor: "#425466",
+        backgroundColor: Colors.ghost,
         padding: 10,
-        marginVertical: 10,
+        marginVertical: 15,
         borderRadius: 10,
-        borderColor: Colors.raisin,
-        borderWidth: 1,
+        borderColor: Colors.gold,
+        borderWidth: 2,
+        alignItems: 'flex-start',
         width: '90%',
-        alignItems: 'center',
+        height: 150,
+        shadowColor: Colors.yellow, // Subtle shadow for depth
+        shadowOffset: { width: 7, height: 7 },
+        shadowOpacity: 1,
+        shadowRadius: 0,
+        elevation: 2,
     },
     restaurantImage: {
-        width: '40%',
+        width: '100%',
         height: '100%',
         borderRadius: 10,
-        marginRight: 10,
     },
     restaurantDetails: {
         flex: 1,
+        flexDirection: 'column',
+        height: '100%',
+        justifyContent: 'space-evenly'
     },
     restaurantName: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: Colors.gold,
+        color: Colors.darkGold,
         marginBottom: 5,
     },
     restaurantTaste: {
         fontSize: 15,
-        color: Colors.ghost,
+        color: Colors.blue,
         marginBottom: 5,
     },
     restaurantAddress: {
         fontSize: 15,
-        color: Colors.gold,
+        color: Colors.darkGold,
         marginBottom: 5,
+        textDecorationLine: 'underline',
     },
     distanceContainer: {
         flexDirection: 'row',
@@ -306,7 +336,7 @@ const styles = StyleSheet.create({
     },
     restaurantDistance: {
         fontSize: 15,
-        color: Colors.champagne,
+        color: Colors.blue,
     },
     modalOverlay: {
         flex: 1,
@@ -364,7 +394,20 @@ const styles = StyleSheet.create({
     buttonText: {
         color: Colors.raisin,
         fontWeight: '600',
-        marginTop: 3,
         fontSize: 19
+    },
+    imagesContainer: {
+        width: '40%',
+        height: '100%',
+        position: 'relative',
+        marginRight: 10,
+    },
+    yelpLogo: {
+        position: 'absolute',
+        bottom: 0,
+        right: -10,
+        top: -70,
+        width: 100,
+        height: 100,
     },
 });

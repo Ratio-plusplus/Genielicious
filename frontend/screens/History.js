@@ -67,7 +67,7 @@ export default function History({ navigation }) {
     // map all restaurant array to be false for heart
     const { pfp, username, fetchData, filter, setFilter, filterFavs, setFilterFavs } = React.useContext(ProfileContext);
     const [restaurants, setRestaurants] = useState([]);
-    
+
     const [ready, setReady] = React.useState(false);
     const { currentUser } = useAuth(); // Access currentUser and loading
     const route = useRoute();
@@ -121,35 +121,34 @@ export default function History({ navigation }) {
         <View style={styles.restaurantDetails}>
             <View style={styles.restaurantTextContainer}>
                 <View style={styles.nameContainer}>
-                    <Text style={styles.restaurantName}>{item.name}</Text>
+                    <Text
+                        style={styles.restaurantName}
+                        numberOfLines={2}
+                        adjustsFontSizeToFit>{item.name}</Text>
                     <View style={styles.endIcons}>
                         <TouchableOpacity onPress={() => toggleFavorite(index)}>
                             {/* if favorite then pink, if not then white */}
                             <MaterialIcons
                                 name={restaurants[index].favorite ? "favorite" : "favorite-border"}
                                 size={24}
-                                color={restaurants[index].favorite ? "#FCA7BE" : "white"}
+                                color={restaurants[index].favorite ? "#FCA7BE" : Colors.darkGold}
                             />
                         </TouchableOpacity>
                     </View>
                 </View>
-                <Text style={styles.restaurantAliases}>{item.taste}</Text>
+                <Text
+                    style={styles.restaurantAliases}
+                    numberOfLines={2}
+                    adjustsFontSizeToFit>{item.taste}</Text>
                 <View style={styles.nameContainer}>
                     <Text
                         style={styles.restaurantAddress}
+                        numberOfLines={3}
+                        adjustsFontSizeToFit
                         onPress={() => openMap(item.address)} // make the address clickable
                     >
                         {item.address}
                     </Text>
-                    <View style={styles.endIcons}>
-                        <TouchableOpacity onPress={() => openYelp(item.url)}>
-                            <Image
-                                source={require('../assets/yelpLogo.png')} // Add Yelp logo image
-                                style={styles.yelpLogo}
-                                resizeMode="contain"
-                            />
-                        </TouchableOpacity>
-                    </View>
                 </View>
             </View>
         </View>
@@ -183,11 +182,20 @@ export default function History({ navigation }) {
                 <ScrollView contentContainerStyle={styles.restaurantList}>
                     {restaurants.map((item, index) => (
                         <View key={index} style={styles.restaurantItem}>
-                            <Image
-                                source={{ uri: item.image }}
-                                style={styles.restaurantImage}
-                                resizeMode="cover"
-                            />
+                            <View style={styles.imagesContainer}>
+                                <Image
+                                    source={{ uri: item.image }}
+                                    style={styles.restaurantImage}
+                                    resizeMode="cover"
+                                />
+                                <TouchableOpacity onPress={() => openYelp(item.url)}>
+                                    <Image
+                                        source={require('../assets/yelp.png')} // Add Yelp logo image
+                                        style={styles.yelpLogo}
+                                        resizeMode="contain"
+                                    />
+                                </TouchableOpacity>
+                            </View>
                             {renderRestaurantItem(item, index)}
                         </View>
                     ))}
@@ -224,21 +232,27 @@ const styles = StyleSheet.create({
     },
     restaurantItem: {
         flexDirection: 'row',
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.ghost,
         padding: 10,
         marginVertical: 15,
         borderRadius: 10,
-        borderColor: Colors.ghost,
-        borderWidth: 1,
+        borderColor: Colors.gold,
+        borderWidth: 2,
         alignItems: 'flex-start',
         width: '90%',
-        height: 150
+        height: 150,
+        shadowColor: Colors.yellow, // Subtle shadow for depth
+        shadowOffset: { width: 7, height: 7 },
+        shadowOpacity: 1,
+        shadowRadius: 0,
+        elevation: 2,
     },
     restaurantImage: {
-        width: '40%',
+        width: '100%',
         height: '100%',
         borderRadius: 10,
-        marginRight: 10,
+        borderWidth: 2,
+        borderColor: Colors.gold
     },
     restaurantDetails: {
         flex: 1,
@@ -253,11 +267,12 @@ const styles = StyleSheet.create({
     nameContainer: {
         flexDirection: 'row',
         justifyContent: 'flex-start',
+        flexShrink: 1
     },
     restaurantName: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: Colors.gold,
+        color: Colors.darkGold,
         marginBottom: 5,
         marginRight: 30,
     },
@@ -265,21 +280,32 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 0,
         right: 0,
-        zIndex: 1, 
+        zIndex: 1,
     },
     restaurantAliases: {
         fontSize: 15,
-        color: Colors.ghost,
+        color: Colors.blue,
         marginBottom: 5,
     },
     restaurantAddress: {
         fontSize: 15,
-        color: Colors.gold,
+        color: Colors.darkGold,
         marginBottom: 5,
-        marginRight: 35
+        marginRight: 35,
+        textDecorationLine: 'underline',
     },
     yelpLogo: {
-        width: 30,
-        height: 30
-    }
+        position: 'absolute',
+        bottom: 0,
+        right: -10,
+        top: -70,
+        width: 100,
+        height: 100,
+    },
+    imagesContainer: {
+        width: '40%',
+        height: '100%',
+        position: 'relative',
+        marginRight: 10,
+    },
 });

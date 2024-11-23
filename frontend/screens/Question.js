@@ -433,7 +433,6 @@ const styles = StyleSheet.create({
     buttonText: {
         color: Colors.raisin,
         fontWeight: '600',
-        marginTop: 3,
         fontSize: 19
     },
     loadingOverlay: {

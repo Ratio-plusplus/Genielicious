@@ -167,7 +167,12 @@ const styles = StyleSheet.create({
         marginTop: 15,
         width: '75%',
         borderRadius: 10,
-        zIndex: 1
+        zIndex: 1,
+        shadowColor: Colors.champagne, // Subtle shadow for depth
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 1,
+        shadowRadius: 2,
+        elevation: 2,
     },
     grid: {
         justifyContent: 'flex-start',
