@@ -1,6 +1,6 @@
 from flask import Flask, request, abort
 import firebase
-import gemini
+import gpt
 import results
 
 app = Flask(__name__)
@@ -58,7 +58,7 @@ def sendQuestion(mode: str):
         abort(400, {'error':"Invalid API url"})
 
     # question depending on mode
-    return gemini.getNextQuestion(user_id,mode)
+    return gpt.getNextQuestion(user_id,mode)
 
 # receives short question answer to process results and return yelp api results
 @app.route("/client/answer/<mode>", methods=["POST"])
@@ -88,7 +88,7 @@ def receiveAnswer(mode:str):
         abort(400, "Parameter \"answer\" not provided.")
 
     # answer submission works the same in all modes
-    return gemini.submitAnswer(user_id, answer)
+    return gpt.submitAnswer(user_id, answer)
 
 @app.route("/database/create_user", methods=["POST"])
 def createUserInfo():
