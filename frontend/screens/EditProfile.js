@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
     },
     inputContainers: {
         borderWidth: 2,
-        borderRadius: 20,
+        borderRadius: 15,
         backgroundColor: Colors.champagne,
         flex: 1,
         padding: 10,

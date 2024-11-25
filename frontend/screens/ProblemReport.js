@@ -75,7 +75,7 @@ export default function ProblemReport({ navigation }) {
                         style={styles.inputField}
                         placeholder="Title"
                         placeholderTextColor="#555"
-                        color={Colors.ghost}
+                        color={Colors.raisin}
                         onChangeText={setTitle}
                         value={title}
                         editable={true}/>
@@ -147,7 +147,7 @@ export default function ProblemReport({ navigation }) {
                         style={styles.descContainers}
                         placeholder="Description"
                         placeholderTextColor="#555"
-                        color={Colors.ghost}
+                        color={Colors.raisin}
                         onChangeText={problemDescription}
                         value={description}
                         editable={true}
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
         width: "92%",
         flexDirection: "row",
         borderWidth: 2,
-        borderRadius: 20,
+        borderRadius: 15,
         marginVertical: 6,
         marginLeft: 15,
         alignItems: "center",
@@ -197,13 +197,12 @@ const styles = StyleSheet.create({
         width: "92%",
         flexDirection: "row",
         borderWidth: 2,
-        borderRadius: 20,
+        borderRadius: 15,
         marginVertical: 6,
         marginLeft: 15,
-        alignItems: "center",
         paddingLeft: 8,
         backgroundColor: Colors.champagne,
-        borderColor: Colors.gold
+        borderColor: Colors.gold,
     },
     background: {
         flex: 1, 

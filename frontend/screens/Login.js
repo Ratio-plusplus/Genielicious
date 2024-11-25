@@ -200,7 +200,7 @@ export default function Login({ navigation }) {
             </Text>
           </TouchableOpacity>
           <Modal
-            animationType="slide"
+            animationType="fade"
             transparent={true}
             visible={modalVisible}
             onRequestClose={() => setModalVisible(false)}
@@ -211,15 +211,22 @@ export default function Login({ navigation }) {
                 {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
                 {message ? <Text style={styles.success}>{message}</Text> : null}
                 <TextInput
+                  style={styles.resetField}
                   placeholder="Enter your email"
+                  placeholderTextColor="#999"
                   value={resetEmail}
                   onChangeText={setResetEmail}
+                  color={Colors.ghost}
                 />
                 <TouchableOpacity onPress={handlePasswordReset}>
-                  <Text>Send Reset Email</Text>
+                  <View style={styles.resetButton}>
+                      <Text style={{fontSize: 16, textAlign: 'center'}}>Send Reset Email</Text>
+                  </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => setModalVisible(false)}>
-                  <Text>Cancel</Text>
+                  <View style={styles.cancelButton}>
+                      <Text style={{fontSize: 16, textAlign: 'center'}}>Cancel</Text>
+                  </View>
                 </TouchableOpacity>
               </View>
             </View>
@@ -244,13 +251,16 @@ const styles = StyleSheet.create({
   modalContent: {
     width: "80%",
     padding: 20,
-    backgroundColor: Colors.ghost,
+    backgroundColor: Colors.blue,
     borderRadius: 10,
     alignItems: "center",
+    borderWidth: 2,
+    borderColor: Colors.ghost
   },
   modalTitle: {
     fontSize: 18,
-    marginBottom: 10,
+    marginBottom: 15,
+    color: Colors.ghost
   },
   content: {
     paddingHorizontal: 30,
@@ -377,4 +387,30 @@ const styles = StyleSheet.create({
     color: Colors.yellow,
     fontWeight: "500",
   },
+  resetField: {
+    backgroundColor: Colors.blue,
+    fontSize: 16,
+    padding: 10,
+    borderWidth: 2,
+    borderColor: Colors.ghost,
+    borderRadius: 10,
+    width: '90%',
+  },
+  resetButton: {
+    backgroundColor: Colors.gold,
+    padding: 10,
+    borderWidth: 2,
+    borderColor: Colors.raisin,
+    borderRadius: 10,
+    width: 250,
+    marginVertical: 10
+  },
+  cancelButton: {
+    backgroundColor: Colors.ghost,
+    padding: 10,
+    borderWidth: 2,
+    borderColor: Colors.raisin,
+    borderRadius: 10,
+    width: 250,
+  }
 });
