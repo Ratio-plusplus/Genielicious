@@ -1,15 +1,15 @@
 import requests
 import json
 import os
-# from dotenv import find_dotenv, load_dotenv
+from dotenv import find_dotenv, load_dotenv
 
-# dotenv_path = find_dotenv()
-# load_dotenv(dotenv_path)
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path)
 
 API_KEY = os.getenv("YELP_API_KEY")
 
 # func to get yelp results on specialized queries
-def getStore(coordinates, term = None, categories = "restaurants", radius=16000, sort_by = "rating", checkOpen = False, price = None):
+def getStore(coordinates, term = None, categories = "restaurants", radius=16000, sort_by = "best_match", checkOpen = False, price = None):
     url = "https://api.yelp.com/v3/businesses/search"
 
     query = {"latitude": coordinates[0], "longitude": coordinates[1], 

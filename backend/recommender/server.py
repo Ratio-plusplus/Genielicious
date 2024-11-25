@@ -90,15 +90,41 @@ def receiveAnswer(mode:str):
     # answer submission works the same in all modes
     return gpt.submitAnswer(user_id, answer)
 
-@app.route("/database/create_user", methods=["POST"])
-def createUserInfo():
+@app.route("/auth/create_user", methods=['POST'])
+def createUser():
+    query = request.get_json()
+
+    if not query:
+        abort(400, "User info not provided")
+
+   
+    #info = json.loads(info)
+    print(query)
+    return firebase.createNewUser(query)
+
+#endregion
+
+#region Outer Region: Firebase Database calls
+#region Inner Region: User info
+
+@app.route("/database/get_location", methods=["POST"])
+def getUserLocation():
 
     query = request.get_json()
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer '):
+        abort(401,{'error': 'Missing authorization header'})
+
+    # # # Validate Token
+    id_token = auth_header.split(' ')[1]
+    user_id = firebase.verify_id_token(id_token)
+    if not user_id:
+        abort(401,{'error': 'Invalid or expired token'})
 
     if not query:
         abort(400, "Information not provided")
 
-    return firebase.createNewUser(query)
+    return firebase.setUserLocation(query, user_id)
 
 @app.route("/database/update_user", methods=["POST"])
 def updateUser():
@@ -175,6 +201,25 @@ def getHistory():
         abort(401,{'error': 'Invalid or expired token'})
 
     return firebase.getHistory(user_id)
+
+@app.route("/database/update_history", methods=["POST"])
+def updateHistory():
+    query = request.get_json()
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer '):
+        abort(401,{'error': 'Missing authorization header'})
+
+    # # # Validate Token
+    id_token = auth_header.split(' ')[1]
+    user_id = firebase.verify_id_token(id_token)
+    if not user_id:
+        abort(401,{'error': 'Invalid or expired token'})
+
+    if not query:
+        abort(400, "Information not provided")
+
+    return firebase.updateHistory(query, user_id)
+#endregion Inner Region
 
 @app.route("/database/get_user_profile", methods=["GET"])
 def getUserProfile():
@@ -262,6 +307,24 @@ def deleteUser():
 
 #endregion Outer Region
 
+# Bug Report forms:
+@app.route("/database/submit_bug_report", methods=["POST"])
+def submitBugReport():
+    query = request.get_json()
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer '):
+        abort(401,{'error': 'Missing authorization header'})
+
+    # # # Validate Token
+    id_token = auth_header.split(' ')[1]
+    user_id = firebase.verify_id_token(id_token)
+    if not user_id:
+        abort(401,{'error': 'Invalid or expired token'})
+
+    if not query:
+        abort(400, "Information not provided")
+
+    return firebase.submitBugReport(query, user_id)
 @app.route("/database/set_active_profile", methods=["POST"])
 def setActiveProfile():
     query = request.get_json()
@@ -294,6 +357,22 @@ def getActiveProfile():
         abort(401, {'error': 'Invalid or expired token'})
 
     return firebase.getActiveProfileId(user_id)
+
+@app.route("/database/delete_history", methods=["DELETE"])
+def deleteHistory():
+    # Check if auth header is given
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer '):
+        abort(401, {'error': 'Missing authorization header'})
+
+    # Validate Token
+    id_token = auth_header.split(' ')[1]
+    user_id = firebase.verify_id_token(id_token)
+    if not user_id:
+        abort(401, {'error': 'Invalid or expired token'})
+
+    # Call the function to delete the user's history
+    return firebase.deleteHistory(user_id)
 
 if __name__ == "__main__":
     try:
