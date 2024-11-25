@@ -77,9 +77,7 @@ export default function Profile({ navigation }) {
                 </View>
             </View>
 
-            <View style={styles.lineContainer}>
-                <View style={styles.line}/>
-            </View>
+            <View style={styles.line}/>
 
             {/* flavor profiles section */}
             {flavorProfiles.length > 0 ? (
@@ -150,7 +148,7 @@ const styles = StyleSheet.create({
     },
     line: {
         backgroundColor: Colors.ghost,
-        height: '8%',
+        height: 2,
         width: '100%',
     },
     avatar: {
@@ -167,25 +165,28 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.gold,
         padding: 13,
         marginTop: 15,
-        width: '70%',
+        width: '75%',
         borderRadius: 10,
-        zIndex: 1
+        zIndex: 1,
+        shadowColor: Colors.champagne, // Subtle shadow for depth
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 1,
+        shadowRadius: 2,
+        elevation: 2,
     },
     grid: {
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         paddingBottom: 20,
     },
     profileIconContainer: {
-        flex: 1,
-        margin: 10,
+        marginBottom: 10,
         alignItems: 'center',
         justifyContent: 'center',
-        width: "50%",
+        width: "33.33%",
     },
     profileIconImage: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
+        width: '100%',
+        height: 130,
         borderWidth: 1,
     },
     activeProfileIconImage: {

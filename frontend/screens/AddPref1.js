@@ -9,28 +9,32 @@ import { useRoute, route } from '@react-navigation/native';
 
 export default function AddPref1 ({ navigation }) {
     const route = useRoute();
-    
+    const [Dtitle, setDtitle] = useState("New Preference");
+
     //list of flavor preferences 
     const { isChecked, setIsChecked, resetPreferences } = useContext(FlavorPreferencesContext);
-    const { profileData } = route.params || {}; //get profile data from navigation params
+    //get profile data from navigation params
+    const { profileData } = route.params || {}; 
+
     // if profile data is provided, set inital state from it
     useEffect(() => {
         if (profileData) {
-            // Populate the fields with the profileData
+            // Populate the fields with the profileData and if there are pre-existing data we will display Edit instead of New
             setIsChecked(profileData);
-            // Dtitle = "Edit Preference"
+            setDtitle("Edit Preference")
         } else {
             // If we aren't editing a pre-existing data then we go back to default
             resetPreferences();
-            // Dtitle = "New Preference"
+            setDtitle("New Preference")
         }
     }, [profileData]);
 
     return (
     <SafeAreaView style={styles.background}>
+        {/* Navigate ot profile page if Back Arrow is pressed */}
         <View style={styles.container}>
                 <TouchableOpacity 
-                    onPress={()=>navigation.navigate('Profile')}    //navigate to profile page if back arrow is pressed
+                    onPress={()=>navigation.navigate('Profile')}
                     style={styles.arrow}>
                     <MaterialIcons
                         name="keyboard-arrow-left"
@@ -38,7 +42,7 @@ export default function AddPref1 ({ navigation }) {
                         color={Colors.ghost}
                     />
                 </TouchableOpacity>
-                <Text style={styles.title}>Add Taste Profile</Text>
+                <Text style={styles.title}>{Dtitle}</Text>
         </View>
 
         <ScrollView>

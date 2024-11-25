@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import { Feather } from "@expo/vector-icons";
-import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Modal} from "react-native";
+import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Modal } from "react-native";
 import { Colors } from "./Colors";
 import React, { useContext, useEffect, useState } from "react";
 import { useAuth } from '../contexts/AuthContext';
@@ -14,96 +14,96 @@ export default function Login({ navigation }) {
   const [isLoggingIn, setisLoggingIn] = React.useState(false);
   const [validUser, setvalidUser] = React.useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-    const { setUsername, setPfp } = useContext(ProfileContext);
-    //Reset Password States
-    const [resetEmail, setResetEmail] = useState("");
-    const [message, setMessage] = useState("");
-    const [modalVisible, setModalVisible] = useState(false);
+  const { setUsername, setPfp } = useContext(ProfileContext);
+  //Reset Password States
+  const [resetEmail, setResetEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
 
-    const { userLoggedIn } = useAuth()
-    useEffect(() => {
-        if (userLoggedIn) {
-            navigation.navigate('Tab');
-        }
-    }, []);
+  const { userLoggedIn } = useAuth()
+  useEffect(() => {
+    if (userLoggedIn) {
+      navigation.navigate('Tab');
+    }
+  }, []);
 
-    const handleLogin = async () => {
-      setErrorMessage('');
-      if (!isLoggingIn) {
-        setisLoggingIn(true);
+  const handleLogin = async () => {
+    setErrorMessage('');
+    if (!isLoggingIn) {
+      setisLoggingIn(true);
+    }
+    try {
+      const user = await doSignInWithEmailAndPassword(email, password);
+      //fetch user data from database using uid
+      if (user) {
+        setvalidUser(true);
       }
+    } catch (errorMessage) {
+      if (errorMessage.code === 'auth/invalid-email') {
+        setErrorMessage('Invalid email. Please try again.');
+      }
+      else if (errorMessage.code === 'auth/invalid-credential') {
+        setErrorMessage('Incorrect password for email. Please try again.');
+      }
+      else if (errorMessage.code === 'auth/missing-password') {
+        setErrorMessage('Please input a password.')
+      }
+      else {
+        setErrorMessage(errorMessage.code);
+        console.log(errorMessage);
+      }
+      setisLoggingIn(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    await onGoogleSignIn();
+    if (validUser) {
+      console.log("Success2");
+      navigation.navigate('Tab')
+    }
+  };
+
+  const onGoogleSignIn = async () => {
+    if (!isLoggingIn) {
+      setisLoggingIn(true);
       try {
-          const user = await doSignInWithEmailAndPassword(email, password);
-        //fetch user data from database using uid
-          if (user) {
-              setvalidUser(true);
-          }
+        await doSignInWithGoogle()
+        console.log("Success");
+        setvalidUser(true);
+
       } catch (errorMessage) {
-        if (errorMessage.code === 'auth/invalid-email') {
-          setErrorMessage('Invalid email. Please try again.');
-        }
-        else if (errorMessage.code === 'auth/invalid-credential') {
-            setErrorMessage('Incorrect password for email. Please try again.');
-        }
-        else if (errorMessage.code === 'auth/missing-password') {
-            setErrorMessage('Please input a password.')
-        }
-        else {
-            setErrorMessage(errorMessage.code);
-            console.log(errorMessage);
-        }
-        setisLoggingIn(false);
+        setErrorMessage(errorMessage.code);
+        console.log(errorMessage);
+
       }
-    };
+    }
+    setisLoggingIn(false);
+  };
 
-    const handleGoogleLogin = async () => {
-        await onGoogleSignIn();
-        if (validUser) {
-            console.log("Success2");
-            navigation.navigate('Tab')
-        }
-    };
+  const handlePasswordReset = async () => {
+    try {
+      await doPasswordReset(resetEmail);
+      setMessage("Password reset email sent! Please check your inbox.");
+      setResetEmail("");
+      setErrorMessage("");
+    } catch (error) {
+      setErrorMessage("Error sending reset email: " + error.message);
+      setMessage("");
+    }
+  };
 
-    const onGoogleSignIn = async () => {
-        if (!isLoggingIn) {
-            setisLoggingIn(true);
-            try {
-                await doSignInWithGoogle()
-                console.log("Success");
-                setvalidUser(true);
-
-            } catch (errorMessage) {
-                setErrorMessage(errorMessage.code);
-                console.log(errorMessage);
-
-            }
-        }
-        setisLoggingIn(false);
-    };
-
-    const handlePasswordReset = async () => {
-        try {
-            await doPasswordReset(resetEmail);
-            setMessage("Password reset email sent! Please check your inbox.");
-            setResetEmail("");
-            setErrorMessage("");
-        } catch (error) {
-            setErrorMessage("Error sending reset email: " + error.message);
-            setMessage("");
-        }
-    };
-
-    useEffect(() => {
-        if (validUser) {
-            console.log("checkpoint");
-            setvalidUser(false);
-            navigation.navigate('Tab');
-        }
-    }, [validUser]);
+  useEffect(() => {
+    if (validUser) {
+      console.log("checkpoint");
+      setvalidUser(false);
+      navigation.navigate('Tab');
+    }
+  }, [validUser]);
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="auto"/>
+      <StatusBar style="auto" />
       <ScrollView
         contentContainerStyle={{
           flex: 1,
@@ -112,39 +112,41 @@ export default function Login({ navigation }) {
         }}>
 
         <View style={styles.content}>
-          <View style={{alignItems: 'center'}}>
+          <View style={{ alignItems: 'center' }}>
             <Text style={styles.title}>Login</Text>
           </View>
 
           {/* email/username input field */}
           <View style={styles.inputContainer}>
-            <View style={styles.icon}>
-              <Feather name="mail" size={22} color="#7C808D" />
+            <View style={styles.input}>
+              <View style={styles.icon}>
+                <Feather name="mail" size={22} color={Colors.raisin} />
+              </View>
+              <TextInput
+                placeholder="Email"
+                placeholderTextColor="#7C808D"
+                color={Colors.raisin}
+                onChangeText={setEmail}   //updates email state when user types
+                value={email}   //current email state
+              />
             </View>
-            <TextInput
-              style={styles.input}
-              placeholder="Email"
-              placeholderTextColor="#7C808D"
-              color={Colors.ghost}
-              onChangeText={setEmail}   //updates email state when user types
-              value={email}   //current email state
-            />
           </View>
 
           {/* password input field */}
           <View style={styles.inputContainer}>
-            <View style={styles.icon}>
-              <Feather name="lock" size={22} color="#7C808D" />
+            <View style={styles.input}>
+              <View style={styles.icon}>
+                <Feather name="lock" size={22} color={Colors.raisin} />
+              </View>
+              <TextInput
+                placeholder="Password"
+                secureTextEntry={!passwordIsVisible}
+                placeholderTextColor="#7C808D"
+                color={Colors.raisin}
+                onChangeText={setPassword}    //updates password state
+                value={password}    //current password state
+              />
             </View>
-            <TextInput
-              style={styles.input}
-              placeholder="Password"
-              secureTextEntry={!passwordIsVisible}
-              placeholderTextColor="#7C808D"
-              color={Colors.ghost}
-              onChangeText={setPassword}    //updates password state
-              value={password}    //current password state
-            />
 
             {/* toggle password visibility */}
             <TouchableOpacity
@@ -159,13 +161,13 @@ export default function Login({ navigation }) {
           </View>
 
           {/* forgot password */}
-                  <TouchableOpacity style={styles.forgotPasswordButton} onPress={() => setModalVisible(true) }>
+          <TouchableOpacity style={styles.forgotPasswordButton} onPress={() => setModalVisible(true)}>
             <Text style={styles.forgotPasswordButtonText}>
               Forgot password?
             </Text>
-            </TouchableOpacity>
-              <Text style={styles.error}>{errorMessage}</Text>
-            <TouchableOpacity style={styles.loginButton} onPress={() => handleLogin()}>
+          </TouchableOpacity>
+          <Text style={styles.error}>{errorMessage}</Text>
+          <TouchableOpacity style={styles.loginButton} onPress={() => handleLogin()}>
             <Text style={styles.loginButtonText}>Login</Text>
           </TouchableOpacity>
 
@@ -177,7 +179,7 @@ export default function Login({ navigation }) {
           </View>
 
           {/* login with Google button */}
-                  <TouchableOpacity style={styles.googleButton} onPress={() => handleGoogleLogin() }>
+          <TouchableOpacity style={styles.googleButton} onPress={() => handleGoogleLogin()}>
             <Image
               style={styles.googleLogo}
               source={require("../../frontend/assets/google-logo.png")}
@@ -189,37 +191,37 @@ export default function Login({ navigation }) {
           <TouchableOpacity style={styles.registerButton}>
             <Text style={styles.registerButtonText}>
               Don't have an account yet?{" "}
-              <Text style={styles.registerButtonTextHighlight} 
+              <Text style={styles.registerButtonTextHighlight}
                 onPress={() => navigation.navigate('Signup')}>
                 Register now!
               </Text>
             </Text>
-                  </TouchableOpacity>
-                  <Modal
-                      animationType="slide"
-                      transparent={true}
-                      visible={modalVisible}
-                      onRequestClose={() => setModalVisible(false)}
-                  >
-                      <View style={styles.modalContainer}>
-                          <View style={styles.modalContent}>
-                              <Text style={styles.modalTitle}>Reset Password</Text>
-                              {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
-                              {message ? <Text style={styles.success}>{message}</Text> : null}
-                              <TextInput
-                                  placeholder="Enter your email"
-                                  value={resetEmail}
-                                  onChangeText={setResetEmail}
-                              />
-                              <TouchableOpacity onPress={handlePasswordReset}>
-                                  <Text>Send Reset Email</Text>
-                              </TouchableOpacity>
-                              <TouchableOpacity onPress={() => setModalVisible(false)}>
-                                  <Text>Cancel</Text>
-                              </TouchableOpacity>
-                          </View>
-                      </View>
-                  </Modal>
+          </TouchableOpacity>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => setModalVisible(false)}
+          >
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>Reset Password</Text>
+                {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
+                {message ? <Text style={styles.success}>{message}</Text> : null}
+                <TextInput
+                  placeholder="Enter your email"
+                  value={resetEmail}
+                  onChangeText={setResetEmail}
+                />
+                <TouchableOpacity onPress={handlePasswordReset}>
+                  <Text>Send Reset Email</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setModalVisible(false)}>
+                  <Text>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -230,7 +232,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.blue,
-    },
+  },
   modalContainer: {
     flex: 1,
     justifyContent: "center",
@@ -267,17 +269,26 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: 15,
+    borderWidth: 2,
+    borderRadius: 15,
+    borderColor: Colors.raisin,
+    backgroundColor: Colors.yellow,
+    paddingVertical: 5,
+    paddingHorizontal: 15
   },
   input: {
-    borderBottomWidth: 1.5,
+    borderWidth: 2,
+    borderRadius: 20,
+    backgroundColor: Colors.champagne,
     flex: 1,
-    paddingBottom: 10,
-    borderBottomColor: Colors.champagne,
+    padding: 10,
+    borderColor: Colors.gold,
     fontSize: 16,
+    flexDirection: 'row',
   },
   passwordVisibleButton: {
     position: "absolute",
-    right: 0,
+    right: 10,
   },
   forgotPasswordButton: {
     alignSelf: "flex-end",
@@ -286,7 +297,7 @@ const styles = StyleSheet.create({
     color: Colors.yellow,
     fontSize: 16,
     fontWeight: "500",
-    },
+  },
   error: {
     color: "#ff0000",
     marginTop: 10
@@ -294,8 +305,10 @@ const styles = StyleSheet.create({
   loginButton: {
     backgroundColor: Colors.gold,
     padding: 14,
-    borderRadius: 10,
+    borderRadius: 20,
     marginTop: 20,
+    borderWidth: 2,
+    borderColor: Colors.raisin
   },
   loginButtonText: {
     color: Colors.raisin,
@@ -323,11 +336,13 @@ const styles = StyleSheet.create({
   googleButton: {
     backgroundColor: Colors.ghost,
     padding: 14,
-    borderRadius: 10,
+    borderRadius: 20,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     position: "relative",
+    borderWidth: 2,
+    borderColor: Colors.raisin
   },
   googleButtonText: {
     color: Colors.raisin,

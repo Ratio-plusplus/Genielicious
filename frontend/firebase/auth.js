@@ -11,11 +11,10 @@ export const doCreateUserWithEmailAndPassword = async (email, password, username
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     //Send Email Verifcation to use
-    await sendEmailVerification(user);
-    
+    const test = await sendEmailVerification(user);    
     //Save user information to database through backend
     const pfp = Image.resolveAssetSource(require("../assets/pfp.png"));
-    const response = await fetch('http://10.0.2.2:5000/database/create_user',
+    const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/auth/create_user',
         {
             method: "POST",
             headers: {
@@ -59,7 +58,7 @@ export const doPasswordChange = (password) => {
 
 export const deleteAccount = async () => {
     idToken = await auth.currentUser.getIdToken();
-    const response = await fetch('http://10.0.2.2:5000/database/delete_user',
+    const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/delete_user',
         {
             method: "DELETE",
             headers: {
@@ -69,5 +68,33 @@ export const deleteAccount = async () => {
         });
     const json = await response.json();
     return json
+};
+
+export const deleteUserHistory = async () => {
+    try {
+        const idToken = await auth.currentUser.getIdToken();
+        const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/delete_history', {
+            method: "DELETE",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${idToken}`
+            },
+        });
+
+        console.log("Checking response: ", response.ok)
+
+        const json = await response.json(); // Parse the response as JSON
+
+        console.log("Response Data:", json)
+
+        if (!response.ok) {
+            throw new Error(responseData.message || 'Failed to delete history');
+        }
+
+        return json; // Return the response data
+    } catch (error) {
+        console.error("Error deleting user history:", error);
+        throw error; // Rethrow the error for handling in the calling function
+    }
 };
 

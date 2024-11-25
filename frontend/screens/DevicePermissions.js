@@ -1,10 +1,12 @@
 import React from 'react';
-import { Text, StyleSheet, View, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
+import { Text, StyleSheet, View, TouchableOpacity, SafeAreaView, ScrollView, StatusBar } from 'react-native';
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 
 export default function DevicePermissions({ navigation }) {
     return (
+        <>
+        <StatusBar/>
         <SafeAreaView style={styles.background}>
             {/* Back button and title screen */}
             <View style={styles.container}>
@@ -55,6 +57,7 @@ export default function DevicePermissions({ navigation }) {
                 </View>
             </ScrollView>
         </SafeAreaView>
+        </>
     );
 }
 
@@ -65,7 +68,7 @@ const styles = StyleSheet.create({
     },
     container: {
         marginHorizontal: 12,
-        marginTop: 12,
+        marginTop: '8%',
         marginBottom: 12,
         flexDirection: "row",
         justifyContent: "center"
@@ -79,17 +82,22 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     sectionContainer: {
-        backgroundColor: Colors.champagne,
+        backgroundColor: Colors.ghost,
         borderRadius: 10,
         padding: 20,
         marginBottom: 20,
         borderWidth: 2,
-        borderColor: Colors.gold
+        borderColor: Colors.gold,
+        shadowColor: Colors.yellow, // Subtle shadow for depth
+        shadowOffset: { width: 7, height: 7 },
+        shadowOpacity: 1,
+        shadowRadius: 0,
+        elevation: 2,
     },
     sectionTitle: {
         fontSize: 22,
         fontWeight: "bold",
-        color: Colors.gold,
+        color: Colors.darkGold,
         marginBottom: 5,
     },
     descText: {
@@ -99,8 +107,9 @@ const styles = StyleSheet.create({
     },
     bulletText: {
         fontSize: 16,
-        color: Colors.raisin,
+        color: Colors.gold,
         marginLeft: 10,
         marginVertical: 5,
+        fontWeight: '600'
     },
 });

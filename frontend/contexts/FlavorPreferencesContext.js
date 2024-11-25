@@ -1,7 +1,5 @@
 // FlavorPreferencesContext.js
 import React, { createContext, useState, useEffect } from 'react';
-import { auth, database } from '../firebase/firebase';
-import { ref, set, push, onValue } from 'firebase/database';
 import { Image } from 'react-native';
 import {useAuth} from './AuthContext'
 
@@ -44,14 +42,13 @@ export const FlavorPreferencesProvider = ({ children }) => {
 
     const [isChecked, setIsChecked] = useState(defaultPreferences);
     const [flavorProfiles, setFlavorProfiles] = useState([]);
-    const [activeProfileId, setActiveProfileId] = useState(null);
     const [mode, setMode] = useState("");
-
+    const [activeProfileId, setActiveProfileId] = useState(null);
 
     const fetchProfiles = async () => {
         if (currentUser) {
             const idToken = await currentUser.getIdToken();
-            const response = await fetch('http://10.0.2.2:5000/database/get_user_profile', {
+            const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/get_user_profile', {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',
@@ -60,12 +57,19 @@ export const FlavorPreferencesProvider = ({ children }) => {
             });
             const json = await response.json();
             const info = json["profiles"];
-            const profilesArray = Object.keys(info).map((key) => ({
-                id: key,
-                ...info[key]
-            }));
-            setFlavorProfiles(profilesArray);
-            console.log("profiles fetched");
+            if (info) {
+                const profilesArray = Object.keys(info).map((key) => ({
+                    id: key,
+                    ...info[key]
+                }));
+                console.log(profilesArray);
+                setFlavorProfiles(profilesArray);
+                console.log("profiles fetched");
+            }
+            else {
+                setFlavorProfiles([]);
+                console.log("No flavor profile")
+            }
         } else {
             console.log("No user is signed in.");
         }
@@ -75,7 +79,7 @@ export const FlavorPreferencesProvider = ({ children }) => {
         console.log(updatedData);
         if (currentUser) {
             const idToken = await currentUser.getIdToken();
-            const response = await fetch('http://10.0.2.2:5000/database/update_flavor_profile',
+            const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/update_flavor_profile',
                 {
                     method: "POST",
                     headers: {
@@ -85,7 +89,7 @@ export const FlavorPreferencesProvider = ({ children }) => {
                     body: JSON.stringify({ profileInfo: updatedData, profileId : profileId }),
                 });
             const json = await response.json();
-            console.log(json)
+            console.log("Hi", json);
         } else {
             console.log("No user is signed in.");
         }
@@ -95,7 +99,7 @@ export const FlavorPreferencesProvider = ({ children }) => {
         if (currentUser) {
             idToken = await currentUser.getIdToken();
             console.log(isChecked);
-            const response = await fetch('http://10.0.2.2:5000/database/add_flavor_profile',
+            const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/add_flavor_profile',
                 {
                     method: "POST",
                     headers: {
@@ -105,7 +109,7 @@ export const FlavorPreferencesProvider = ({ children }) => {
                     body: JSON.stringify({ preferences: isChecked, name: name, photoURL: selectedImage }),
                 });
             const json = await response.json();
-            console.log(json);
+            console.log("Hi", json);
         } else {
             console.log("No user is signed in.");
         }
@@ -119,22 +123,23 @@ export const FlavorPreferencesProvider = ({ children }) => {
         if (currentUser) {
             const idToken = await currentUser.getIdToken();
             try {
-                const response = await fetch('http://10.0.2.2:5000/database/get_active_profile', {
+                const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/get_active_profile', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${idToken}`
                     }
                 });
-
+                console.log(response);
                 console.log('Getting response: ', response.ok);
 
                 if (response.ok) {
                     const data = await response.json();
                     setActiveProfileId(data.activeProfileId); // Set the active profile ID
                 } else {
-                    const errorText = await response.text();
-                    console.error("Error fetching active profile ID: ", errorText);
+                    console.log("No active profile currently set.")
+                    // const errorText = await response.text();
+                    // console.error("Error fetching active profile ID: ", errorText);
                 }
             } catch (error) {
                 console.error("Error fetching active profile ID: ", error);
@@ -163,16 +168,16 @@ export const FlavorPreferencesProvider = ({ children }) => {
         if (currentUser) {
             const idToken = await currentUser.getIdToken();
             try {
-                const response = await fetch('http://10.0.2.2:5000/database/set_active_profile', {
+                const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/set_active_profile', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${idToken}`
                     },
-                    body: JSON.stringify({ profileId })
+                    body: JSON.stringify({ profileId: profileId })
                 });
 
-                if (response.ok) {
+                if (response.ok || profileId === '') {
                     console.log("Active profile updated in Firebase successfully.");
                     setActiveProfileId(profileId); // Update local state
                 } else {
@@ -186,6 +191,12 @@ export const FlavorPreferencesProvider = ({ children }) => {
             console.log("No user is signed in.");
         }
     };
+
+    useEffect(() => {
+        if (!loading) {
+            fetchProfiles(); // Only fetch data when loading is false
+        }
+    }, [loading, currentUser]); // Depend on loading and currentUser
 
     return (
         <FlavorPreferencesContext.Provider value={{ 

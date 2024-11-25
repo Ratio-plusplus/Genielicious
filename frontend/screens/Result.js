@@ -9,17 +9,24 @@ import { useFocusEffect } from '@react-navigation/native';
 // array for the different restaurant results
 // has the name, taste, address, distance, and image
 // map the name, taste, address, and distance (put it into text to show up in results)
-const renderRestaurantItem = ({ name, taste, address, distance }) => (
+const renderRestaurantItem = ({ name, taste, address, distance, url }) => (
     <View style={styles.restaurantDetails}>
         <Text 
             style={styles.restaurantName} 
+            numberOfLines={2}
+            adjustsFontSizeToFit
             onPress={() => openMap(address)} // make the name clickable
         >
             {name}
         </Text>
-        <Text style={styles.restaurantTaste}>{taste}</Text>
+        <Text 
+            style={styles.restaurantTaste}
+            numberOfLines={1}
+            adjustsFontSizeToFit>{taste}</Text>
         <Text 
             style={styles.restaurantAddress} 
+            numberOfLines={2}
+            adjustsFontSizeToFit
             onPress={() => openMap(address)} // make the address clickable
         >
             {address}
@@ -30,10 +37,13 @@ const renderRestaurantItem = ({ name, taste, address, distance }) => (
             <MaterialIcons
                 name="location-on"
                 size={16}
-                color={Colors.champagne}
+                color={Colors.blue}
                 style={styles.locationIcon}
             />
-            <Text style={styles.restaurantDistance}>{distance} miles away</Text>
+            <Text 
+                style={styles.restaurantDistance}
+                numberOfLines={1}
+                adjustsFontSizeToFit>{distance} miles away</Text>
         </View>
     </View>
 );
@@ -45,42 +55,48 @@ const openMap = (address) => {
     Linking.openURL(url); // Linking API allows user to open URLs
 };
 
+const openYelp = (url) => {
+    Linking.openURL(url);
+};
+
 const getResults = async (currentUser) => {
     const restaurants = [];
     const idToken = await currentUser.getIdToken();
-    const response = await fetch('http://10.0.2.2:5000/database/get_result_cache', {
+    //Call to API to retrieve result cache in Realtime Database
+    const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/get_result_cache', {
         method: "GET",
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${idToken}`
         }
     });
+    //Turns response into a json
     const json = await response.json();
+    //Gets the string stored in info
     const results = json["info"];
     const businessList = JSON.parse(results).businesses;
     for (i = 0; i < businessList.length; i++) {
         const restaurantInfo = businessList[i];
         restaurantInfo.distance = Math.round((restaurantInfo.distance / 1609) * 100) / 100;
         aliases = [];
+        console.log(restaurantInfo.url);
         for (x = 0; x < restaurantInfo.categories.length; x++) {
-            aliases.push(restaurantInfo.categories[x].title);
+            //console.log(restaurantInfo.categories[x]);
+            aliases.push(restaurantInfo.categories[x].alias);
         }
-        const push = { name: restaurantInfo.name, taste: aliases.join(', '), address: restaurantInfo.location.display_address.join(', '), distance: restaurantInfo.distance, image: restaurantInfo.image_url };
+        const push = { name: restaurantInfo.name, taste: aliases.join(', '), address: restaurantInfo.location.display_address.join(', '), distance: restaurantInfo.distance, image: restaurantInfo.image_url, favorite: false, url: restaurantInfo.url };
         restaurants.push(push);
     }
     const restaurant = JSON.stringify(restaurants);
-    const slice1 = restaurant.replace("[", "");
-    const history = slice1.replace("]", "");
-    const response1 = await fetch('http://10.0.2.2:5000/database/add_history', {
+    const response1 = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/add_history', { //https://genielicious-1229a.wl.r.appspot.com
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${idToken}`
         },
-        body: JSON.stringify({ "restaurantsInfo": history })
+        body: JSON.stringify({ "restaurantsInfo": restaurant })
     });
     const json1 = await response1.json();
-    console.log(json1);
     return restaurants;
 };
 export default function Result({ navigation }) {
@@ -179,11 +195,20 @@ export default function Result({ navigation }) {
                 <ScrollView contentContainerStyle={styles.restaurantList}>
                     {restaurants.map((item, index) => (
                         <View key={index} style={styles.restaurantItem}>
-                            <Image
-                                source={{ uri: item.image }}
-                                style={styles.restaurantImage}
-                                resizeMode="cover"
-                            />
+                            <View style={styles.imagesContainer}>
+                                <Image
+                                    source={{ uri: item.image }}
+                                    style={styles.restaurantImage}
+                                    resizeMode="cover"
+                                />
+                                <TouchableOpacity onPress={() => openYelp(item.url)}>
+                                    <Image
+                                        source={require('../assets/yelp.png')} // Add Yelp logo image
+                                        style={styles.yelpLogo}
+                                        resizeMode="contain"
+                                    />
+                                </TouchableOpacity>
+                            </View>
                             <React.Fragment key={index}>
                                 {renderRestaurantItem(item)}
                             </React.Fragment>
@@ -210,12 +235,17 @@ const styles = StyleSheet.create({
     },
     arrowButton: {
         zIndex: 100000,
+        paddingTop: '8%'
     },
     title: {
         fontWeight: "bold",
-        fontSize: 25,
+        fontSize: 22,
         color: Colors.champagne,
-        right: 50,
+        paddingRight: '10%',
+        paddingTop: '5%',
+        fontFamily: 'InknutAntiqua-Regular',
+        textAlign: 'center',
+        justifyContent: 'center'
     },
     genieContainer: {
         height: '48%',  
@@ -247,48 +277,55 @@ const styles = StyleSheet.create({
         marginTop: -70, 
         paddingBottom: 10,
         marginLeft: 0,
-
     },
     restaurantList: {
         flexGrow: 1,
         alignItems: 'center',
-
     },
     restaurantItem: {
         flexDirection: 'row',
-        backgroundColor: "#425466",
+        backgroundColor: Colors.ghost,
         padding: 10,
-        marginVertical: 10,
+        marginVertical: 15,
         borderRadius: 10,
-        borderColor: Colors.raisin,
-        borderWidth: 1,
+        borderColor: Colors.gold,
+        borderWidth: 2,
+        alignItems: 'flex-start',
         width: '90%',
-        alignItems: 'center',
+        height: 150,
+        shadowColor: Colors.yellow, // Subtle shadow for depth
+        shadowOffset: { width: 7, height: 7 },
+        shadowOpacity: 1,
+        shadowRadius: 0,
+        elevation: 2,
     },
     restaurantImage: {
-        width: '40%',
+        width: '100%',
         height: '100%',
         borderRadius: 10,
-        marginRight: 10,
     },
     restaurantDetails: {
         flex: 1,
+        flexDirection: 'column',
+        height: '100%',
+        justifyContent: 'space-evenly'
     },
     restaurantName: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: Colors.gold,
+        color: Colors.darkGold,
         marginBottom: 5,
     },
     restaurantTaste: {
         fontSize: 15,
-        color: Colors.ghost,
+        color: Colors.blue,
         marginBottom: 5,
     },
     restaurantAddress: {
         fontSize: 15,
-        color: Colors.gold,
+        color: Colors.darkGold,
         marginBottom: 5,
+        textDecorationLine: 'underline',
     },
     distanceContainer: {
         flexDirection: 'row',
@@ -299,7 +336,7 @@ const styles = StyleSheet.create({
     },
     restaurantDistance: {
         fontSize: 15,
-        color: Colors.champagne,
+        color: Colors.blue,
     },
     modalOverlay: {
         flex: 1,
@@ -331,7 +368,8 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         marginBottom: 20,
         color: Colors.ghost,
-        alignItems: 'center'
+        alignItems: 'center',
+        textAlign: 'center'
     },
     modalButtons: {
         flexDirection: 'row',
@@ -356,7 +394,20 @@ const styles = StyleSheet.create({
     buttonText: {
         color: Colors.raisin,
         fontWeight: '600',
-        marginTop: 3,
         fontSize: 19
+    },
+    imagesContainer: {
+        width: '40%',
+        height: '100%',
+        position: 'relative',
+        marginRight: 10,
+    },
+    yelpLogo: {
+        position: 'absolute',
+        bottom: 0,
+        right: -10,
+        top: -70,
+        width: 100,
+        height: 100,
     },
 });

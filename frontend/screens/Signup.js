@@ -1,14 +1,14 @@
 import { StatusBar } from "expo-status-bar";
 import { Feather } from "@expo/vector-icons";
 import Ionicons from '@expo/vector-icons/Ionicons'
-import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
+import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Colors } from "./Colors";
 import { doCreateUserWithEmailAndPassword } from '../firebase/auth';
 
 
 
-export default function Signup({navigation}) {
+export default function Signup({ navigation }) {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
@@ -16,114 +16,118 @@ export default function Signup({navigation}) {
   const [isRegistering, setIsRegistering] = useState(false);
   const [passwordIsVisible, setPasswordIsVisible] = React.useState(false);
   const [confirmPasswordIsVisible, setConfirmPasswordIsVisible] = React.useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
-    const [createdUser, setcreatedUser] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [createdUser, setcreatedUser] = useState(false);
+  const [isEditable, setIsEditable] = useState(true);
 
 
-    //On Press Method
-    const handleSignup = async () => {
-        //Check if passwords match
-        try{
-          const user = await createUser();
-            if (user) {
-                const intervalId = setInterval(async () => {
-                    await user.reload();
-                    if (user.emailVerified) {
-                        console.log("verified");
-                        clearInterval(intervalId);
-                        //fetch user data after signing up
-                        navigation.navigate('Tab');
-                    } else {
-                        setErrorMessage('Please verify your email before logging in.');
-                    }
-                }, 1000);
-            
-            setcreatedUser(true);
+  //On Press Method
+  const handleSignup = async () => {
+    setIsEditable(false);
+    //Check if passwords match
+    try {
+      const user = await createUser();
+      if (user) {
+        const intervalId = setInterval(async () => {
+          await user.reload();
+          if (user.emailVerified) {
+            console.log("verified");
+            clearInterval(intervalId);
+            //fetch user data after signing up
+            navigation.navigate('Tab');
+          } else {
+            setErrorMessage('Please verify your email before logging in.');
+            console.log("Waiting for verification");
           }
-        } catch (error) {
-          console.error("Error during signup:", error.message);
-          setErrorMessage(error.message);
-          setIsRegistering(false);
-        }
-      };
+        }, 1000);
 
-    const validate = (text) => {
-        let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
-        if (reg.test(text) === false) {
-            setErrorMessage("Invalid Email");
-            setEmail(text)
-            return false;
+        setcreatedUser(true);
+      }
+    } catch (error) {
+      console.error("Error during signup:", error.message);
+      setErrorMessage(error.message);
+      setIsRegistering(false);
+    }
+  };
+
+  const validate = (text) => {
+    let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+    if (reg.test(text) === false) {
+      setErrorMessage("Invalid Email");
+      setEmail(text)
+      return false;
+    }
+    else {
+      setEmail(text)
+      setErrorMessage("");
+      return true;
+    }
+  }
+
+  //Create user method
+  const createUser = async () => {
+    //e.preventDefault()
+    setErrorMessage('');
+    if (!isRegistering) {
+      setIsRegistering(true);
+
+      try {
+        //Check if passwords match
+        if (validate(email)) {
+          if (password == confirmPassword) {
+            console.log(username);
+            return await doCreateUserWithEmailAndPassword(email, password, username)
+          }
+        }
+        //Error msgs from Firebase Auth
+      } catch (errorMessage) {
+        if (errorMessage.code === "auth/email-already-in-use") {
+          setErrorMessage("Email already exists. Please choose a different email.");
+        } else if (errorMessage.code === "auth/missing-email") {
+          setErrorMessage("Please provide an email address");
+        } else if (errorMessage.code === "auth/invalid-password") {
+          setErrorMessage("Invalid Password. Password must be at least six characters and contain an uppercase letter, number, and special character");
+        } else if (errorMessage.code === "auth/password-does-not-meet-requirements") {
+          setErrorMessage("Invalid Password. Password must be at least six characters and contain an uppercase letter, number, and special character");
         }
         else {
-            setEmail(text)
-            setErrorMessage("");
-            return true;
-        } 
-    }
-
-    //Create user method
-    const createUser = async () => {
-        //e.preventDefault()
-        setErrorMessage('');
-        if (!isRegistering) {
-            setIsRegistering(true);
-            
-            try {
-                //Check if passwords match
-                if (validate(email)){
-                    if (password == confirmPassword) {
-                        return await doCreateUserWithEmailAndPassword(email, password, username)
-                    }
-                }
-                //Error msgs from Firebase Auth
-            } catch (errorMessage) {
-                if (errorMessage.code === "auth/email-already-in-use") {
-                    setErrorMessage("Email already exists. Please choose a different email.");
-                } else if (errorMessage.code === "auth/missing-email") {
-                    setErrorMessage("Please provide an email address");
-                } else if (errorMessage.code === "auth/invalid-password") {
-                    setErrorMessage("Invalid Password. Password must be at least six characters and contain an uppercase letter, number, and special character");
-                } else if (errorMessage.code === "auth/password-does-not-meet-requirements") {
-                    setErrorMessage("Invalid Password. Password must be at least six characters and contain an uppercase letter, number, and special character");
-                }
-                else {
-                    setErrorMessage(errorMessage.code)
-                }
-                //No longer registering
-                setIsRegistering(false);
-            }
+          setErrorMessage(errorMessage.code)
         }
-    }
-
-    const handleGoogleLogin = async () => {
-        await onGoogleSignIn();
-        if (createdUser) {
-            console.log("Success2");
-            navigation.navigate('Tab')
-        }
-    }
-
-    const onGoogleSignIn = async () => {
-        if (!isRegistering) {
-            setIsRegistering(true);
-            try {
-                await doSignInWithGoogle()
-                console.log("Success");
-                setcreatedUser(true);
-
-            } catch (errorMessage) {
-                setErrorMessage(errorMessage.code);
-                console.log(errorMessage);
-
-            }
-        }
+        //No longer registering
         setIsRegistering(false);
-    };
+      }
+    }
+  }
+
+  const handleGoogleLogin = async () => {
+    await onGoogleSignIn();
+    if (createdUser) {
+      console.log("Success2");
+      navigation.navigate('Tab')
+    }
+  }
+
+  const onGoogleSignIn = async () => {
+    if (!isRegistering) {
+      setIsRegistering(true);
+      try {
+        await doSignInWithGoogle()
+        console.log("Success");
+        setcreatedUser(true);
+
+      } catch (errorMessage) {
+        setErrorMessage(errorMessage.code);
+        console.log(errorMessage);
+
+      }
+    }
+    setIsRegistering(false);
+  };
 
 
-    return (
+  return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="auto"/>
+      <StatusBar style="auto" />
       <ScrollView
         contentContainerStyle={{
           flex: 1,
@@ -132,54 +136,60 @@ export default function Signup({navigation}) {
         }}>
 
         <View style={styles.content}>
-          <View style={{alignItems: 'center'}}>
+          <View style={{ alignItems: 'center' }}>
             <Text style={styles.title}>Sign Up</Text>
           </View>
 
           {/* username input field */}
           <View style={styles.inputContainer}>
-            <View style={styles.icon}>
-              <Ionicons name="person" size={22} color="#7C808D" />
+            <View style={styles.input}>
+              <View style={styles.icon}>
+                <Ionicons name="person" size={22} color={Colors.raisin} />
+              </View>
+              <TextInput
+                placeholder="Username"
+                placeholderTextColor="#7C808D"
+                color={Colors.raisin}
+                disabled={!isEditable}
+                onChangeText={setUsername}    //updates username state
+                value={username}    //current username state
+              />
             </View>
-            <TextInput
-              style={styles.input}
-              placeholder="Username"
-              placeholderTextColor="#7C808D"
-              color={Colors.ghost}
-              onChangeText={setUsername}    //updates username state
-              value={username}    //current username state
-            />
           </View>
 
           {/* email input field */}
           <View style={styles.inputContainer}>
-            <View style={styles.icon}>
-              <Feather name="mail" size={22} color="#7C808D" />
+            <View style={styles.input}>
+              <View style={styles.icon}>
+                <Feather name="mail" size={22} color={Colors.raisin} />
+              </View>
+              <TextInput
+                placeholder="Email"
+                placeholderTextColor="#7C808D"
+                color={Colors.raisin}
+                disabled={!isEditable}
+                onChangeText={(text) => validate(text)}     //updates email state
+                value={email}     //current email state
+              />
             </View>
-            <TextInput
-              style={styles.input}
-              placeholder="Email"
-              placeholderTextColor="#7C808D"
-              color={Colors.ghost}
-              onChangeText={(text) => validate(text)}     //updates email state
-              value={email}     //current email state
-            />
           </View>
 
           {/* password input field */}
           <View style={styles.inputContainer}>
-            <View style={styles.icon}>
-              <Feather name="lock" size={22} color="#7C808D" />
+            <View style={styles.input}>
+              <View style={styles.icon}>
+                <Feather name="lock" size={22} color={Colors.raisin} />
+              </View>
+              <TextInput
+                placeholder="Password"
+                disabled={!isEditable}
+                secureTextEntry={!passwordIsVisible}
+                placeholderTextColor="#7C808D"
+                color={Colors.raisin}
+                onChangeText={setPassword}      //updates password state
+                value={password}      //current password state
+              />
             </View>
-            <TextInput
-              style={styles.input}
-              placeholder="Password"
-              secureTextEntry={!passwordIsVisible}
-              placeholderTextColor="#7C808D"
-              color={Colors.ghost}
-              onChangeText={setPassword}      //updates password state
-              value={password}      //current password state
-            />
 
             {/* toggle password visibility */}
             <TouchableOpacity
@@ -195,57 +205,46 @@ export default function Signup({navigation}) {
 
           {/* confirm password input field */}
           <View style={styles.inputContainer}>
-            <View style={styles.icon}>
-              <Feather name="lock" size={22} color="#7C808D" />
+            <View style={styles.input}>
+              <View style={styles.icon}>
+                <Feather name="lock" size={22} color={Colors.raisin} />
+              </View>
+              <TextInput
+                placeholder="Confirm Password"
+                secureTextEntry={!confirmPasswordIsVisible}
+                placeholderTextColor="#7C808D"
+                color={Colors.raisin}
+                disabled={!isEditable}
+                onChangeText={setConfirmPassword}
+                value={confirmPassword}
+              />
             </View>
-            <TextInput
-              style={styles.input}
-              placeholder="Confirm Password"
-              secureTextEntry={!confirmPasswordIsVisible}
-              placeholderTextColor="#7C808D"
-              color={Colors.ghost}
-              onChangeText={setConfirmPassword}
-              value={confirmPassword}
-            />
 
             {/* toggle password visibility */}
             <TouchableOpacity
               style={styles.passwordVisibleButton}
+              disabled={!isEditable}
               onPress={() => setConfirmPasswordIsVisible(!confirmPasswordIsVisible)}>
               <Feather
                 name={confirmPasswordIsVisible ? "eye" : "eye-off"}
                 size={22}
+
                 color="#7C808D"
               />
             </TouchableOpacity>
           </View>
-                    <Text style={styles.error}>{errorMessage}</Text>
+          <Text style={styles.error}>{errorMessage}</Text>
+
           {/* signup button */}
           <TouchableOpacity style={styles.signupButton} onPress={() => handleSignup()}>
             <Text style={styles.signupButtonText}>Sign Up</Text>
-          </TouchableOpacity>
-
-          {/* separator between signup methods */}
-          <View style={styles.orContainer}>
-            <View style={styles.orLine} />
-            <Text style={styles.orText}>OR</Text>
-            <View style={styles.orLine} />
-          </View>
-
-          {/* sign up with Google button */}
-          <TouchableOpacity style={styles.googleButton}>
-            <Image
-              style={styles.googleLogo}
-              source={require("../../frontend/assets/google-logo.png")}
-            />
-            <Text style={styles.googleButtonText}>Sign up with Google</Text>
           </TouchableOpacity>
 
           {/* navigate to Login screen */}
           <TouchableOpacity style={styles.loginButton}>
             <Text style={styles.loginButtonText}>
               Already have an account?{" "}
-              <Text style={styles.loginButtonTextHighlight} 
+              <Text style={styles.loginButtonTextHighlight}
                 onPress={() => navigation.navigate('Login')}>
                 Login now!
               </Text>
@@ -270,11 +269,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 40,
     color: Colors.champagne
-    },
-    error: {
-        color: "#ff0000",
-        marginTop: 10
-    },
+  },
+  error: {
+    color: "#ff0000",
+    marginBottom: 10
+  },
   inputContainer: {
     flexDirection: "row",
     width: "100%",
@@ -285,67 +284,39 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: 15,
+    borderWidth: 2,
+    borderRadius: 15,
+    borderColor: Colors.raisin,
+    backgroundColor: Colors.yellow,
+    paddingVertical: 5,
+    paddingHorizontal: 15
   },
   input: {
-    borderBottomWidth: 1.5,
+    borderWidth: 2,
+    borderRadius: 20,
+    backgroundColor: Colors.champagne,
     flex: 1,
-    paddingBottom: 10,
-    borderBottomColor: Colors.champagne,
+    padding: 10,
+    borderColor: Colors.gold,
     fontSize: 16,
+    flexDirection: 'row',
   },
   passwordVisibleButton: {
     position: "absolute",
-    right: 0,
+    right: 10,
   },
   signupButton: {
     backgroundColor: Colors.gold,
     padding: 14,
-    borderRadius: 10,
-    marginTop: 20,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: Colors.raisin
   },
   signupButtonText: {
     color: Colors.raisin,
     textAlign: "center",
     fontWeight: "600",
     fontSize: 16,
-  },
-  orContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 20,
-    marginBottom: 20,
-  },
-  orLine: {
-    height: 1,
-    backgroundColor: Colors.ghost,
-    flex: 1,
-  },
-  orText: {
-    color: Colors.ghost,
-    marginRight: 10,
-    marginLeft: 10,
-    fontSize: 14,
-  },
-  googleButton: {
-    backgroundColor: Colors.ghost,
-    padding: 14,
-    borderRadius: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    position: "relative",
-  },
-  googleButtonText: {
-    color: Colors.raisin,
-    fontSize: 16,
-    fontWeight: "600",
-    textAlign: "center",
-  },
-  googleLogo: {
-    width: 20.03,
-    height: 20.44,
-    position: "absolute",
-    left: 14,
   },
   loginButton: {
     alignSelf: "center",

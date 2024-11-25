@@ -1,52 +1,89 @@
 import * as React from 'react';
-import useLocation from '../constants/useLocation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback,useRef } from 'react';
 import { Colors } from './Colors';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Modal, ActivityIndicator} from "react-native";
+import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Modal, ActivityIndicator, Animated} from "react-native";
 import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
-import * as Font from 'expo-font';
+import * as Location from "expo-location";
+import { useFocusEffect } from '@react-navigation/native';
+import { useAuth } from '../contexts/AuthContext'
+
 
 export default function Home({ navigation }) {
-    const { latitude, longitude, errorMsg } = useLocation();
-    // load custom font
-    const [fontLoaded, setFontLoaded] = useState(false);
-    useEffect(() => {
-        async function loadFont() {
-            await Font.loadAsync({
-                'InknutAntiqua-Regular': require('../assets/fonts/InknutAntiqua-Regular.ttf'),
-            });
-            setFontLoaded(true);
-        }
-        loadFont();
-    }, []);
-
-    console.log(latitude, longitude, errorMsg);
+    const { currentUser } = useAuth(); // Access currentUser and loading
     const { setMode, flavorProfiles, activeProfileId, updateActiveProfileInFirebase } = React.useContext(FlavorPreferencesContext);
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
     const [items, setItems] = useState([]);
 
+    const moveAnimation = useRef(new Animated.Value(0)).current; // For vertical movement
+    const fadeAnimation = useRef(new Animated.Value(0)).current; // For fading
+
     useEffect(() => {
         // Map flavorProfiles to the format required by DropDownPicker
-        const profileItems = flavorProfiles.map(profile => ({
-            label: profile.title,
-            value: profile.id
-        }));
+        const profileItems = [
+            { label: 'None', value: 'None' }, // Add "None" option
+            ...flavorProfiles.map(profile => ({
+                label: profile.title,
+                value: profile.id
+            }))
+        ];
+
         setItems(profileItems);
 
         // Set the active profile ID when it changes
         if (activeProfileId && profileItems.length > 0) {
             setValue(activeProfileId);
         }
-    }, [flavorProfiles, activeProfileId]);
+        // Animation: Move up and down
+        const moveAnimationLoop = Animated.loop(
+          Animated.sequence([
+            Animated.timing(moveAnimation, {
+                toValue: 10, // Move down
+                duration: 1300,
+                useNativeDriver: true,
+              }),
+            Animated.timing(moveAnimation, {
+              toValue: 0, // Move up
+              duration: 1500,
+              useNativeDriver: true,
+            }),
+          ])
+        );
+    
+        // Animation: Fade in and out
+        const fadeAnimationLoop = Animated.loop(
+          Animated.sequence([
+            Animated.timing(fadeAnimation, {
+              toValue: 1, // Fully visible
+              duration: 3000,
+              useNativeDriver: true,
+            }),
+            Animated.timing(fadeAnimation, {
+              toValue: 0, // Fully invisible
+              duration: 2000,
+              useNativeDriver: true,
+            }),
+          ])
+        );
+    
+        // Start animations
+        moveAnimationLoop.start();
+        fadeAnimationLoop.start();
+    
+        // // Cleanup function (optional, if needed for stopping animations)
+        // return () => {
+        //   moveAnimationLoop.stop();
+        //   fadeAnimationLoop.stop();
+        // };
+      }, [flavorProfiles, activeProfileId, moveAnimation, fadeAnimation]);
 
     const handleValueChange = (newValue) => {
         console.log("handleValueChange called with:", newValue);
-        if (newValue && newValue !== value) { // Ensure it's a new selection
+        if (newValue !== value) { // Ensure it's a new selection
             console.log("Updating active profile to:", newValue);
             setValue(newValue);
-            updateActiveProfileInFirebase(newValue);
+            updateActiveProfileInFirebase(newValue === '' ? '' : newValue); // Send empty string for "None"
         } else {
             console.log("No change in profile ID or no profile selected.");
         }
@@ -57,7 +94,52 @@ export default function Home({ navigation }) {
         navigation.navigate('Question');
     }
 
-    
+    const getUserLocation = async () => {
+        // Just uses expo-location to grab location and print it as coordinates
+        let { status } = await Location.requestForegroundPermissionsAsync();
+
+        if (status !== 'granted') {
+            setErrorMsg('Permission to location not granted')
+            console.log('Perms not granted!')
+            return;
+        }
+
+        // Once permissions are grabbed, get coords but in a tuple
+        let { coords } = await Location.getCurrentPositionAsync();
+
+        if (coords) {
+            const { latitude, longitude } = coords;
+            console.log('lat and long: ', latitude, longitude);
+            let location = await Location.reverseGeocodeAsync({
+                latitude,
+                longitude,
+            });
+            console.log('User location is: ', location);
+            const idToken = await currentUser.getIdToken();
+            const response = await fetch(`https://genielicious-1229a.wl.r.appspot.com/database/get_location`, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${idToken}`
+                }, body: JSON.stringify({ latitude: latitude, longitude: longitude })
+            });
+            if (response.ok) {
+                const json = await response.json();
+                console.log(json);
+            } else {
+                const json = await response.text();
+                console.log(json);
+            }
+            
+        };
+    };
+
+    useFocusEffect(
+        useCallback(() => {
+            getUserLocation();
+        }, [])
+    );
+
     return (
         <SafeAreaView style={styles.background}>
             {/* title */}
@@ -72,9 +154,9 @@ export default function Home({ navigation }) {
                     style={styles.sparkle}
                     resizeMode="contain"
                 />
-                <Image
+                <Animated.Image
                     source={require("../assets/chef_hands_hover.png")}
-                    style={styles.genieImage}
+                    style={[styles.genieImage, {transform: [{ translateY: moveAnimation }]},]}
                     resizeMode="contain"
                 />
                 <Image
@@ -82,9 +164,9 @@ export default function Home({ navigation }) {
                     style={styles.crystalBall}
                     resizeMode="contain"
                 />
-                <Image
+                <Animated.Image
                     source={require("../assets/food.png")}
-                    style={styles.food}
+                    style={[styles.food, {opacity: fadeAnimation},]}
                     resizeMode="contain"
                 />
             </View>
@@ -150,9 +232,10 @@ const styles = StyleSheet.create({
         flex: 0.1,
         justifyContent: 'center',
         alignItems: 'center',
+        paddingTop: '8%'
     },
     titleText: {
-        fontSize: 33,
+        fontSize: 30,
         fontWeight: 'bold',
         color: Colors.champagne,
         fontFamily: 'InknutAntiqua-Regular',
