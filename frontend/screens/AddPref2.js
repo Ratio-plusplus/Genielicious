@@ -264,8 +264,9 @@ export default function AddPref2({ navigation }) {
                         marginBottom: 10
                     }}>
                         <Text style={styles.sectionText}>Title:</Text>
-                        <View style={styles.inputContainers}>
-                            <TextInput
+                        <View>
+                        <TextInput
+                                style={styles.inputContainers}
                                 placeholder="Title"
                                 placeholderTextColor="#7C808D"
                                 color={Colors.ghost}

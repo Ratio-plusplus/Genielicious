@@ -122,7 +122,8 @@ export default function Login({ navigation }) {
               <View style={styles.icon}>
                 <Feather name="mail" size={22} color={Colors.raisin} />
               </View>
-              <TextInput
+                          <TextInput
+                              style={styles.inputField}
                 placeholder="Email"
                 placeholderTextColor="#7C808D"
                 color={Colors.raisin}
@@ -138,7 +139,8 @@ export default function Login({ navigation }) {
               <View style={styles.icon}>
                 <Feather name="lock" size={22} color={Colors.raisin} />
               </View>
-              <TextInput
+                          <TextInput
+                              style={styles.inputField}
                 placeholder="Password"
                 secureTextEntry={!passwordIsVisible}
                 placeholderTextColor="#7C808D"
@@ -285,7 +287,13 @@ const styles = StyleSheet.create({
     borderColor: Colors.gold,
     fontSize: 16,
     flexDirection: 'row',
-  },
+    },
+    inputField: {
+        backgroundColor: Colors.champagne,
+        flex: 1,
+        fontSize: 16,
+        flexDirection: 'row',
+    },
   passwordVisibleButton: {
     position: "absolute",
     right: 10,

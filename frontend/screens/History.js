@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 7, height: 7 },
         shadowOpacity: 1,
         shadowRadius: 0,
-        elevation: 2,
+        elevation: 1000,
     },
     restaurantImage: {
         width: '100%',

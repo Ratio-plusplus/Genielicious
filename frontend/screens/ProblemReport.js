@@ -72,6 +72,7 @@ export default function ProblemReport({ navigation }) {
             <Text style={styles.sectionText}>Title:</Text>
                 <View style={styles.inputContainers}>
                     <TextInput
+                        style={styles.inputField}
                         placeholder="Title"
                         placeholderTextColor="#7C808D"
                         color={Colors.ghost}
@@ -141,8 +142,9 @@ export default function ProblemReport({ navigation }) {
                 <View style={styles.selectContainer}>
                     <Text style={styles.sectionTitle}>Problem Description:</Text>
                 </View>
-                <View style={styles.descContainers}>
+                <View>
                     <TextInput
+                        style={styles.descContainers}
                         placeholder="Description"
                         placeholderTextColor="#7C808D"
                         color={Colors.ghost}
@@ -219,6 +221,12 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: Colors.ghost,
         marginTop: 2,
+    },
+    inputField: {
+        backgroundColor: Colors.champagne,
+        flex: 1,
+        fontSize: 16,
+        flexDirection: 'row',
     },
     saveButton: {
         backgroundColor: Colors.gold,

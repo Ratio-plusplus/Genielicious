@@ -163,6 +163,7 @@ export default function EditProfile({ navigation }) {
                         <Text style={styles.sectionText}>Username</Text>
                         <View style={styles.inputContainers}>
                             <TextInput
+                                style={styles.inputField}
                                 placeholder="Username"
                                 placeholderTextColor="#7C808D"
                                 onChangeText={setUsername}
@@ -180,6 +181,7 @@ export default function EditProfile({ navigation }) {
                         <Text style={styles.sectionText}>Email</Text>
                         <View style={styles.inputContainers}>
                             <TextInput
+                                style={styles.inputField}
                                 placeholder="Email"
                                 placeholderTextColor="#7C808D"
                                 onChangeText={setEmail}
@@ -197,6 +199,7 @@ export default function EditProfile({ navigation }) {
                         <Text style={styles.sectionText}>Password</Text>
                         <View style={styles.inputContainers}>
                             <TextInput
+                                style={styles.inputField}
                                 placeholder="New Password"
                                 placeholderTextColor="#7C808D"
                                 onChangeText={setPassword}
@@ -277,6 +280,12 @@ const styles = StyleSheet.create({
         marginLeft: 15,
         alignItems: "center",
         paddingLeft: 8
+    },
+    inputField: {
+        backgroundColor: Colors.champagne,
+        flex: 1,
+        fontSize: 16,
+        flexDirection: 'row',
     },
     saveButton: {
         backgroundColor: Colors.gold,

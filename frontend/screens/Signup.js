@@ -146,7 +146,9 @@ export default function Signup({ navigation }) {
               <View style={styles.icon}>
                 <Ionicons name="person" size={22} color={Colors.raisin} />
               </View>
-              <TextInput
+                          <TextInput
+                              style={styles.inputField}
+
                 placeholder="Username"
                 placeholderTextColor="#7C808D"
                 color={Colors.raisin}
@@ -163,7 +165,9 @@ export default function Signup({ navigation }) {
               <View style={styles.icon}>
                 <Feather name="mail" size={22} color={Colors.raisin} />
               </View>
-              <TextInput
+                          <TextInput
+                              style={styles.inputField}
+
                 placeholder="Email"
                 placeholderTextColor="#7C808D"
                 color={Colors.raisin}
@@ -180,7 +184,8 @@ export default function Signup({ navigation }) {
               <View style={styles.icon}>
                 <Feather name="lock" size={22} color={Colors.raisin} />
               </View>
-              <TextInput
+                          <TextInput
+                              style={styles.inputField}
                 placeholder="Password"
                 disabled={!isEditable}
                 secureTextEntry={!passwordIsVisible}
@@ -209,7 +214,8 @@ export default function Signup({ navigation }) {
               <View style={styles.icon}>
                 <Feather name="lock" size={22} color={Colors.raisin} />
               </View>
-              <TextInput
+                          <TextInput
+                              style={styles.inputField}
                 placeholder="Confirm Password"
                 secureTextEntry={!confirmPasswordIsVisible}
                 placeholderTextColor="#7C808D"
@@ -260,7 +266,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.blue,
-  },
+    },
+    inputField: {
+        backgroundColor: Colors.champagne,
+        flex: 1,
+        fontSize: 16,
+        flexDirection: 'row',
+    },
   content: {
     paddingHorizontal: 30,
   },
