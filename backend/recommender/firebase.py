@@ -2,19 +2,19 @@
 # !sudo pip install firebase-admin
 from enum import verify
 from firebase_admin import db, credentials, initialize_app, auth
-from dotenv import find_dotenv, load_dotenv
 import os
 from flask import jsonify
 import json
 import ast
+# from dotenv import find_dotenv, load_dotenv
 
-dotenv_path = find_dotenv()
-load_dotenv(dotenv_path) # loads env vars into path
+# dotenv_path = find_dotenv()
+# load_dotenv(dotenv_path) # loads env vars into path
 
-cred = credentials.Certificate("confidential\\serviceAccountKey.json")
+# cred = credentials.Certificate("confidential\\serviceAccountKey.json")
 
 db_url = {'databaseURL': os.getenv("DATABASE_URL")}
-initialize_app(cred, db_url) #credentials.ApplicationDefault()
+initialize_app(credentials.ApplicationDefault(), db_url) #credentials.ApplicationDefault()
 
 def verify_id_token(idToken):
     try:

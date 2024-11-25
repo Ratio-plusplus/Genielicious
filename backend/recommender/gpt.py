@@ -1,12 +1,12 @@
 import json
 from firebase import getDataRef, getUserCacheRef, getActiveFoodProfile
 #from firebase import getTestUserCacheRef
-from dotenv import find_dotenv, load_dotenv
 import results
 from openai import OpenAI
+# from dotenv import find_dotenv, load_dotenv
 
-dotenv_path = find_dotenv()
-load_dotenv(dotenv_path)
+# dotenv_path = find_dotenv()
+# load_dotenv(dotenv_path)
 
 client = OpenAI()
 
@@ -81,7 +81,7 @@ def submitAnswer(user_id,answer):
       return {"success": True, "results": False}
     elif surveyCache[-1]["role"] == "user": # if not user then the last response was model
       return {"Error 401" : "Client already answered question."}
-    elif json.loads(surveyCache[-1])["recommendations"]: # checks if last response from model had the recommendations (should be boolean)
+    elif json.loads(surveyCache[-1]["content"])["recommendations"]: # checks if last response from model had the recommendations (should be boolean)
       results.compileResults(user_id, answer) # puts results into resultsCache
       return {"success": True, "results": True}
 

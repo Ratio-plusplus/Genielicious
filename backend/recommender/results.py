@@ -35,6 +35,11 @@ def compileResults(user_id, food_item:str):
 
     yelp_results = getStore(coords, term = food_item, price=budget, radius=distance)
 
+    
+    if "businesses" not in yelp_results:
+        print("error")
+        cache.update({"resultsCache" : json.dumps({"error": {"type":500,"message":"Yelp businesses not provided"}})})
+        
     # Parsing Yelp results to not include unnecessary/extra fields
     formatted_results = []
     for business in yelp_results["businesses"]:
