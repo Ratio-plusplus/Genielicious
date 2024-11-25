@@ -165,10 +165,10 @@ export default function EditProfile({ navigation }) {
                             <TextInput
                                 style={styles.inputField}
                                 placeholder="Username"
-                                placeholderTextColor="#7C808D"
+                                placeholderTextColor="#555"
                                 onChangeText={setUsername}
                                 value={username}
-                                color={Colors.ghost}
+                                color={Colors.raisin}
                                 editable={true} />
                         </View>
                     </View>
@@ -183,10 +183,10 @@ export default function EditProfile({ navigation }) {
                             <TextInput
                                 style={styles.inputField}
                                 placeholder="Email"
-                                placeholderTextColor="#7C808D"
+                                placeholderTextColor="#555"
                                 onChangeText={setEmail}
                                 value={email}
-                                color={Colors.ghost}
+                                color={Colors.raisin}
                                 editable={false} />
                         </View>
                     </View>
@@ -201,11 +201,11 @@ export default function EditProfile({ navigation }) {
                             <TextInput
                                 style={styles.inputField}
                                 placeholder="New Password"
-                                placeholderTextColor="#7C808D"
+                                placeholderTextColor="#555"
                                 onChangeText={setPassword}
                                 value={password}
                                 editable={true}
-                                color={Colors.ghost}
+                                color={Colors.raisin}
                                 secureTextEntry />
                         </View>
                     </View>
@@ -265,21 +265,23 @@ const styles = StyleSheet.create({
         zIndex: 9999
     },
     sectionText: {
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: "bold",
         marginLeft: 15,
         color: Colors.ghost
     },
     inputContainers: {
-        height: 44,
-        width: "92%",
-        flexDirection: "row",
-        borderWidth: 1,
-        borderRadius: 4,
-        marginVertical: 6,
-        marginLeft: 15,
-        alignItems: "center",
-        paddingLeft: 8
+        borderWidth: 2,
+        borderRadius: 20,
+        backgroundColor: Colors.champagne,
+        flex: 1,
+        padding: 10,
+        borderColor: Colors.gold,
+        fontSize: 16,
+        flexDirection: 'row',
+        marginHorizontal: 15,
+        marginBottom: 10,
+        marginTop: 5
     },
     inputField: {
         backgroundColor: Colors.champagne,

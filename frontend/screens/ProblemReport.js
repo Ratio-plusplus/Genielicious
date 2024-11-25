@@ -74,7 +74,7 @@ export default function ProblemReport({ navigation }) {
                     <TextInput
                         style={styles.inputField}
                         placeholder="Title"
-                        placeholderTextColor="#7C808D"
+                        placeholderTextColor="#555"
                         color={Colors.ghost}
                         onChangeText={setTitle}
                         value={title}
@@ -146,7 +146,7 @@ export default function ProblemReport({ navigation }) {
                     <TextInput
                         style={styles.descContainers}
                         placeholder="Description"
-                        placeholderTextColor="#7C808D"
+                        placeholderTextColor="#555"
                         color={Colors.ghost}
                         onChangeText={problemDescription}
                         value={description}
@@ -183,23 +183,27 @@ const styles = StyleSheet.create({
         height: 44,
         width: "92%",
         flexDirection: "row",
-        borderWidth: 1,
-        borderRadius: 4,
+        borderWidth: 2,
+        borderRadius: 20,
         marginVertical: 6,
         marginLeft: 15,
         alignItems: "center",
-        paddingLeft: 8
+        paddingLeft: 8,
+        backgroundColor: Colors.champagne,
+        borderColor: Colors.gold
     },
     descContainers: {
         height: 300,
         width: "92%",
         flexDirection: "row",
-        borderWidth: 1,
-        borderRadius: 4,
+        borderWidth: 2,
+        borderRadius: 20,
         marginVertical: 6,
         marginLeft: 15,
         alignItems: "center",
-        paddingLeft: 8
+        paddingLeft: 8,
+        backgroundColor: Colors.champagne,
+        borderColor: Colors.gold
     },
     background: {
         flex: 1, 

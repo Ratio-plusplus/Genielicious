@@ -122,10 +122,10 @@ export default function Login({ navigation }) {
               <View style={styles.icon}>
                 <Feather name="mail" size={22} color={Colors.raisin} />
               </View>
-                          <TextInput
-                              style={styles.inputField}
+              <TextInput
+                style={styles.inputField}
                 placeholder="Email"
-                placeholderTextColor="#7C808D"
+                placeholderTextColor="#555"
                 color={Colors.raisin}
                 onChangeText={setEmail}   //updates email state when user types
                 value={email}   //current email state
@@ -139,11 +139,11 @@ export default function Login({ navigation }) {
               <View style={styles.icon}>
                 <Feather name="lock" size={22} color={Colors.raisin} />
               </View>
-                          <TextInput
-                              style={styles.inputField}
+              <TextInput
+                style={styles.inputField}
                 placeholder="Password"
                 secureTextEntry={!passwordIsVisible}
-                placeholderTextColor="#7C808D"
+                placeholderTextColor="#555"
                 color={Colors.raisin}
                 onChangeText={setPassword}    //updates password state
                 value={password}    //current password state
@@ -157,7 +157,7 @@ export default function Login({ navigation }) {
               <Feather
                 name={passwordIsVisible ? "eye" : "eye-off"}    //changes icon based on visibility state
                 size={22}
-                color="#7C808D"
+                color="#555"
               />
             </TouchableOpacity>
           </View>
@@ -287,13 +287,13 @@ const styles = StyleSheet.create({
     borderColor: Colors.gold,
     fontSize: 16,
     flexDirection: 'row',
-    },
-    inputField: {
-        backgroundColor: Colors.champagne,
-        flex: 1,
-        fontSize: 16,
-        flexDirection: 'row',
-    },
+  },
+  inputField: {
+    backgroundColor: Colors.champagne,
+    flex: 1,
+    fontSize: 16,
+    flexDirection: 'row',
+  },
   passwordVisibleButton: {
     position: "absolute",
     right: 10,
