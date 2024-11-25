@@ -255,12 +255,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     borderWidth: 2,
-    borderColor: Colors.ghost
+    borderColor: Colors.gold
   },
   modalTitle: {
     fontSize: 18,
     marginBottom: 15,
-    color: Colors.ghost
+    color: Colors.champagne,
+    fontWeight: 'bold'
   },
   content: {
     paddingHorizontal: 30,
@@ -388,13 +389,14 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   resetField: {
-    backgroundColor: Colors.blue,
+    backgroundColor: Colors.champagne,
     fontSize: 16,
     padding: 10,
     borderWidth: 2,
-    borderColor: Colors.ghost,
+    borderColor: Colors.gold,
     borderRadius: 10,
     width: '90%',
+    marginBottom: 3
   },
   resetButton: {
     backgroundColor: Colors.gold,
@@ -412,5 +414,6 @@ const styles = StyleSheet.create({
     borderColor: Colors.raisin,
     borderRadius: 10,
     width: 250,
+    marginBottom: 5
   }
 });
