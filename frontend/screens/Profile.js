@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
     },
     activeProfileIconImage: {
         borderColor: Colors.gold, // Active profile image border color
-        borderWidth: 3,
+        borderWidth: 5,
     },
     profileIconText: {
         marginTop: 8,

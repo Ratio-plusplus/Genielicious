@@ -159,7 +159,7 @@ export default function History({ navigation }) {
             <View style={styles.restaurantListContainer}>
                 <ScrollView contentContainerStyle={styles.restaurantList}>
                     {restaurants.length === 0 ? (
-                        <Text style={styles.noHistoryText}>No history found. Use the genie now!</Text>
+                        <Text style={styles.noHistoryText}>No history found. Use our Genie now!</Text>
                     ) : (
                         restaurants.map((item, index) => (
                             <View key={index} style={styles.restaurantItem}>
