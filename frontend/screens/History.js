@@ -6,28 +6,6 @@ import { useAuth } from '../contexts/AuthContext';
 import { useFocusEffect, useRoute } from '@react-navigation/native';
 import { ProfileContext } from '../contexts/ProfileContext';
 
-// array for the different restaurant results
-const restaurants = [
-    {
-        name: 'Wingstop',
-        aliases: 'Comfort Food, Finger Food',
-        address: '4401 E Pacific Coast Hwy, Long Beach, CA 90804',
-        image: require('../assets/restaurant1.png'),
-    },
-    {
-        name: 'Buffalo Wild Wings',
-        aliases: 'European, Meat-Centric',
-        address: '6314 Pacific Coast Hwy, Long Beach, CA 90803',
-        image: require('../assets/restaurant2.png'),
-    },
-    {
-        name: 'Fire Wings',
-        aliases: 'North American, Quick Eats',
-        address: '7565 Long Bch Towne Ctr, Long Beach, CA 90808',
-        image: require('../assets/restaurant3.png'),
-    },
-];
-
 const getHistory = async (currentUser) => {
     const idToken = await currentUser.getIdToken();
     const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/get_history', {
@@ -180,25 +158,29 @@ export default function History({ navigation }) {
 
             <View style={styles.restaurantListContainer}>
                 <ScrollView contentContainerStyle={styles.restaurantList}>
-                    {restaurants.map((item, index) => (
-                        <View key={index} style={styles.restaurantItem}>
-                            <View style={styles.imagesContainer}>
-                                <Image
-                                    source={{ uri: item.image }}
-                                    style={styles.restaurantImage}
-                                    resizeMode="cover"
-                                />
-                                <TouchableOpacity onPress={() => openYelp(item.url)}>
+                    {restaurants.length === 0 ? (
+                        <Text style={styles.noHistoryText}>No history found. Use the genie now!</Text>
+                    ) : (
+                        restaurants.map((item, index) => (
+                            <View key={index} style={styles.restaurantItem}>
+                                <View style={styles.imagesContainer}>
                                     <Image
-                                        source={require('../assets/yelp.png')} // Add Yelp logo image
-                                        style={styles.yelpLogo}
-                                        resizeMode="contain"
+                                        source={{ uri: item.image }}
+                                        style={styles.restaurantImage}
+                                        resizeMode="cover"
                                     />
-                                </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => openYelp(item.url)}>
+                                        <Image
+                                            source={require('../assets/yelp.png')}
+                                            style={styles.yelpLogo}
+                                            resizeMode="contain"
+                                        />
+                                    </TouchableOpacity>
+                                </View>
+                                {renderRestaurantItem(item, index)}
                             </View>
-                            {renderRestaurantItem(item, index)}
-                        </View>
-                    ))}
+                        ))
+                    )}
                 </ScrollView>
             </View>
         </SafeAreaView>
@@ -308,4 +290,11 @@ const styles = StyleSheet.create({
         position: 'relative',
         marginRight: 10,
     },
+    noHistoryText: {
+        color: Colors.ghost, 
+        fontSize: 20, 
+        height: '68%', 
+        marginTop: 10,
+        fontWeight: 'bold'
+    }
 });

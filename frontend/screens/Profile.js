@@ -202,6 +202,7 @@ const styles = StyleSheet.create({
         color: Colors.ghost, 
         fontSize: 20, 
         height: '68%', 
-        marginLeft: 20 
+        marginLeft: 20 ,
+        fontWeight: 'bold'
     }
 });

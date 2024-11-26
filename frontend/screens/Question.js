@@ -135,7 +135,10 @@ export default function Question({ navigation }) {
     const renderQuestions = (item) => (
         <View
             style={[{ backgroundColor: selectedAnswer === item ? Colors.gold : Colors.champagne }]}>
-            <Text style={styles.answerText}>{item}</Text>
+            <Text 
+                style={styles.answerText}
+                numberOfLines={1}
+                adjustsFontSizeToFit>{item}</Text>
         </View>
     );
     useEffect(() => {
@@ -203,7 +206,10 @@ export default function Question({ navigation }) {
                 <>
                     <View style={styles.questionContainer}>
                         <View style={styles.questionButton}>
-                            <Text style={styles.questionText}>{question}</Text>
+                            <Text 
+                                style={styles.questionText}
+                                numberOfLines={2}
+                                adjustsFontSizeToFit>{question}</Text>
                         </View>
                     </View>
 
@@ -310,7 +316,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginTop: '-30%',
         marginHorizontal: 20,
-        marginVertical: '10%'
+        marginVertical: 20
     },
     questionButton: {
         backgroundColor: Colors.champagne,
@@ -320,7 +326,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
     },
     questionText: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: '600',
         color: Colors.raisin,
         textAlign: 'center',
@@ -329,7 +335,7 @@ const styles = StyleSheet.create({
     responsesContainer: {
         flex: 0.3,
         alignItems: 'center',
-        marginTop: -20
+        marginTop: -15
     },
     buttonsContainer: {
         flexDirection: 'column',
