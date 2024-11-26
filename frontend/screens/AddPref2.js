@@ -24,8 +24,6 @@ export default function AddPref2({ navigation }) {
     const [buttonTitle, setButtonTitle] = useState("Add Taste Profile");
     const presetImages = [
         //add in path for any additional preset pictures
-        require('../assets/images/Dessert.png'),
-        require('../assets/images/Vegetables.png'),
         require('../assets/images/images.jpg'),
         require('../assets/images/images1.jpg'),
         require('../assets/images/images (1).jpg'),
