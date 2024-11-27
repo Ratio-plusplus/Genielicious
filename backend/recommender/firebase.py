@@ -8,10 +8,10 @@ import json
 import ast
 # from dotenv import find_dotenv, load_dotenv
 
-# dotenv_path = find_dotenv()
-# load_dotenv(dotenv_path) # loads env vars into path
+#dotenv_path = find_dotenv()
+#load_dotenv(dotenv_path) # loads env vars into path
 
-# cred = credentials.Certificate("confidential\\serviceAccountKey.json")
+#cred = credentials.Certificate("confidential\\serviceAccountKey.json")
 
 db_url = {'databaseURL': os.getenv("DATABASE_URL")}
 initialize_app(credentials.ApplicationDefault(), db_url) #credentials.ApplicationDefault()

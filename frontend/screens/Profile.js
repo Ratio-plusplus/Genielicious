@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
     },
     activeProfileIconImage: {
         borderColor: Colors.gold, // Active profile image border color
-        borderWidth: 3,
+        borderWidth: 5,
     },
     profileIconText: {
         marginTop: 8,
@@ -202,6 +202,7 @@ const styles = StyleSheet.create({
         color: Colors.ghost, 
         fontSize: 20, 
         height: '68%', 
-        marginLeft: 20 
+        marginLeft: 20 ,
+        fontWeight: 'bold'
     }
 });

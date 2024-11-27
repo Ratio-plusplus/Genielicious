@@ -2,7 +2,7 @@ import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, TextInput,
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import React, {useState, useContext, useEffect} from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Colors } from './Colors';
 import CheckBox from 'react-native-check-box';
 import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
@@ -16,7 +16,7 @@ export default function AddPref2({ navigation }) {
     const [name, setName] = React.useState();
     const [selectedDistance, setSelectedDistance] = useState(null);
     const [selectedBudget, setSelectedBudget] = useState(null);
-    const { isChecked, setIsChecked, addToProfile, updateProfile, fetchProfiles } = useContext(FlavorPreferencesContext) 
+    const { isChecked, setIsChecked, addToProfile, updateProfile, fetchProfiles } = useContext(FlavorPreferencesContext)
     const [showPresetImages, setShowPresetImages] = useState(false)
     const route = useRoute();
     const { existingProfileData } = route.params || {};
@@ -24,25 +24,27 @@ export default function AddPref2({ navigation }) {
     const [buttonTitle, setButtonTitle] = useState("Add Taste Profile");
     const presetImages = [
         //add in path for any additional preset pictures
-        require('../assets/images//Dessert.png'),
-        require('../assets/images//Vegetables.png'),
-        require('../assets/images//images.jpg'),
-        require('../assets/images//images1.jpg'),
-        require('../assets/images//images (1).jpg'),
-        require('../assets/images//images (2).jpg'),
-        require('../assets/images//images (3).jpg'),
-        require('../assets/images//images (4).jpg'),
-        require('../assets/images//images (5).jpg'),
-        require('../assets/images//images (6).jpg'),
-        
+        require('../assets/images/images.jpg'),
+        require('../assets/images/images1.jpg'),
+        require('../assets/images/images (1).jpg'),
+        require('../assets/images/images (2).jpg'),
+        require('../assets/images/images (3).jpg'),
+        require('../assets/images/images (4).jpg'),
+        require('../assets/images/images (5).jpg'),
+        require('../assets/images/images (6).jpg'),
+        require('../assets/images/image 11.png'),
+        require('../assets/images/image 12.png'),
+        require('../assets/images/image 66.png'),
+        require('../assets/images/image 68.png'),
+        require('../assets/images/image 79.png'),
     ]
 
     // Allows user to pick an image on their phone
-    const handleImageSelection = async() => {
+    const handleImageSelection = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
             allowsEditing: true,
-            aspect: [4,4],
+            aspect: [4, 4],
             quality: 1,
         });
 
@@ -60,9 +62,10 @@ export default function AddPref2({ navigation }) {
     }
 
     const selectPresetImage = (image) => {
-        setSelectedImage(Image.resolveAssetSource(image).uri)
+        const resolvedUri = Image.resolveAssetSource(image).uri;
+        setSelectedImage(resolvedUri)
         setShowPresetImages(false);
-        setModalVisible(false) 
+        setModalVisible(false)
         setPresetModalVisible(false)
     }
 
@@ -79,7 +82,11 @@ export default function AddPref2({ navigation }) {
     //firebase logic to add or update the profile
     const handleSaveProfile = async () => {
         console.log("handleSaveProfile called"); // Debugging line
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> main
         // We first check to see if there is any pre=existing data and store those values
         const profileData = {
             title: name ?? existingProfileData.name,
@@ -89,7 +96,11 @@ export default function AddPref2({ navigation }) {
             tastePreferences: isChecked.tastePreferences ?? existingProfileData.tastePreferences,
             allergies: isChecked.allergies ?? existingProfileData.allergies,
         };
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> main
         // If there is pre-existing data then we edit/update, if not we add a new profile
         try {
             if (existingProfileData && existingProfileData.id) {
@@ -110,7 +121,7 @@ export default function AddPref2({ navigation }) {
 
     // set the values after we figure out if we have any pre-existing data
     useEffect(() => {
-        if(existingProfileData){
+        if (existingProfileData) {
             setSelectedImage(existingProfileData.image)
             setName(existingProfileData.title);
             setSelectedBudget(existingProfileData.budget)
@@ -134,6 +145,7 @@ export default function AddPref2({ navigation }) {
                 marginTop: 12,
                 marginBottom: 12,
                 flexDirection: "row",
+<<<<<<< HEAD
                 justifyContent: "center"}}>
                     <TouchableOpacity 
                         onPress={()=>navigation.navigate('Add Preference 1')}
@@ -148,10 +160,28 @@ export default function AddPref2({ navigation }) {
                         />
                     </TouchableOpacity>
                     <Text style={{marginTop: 2, fontWeight: 600, fontSize: 22, color: Colors.ghost}}>{pageTitle}</Text>
+=======
+                justifyContent: "center"
+            }}>
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('Add Preference 1')}
+                    style={{
+                        position: "absolute",
+                        left: 0
+                    }}>
+                    <MaterialIcons
+                        name="keyboard-arrow-left"
+                        size={33}
+                        color={Colors.ghost}
+                    />
+                </TouchableOpacity>
+                <Text style={{ marginTop: 2, fontWeight: 600, fontSize: 22, color: Colors.ghost }}>{pageTitle}</Text>
+>>>>>>> main
             </View>
 
             {/* Visual changes for the preference profile picture */}
             {/* <ScrollView> */}
+<<<<<<< HEAD
                 <View style={{
                     alignItems: "center",
                     marginTop: 10,
@@ -181,99 +211,143 @@ export default function AddPref2({ navigation }) {
                                     }}
                                 />
                             )}
+=======
+            <View style={{
+                alignItems: "center",
+                marginTop: 10,
+                marginBottom: 20
+            }}>
+                <TouchableOpacity
+                    onPress={handleProfilePicturePress}>
+                    {selectedImage ? (
+                        <Image
+                            source={{ uri: selectedImage }}
+                            style={{
+                                height: 125,
+                                width: 125,
+                                borderRadius: 85,
+                                borderWidth: 2,
+                                borderColor: "#000"
+                            }}
+                        />
+                    ) : (
+                        <Image
+                            source={{ uri: initialpfp }} // Fallback image if selectedImage is null
+                            style={{
+                                height: 125,
+                                width: 125,
+                                borderRadius: 85,
+                                borderWidth: 2,
+                                borderColor: "#000",
+                            }}
+                        />
+                    )}
+>>>>>>> main
 
-                        <View style={{
-                            position: "absolute",
-                            bottom: -5,
-                            right: -5,
-                            zIndex: 9999
-                        }}>
-                            <MaterialIcons
-                                name="photo-camera"
-                                size={28}
-                                color={Colors.ghost}/>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-                
-                {/* Main Modal for selecting images */}
-                <Modal
-                    animationType="fade"
-                    transparent={true}
-                    visible={isModalVisible}
-                    onRequestClose={() => setModalVisible(false)}
-                >
-                    <View style={styles.modalOverlay}>
-                        <View style={styles.modalContainer}>
-                            <Text style={styles.modalTitle}>Choose an Option</Text>
-                            <TouchableOpacity style={styles.modalButton} onPress={handleImageSelection}>
-                                <Text style={styles.modalButtonText}>Select from Gallery</Text>
-                            </TouchableOpacity>
-
-                            {/* Button to open preset images modal */}
-                            <TouchableOpacity
-                                style={styles.modalButton}
-                                onPress={() => setPresetModalVisible(true)}>
-                                <Text style={styles.modalButtonText}>Select from Preset Images</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.cancelButton}>
-                                <Text style={styles.cancelButtonText}>Cancel</Text>
-                            </TouchableOpacity>
-                        </View>
+                    <View style={{
+                        position: "absolute",
+                        bottom: -5,
+                        right: -5,
+                        zIndex: 9999
+                    }}>
+                        <MaterialIcons
+                            name="photo-camera"
+                            size={28}
+                            color={Colors.ghost} />
                     </View>
-                </Modal>
+                </TouchableOpacity>
+            </View>
 
-                {/* Preset Images Modal */}
-                <Modal
-                    animationType="fade"
-                    transparent={true}
-                    visible={isPresetModalVisible}
-                    onRequestClose={() => setPresetModalVisible(false)}
-                >
-                    <View style={styles.modalOverlay}>
-                        <View style={styles.modalContainer}>
-                            <Text style={styles.modalTitle}>Preset Images</Text>
-                            <FlatList
-                                data={presetImages}
-                                renderItem={({ item }) => (
+            {/* Main Modal for selecting images */}
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={isModalVisible}
+                onRequestClose={() => setModalVisible(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContainer}>
+                        <Text style={styles.modalTitle}>Choose an Option</Text>
+                        <TouchableOpacity style={styles.modalButton} onPress={handleImageSelection}>
+                            <Text style={styles.modalButtonText}>Select from Gallery</Text>
+                        </TouchableOpacity>
+
+                        {/* Button to open preset images modal */}
+                        <TouchableOpacity
+                            style={styles.modalButton}
+                            onPress={() => {
+                                setModalVisible(false);
+                                setPresetModalVisible(true)
+                            }}>
+                            <Text style={styles.modalButtonText}>Select from Preset Images</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.cancelButton}>
+                            <Text style={styles.cancelButtonText}>Cancel</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+
+            {/* Preset Images Modal */}
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={isPresetModalVisible}
+                onRequestClose={() => setPresetModalVisible(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContainer}>
+                        <Text style={[styles.modalTitle, { marginBottom: 15 }]}>Preset Images</Text>
+                        <FlatList
+                            data={presetImages}
+                            renderItem={({ item }) => {
+                                const resolvedUri = Image.resolveAssetSource(item).uri;
+                                const isSelected = resolvedUri === selectedImage;
+
+                                return (
                                     <TouchableOpacity onPress={() => selectPresetImage(item)}>
                                         <Image
                                             source={item}
-                                            style={styles.presetImages} // Ensure all images have fixed size
+                                            style={[
+                                                styles.presetImages,
+                                                isSelected && { borderWidth: 6, borderColor: "#0989FF" } // Blue border for selected image
+                                            ]}
                                         />
                                     </TouchableOpacity>
-                                )}
-                                keyExtractor={(item, index) => index.toString()}
-                                showsVerticalScrollIndicator = {true}
-                                numColumns = {3}
-                            />
-                            <TouchableOpacity onPress={() => setPresetModalVisible(false)} style={styles.cancelButton}>
-                                <Text style={styles.cancelButtonText}>Close</Text>
-                            </TouchableOpacity>
-                        </View>
+                                );
+                            }}
+                            keyExtractor={(item, index) => index.toString()}
+                            showsVerticalScrollIndicator={true}
+                            numColumns={3}
+                        />
+                        <TouchableOpacity onPress={() => setPresetModalVisible(false)} style={styles.cancelButton}>
+                            <Text style={styles.cancelButtonText}>Close</Text>
+                        </TouchableOpacity>
                     </View>
-                </Modal>
+                </View>
+            </Modal>
 
-                
 
-                {/* Title box */}
-                <View>
-                    <View style={{
-                        flexDirection: "column",
-                        marginBottom: 10
-                    }}>
-                        <Text style={styles.sectionText}>Title:</Text>
-                        <View style={styles.inputContainers}>
-                            <TextInput
-                                placeholder="Title"
-                                placeholderTextColor="#7C808D"
-                                color={Colors.ghost}
-                                onChangeText={setName}
-                                value={name || ''}
-                                editable={true}/>
-                        </View>
+
+            {/* Title box */}
+            <View>
+                <View style={{
+                    flexDirection: "column",
+                    marginBottom: 10
+                }}>
+                    <Text style={styles.sectionText}>Title:</Text>
+                    <View>
+                        <TextInput
+                            style={styles.inputContainers}
+                            placeholder="Title"
+                            placeholderTextColor="#7C808D"
+                            color={Colors.ghost}
+                            onChangeText={setName}
+                            value={name || ''}
+                            editable={true} />
                     </View>
+                </View>
 
                 {/* Distance checkbox section */}
                 <View style={styles.checkboxContainer}>
@@ -288,7 +362,7 @@ export default function AddPref2({ navigation }) {
                                 distance: 16093
                             }))
                         }
-                    }
+                        }
                     />
                     <RadioButton
                         label="Within 15 miles"
@@ -300,7 +374,7 @@ export default function AddPref2({ navigation }) {
                                 distance: 24140
                             }))
                         }
-                    }
+                        }
                     />
                     <RadioButton
                         label="Within 20 miles"
@@ -312,7 +386,7 @@ export default function AddPref2({ navigation }) {
                                 distance: 32187
                             }))
                         }
-                    }
+                        }
                     />
                     <RadioButton
                         label="Within 25 miles"
@@ -324,7 +398,7 @@ export default function AddPref2({ navigation }) {
                                 distance: 40000
                             }))
                         }
-                    }
+                        }
                     />
                 </View>
 
@@ -340,7 +414,7 @@ export default function AddPref2({ navigation }) {
                                 ...prevState,
                                 budget: 1
                             }))
-                        }}       
+                        }}
                     />
                     <RadioButton
                         label="$30 or less"
@@ -351,7 +425,7 @@ export default function AddPref2({ navigation }) {
                                 ...prevState,
                                 budget: 2
                             }))
-                        }}       
+                        }}
                     />
                     <RadioButton
                         label="$60 or less"
@@ -362,7 +436,7 @@ export default function AddPref2({ navigation }) {
                                 ...prevState,
                                 budget: 3
                             }))
-                        }}       
+                        }}
                     />
                     <RadioButton
                         label="More than $60"
@@ -376,6 +450,7 @@ export default function AddPref2({ navigation }) {
                         }}
                     />
                 </View>
+<<<<<<< HEAD
                     <TouchableOpacity style={styles.saveButton}
                         onPress={() => {
                             handleSaveProfile();
@@ -384,6 +459,16 @@ export default function AddPref2({ navigation }) {
                         <Text style={styles.saveText}>{buttonTitle}</Text>
                     </TouchableOpacity>
                 </View>
+=======
+                <TouchableOpacity style={styles.saveButton}
+                    onPress={() => {
+                        handleSaveProfile();
+                        fetchProfiles();
+                    }}>
+                    <Text style={styles.saveText}>{buttonTitle}</Text>
+                </TouchableOpacity>
+            </View>
+>>>>>>> main
             {/* </ScrollView> */}
         </SafeAreaView>
     )
@@ -413,9 +498,9 @@ const styles = StyleSheet.create({
         paddingLeft: 22,
     },
     sectionTitle: {
-        fontSize: 22, 
-        fontWeight: "bold", 
-        color: Colors.ghost, 
+        fontSize: 22,
+        fontWeight: "bold",
+        color: Colors.ghost,
         marginBottom: 15,
     },
     checkbox: {
@@ -424,7 +509,7 @@ const styles = StyleSheet.create({
         marginBottom: 15,
     },
     checkboxText: {
-        fontSize: 19, 
+        fontSize: 19,
         color: Colors.ghost,
     },
     saveButton: {
@@ -465,11 +550,13 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         padding: 20,
         alignItems: 'center',
+        borderWidth: 2,
+        borderColor: Colors.ghost
     },
     modalTitle: {
         fontSize: 22,
         fontWeight: 'bold',
-        marginBottom: 15,
+        marginBottom: 7,
         color: Colors.ghost,
     },
     modalButton: {
@@ -477,6 +564,7 @@ const styles = StyleSheet.create({
         padding: 15,
         borderRadius: 8,
         marginTop: 10,
+        marginBottom: 5,
         width: '100%',
         alignItems: 'center',
     },
@@ -490,15 +578,15 @@ const styles = StyleSheet.create({
     },
     cancelButtonText: {
         color: Colors.ghost,
-        fontSize: 16,
+        fontSize: 17,
     },
     presetImages: {
         width: 90,  // Adjust width for 3 images per row
         height: 90, // Keep height consistent
-        margin: 5,   // Ensure spacing between images
-        borderRadius: 15,
-        borderWidth: 1,
-        borderColor: '#ddd',
+        //margin: 5,   // Ensure spacing between images
+        //borderRadius: 15,
+        borderWidth: 2,
+        borderColor: Colors.ghost,
     },
     radioButtonContainer: {
         flexDirection: "row",

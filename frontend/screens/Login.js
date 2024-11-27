@@ -123,8 +123,14 @@ export default function Login({ navigation }) {
                 <Feather name="mail" size={22} color={Colors.raisin} />
               </View>
               <TextInput
+<<<<<<< HEAD
                 placeholder="Email"
                 placeholderTextColor="#7C808D"
+=======
+                style={styles.inputField}
+                placeholder="Email"
+                placeholderTextColor="#555"
+>>>>>>> main
                 color={Colors.raisin}
                 onChangeText={setEmail}   //updates email state when user types
                 value={email}   //current email state
@@ -139,9 +145,16 @@ export default function Login({ navigation }) {
                 <Feather name="lock" size={22} color={Colors.raisin} />
               </View>
               <TextInput
+<<<<<<< HEAD
                 placeholder="Password"
                 secureTextEntry={!passwordIsVisible}
                 placeholderTextColor="#7C808D"
+=======
+                style={styles.inputField}
+                placeholder="Password"
+                secureTextEntry={!passwordIsVisible}
+                placeholderTextColor="#555"
+>>>>>>> main
                 color={Colors.raisin}
                 onChangeText={setPassword}    //updates password state
                 value={password}    //current password state
@@ -155,7 +168,7 @@ export default function Login({ navigation }) {
               <Feather
                 name={passwordIsVisible ? "eye" : "eye-off"}    //changes icon based on visibility state
                 size={22}
-                color="#7C808D"
+                color="#555"
               />
             </TouchableOpacity>
           </View>
@@ -198,7 +211,11 @@ export default function Login({ navigation }) {
             </Text>
           </TouchableOpacity>
           <Modal
+<<<<<<< HEAD
             animationType="slide"
+=======
+            animationType="fade"
+>>>>>>> main
             transparent={true}
             visible={modalVisible}
             onRequestClose={() => setModalVisible(false)}
@@ -209,6 +226,7 @@ export default function Login({ navigation }) {
                 {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
                 {message ? <Text style={styles.success}>{message}</Text> : null}
                 <TextInput
+<<<<<<< HEAD
                   placeholder="Enter your email"
                   value={resetEmail}
                   onChangeText={setResetEmail}
@@ -218,6 +236,24 @@ export default function Login({ navigation }) {
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => setModalVisible(false)}>
                   <Text>Cancel</Text>
+=======
+                  style={styles.resetField}
+                  placeholder="Enter your email"
+                  placeholderTextColor="#999"
+                  value={resetEmail}
+                  onChangeText={setResetEmail}
+                  color={Colors.ghost}
+                />
+                <TouchableOpacity onPress={handlePasswordReset}>
+                  <View style={styles.resetButton}>
+                      <Text style={{fontSize: 16, textAlign: 'center'}}>Send Reset Email</Text>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setModalVisible(false)}>
+                  <View style={styles.cancelButton}>
+                      <Text style={{fontSize: 16, textAlign: 'center'}}>Cancel</Text>
+                  </View>
+>>>>>>> main
                 </TouchableOpacity>
               </View>
             </View>
@@ -242,13 +278,17 @@ const styles = StyleSheet.create({
   modalContent: {
     width: "80%",
     padding: 20,
-    backgroundColor: Colors.ghost,
+    backgroundColor: Colors.blue,
     borderRadius: 10,
     alignItems: "center",
+    borderWidth: 2,
+    borderColor: Colors.gold
   },
   modalTitle: {
     fontSize: 18,
-    marginBottom: 10,
+    marginBottom: 15,
+    color: Colors.champagne,
+    fontWeight: 'bold'
   },
   content: {
     paddingHorizontal: 30,
@@ -285,6 +325,15 @@ const styles = StyleSheet.create({
     borderColor: Colors.gold,
     fontSize: 16,
     flexDirection: 'row',
+<<<<<<< HEAD
+=======
+  },
+  inputField: {
+    backgroundColor: Colors.champagne,
+    flex: 1,
+    fontSize: 16,
+    flexDirection: 'row',
+>>>>>>> main
   },
   passwordVisibleButton: {
     position: "absolute",
@@ -369,4 +418,32 @@ const styles = StyleSheet.create({
     color: Colors.yellow,
     fontWeight: "500",
   },
+  resetField: {
+    backgroundColor: Colors.champagne,
+    fontSize: 16,
+    padding: 10,
+    borderWidth: 2,
+    borderColor: Colors.gold,
+    borderRadius: 10,
+    width: '90%',
+    marginBottom: 3
+  },
+  resetButton: {
+    backgroundColor: Colors.gold,
+    padding: 10,
+    borderWidth: 2,
+    borderColor: Colors.raisin,
+    borderRadius: 10,
+    width: 250,
+    marginVertical: 10
+  },
+  cancelButton: {
+    backgroundColor: Colors.ghost,
+    padding: 10,
+    borderWidth: 2,
+    borderColor: Colors.raisin,
+    borderRadius: 10,
+    width: 250,
+    marginBottom: 5
+  }
 });

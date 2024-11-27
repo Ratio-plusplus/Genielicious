@@ -144,7 +144,7 @@ export default function Home({ navigation }) {
         <SafeAreaView style={styles.background}>
             {/* title */}
             <View style={styles.titleContainer}>
-                <Text style={styles.titleText}>Genielicious</Text>
+                <Text style={styles.titleText}>G e n i e l i c i o u s</Text>
             </View>
 
             {/* all the images in the background */}
@@ -238,7 +238,6 @@ const styles = StyleSheet.create({
         fontSize: 30,
         fontWeight: 'bold',
         color: Colors.champagne,
-        fontFamily: 'InknutAntiqua-Regular',
     },
     genieContainer: {
         flex: 0.63,
@@ -308,9 +307,9 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.gold,
         padding: 10,
         width: '30%',
-        borderRadius: 10,
-        borderColor: Colors.raisin,
-        borderWidth: 1
+        borderRadius: 15,
+        borderColor: Colors.champagne,
+        borderWidth: 2
     },
     profileSubtitle: {
         fontSize: 16,

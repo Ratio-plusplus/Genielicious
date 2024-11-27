@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, Alert, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import React, { useState, useContext } from 'react';
@@ -11,6 +11,7 @@ export default function Preference({ navigation, route }) {
     const { currentUser, loading } = useAuth(); // Access currentUser and loading
     const { profileData } = route.params;
     const { setActiveProfile } = useContext(FlavorPreferencesContext);
+    const [modalVisible, setModalVisible] = useState(false);
 
     const [tasteProfile, setTasteProfile] = useState({
         title: profileData?.title || '',
@@ -44,15 +45,17 @@ export default function Preference({ navigation, route }) {
     const tastePreferencesString = getTrueKeysAsString(tasteProfile.tastePreferences);
     const allergiesString = getTrueKeysAsString(tasteProfile.allergies);
 
-    const handleDeleteProfile = () => {
-        Alert.alert(
-            "Delete Profile",
-            "Are you sure you want to delete this flavor profile?",
-            [
-                {
-                    text: "Cancel",
-                    style: "cancel"
+    const handleDeleteProfile = async () => {
+        try {
+            const idToken = await currentUser.getIdToken();
+            console.log(profileData.id);
+            const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/delete_flavor_profile', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${idToken}`
                 },
+<<<<<<< HEAD
                 {
                     text: "Delete",
                     onPress: async () => {
@@ -67,24 +70,33 @@ export default function Preference({ navigation, route }) {
                                 },
                                 body: JSON.stringify({ profileId: profileData.id })
                             });
+=======
+                body: JSON.stringify({ profileId: profileData.id })
+            });
+>>>>>>> main
 
-                            console.log("Response Status:", response.status);
-                            const responseText = await response.text();
-                            console.log("Response Text:", responseText);
+            console.log("Response Status:", response.status);
+            const responseText = await response.text();
+            console.log("Response Text:", responseText);
 
-                            if (response.ok) {
-                                navigation.navigate('Profile');
-                            } else {
-                                console.error("Error deleting profile: ", responseText);
-                            }
-                        } catch (error) {
-                            console.error("Error deleting profile: ", error);
-                        }
-                    },
-                    style: "destructive"
-                }
-            ]
-        );
+            if (response.ok) {
+                navigation.navigate('Profile');
+            } else {
+                console.error("Error deleting profile: ", responseText);
+            }
+        } catch (error) {
+            console.error("Error deleting profile: ", error);
+        }
+    };
+
+    const handleConfirmYes = () => {
+        setModalVisible(false);  // close the modal
+        handleDeleteProfile();
+        navigation.navigate('Tab');  // navigate back to the Home page
+    };
+
+    const handleConfirmNo = () => {
+        setModalVisible(false);  // close the modal without navigating
     };
 
     const handleSetActiveProfile = async () => {
@@ -126,7 +138,7 @@ export default function Preference({ navigation, route }) {
                 </TouchableOpacity>
                 <Text style={{ marginTop: 2, fontWeight: '600', fontSize: 22, color: Colors.ghost }}>{tasteProfile.title}</Text>
                 <TouchableOpacity
-                    onPress={handleDeleteProfile}
+                    onPress={() => setModalVisible(true)}
                     style={{ position: "absolute", right: 0 }}>
                     <MaterialIcons
                         name="delete"
@@ -136,6 +148,30 @@ export default function Preference({ navigation, route }) {
                 </TouchableOpacity>
             </View>
 
+<<<<<<< HEAD
+=======
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => setModalVisible(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContainer}>
+                        <Text style={styles.modalText}>Are you sure you want to delete this taste profile?</Text>
+                        <View style={styles.modalButtons}>
+                            <TouchableOpacity style={styles.modalYesButton} onPress={handleConfirmYes}>
+                                <Text style={styles.modalButtonText}>Yes</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.modalNoButton} onPress={handleConfirmNo}>
+                                <Text style={styles.modalButtonText}>No</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+
+>>>>>>> main
             {/* <ScrollView contentContainerStyle={{ paddingBottom: 20 }}> */}
                 <View style={{ alignItems: "center", marginTop: 10, marginBottom: 20 }}>
                     <Image
@@ -264,5 +300,63 @@ const styles = StyleSheet.create({
         fontSize: 22,
         fontWeight: "bold",
         color: Colors.raisin
-    }
+    },
+    modalOverlay: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',  
+    },
+    modalContainer: {
+        width: '80%',
+        height: '20%',
+        backgroundColor: Colors.blue,
+        borderRadius: 10,
+        borderWidth: 2,
+        borderColor: Colors.ghost,
+        padding: 20,
+        marginHorizontal: 0,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    modalText: {
+        fontSize: 22,
+        fontWeight: '600',
+        marginBottom: 20,
+        color: Colors.ghost,
+        alignItems: 'center',
+        textAlign: 'center'
+    },
+    modalButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        width: '100%',
+        height: '35%'
+    },
+    modalYesButton: {
+        padding: 10,
+        borderRadius: 5,
+        minWidth: 100,
+        alignItems: 'center',
+        backgroundColor: Colors.gold
+    },
+    modalNoButton: {
+        padding: 10,
+        borderRadius: 5,
+        minWidth: 100,
+        alignItems: 'center',
+        backgroundColor: Colors.ghost
+    },
+    modalButtonText: {
+        color: Colors.raisin,
+        fontWeight: '600',
+        fontSize: 19
+    },
 });

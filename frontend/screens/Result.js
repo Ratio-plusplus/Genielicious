@@ -241,11 +241,17 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         fontSize: 22,
         color: Colors.champagne,
+<<<<<<< HEAD
         paddingRight: '10%',
         paddingTop: '5%',
         fontFamily: 'InknutAntiqua-Regular',
         textAlign: 'center',
         justifyContent: 'center'
+=======
+        textAlign: 'center',
+        paddingRight: '13%',
+        paddingTop: '8%'
+>>>>>>> main
     },
     genieContainer: {
         height: '48%',  
@@ -349,7 +355,7 @@ const styles = StyleSheet.create({
         height: '20%',
         backgroundColor: Colors.blue,
         borderRadius: 10,
-        borderWidth: 1,
+        borderWidth: 2,
         borderColor: Colors.ghost,
         padding: 20,
         marginHorizontal: 0,
