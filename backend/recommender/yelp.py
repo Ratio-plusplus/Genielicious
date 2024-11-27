@@ -1,15 +1,15 @@
 import requests
 import json
 import os
-#from dotenv import find_dotenv, load_dotenv
+# from dotenv import find_dotenv, load_dotenv
 
-#dotenv_path = find_dotenv()
-#load_dotenv(dotenv_path)
+# dotenv_path = find_dotenv()
+# load_dotenv(dotenv_path)
 
 API_KEY = os.getenv("YELP_API_KEY")
 
 # func to get yelp results on specialized queries
-def getStore(coordinates, term = None, categories = "restaurants", radius=16000, sort_by = "best_match", checkOpen = True, price = None):
+def getStore(coordinates, term = None, categories = "restaurants,food", radius=16000, sort_by = "best_match", checkOpen = True, price = None):
     url = "https://api.yelp.com/v3/businesses/search"
 
     query = {"latitude": coordinates[0], "longitude": coordinates[1], 
@@ -60,8 +60,9 @@ if __name__ == "__main__":
     CSULB_coordinates = (33.78336745904146, -118.1101659429386) # test location (lat,long)
     default_radius = 16000 # ~10 miles in meters
     default_category = "restaurants"
+    term = "Grilled Lemon Herb Chicken"
 
-    # res = getStore(CSULB_coordinates, categories="raw_food")
+    # res = getStore(CSULB_coordinates, term = term)
     # res = categoryDetails("en_US") # gets all businesses within en_US locale
 
     # cacheToJson("results.json", res)

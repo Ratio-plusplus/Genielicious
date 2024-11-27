@@ -22,6 +22,14 @@ def getResults(user_id):
     return results
 
 def compileResults(user_id, food_item:str):
+    # status values will let the frontend know what type of results are given
+    # codes are as follows:
+    #   1 : successful/normal results
+    #   2 : exact results weren't found so "next best" results were given
+    #   3 : no results could be found for one reason or another 
+    #       ex: there are no OPEN businesses that are also on yelp around the user
+    #       ex: there are no restaurants around that are similar enough
+    status = 1
     cache = getUserCacheRef(user_id)
     coords = getLocation(user_id) # user location        
 
@@ -39,7 +47,17 @@ def compileResults(user_id, food_item:str):
     if "businesses" not in yelp_results:
         print("error")
         cache.update({"resultsCache" : json.dumps({"error": {"type":500,"message":"Yelp businesses not provided"}})})
-        
+
+    # handle when no businesses are given
+    if yelp_results["total"] == 0:
+        status = 2
+        # broaden search parameters a bit
+        yelp_results = getStore(coords, term = food_item.split(" ")[0:2], categories="food",price=budget, radius=distance)
+
+    # check if there are any new results
+    if yelp_results["total"] == 0:
+        status = 3
+
     # Parsing Yelp results to not include unnecessary/extra fields
     formatted_results = []
     for business in yelp_results["businesses"]:
@@ -50,7 +68,9 @@ def compileResults(user_id, food_item:str):
         formatted_business["categories"] = business["categories"]
         formatted_business["location"] = business["location"]
         formatted_business["url"] = business["url"]
+        formatted_business["coordinates"] = business["coordinates"]
         formatted_results.append(formatted_business)
 
     clearCache(user_id)
-    cache.update({"resultsCache" : json.dumps({"businesses":formatted_results})})
+    cache.update({"resultsCache" : json.dumps({"businesses":formatted_results,
+                                               "result_status":status})})
