@@ -124,10 +124,10 @@ def getUser(uid):
 def updateDatabaseUser(query, uid):
     try:
         keys = query.keys()
-        print(keys)
+        # print(keys)
         for key in keys:
-            print(key)
-            print(query.get(key))
+            # print(key)
+            # print(query.get(key))
             db.reference(f"users/{uid}").update({key: query.get(key) })
         return jsonify({"uid": uid, "message": "User updated successfully in database"}), 200
     except Exception as e:
@@ -146,7 +146,7 @@ def addHistory(query, uid):
     try:
         restaurantsInfo = query.get("restaurantsInfo")
         loading = json.loads(str(restaurantsInfo))
-        categories = db.reference("yelp_data/categorized_aliases").get();
+        categories = db.reference("yelp_data/categorized_aliases").get()
         for restaurant in loading:
             taste = restaurant['taste']
             alias = taste.split(", ")
@@ -156,8 +156,8 @@ def addHistory(query, uid):
                 if i in categories:
                     aliases = categories[i]
                     tastes.update(aliases)
-                else:
-                    print(i)
+                # else:
+                #     print(i)
             x = ', '.join(map(str, tastes))
             restaurant['taste'] = x
             ref = db.reference(f"users/{uid}/history").push()

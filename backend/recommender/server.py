@@ -99,7 +99,7 @@ def createUser():
 
    
     #info = json.loads(info)
-    print(query)
+    # print(query)
     return firebase.createNewUser(query)
 
 #endregion
