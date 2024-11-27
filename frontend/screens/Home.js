@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback,useRef } from 'react';
 import { Colors } from './Colors';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Modal, ActivityIndicator} from "react-native";
+import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Modal, ActivityIndicator, Animated} from "react-native";
 import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
 import * as Location from "expo-location";
 import { useFocusEffect } from '@react-navigation/native';
@@ -15,6 +15,9 @@ export default function Home({ navigation }) {
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
     const [items, setItems] = useState([]);
+
+    const moveAnimation = useRef(new Animated.Value(0)).current; // For vertical movement
+    const fadeAnimation = useRef(new Animated.Value(0)).current; // For fading
 
     useEffect(() => {
         // Map flavorProfiles to the format required by DropDownPicker
@@ -32,7 +35,48 @@ export default function Home({ navigation }) {
         if (activeProfileId && profileItems.length > 0) {
             setValue(activeProfileId);
         }
-    }, [flavorProfiles, activeProfileId]);
+        // Animation: Move up and down
+        const moveAnimationLoop = Animated.loop(
+          Animated.sequence([
+            Animated.timing(moveAnimation, {
+                toValue: 10, // Move down
+                duration: 1300,
+                useNativeDriver: true,
+              }),
+            Animated.timing(moveAnimation, {
+              toValue: 0, // Move up
+              duration: 1500,
+              useNativeDriver: true,
+            }),
+          ])
+        );
+    
+        // Animation: Fade in and out
+        const fadeAnimationLoop = Animated.loop(
+          Animated.sequence([
+            Animated.timing(fadeAnimation, {
+              toValue: 1, // Fully visible
+              duration: 3000,
+              useNativeDriver: true,
+            }),
+            Animated.timing(fadeAnimation, {
+              toValue: 0, // Fully invisible
+              duration: 2000,
+              useNativeDriver: true,
+            }),
+          ])
+        );
+    
+        // Start animations
+        moveAnimationLoop.start();
+        fadeAnimationLoop.start();
+    
+        // // Cleanup function (optional, if needed for stopping animations)
+        // return () => {
+        //   moveAnimationLoop.stop();
+        //   fadeAnimationLoop.stop();
+        // };
+      }, [flavorProfiles, activeProfileId, moveAnimation, fadeAnimation]);
 
     const handleValueChange = (newValue) => {
         console.log("handleValueChange called with:", newValue);
@@ -89,11 +133,13 @@ export default function Home({ navigation }) {
             
         };
     };
+
     useFocusEffect(
         useCallback(() => {
             getUserLocation();
         }, [])
     );
+
     return (
         <SafeAreaView style={styles.background}>
             {/* title */}
@@ -108,9 +154,9 @@ export default function Home({ navigation }) {
                     style={styles.sparkle}
                     resizeMode="contain"
                 />
-                <Image
+                <Animated.Image
                     source={require("../assets/chef_hands_hover.png")}
-                    style={styles.genieImage}
+                    style={[styles.genieImage, {transform: [{ translateY: moveAnimation }]},]}
                     resizeMode="contain"
                 />
                 <Image
@@ -118,9 +164,9 @@ export default function Home({ navigation }) {
                     style={styles.crystalBall}
                     resizeMode="contain"
                 />
-                <Image
+                <Animated.Image
                     source={require("../assets/food.png")}
-                    style={styles.food}
+                    style={[styles.food, {opacity: fadeAnimation},]}
                     resizeMode="contain"
                 />
             </View>

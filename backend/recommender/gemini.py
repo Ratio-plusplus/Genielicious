@@ -32,7 +32,7 @@ def getPrompt(user_id, mode):
     for i in activeFoodProfile["allergies"]:
         if activeFoodProfile["allergies"][i] == True:
             allergies.append(i)
-    print(allergies)
+    # print(allergies)
     #allergies = activeFoodProfile["allergies"]["include"] # list of food allergy strings
     includedPreferences = []
     excludedPreferences = []
@@ -106,7 +106,7 @@ def getNextQuestion(user_id:str, mode:str):
   budgetCache = cache.child("budgetCache").get()
   
   activeProfile = getActiveFoodProfile(user_id)
-  print(activeProfile)
+  # print(activeProfile)
   if activeProfile:
       budget = activeProfile["budget"]
       distance = activeProfile["distance"]
@@ -171,16 +171,17 @@ def formatStringToJson(s):
   return data
 
 if __name__ == "__main__":
-  with open(r"backend\recommender\unused\survey.json", "r") as file:
-    prompt = json.load(file)["prompt"] 
+  # with open(r"backend\recommender\unused\survey.json", "r") as file:
+  #   prompt = json.load(file)["prompt"] 
 
-  surveyCache = [{"role":"user","parts":[{"text": prompt}]},]
-  response = model.generate_content(
-      surveyCache, # "contents" parameter
-      generation_config=genai.types.GenerationConfig(
-          temperature=1.0, # "randomness" of model
-      ),
-  )
+  # surveyCache = [{"role":"user","parts":[{"text": prompt}]},]
+  # response = model.generate_content(
+  #     surveyCache, # "contents" parameter
+  #     generation_config=genai.types.GenerationConfig(
+  #         temperature=1.0, # "randomness" of model
+  #     ),
+  # )
+  print("hello")
   # cacheToJson(r"backend\recommender\unused\res.json",response.text)
   # cacheToJson(r"backend\recommender\unused\res_out.json",formatStringToJson(response.text))
 
