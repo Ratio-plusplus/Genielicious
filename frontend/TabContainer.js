@@ -18,27 +18,8 @@ const genieIconChampagne = require('../frontend/assets/iconGenieLight.png');
 
 const Tab = createBottomTabNavigator();
 
-<<<<<<< HEAD
-//bottom navigation bar for profile, genie, and history screens
-export default function TabContainer() {
-    return(
-            <Tab.Navigator 
-            initialRouteName={homeName}
-            screenOptions={({route}) => ({
-                tabBarActiveTintColor: Colors.raisin,
-                tabBarInactiveTintColor: Colors.champagne,
-                tabBarLabelStyle: {fontSize: 12},
-                tabBarStyle: { height: 90,  backgroundColor: Colors.blue, borderTopColor: Colors.champagne},
-                tabBarItemStyle: {paddingVertical: 8, borderRadius: 20},
-                tabBarActiveBackgroundColor: Colors.gold,
-                headerShown: false,
-                tabBarIcon: ({focused, color, size}) => {
-                    let iconName;
-                    let rn = route.name;
-=======
 const AnimatedTabBarButton = ({ label, children, onPress, focused }) => {
     const animation = useRef(new Animated.Value(0)).current;
->>>>>>> main
 
     React.useEffect(() => {
         Animated.timing(animation, {

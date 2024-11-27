@@ -55,25 +55,8 @@ export default function Preference({ navigation, route }) {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${idToken}`
                 },
-<<<<<<< HEAD
-                {
-                    text: "Delete",
-                    onPress: async () => {
-                        try {
-                            const idToken = await currentUser.getIdToken();
-                            console.log(profileData.id);
-                            const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/delete_flavor_profile', {
-                                method: 'DELETE',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'Authorization': `Bearer ${idToken}`
-                                },
-                                body: JSON.stringify({ profileId: profileData.id })
-                            });
-=======
                 body: JSON.stringify({ profileId: profileData.id })
             });
->>>>>>> main
 
             console.log("Response Status:", response.status);
             const responseText = await response.text();
@@ -148,8 +131,6 @@ export default function Preference({ navigation, route }) {
                 </TouchableOpacity>
             </View>
 
-<<<<<<< HEAD
-=======
             <Modal
                 animationType="fade"
                 transparent={true}
@@ -171,7 +152,6 @@ export default function Preference({ navigation, route }) {
                 </View>
             </Modal>
 
->>>>>>> main
             {/* <ScrollView contentContainerStyle={{ paddingBottom: 20 }}> */}
                 <View style={{ alignItems: "center", marginTop: 10, marginBottom: 20 }}>
                     <Image

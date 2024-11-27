@@ -82,11 +82,7 @@ export default function AddPref2({ navigation }) {
     //firebase logic to add or update the profile
     const handleSaveProfile = async () => {
         console.log("handleSaveProfile called"); // Debugging line
-<<<<<<< HEAD
-        
-=======
 
->>>>>>> main
         // We first check to see if there is any pre=existing data and store those values
         const profileData = {
             title: name ?? existingProfileData.name,
@@ -96,11 +92,7 @@ export default function AddPref2({ navigation }) {
             tastePreferences: isChecked.tastePreferences ?? existingProfileData.tastePreferences,
             allergies: isChecked.allergies ?? existingProfileData.allergies,
         };
-<<<<<<< HEAD
-    
-=======
 
->>>>>>> main
         // If there is pre-existing data then we edit/update, if not we add a new profile
         try {
             if (existingProfileData && existingProfileData.id) {
@@ -145,22 +137,6 @@ export default function AddPref2({ navigation }) {
                 marginTop: 12,
                 marginBottom: 12,
                 flexDirection: "row",
-<<<<<<< HEAD
-                justifyContent: "center"}}>
-                    <TouchableOpacity 
-                        onPress={()=>navigation.navigate('Add Preference 1')}
-                        style={{
-                            position: "absolute",
-                            left: 0
-                        }}>
-                        <MaterialIcons
-                            name="keyboard-arrow-left"
-                            size={33}
-                            color={Colors.ghost}
-                        />
-                    </TouchableOpacity>
-                    <Text style={{marginTop: 2, fontWeight: 600, fontSize: 22, color: Colors.ghost}}>{pageTitle}</Text>
-=======
                 justifyContent: "center"
             }}>
                 <TouchableOpacity
@@ -176,42 +152,10 @@ export default function AddPref2({ navigation }) {
                     />
                 </TouchableOpacity>
                 <Text style={{ marginTop: 2, fontWeight: 600, fontSize: 22, color: Colors.ghost }}>{pageTitle}</Text>
->>>>>>> main
             </View>
 
             {/* Visual changes for the preference profile picture */}
             {/* <ScrollView> */}
-<<<<<<< HEAD
-                <View style={{
-                    alignItems: "center",
-                    marginTop: 10,
-                    marginBottom: 20}}>
-                    <TouchableOpacity
-                        onPress={handleProfilePicturePress}>
-                            {selectedImage ? (
-                                <Image 
-                                    source={{uri:selectedImage}}
-                                    style={{
-                                        height: 125,
-                                        width: 125,
-                                        borderRadius: 85,
-                                        borderWidth: 2,
-                                        borderColor: "#000"
-                                    }}
-                                />
-                            ) : (
-                                <Image 
-                                    source={{ uri: initialpfp }} // Fallback image if selectedImage is null
-                                    style={{
-                                        height: 125,
-                                        width: 125,
-                                        borderRadius: 85,
-                                        borderWidth: 2,
-                                        borderColor: "#000",
-                                    }}
-                                />
-                            )}
-=======
             <View style={{
                 alignItems: "center",
                 marginTop: 10,
@@ -242,7 +186,6 @@ export default function AddPref2({ navigation }) {
                             }}
                         />
                     )}
->>>>>>> main
 
                     <View style={{
                         position: "absolute",
@@ -450,16 +393,6 @@ export default function AddPref2({ navigation }) {
                         }}
                     />
                 </View>
-<<<<<<< HEAD
-                    <TouchableOpacity style={styles.saveButton}
-                        onPress={() => {
-                            handleSaveProfile();
-                            fetchProfiles();
-                        }}>
-                        <Text style={styles.saveText}>{buttonTitle}</Text>
-                    </TouchableOpacity>
-                </View>
-=======
                 <TouchableOpacity style={styles.saveButton}
                     onPress={() => {
                         handleSaveProfile();
@@ -468,7 +401,6 @@ export default function AddPref2({ navigation }) {
                     <Text style={styles.saveText}>{buttonTitle}</Text>
                 </TouchableOpacity>
             </View>
->>>>>>> main
             {/* </ScrollView> */}
         </SafeAreaView>
     )

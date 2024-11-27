@@ -168,11 +168,7 @@ export default function EditProfile({ navigation }) {
                                 placeholderTextColor="#555"
                                 onChangeText={setUsername}
                                 value={username}
-<<<<<<< HEAD
-                                color={Colors.ghost}
-=======
                                 color={Colors.raisin}
->>>>>>> main
                                 editable={true} />
                         </View>
                     </View>
@@ -190,11 +186,7 @@ export default function EditProfile({ navigation }) {
                                 placeholderTextColor="#555"
                                 onChangeText={setEmail}
                                 value={email}
-<<<<<<< HEAD
-                                color={Colors.ghost}
-=======
                                 color={Colors.raisin}
->>>>>>> main
                                 editable={false} />
                         </View>
                     </View>
@@ -213,11 +205,7 @@ export default function EditProfile({ navigation }) {
                                 onChangeText={setPassword}
                                 value={password}
                                 editable={true}
-<<<<<<< HEAD
-                                color={Colors.ghost}
-=======
                                 color={Colors.raisin}
->>>>>>> main
                                 secureTextEntry />
                         </View>
                     </View>

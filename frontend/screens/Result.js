@@ -239,19 +239,11 @@ const styles = StyleSheet.create({
     },
     title: {
         fontWeight: "bold",
-        fontSize: 22,
+        fontSize: 25,
         color: Colors.champagne,
-<<<<<<< HEAD
-        paddingRight: '10%',
-        paddingTop: '5%',
-        fontFamily: 'InknutAntiqua-Regular',
-        textAlign: 'center',
-        justifyContent: 'center'
-=======
         textAlign: 'center',
         paddingRight: '13%',
         paddingTop: '8%'
->>>>>>> main
     },
     genieContainer: {
         height: '48%',  

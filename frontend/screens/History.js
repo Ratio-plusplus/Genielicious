@@ -5,31 +5,6 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthContext';
 import { useFocusEffect, useRoute } from '@react-navigation/native';
 import { ProfileContext } from '../contexts/ProfileContext';
-<<<<<<< HEAD
-
-// array for the different restaurant results
-const restaurants = [
-    {
-        name: 'Wingstop',
-        aliases: 'Comfort Food, Finger Food',
-        address: '4401 E Pacific Coast Hwy, Long Beach, CA 90804',
-        image: require('../assets/restaurant1.png'),
-    },
-    {
-        name: 'Buffalo Wild Wings',
-        aliases: 'European, Meat-Centric',
-        address: '6314 Pacific Coast Hwy, Long Beach, CA 90803',
-        image: require('../assets/restaurant2.png'),
-    },
-    {
-        name: 'Fire Wings',
-        aliases: 'North American, Quick Eats',
-        address: '7565 Long Bch Towne Ctr, Long Beach, CA 90808',
-        image: require('../assets/restaurant3.png'),
-    },
-];
-=======
->>>>>>> main
 
 const getHistory = async (currentUser) => {
     const idToken = await currentUser.getIdToken();
@@ -183,27 +158,6 @@ export default function History({ navigation }) {
 
             <View style={styles.restaurantListContainer}>
                 <ScrollView contentContainerStyle={styles.restaurantList}>
-<<<<<<< HEAD
-                    {restaurants.map((item, index) => (
-                        <View key={index} style={styles.restaurantItem}>
-                            <View style={styles.imagesContainer}>
-                                <Image
-                                    source={{ uri: item.image }}
-                                    style={styles.restaurantImage}
-                                    resizeMode="cover"
-                                />
-                                <TouchableOpacity onPress={() => openYelp(item.url)}>
-                                    <Image
-                                        source={require('../assets/yelp.png')} // Add Yelp logo image
-                                        style={styles.yelpLogo}
-                                        resizeMode="contain"
-                                    />
-                                </TouchableOpacity>
-                            </View>
-                            {renderRestaurantItem(item, index)}
-                        </View>
-                    ))}
-=======
                     {restaurants.length === 0 ? (
                         <Text style={styles.noHistoryText}>No history found. Use our Genie now!</Text>
                     ) : (
@@ -227,7 +181,6 @@ export default function History({ navigation }) {
                             </View>
                         ))
                     )}
->>>>>>> main
                 </ScrollView>
             </View>
         </SafeAreaView>
@@ -274,11 +227,7 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 7, height: 7 },
         shadowOpacity: 1,
         shadowRadius: 0,
-<<<<<<< HEAD
-        elevation: 2,
-=======
         elevation: 1000,
->>>>>>> main
     },
     restaurantImage: {
         width: '100%',
@@ -341,8 +290,6 @@ const styles = StyleSheet.create({
         position: 'relative',
         marginRight: 10,
     },
-<<<<<<< HEAD
-=======
     noHistoryText: {
         color: Colors.ghost, 
         fontSize: 20, 
@@ -350,5 +297,4 @@ const styles = StyleSheet.create({
         marginTop: 10,
         fontWeight: 'bold'
     }
->>>>>>> main
 });

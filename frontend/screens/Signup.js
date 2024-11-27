@@ -147,15 +147,10 @@ export default function Signup({ navigation }) {
                 <Ionicons name="person" size={22} color={Colors.raisin} />
               </View>
               <TextInput
-<<<<<<< HEAD
-                placeholder="Username"
-                placeholderTextColor="#7C808D"
-=======
                 style={styles.inputField}
 
                 placeholder="Username"
                 placeholderTextColor="#555"
->>>>>>> main
                 color={Colors.raisin}
                 disabled={!isEditable}
                 onChangeText={setUsername}    //updates username state
@@ -171,15 +166,10 @@ export default function Signup({ navigation }) {
                 <Feather name="mail" size={22} color={Colors.raisin} />
               </View>
               <TextInput
-<<<<<<< HEAD
-                placeholder="Email"
-                placeholderTextColor="#7C808D"
-=======
                 style={styles.inputField}
 
                 placeholder="Email"
                 placeholderTextColor="#555"
->>>>>>> main
                 color={Colors.raisin}
                 disabled={!isEditable}
                 onChangeText={(text) => validate(text)}     //updates email state
@@ -195,18 +185,11 @@ export default function Signup({ navigation }) {
                 <Feather name="lock" size={22} color={Colors.raisin} />
               </View>
               <TextInput
-<<<<<<< HEAD
-                placeholder="Password"
-                disabled={!isEditable}
-                secureTextEntry={!passwordIsVisible}
-                placeholderTextColor="#7C808D"
-=======
                 style={styles.inputField}
                 placeholder="Password"
                 disabled={!isEditable}
                 secureTextEntry={!passwordIsVisible}
                 placeholderTextColor="#555"
->>>>>>> main
                 color={Colors.raisin}
                 onChangeText={setPassword}      //updates password state
                 value={password}      //current password state
@@ -232,16 +215,10 @@ export default function Signup({ navigation }) {
                 <Feather name="lock" size={22} color={Colors.raisin} />
               </View>
               <TextInput
-<<<<<<< HEAD
-                placeholder="Confirm Password"
-                secureTextEntry={!confirmPasswordIsVisible}
-                placeholderTextColor="#7C808D"
-=======
                 style={styles.inputField}
                 placeholder="Confirm Password"
                 secureTextEntry={!confirmPasswordIsVisible}
                 placeholderTextColor="#555"
->>>>>>> main
                 color={Colors.raisin}
                 disabled={!isEditable}
                 onChangeText={setConfirmPassword}
@@ -257,12 +234,7 @@ export default function Signup({ navigation }) {
               <Feather
                 name={confirmPasswordIsVisible ? "eye" : "eye-off"}
                 size={22}
-<<<<<<< HEAD
-
-                color="#7C808D"
-=======
                 color="#555"
->>>>>>> main
               />
             </TouchableOpacity>
           </View>

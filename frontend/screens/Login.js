@@ -123,14 +123,9 @@ export default function Login({ navigation }) {
                 <Feather name="mail" size={22} color={Colors.raisin} />
               </View>
               <TextInput
-<<<<<<< HEAD
-                placeholder="Email"
-                placeholderTextColor="#7C808D"
-=======
                 style={styles.inputField}
                 placeholder="Email"
                 placeholderTextColor="#555"
->>>>>>> main
                 color={Colors.raisin}
                 onChangeText={setEmail}   //updates email state when user types
                 value={email}   //current email state
@@ -145,16 +140,10 @@ export default function Login({ navigation }) {
                 <Feather name="lock" size={22} color={Colors.raisin} />
               </View>
               <TextInput
-<<<<<<< HEAD
-                placeholder="Password"
-                secureTextEntry={!passwordIsVisible}
-                placeholderTextColor="#7C808D"
-=======
                 style={styles.inputField}
                 placeholder="Password"
                 secureTextEntry={!passwordIsVisible}
                 placeholderTextColor="#555"
->>>>>>> main
                 color={Colors.raisin}
                 onChangeText={setPassword}    //updates password state
                 value={password}    //current password state
@@ -211,11 +200,7 @@ export default function Login({ navigation }) {
             </Text>
           </TouchableOpacity>
           <Modal
-<<<<<<< HEAD
-            animationType="slide"
-=======
             animationType="fade"
->>>>>>> main
             transparent={true}
             visible={modalVisible}
             onRequestClose={() => setModalVisible(false)}
@@ -226,17 +211,6 @@ export default function Login({ navigation }) {
                 {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
                 {message ? <Text style={styles.success}>{message}</Text> : null}
                 <TextInput
-<<<<<<< HEAD
-                  placeholder="Enter your email"
-                  value={resetEmail}
-                  onChangeText={setResetEmail}
-                />
-                <TouchableOpacity onPress={handlePasswordReset}>
-                  <Text>Send Reset Email</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => setModalVisible(false)}>
-                  <Text>Cancel</Text>
-=======
                   style={styles.resetField}
                   placeholder="Enter your email"
                   placeholderTextColor="#999"
@@ -253,7 +227,6 @@ export default function Login({ navigation }) {
                   <View style={styles.cancelButton}>
                       <Text style={{fontSize: 16, textAlign: 'center'}}>Cancel</Text>
                   </View>
->>>>>>> main
                 </TouchableOpacity>
               </View>
             </View>
@@ -325,15 +298,12 @@ const styles = StyleSheet.create({
     borderColor: Colors.gold,
     fontSize: 16,
     flexDirection: 'row',
-<<<<<<< HEAD
-=======
   },
   inputField: {
     backgroundColor: Colors.champagne,
     flex: 1,
     fontSize: 16,
     flexDirection: 'row',
->>>>>>> main
   },
   passwordVisibleButton: {
     position: "absolute",
