@@ -25,28 +25,31 @@ const AnimatedTabBarButton = ({ label, children, onPress, focused }) => {
         Animated.timing(animation, {
             toValue: focused ? 1 : 0,
             duration: 300,
-            useNativeDriver: true,
+            useNativeDriver: false,
         }).start();
     }, [focused]);
 
+    const backgroundColor = animation.interpolate({
+        inputRange: [0, 1],
+        outputRange: [Colors.champagne, Colors.gold],
+    });
+
     const translateX = animation.interpolate({
         inputRange: [0, 1],
-        outputRange: [-20, 0], // Slide label from left to right
+        outputRange: [-17, 0], // Slide the label in from left
     });
 
     const opacity = animation;
 
     return (
-        <TouchableOpacity
-            style={[
-                styles.tabButton,
-                focused && { backgroundColor: Colors.gold },
-            ]}
-            onPress={onPress}
-            activeOpacity={1}
-        >
-            {children}
-            {focused && (
+        <TouchableOpacity onPress={onPress} activeOpacity={1} style={{ flex: 1 }}>
+            <Animated.View
+                style={[
+                    styles.tabButton,
+                    { backgroundColor }, // Animated background
+                ]}
+            >
+                <View style={styles.iconWrapper}>{children}</View>
                 <Animated.Text
                     style={[
                         styles.label,
@@ -58,10 +61,12 @@ const AnimatedTabBarButton = ({ label, children, onPress, focused }) => {
                 >
                     {label}
                 </Animated.Text>
-            )}
+            </Animated.View>
         </TouchableOpacity>
     );
 };
+
+
 
 export default function TabContainer() {
     return (
@@ -146,35 +151,37 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.blue,
     },
     hiddenTabBar: {
-        display: 'none', // Hide the default tab bar
+        display: 'none',
     },
     tabBar: {
         flexDirection: 'row',
         height: 65,
-        position: 'relative',
-        bottom: 10,
         marginHorizontal: 20,
-        marginVertical: 10,
+        marginBottom: 15,
+        marginTop: 7,
         backgroundColor: Colors.champagne,
         borderRadius: 40,
-        justifyContent: 'space-around',
+        justifyContent: 'space-evenly', 
         alignItems: 'center',
         shadowColor: Colors.yellow,
         shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 1,
         shadowRadius: 5,
         elevation: 5,
-        zIndex: 10,
         borderWidth: 3,
-        borderColor: Colors.gold
+        borderColor: Colors.gold,
+        padding: 8
     },
     tabButton: {
+        flex: 1, 
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: 8,
-        paddingHorizontal: 23,
+        justifyContent: 'center', 
         borderRadius: 40,
+    },
+    iconWrapper: {
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     label: {
         marginLeft: 8,
@@ -187,3 +194,4 @@ const styles = StyleSheet.create({
         height: 30,
     },
 });
+
