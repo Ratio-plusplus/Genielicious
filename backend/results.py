@@ -42,7 +42,7 @@ def compileResults(user_id, food_item:str):
         budget = int(cache.child("budgetCache").get())
 
     yelp_results = getStore(coords, term = food_item, price=budget, radius=distance)
-
+    print(yelp_results)
     
     if "businesses" not in yelp_results:
         error = {"error": {"type":500,"message":"Yelp businesses not provided"}}
@@ -50,14 +50,14 @@ def compileResults(user_id, food_item:str):
         cache.update({"resultsCache" : json.dumps(error)})
         return error
 
-    total = len(yelp_results["businesses"])
+    total = yelp_results.get("businesses",0)
 
     # handle when no businesses are given
     if total == 0:
         status = 2
         # broaden search parameters a bit
         yelp_results = getStore(coords, term = food_item.split(" ")[0:2], categories="food",price=budget, radius=distance)
-        total = len(yelp_results["businesses"])
+        total = yelp_results.get("businesses",0)
 
     # check if there are any new results
     if total == 0:
