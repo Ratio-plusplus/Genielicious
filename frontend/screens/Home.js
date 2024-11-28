@@ -133,10 +133,19 @@ export default function Home({ navigation }) {
             
         };
     };
-
+    const clearSession = async () => {
+        const idToken = await currentUser.getIdToken();
+        const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/client/clear_session', {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${idToken}`
+            }
+        });
+    }
     useFocusEffect(
         useCallback(() => {
             getUserLocation();
+            clearSession();
         }, [])
     );
 
@@ -153,6 +162,7 @@ export default function Home({ navigation }) {
                     source={require("../assets/sparkle.png")}
                     style={styles.sparkle}
                     resizeMode="contain"
+                    onError={(error) => console.log('Image load failed', error)}
                 />
                 <Animated.Image
                     source={require("../assets/chef_hands_hover.png")}

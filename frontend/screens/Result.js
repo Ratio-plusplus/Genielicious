@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useCallback, useEffect } from 'react';
-import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text, ScrollView, Linking, Modal } from 'react-native';
+import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text, ScrollView, Linking, Modal, ActivityIndicator } from 'react-native';
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthContext';
@@ -118,10 +118,11 @@ export default function Result({ navigation }) {
     };
     useEffect(() => {
         if (!ready) {
-            setReady(true);
+            
             const fetchResults = async () => {
                 const results = await getResults(currentUser);
                 setRestaurants(results);
+                setReady(true);
             }
         fetchResults();
         }
@@ -189,8 +190,9 @@ export default function Result({ navigation }) {
                     resizeMode="contain"
                 />
             </View>
-
+            
             {/* restaurant list that is scrollable */}
+            {ready && (
             <View style={styles.restaurantListContainer}>
                 <ScrollView contentContainerStyle={styles.restaurantList}>
                     {restaurants.map((item, index) => (
@@ -216,6 +218,15 @@ export default function Result({ navigation }) {
                     ))}
                 </ScrollView>
             </View>
+            )}
+            {!ready && (
+                <View style={styles.loadingOverlay}>
+                    <View style={styles.loadingContent}>
+                        <ActivityIndicator size="large" color="#007bff" />
+                        <Text style={styles.loadingText}>Loading...</Text>
+                    </View>
+                </View>
+            )}
         </SafeAreaView>
     );
 }
@@ -407,5 +418,26 @@ const styles = StyleSheet.create({
         top: -70,
         width: 100,
         height: 100,
+    },
+    loadingOverlay: {
+        position: "absolute",       // Full-screen overlay
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,                 // Covers entire screen
+        justifyContent: "center",  // Centers children vertically
+        alignItems: "center",      // Centers children horizontally
+        backgroundColor: "rgba(0, 0, 0, 0.25)", // Semi-transparent black
+        zIndex: 1000,              // Ensures it appears above everything else
+    },
+    loadingContent: {
+        justifyContent: "center",  // Centers content vertically inside this container
+        alignItems: "center",      // Centers content horizontally
+    },
+    loadingText: {
+        marginTop: 10,             // Adds space between the spinner and the text
+        fontSize: 16,
+        color: "#fff",             // White text for visibility
+        textAlign: "center",       // Centers text
     },
 });

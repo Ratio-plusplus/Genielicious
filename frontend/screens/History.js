@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text, ScrollView, Linking } from 'react-native';
+import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text, ScrollView, Linking, ActivityIndicator } from 'react-native';
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthContext';
@@ -50,6 +50,8 @@ export default function History({ navigation }) {
     const { currentUser } = useAuth(); // Access currentUser and loading
     const route = useRoute();
     const { filters } = route.params || {}; // Get filters from navigation params
+    const [isLoading, setIsLoading] = useState(true);
+
 
     const saveFavorites = async (index) => {
         const idToken = await currentUser.getIdToken();
@@ -134,14 +136,18 @@ export default function History({ navigation }) {
 
     useFocusEffect(
         useCallback(() => {
+            setIsLoading(true);
             const fetchHistory = async () => {
                 const results = await getHistory(currentUser);
                 const filteredResults = filterRestaurants(results); // Apply filters
                 setRestaurants(filteredResults);
+                setIsLoading(false);
             };
             fetchHistory();
         }, [filters]) // Re-fetch when filters change
     );
+
+
     return (
         <SafeAreaView style={styles.background}>
             <View style={styles.header}>
@@ -155,7 +161,7 @@ export default function History({ navigation }) {
                     />
                 </TouchableOpacity>
             </View>
-
+            {!isLoading && (
             <View style={styles.restaurantListContainer}>
                 <ScrollView contentContainerStyle={styles.restaurantList}>
                     {restaurants.length === 0 ? (
@@ -182,7 +188,16 @@ export default function History({ navigation }) {
                         ))
                     )}
                 </ScrollView>
-            </View>
+                </View>
+            )}
+            {isLoading && (
+                <View style={styles.loadingOverlay}>
+                    <View style={styles.loadingContent}>
+                        <ActivityIndicator size="large" color="#007bff" />
+                        <Text style={styles.loadingText}>Loading...</Text>
+                    </View>
+                </View>
+            )}
         </SafeAreaView>
     );
 }
@@ -296,5 +311,26 @@ const styles = StyleSheet.create({
         height: '68%', 
         marginTop: 10,
         fontWeight: 'bold'
-    }
+    },
+    loadingOverlay: {
+        position: "absolute",       // Full-screen overlay
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,                 // Covers entire screen
+        justifyContent: "center",  // Centers children vertically
+        alignItems: "center",      // Centers children horizontally
+        backgroundColor: "rgba(0, 0, 0, 0.25)", // Semi-transparent black
+        zIndex: 1000,              // Ensures it appears above everything else
+    },
+    loadingContent: {
+        justifyContent: "center",  // Centers content vertically inside this container
+        alignItems: "center",      // Centers content horizontally
+    },
+    loadingText: {
+        marginTop: 10,             // Adds space between the spinner and the text
+        fontSize: 16,
+        color: "#fff",             // White text for visibility
+        textAlign: "center",       // Centers text
+    },
 });
