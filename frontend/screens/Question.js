@@ -208,7 +208,7 @@ export default function Question({ navigation }) {
                         <View style={styles.questionButton}>
                             <Text 
                                 style={styles.questionText}
-                                numberOfLines={2}
+                                numberOfLines={3}
                                 adjustsFontSizeToFit>{question}</Text>
                         </View>
                     </View>
