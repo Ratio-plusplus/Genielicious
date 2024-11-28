@@ -1,10 +1,10 @@
 import requests
 import json
 import os
-# from dotenv import find_dotenv, load_dotenv
+from dotenv import find_dotenv, load_dotenv
 
-# dotenv_path = find_dotenv()
-# load_dotenv(dotenv_path)
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path)
 
 API_KEY = os.getenv("YELP_API_KEY")
 
@@ -57,12 +57,12 @@ def cacheToJson(result_path:str, values:str):
     print(f"Results cached in {result_path}.")
 
 if __name__ == "__main__":
-    CSULB_coordinates = (33.78336745904146, -118.1101659429386) # test location (lat,long)
-    default_radius = 16000 # ~10 miles in meters
-    default_category = "restaurants"
-    term = "Grilled Lemon Herb Chicken"
+    CSULB_coordinates = (37.4220936, -122.083922) # test location (lat,long)
+    default_radius = 40000 # ~10 miles in meters
+    default_category = "food"
+    term = "Cheeseburger"
 
-    # res = getStore(CSULB_coordinates, term = term)
+    # res = getStore(CSULB_coordinates, term = term, categories=default_category, radius=default_radius)
     # res = categoryDetails("en_US") # gets all businesses within en_US locale
 
     # cacheToJson("results.json", res)

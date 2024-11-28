@@ -48,15 +48,19 @@ def compileResults(user_id, food_item:str):
         error = {"error": {"type":500,"message":"Yelp businesses not provided"}}
         print(error)
         cache.update({"resultsCache" : json.dumps(error)})
+        return error
+
+    total = len(yelp_results["businesses"])
 
     # handle when no businesses are given
-    if yelp_results["total"] == 0:
+    if total == 0:
         status = 2
         # broaden search parameters a bit
         yelp_results = getStore(coords, term = food_item.split(" ")[0:2], categories="food",price=budget, radius=distance)
+        total = len(yelp_results["businesses"])
 
     # check if there are any new results
-    if yelp_results["total"] == 0:
+    if total == 0:
         status = 3
 
     # Parsing Yelp results to not include unnecessary/extra fields
