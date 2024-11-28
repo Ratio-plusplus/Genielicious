@@ -84,11 +84,12 @@ const getResults = async (currentUser) => {
             //console.log(restaurantInfo.categories[x]);
             aliases.push(restaurantInfo.categories[x].alias);
         }
-        const push = { name: restaurantInfo.name, taste: aliases.join(', '), address: restaurantInfo.location.display_address.join(', '), distance: restaurantInfo.distance, image: restaurantInfo.image_url, favorite: false, url: restaurantInfo.url };
+        const push = {
+            name: restaurantInfo.name, taste: aliases.join(', '), address: restaurantInfo.location.display_address.join(', '), distance: restaurantInfo.distance, image: restaurantInfo.image_url, favorite: false, url: restaurantInfo.url, coordinates: { latitude: restaurantInfo.coordinates.latitude, longitude: restaurantInfo.coordinates.longitude } };
         restaurants.push(push);
     }
     const restaurant = JSON.stringify(restaurants);
-    const response1 = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/add_history', { //https://genielicious-1229a.wl.r.appspot.com
+    await fetch('https://genielicious-1229a.wl.r.appspot.com/database/add_history', { //https://genielicious-1229a.wl.r.appspot.com
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
@@ -96,7 +97,6 @@ const getResults = async (currentUser) => {
         },
         body: JSON.stringify({ "restaurantsInfo": restaurant })
     });
-    const json1 = await response1.json();
     return restaurants;
 };
 export default function Result({ navigation }) {

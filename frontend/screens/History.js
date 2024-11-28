@@ -21,7 +21,7 @@ const getHistory = async (currentUser) => {
         const profilesArray = Object.keys(info).map((key) => ({
             id: key,
             ...info[key]
-        }));
+        })).reverse();
         console.log(profilesArray);
         return profilesArray
     }
@@ -43,10 +43,8 @@ const openYelp = (url) => {
 
 export default function History({ navigation }) {
     // map all restaurant array to be false for heart
-    const { pfp, username, fetchData, filter, setFilter, filterFavs, setFilterFavs } = React.useContext(ProfileContext);
     const [restaurants, setRestaurants] = useState([]);
-
-    const [ready, setReady] = React.useState(false);
+    const { location } = React.useContext(ProfileContext);
     const { currentUser } = useAuth(); // Access currentUser and loading
     const route = useRoute();
     const { filters } = route.params || {}; // Get filters from navigation params
@@ -75,11 +73,11 @@ export default function History({ navigation }) {
         console.log("After: ", newRestaurants);
         saveFavorites(index);
     };
-
+    
     // Function to filter restaurants based on selected filters
     const filterRestaurants = (restaurants) => {
         if (!filters) return restaurants; // If no filters, return all restaurants
-
+        
         return restaurants.filter(restaurant => {
             const split = restaurant.taste.split(", ");
             const tastes = split.map(str =>
@@ -93,6 +91,9 @@ export default function History({ navigation }) {
                 matchesCuisine = filters.cuisines.length === 0 || filters.cuisines.includes(tastes[i]);
             }
             const matchesFavorites = !filters.favorites || restaurant.favorite; // Assuming 'favorite' is a boolean in restaurant data
+            if (filters.sort) {
+                matchesCuisine.sort((a, b) => a.distance - b.distance);
+            }
             return matchesCuisine && matchesFavorites;
         });
     };
@@ -130,20 +131,41 @@ export default function History({ navigation }) {
                         {item.address}
                     </Text>
                 </View>
+                <View style={styles.nameContainer}>
+                    <Text
+                        style={styles.restaurantName}
+                        numberOfLines={1}
+                        adjustsFontSizeToFit
+                    >
+                        {item.distance} miles
+                    </Text>
+                </View>
             </View>
         </View>
     );
-
+    const getDistance = (results) => {
+        const r = 3963; // km (3,963.1) in mi
+        const p = Math.PI / 180;
+        newRestaurant = results.map(item => ({
+            ...item, distance: Math.round((2 * r * Math.asin(Math.sqrt(
+                (0.5 - Math.cos((location.latitude - item.coordinates.latitude) * p) / 2
+                    + Math.cos(item.coordinates.latitude * p) * Math.cos(location.latitude * p) *
+                    (1 - Math.cos((location.longitude - item.coordinates.longitude) * p)) / 2)))) * 100) / 100
+        }))
+        console.log(newRestaurant);
+        return newRestaurant;
+    };
     useFocusEffect(
         useCallback(() => {
             setIsLoading(true);
             const fetchHistory = async () => {
                 const results = await getHistory(currentUser);
                 const filteredResults = filterRestaurants(results); // Apply filters
-                setRestaurants(filteredResults);
-                setIsLoading(false);
+                const distanceAdded = getDistance(results);
+                setRestaurants(distanceAdded);
             };
             fetchHistory();
+            setIsLoading(false);
         }, [filters]) // Re-fetch when filters change
     );
 

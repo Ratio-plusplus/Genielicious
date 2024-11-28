@@ -7,6 +7,8 @@ import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
 import * as Location from "expo-location";
 import { useFocusEffect } from '@react-navigation/native';
 import { useAuth } from '../contexts/AuthContext'
+import { ProfileContext } from '../contexts/ProfileContext';
+
 
 
 export default function Home({ navigation }) {
@@ -15,6 +17,8 @@ export default function Home({ navigation }) {
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
     const [items, setItems] = useState([]);
+    const { setLocation, getUserLocation } = React.useContext(ProfileContext);
+
 
     const moveAnimation = useRef(new Animated.Value(0)).current; // For vertical movement
     const fadeAnimation = useRef(new Animated.Value(0)).current; // For fading
@@ -94,45 +98,7 @@ export default function Home({ navigation }) {
         navigation.navigate('Question');
     }
 
-    const getUserLocation = async () => {
-        // Just uses expo-location to grab location and print it as coordinates
-        let { status } = await Location.requestForegroundPermissionsAsync();
-
-        if (status !== 'granted') {
-            setErrorMsg('Permission to location not granted')
-            console.log('Perms not granted!')
-            return;
-        }
-
-        // Once permissions are grabbed, get coords but in a tuple
-        let { coords } = await Location.getCurrentPositionAsync();
-
-        if (coords) {
-            const { latitude, longitude } = coords;
-            console.log('lat and long: ', latitude, longitude);
-            let location = await Location.reverseGeocodeAsync({
-                latitude,
-                longitude,
-            });
-            console.log('User location is: ', location);
-            const idToken = await currentUser.getIdToken();
-            const response = await fetch(`https://genielicious-1229a.wl.r.appspot.com/database/get_location`, {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${idToken}`
-                }, body: JSON.stringify({ latitude: latitude, longitude: longitude })
-            });
-            if (response.ok) {
-                const json = await response.json();
-                console.log(json);
-            } else {
-                const json = await response.text();
-                console.log(json);
-            }
-            
-        };
-    };
+    
     const clearSession = async () => {
         const idToken = await currentUser.getIdToken();
         const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/client/clear_session', {
