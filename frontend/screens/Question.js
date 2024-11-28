@@ -137,7 +137,7 @@ export default function Question({ navigation }) {
             style={[{ backgroundColor: selectedAnswer === item ? Colors.gold : Colors.champagne }]}>
             <Text 
                 style={styles.answerText}
-                numberOfLines={1}
+                numberOfLines={2}
                 adjustsFontSizeToFit>{item}</Text>
         </View>
     );
@@ -314,7 +314,7 @@ const styles = StyleSheet.create({
         flexGrow: 0.2,
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: '-30%',
+        marginTop: '-43%',
         marginHorizontal: 20,
         marginVertical: 20
     },
@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: Colors.champagne,
         padding: 10,
-        width: '55%',
+        width: '62%',
         borderRadius: 10,
         borderColor: Colors.raisin,
         borderWidth: 1,
