@@ -73,11 +73,11 @@ export default function History({ navigation }) {
         console.log("After: ", newRestaurants);
         saveFavorites(index);
     };
-    
+
     // Function to filter restaurants based on selected filters
     const filterRestaurants = (restaurants) => {
         if (!filters) return restaurants; // If no filters, return all restaurants
-        
+
         return restaurants.filter(restaurant => {
             const split = restaurant.taste.split(", ");
             const tastes = split.map(str =>
@@ -131,14 +131,18 @@ export default function History({ navigation }) {
                         {item.address}
                     </Text>
                 </View>
-                <View style={styles.nameContainer}>
+
+                <View style={styles.distanceContainer}>
+                    <MaterialIcons
+                        name="location-on"
+                        size={16}
+                        color={Colors.blue}
+                        style={styles.locationIcon}
+                    />
                     <Text
-                        style={styles.restaurantName}
+                        style={styles.restaurantDistance}
                         numberOfLines={1}
-                        adjustsFontSizeToFit
-                    >
-                        {item.distance} miles
-                    </Text>
+                        adjustsFontSizeToFit>{item.distance} miles away</Text>
                 </View>
             </View>
         </View>
@@ -146,7 +150,7 @@ export default function History({ navigation }) {
     const getDistance = (results) => {
         const r = 3963; // km (3,963.1) in mi
         const p = Math.PI / 180;
-        newRestaurant = results.map(item => ({
+        const newRestaurant = results.map(item => ({
             ...item, distance: Math.round((2 * r * Math.asin(Math.sqrt(
                 (0.5 - Math.cos((location.latitude - item.coordinates.latitude) * p) / 2
                     + Math.cos(item.coordinates.latitude * p) * Math.cos(location.latitude * p) *
@@ -184,32 +188,32 @@ export default function History({ navigation }) {
                 </TouchableOpacity>
             </View>
             {!isLoading && (
-            <View style={styles.restaurantListContainer}>
-                <ScrollView contentContainerStyle={styles.restaurantList}>
-                    {restaurants.length === 0 ? (
-                        <Text style={styles.noHistoryText}>No history found. Use our Genie now!</Text>
-                    ) : (
-                        restaurants.map((item, index) => (
-                            <View key={index} style={styles.restaurantItem}>
-                                <View style={styles.imagesContainer}>
-                                    <Image
-                                        source={{ uri: item.image }}
-                                        style={styles.restaurantImage}
-                                        resizeMode="cover"
-                                    />
-                                    <TouchableOpacity onPress={() => openYelp(item.url)}>
+                <View style={styles.restaurantListContainer}>
+                    <ScrollView contentContainerStyle={styles.restaurantList}>
+                        {restaurants.length === 0 ? (
+                            <Text style={styles.noHistoryText}>No history found. Use our Genie now!</Text>
+                        ) : (
+                            restaurants.map((item, index) => (
+                                <View key={index} style={styles.restaurantItem}>
+                                    <View style={styles.imagesContainer}>
                                         <Image
-                                            source={require('../assets/yelp.png')}
-                                            style={styles.yelpLogo}
-                                            resizeMode="contain"
+                                            source={{ uri: item.image }}
+                                            style={styles.restaurantImage}
+                                            resizeMode="cover"
                                         />
-                                    </TouchableOpacity>
+                                        <TouchableOpacity onPress={() => openYelp(item.url)}>
+                                            <Image
+                                                source={require('../assets/yelp.png')}
+                                                style={styles.yelpLogo}
+                                                resizeMode="contain"
+                                            />
+                                        </TouchableOpacity>
+                                    </View>
+                                    {renderRestaurantItem(item, index)}
                                 </View>
-                                {renderRestaurantItem(item, index)}
-                            </View>
-                        ))
-                    )}
-                </ScrollView>
+                            ))
+                        )}
+                    </ScrollView>
                 </View>
             )}
             {isLoading && (
@@ -259,7 +263,7 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         alignItems: 'flex-start',
         width: '90%',
-        height: 150,
+        height: 170,
         shadowColor: Colors.yellow, // Subtle shadow for depth
         shadowOffset: { width: 7, height: 7 },
         shadowOpacity: 1,
@@ -293,7 +297,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: Colors.darkGold,
         marginBottom: 5,
-        marginRight: 30,
+        marginRight: 40,
     },
     endIcons: {
         position: 'absolute',
@@ -313,6 +317,17 @@ const styles = StyleSheet.create({
         marginRight: 35,
         textDecorationLine: 'underline',
     },
+    distanceContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    locationIcon: {
+        marginRight: 5,
+    },
+    restaurantDistance: {
+        fontSize: 15,
+        color: Colors.blue,
+    },
     yelpLogo: {
         position: 'absolute',
         bottom: 0,
@@ -328,9 +343,9 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     noHistoryText: {
-        color: Colors.ghost, 
-        fontSize: 20, 
-        height: '68%', 
+        color: Colors.ghost,
+        fontSize: 20,
+        height: '68%',
         marginTop: 10,
         fontWeight: 'bold'
     },
