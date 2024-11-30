@@ -167,7 +167,12 @@ const styles = StyleSheet.create({
         marginTop: 15,
         width: '75%',
         borderRadius: 10,
-        zIndex: 1
+        zIndex: 1,
+        shadowColor: Colors.champagne, // Subtle shadow for depth
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 1,
+        shadowRadius: 2,
+        elevation: 2,
     },
     grid: {
         justifyContent: 'flex-start',
@@ -186,7 +191,7 @@ const styles = StyleSheet.create({
     },
     activeProfileIconImage: {
         borderColor: Colors.gold, // Active profile image border color
-        borderWidth: 3,
+        borderWidth: 5,
     },
     profileIconText: {
         marginTop: 8,
@@ -197,6 +202,7 @@ const styles = StyleSheet.create({
         color: Colors.ghost, 
         fontSize: 20, 
         height: '68%', 
-        marginLeft: 20 
+        marginLeft: 20 ,
+        fontWeight: 'bold'
     }
 });

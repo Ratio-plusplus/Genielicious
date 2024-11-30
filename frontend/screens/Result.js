@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useCallback, useEffect } from 'react';
-import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text, ScrollView, Linking, Modal } from 'react-native';
+import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text, ScrollView, Linking, Modal, ActivityIndicator } from 'react-native';
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthContext';
@@ -13,13 +13,20 @@ const renderRestaurantItem = ({ name, taste, address, distance, url }) => (
     <View style={styles.restaurantDetails}>
         <Text 
             style={styles.restaurantName} 
+            numberOfLines={2}
+            adjustsFontSizeToFit
             onPress={() => openMap(address)} // make the name clickable
         >
             {name}
         </Text>
-        <Text style={styles.restaurantTaste}>{taste}</Text>
+        <Text 
+            style={styles.restaurantTaste}
+            numberOfLines={1}
+            adjustsFontSizeToFit>{taste}</Text>
         <Text 
             style={styles.restaurantAddress} 
+            numberOfLines={2}
+            adjustsFontSizeToFit
             onPress={() => openMap(address)} // make the address clickable
         >
             {address}
@@ -30,10 +37,13 @@ const renderRestaurantItem = ({ name, taste, address, distance, url }) => (
             <MaterialIcons
                 name="location-on"
                 size={16}
-                color={Colors.champagne}
+                color={Colors.blue}
                 style={styles.locationIcon}
             />
-            <Text style={styles.restaurantDistance}>{distance} miles away</Text>
+            <Text 
+                style={styles.restaurantDistance}
+                numberOfLines={1}
+                adjustsFontSizeToFit>{distance} miles away</Text>
         </View>
     </View>
 );
@@ -43,6 +53,10 @@ const openMap = (address) => {
     const formattedAddress = encodeURIComponent(address); // format the address for a Google Maps URL
     const url = `https://www.google.com/maps/search/?api=1&query=${formattedAddress}`;
     Linking.openURL(url); // Linking API allows user to open URLs
+};
+
+const openYelp = (url) => {
+    Linking.openURL(url);
 };
 
 const getResults = async (currentUser) => {
@@ -70,11 +84,12 @@ const getResults = async (currentUser) => {
             //console.log(restaurantInfo.categories[x]);
             aliases.push(restaurantInfo.categories[x].alias);
         }
-        const push = { name: restaurantInfo.name, taste: aliases.join(', '), address: restaurantInfo.location.display_address.join(', '), distance: restaurantInfo.distance, image: restaurantInfo.image_url, favorite: false, url: restaurantInfo.url };
+        const push = {
+            name: restaurantInfo.name, taste: aliases.join(', '), address: restaurantInfo.location.display_address.join(', '), distance: restaurantInfo.distance, image: restaurantInfo.image_url, favorite: false, url: restaurantInfo.url, coordinates: { latitude: restaurantInfo.coordinates.latitude, longitude: restaurantInfo.coordinates.longitude } };
         restaurants.push(push);
     }
     const restaurant = JSON.stringify(restaurants);
-    const response1 = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/add_history', { //https://genielicious-1229a.wl.r.appspot.com
+    await fetch('https://genielicious-1229a.wl.r.appspot.com/database/add_history', { //https://genielicious-1229a.wl.r.appspot.com
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
@@ -82,7 +97,6 @@ const getResults = async (currentUser) => {
         },
         body: JSON.stringify({ "restaurantsInfo": restaurant })
     });
-    const json1 = await response1.json();
     return restaurants;
 };
 export default function Result({ navigation }) {
@@ -104,10 +118,11 @@ export default function Result({ navigation }) {
     };
     useEffect(() => {
         if (!ready) {
-            setReady(true);
+            
             const fetchResults = async () => {
                 const results = await getResults(currentUser);
                 setRestaurants(results);
+                setReady(true);
             }
         fetchResults();
         }
@@ -175,17 +190,27 @@ export default function Result({ navigation }) {
                     resizeMode="contain"
                 />
             </View>
-
+            
             {/* restaurant list that is scrollable */}
+            {ready && (
             <View style={styles.restaurantListContainer}>
                 <ScrollView contentContainerStyle={styles.restaurantList}>
                     {restaurants.map((item, index) => (
                         <View key={index} style={styles.restaurantItem}>
-                            <Image
-                                source={{ uri: item.image }}
-                                style={styles.restaurantImage}
-                                resizeMode="cover"
-                            />
+                            <View style={styles.imagesContainer}>
+                                <Image
+                                    source={{ uri: item.image }}
+                                    style={styles.restaurantImage}
+                                    resizeMode="cover"
+                                />
+                                <TouchableOpacity onPress={() => openYelp(item.url)}>
+                                    <Image
+                                        source={require('../assets/yelp.png')} // Add Yelp logo image
+                                        style={styles.yelpLogo}
+                                        resizeMode="contain"
+                                    />
+                                </TouchableOpacity>
+                            </View>
                             <React.Fragment key={index}>
                                 {renderRestaurantItem(item)}
                             </React.Fragment>
@@ -193,6 +218,15 @@ export default function Result({ navigation }) {
                     ))}
                 </ScrollView>
             </View>
+            )}
+            {!ready && (
+                <View style={styles.loadingOverlay}>
+                    <View style={styles.loadingContent}>
+                        <ActivityIndicator size="large" color="#007bff" />
+                        <Text style={styles.loadingText}>Loading...</Text>
+                    </View>
+                </View>
+            )}
         </SafeAreaView>
     );
 }
@@ -216,13 +250,11 @@ const styles = StyleSheet.create({
     },
     title: {
         fontWeight: "bold",
-        fontSize: 22,
+        fontSize: 25,
         color: Colors.champagne,
-        paddingRight: '10%',
-        paddingTop: '5%',
-        fontFamily: 'InknutAntiqua-Regular',
         textAlign: 'center',
-        justifyContent: 'center'
+        paddingRight: '13%',
+        paddingTop: '8%'
     },
     genieContainer: {
         height: '48%',  
@@ -254,48 +286,55 @@ const styles = StyleSheet.create({
         marginTop: -70, 
         paddingBottom: 10,
         marginLeft: 0,
-
     },
     restaurantList: {
         flexGrow: 1,
         alignItems: 'center',
-
     },
     restaurantItem: {
         flexDirection: 'row',
-        backgroundColor: "#425466",
+        backgroundColor: Colors.ghost,
         padding: 10,
-        marginVertical: 10,
+        marginVertical: 15,
         borderRadius: 10,
-        borderColor: Colors.raisin,
-        borderWidth: 1,
+        borderColor: Colors.gold,
+        borderWidth: 2,
+        alignItems: 'flex-start',
         width: '90%',
-        alignItems: 'center',
+        height: 150,
+        shadowColor: Colors.yellow, // Subtle shadow for depth
+        shadowOffset: { width: 7, height: 7 },
+        shadowOpacity: 1,
+        shadowRadius: 0,
+        elevation: 2,
     },
     restaurantImage: {
-        width: '40%',
+        width: '100%',
         height: '100%',
         borderRadius: 10,
-        marginRight: 10,
     },
     restaurantDetails: {
         flex: 1,
+        flexDirection: 'column',
+        height: '100%',
+        justifyContent: 'space-evenly'
     },
     restaurantName: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: Colors.gold,
+        color: Colors.darkGold,
         marginBottom: 5,
     },
     restaurantTaste: {
         fontSize: 15,
-        color: Colors.ghost,
+        color: Colors.blue,
         marginBottom: 5,
     },
     restaurantAddress: {
         fontSize: 15,
-        color: Colors.gold,
+        color: Colors.darkGold,
         marginBottom: 5,
+        textDecorationLine: 'underline',
     },
     distanceContainer: {
         flexDirection: 'row',
@@ -306,7 +345,7 @@ const styles = StyleSheet.create({
     },
     restaurantDistance: {
         fontSize: 15,
-        color: Colors.champagne,
+        color: Colors.blue,
     },
     modalOverlay: {
         flex: 1,
@@ -319,7 +358,7 @@ const styles = StyleSheet.create({
         height: '20%',
         backgroundColor: Colors.blue,
         borderRadius: 10,
-        borderWidth: 1,
+        borderWidth: 2,
         borderColor: Colors.ghost,
         padding: 20,
         marginHorizontal: 0,
@@ -364,7 +403,41 @@ const styles = StyleSheet.create({
     buttonText: {
         color: Colors.raisin,
         fontWeight: '600',
-        marginTop: 3,
         fontSize: 19
+    },
+    imagesContainer: {
+        width: '40%',
+        height: '100%',
+        position: 'relative',
+        marginRight: 10,
+    },
+    yelpLogo: {
+        position: 'absolute',
+        bottom: 0,
+        right: -10,
+        top: -70,
+        width: 100,
+        height: 100,
+    },
+    loadingOverlay: {
+        position: "absolute",       // Full-screen overlay
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,                 // Covers entire screen
+        justifyContent: "center",  // Centers children vertically
+        alignItems: "center",      // Centers children horizontally
+        backgroundColor: "rgba(0, 0, 0, 0.25)", // Semi-transparent black
+        zIndex: 1000,              // Ensures it appears above everything else
+    },
+    loadingContent: {
+        justifyContent: "center",  // Centers content vertically inside this container
+        alignItems: "center",      // Centers content horizontally
+    },
+    loadingText: {
+        marginTop: 10,             // Adds space between the spinner and the text
+        fontSize: 16,
+        color: "#fff",             // White text for visibility
+        textAlign: "center",       // Centers text
     },
 });

@@ -72,9 +72,10 @@ export default function ProblemReport({ navigation }) {
             <Text style={styles.sectionText}>Title:</Text>
                 <View style={styles.inputContainers}>
                     <TextInput
+                        style={styles.inputField}
                         placeholder="Title"
-                        placeholderTextColor="#7C808D"
-                        color={Colors.ghost}
+                        placeholderTextColor="#555"
+                        color={Colors.raisin}
                         onChangeText={setTitle}
                         value={title}
                         editable={true}/>
@@ -141,11 +142,12 @@ export default function ProblemReport({ navigation }) {
                 <View style={styles.selectContainer}>
                     <Text style={styles.sectionTitle}>Problem Description:</Text>
                 </View>
-                <View style={styles.descContainers}>
+                <View>
                     <TextInput
+                        style={styles.descContainers}
                         placeholder="Description"
-                        placeholderTextColor="#7C808D"
-                        color={Colors.ghost}
+                        placeholderTextColor="#555"
+                        color={Colors.raisin}
                         onChangeText={problemDescription}
                         value={description}
                         editable={true}
@@ -181,23 +183,26 @@ const styles = StyleSheet.create({
         height: 44,
         width: "92%",
         flexDirection: "row",
-        borderWidth: 1,
-        borderRadius: 4,
+        borderWidth: 2,
+        borderRadius: 15,
         marginVertical: 6,
         marginLeft: 15,
         alignItems: "center",
-        paddingLeft: 8
+        paddingLeft: 8,
+        backgroundColor: Colors.champagne,
+        borderColor: Colors.gold
     },
     descContainers: {
         height: 300,
         width: "92%",
         flexDirection: "row",
-        borderWidth: 1,
-        borderRadius: 4,
+        borderWidth: 2,
+        borderRadius: 15,
         marginVertical: 6,
         marginLeft: 15,
-        alignItems: "center",
-        paddingLeft: 8
+        paddingLeft: 8,
+        backgroundColor: Colors.champagne,
+        borderColor: Colors.gold,
     },
     background: {
         flex: 1, 
@@ -219,6 +224,12 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: Colors.ghost,
         marginTop: 2,
+    },
+    inputField: {
+        backgroundColor: Colors.champagne,
+        flex: 1,
+        fontSize: 16,
+        flexDirection: 'row',
     },
     saveButton: {
         backgroundColor: Colors.gold,
