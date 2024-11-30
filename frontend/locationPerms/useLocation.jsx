@@ -6,29 +6,42 @@ const useLocation = () => {
     const [longitude, setLongitude] = useState("");
     const [latitude, setLatitude] = useState("");
 
+    {/* Requests user lcocation by Foreground for constant access*/}
     const getUserLocation = async () => {
         let { status } = await Location.requestForegroundPermissionsAsync();
 
+        // Checks if location is not provided 
         if(status !== 'granted'){
-            setErrorMsg('Permission to location not granted')
-            console.log('Perms not granted!')
+            setErrorMsg('Permission to location not granted');
             return;
         }
 
-        let {coords} = await Location.getCurrentPositionAsync();
+        {/* Sets location so that longitude and latitude */}
+        try { 
+            let {coords} = await Location.getCurrentPositionAsync();
+            if(coords) {
+                const { latitude, longitude } = coords;
+                console.log('lat and long: ', latitude, longitude);
+                setLatitude(latitude);
+                setLongitude(longitude);
+                let response = await Location.reverseGeocodeAsync({
+                    latitude,
+                    longitude,
+                });
 
-        if(coords) {
-            const { latitude, longitude } = coords;
-            console.log('lat and long: ', latitude, longitude);
-            setLatitude(latitude);
-            setLongitude(longitude);
-            let response = await Location.reverseGeocodeAsync({
-                latitude,
-                longitude,
-            });
-        
-            console.log('User location is: ', response);
-        };
+            Location.watchPositionAsync(
+                { accuracy: Location.Accuracy.High, timeInterval: 100000 },
+                (location) => {
+                    console.log(location);
+                }
+            );
+            };
+            //try and catch so that it will ask every time userLocation is invoked if location is not accessed
+        } catch (error) {
+            // Handle errors
+            setErrorMsg(error.message);
+            console.error('Error starting foreground location tracking:', error);
+          }
     };
 
 

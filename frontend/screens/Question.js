@@ -10,6 +10,10 @@ import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads'
 import * as Font from 'expo-font';
 
 export default function Question({ navigation }) {
+    // test ad
+    const test_ad_id = "ca-app-pub-8950189603855014/4047050704";
+
+
     // load custom font
     const [fontLoaded, setFontLoaded] = useState(false);
     useEffect(() => {
@@ -225,7 +229,13 @@ export default function Question({ navigation }) {
 
             {/* Ad area */}
             <View style={styles.adContainer}>
-                <BannerAd size="480x100" unitId={TestIds.BANNER} />
+                <BannerAd
+                unitId={test_ad_id}
+                size={BannerAdSize.FULL_BANNER} // Adjust the size dynamically
+                requestOptions={{
+                    requestNonPersonalizedAdsOnly: true,
+                }}
+        />
             </View>
 
             {/* Confirmation modal for ad */}
@@ -356,7 +366,6 @@ const styles = StyleSheet.create({
     adContainer: {
         position: 'absolute',
         bottom: 0,
-        height: '12%',
         width: '100%',
         alignItems: 'center',
         justifyContent: 'center',
