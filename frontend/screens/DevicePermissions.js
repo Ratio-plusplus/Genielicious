@@ -1,9 +1,16 @@
 import React from 'react';
-import { Text, StyleSheet, View, TouchableOpacity, SafeAreaView, ScrollView, StatusBar } from 'react-native';
+import { Text, StyleSheet, Switch, View, TouchableOpacity, SafeAreaView, ScrollView, StatusBar } from 'react-native';
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 
 export default function DevicePermissions({ navigation }) {
+
+    const askCameraPermissions = () => {
+        
+    };
+
+
+
     return (
         <>
         <StatusBar/>
@@ -29,6 +36,12 @@ export default function DevicePermissions({ navigation }) {
                 {/* location permissions section */}
                 <View style={styles.sectionContainer}>
                     <Text style={styles.sectionTitle}>Location Permissions</Text>
+                    <Switch
+                        trackColor={{false: '#767577', true: '#81b0ff'}}
+                        ios_backgroundColor="#3e3e3e"
+                        onValueChange={1}
+                        value={1}
+                        />
                     <Text style={styles.descText}>
                         If you choose to allow location access, we may receive information about your precise location through things like:
                     </Text>

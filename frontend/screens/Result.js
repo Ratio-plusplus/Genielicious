@@ -1,4 +1,4 @@
-import * as React from 'react';
+    import * as React from 'react';
 import { useState, useCallback, useEffect } from 'react';
 import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text, ScrollView, Linking, Modal, ActivityIndicator } from 'react-native';
 import { Colors } from './Colors';
