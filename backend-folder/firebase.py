@@ -31,7 +31,6 @@ def verify_id_token(idToken):
         print(f"Error verifying ID token: {str(e)}")
         return None
 
-#region Inner Region: Recommender Methods
 def getTestUser(user_id):
     return db.reference(f"test_users/{user_id}")
 
@@ -68,9 +67,6 @@ def changeTestUserID(this:str, that:str):
     })
     user.delete()
 
-#endregion Inner Region
-
-#region Inner Region: User Info Methods
 def createNewUser(query):
     try:
         uid = query.get("uid")
@@ -160,8 +156,8 @@ def addHistory(query, uid):
                 #     print(i)
             x = ', '.join(map(str, tastes))
             restaurant['taste'] = x
-            ref = db.reference(f"users/{uid}/history").push()
-            ref.set(restaurant)
+            ref = db.reference(f"users/{uid}/history")
+            ref.update({f"{restaurant["id"]}":restaurant})
         return jsonify({"uid": uid, "message": "User added to history successfully added"}), 200
     except Exception as e:
         print(e)
@@ -209,9 +205,6 @@ def deleteHistory(uid):
         print(e)
         return jsonify({"Error": e}), 400
 
-#endregion Inner Region
-
-#region Inner Region: User Flavor Profile Methods
 def getProfile(uid):
     try:
         if uid:

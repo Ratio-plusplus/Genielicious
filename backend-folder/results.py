@@ -67,6 +67,7 @@ def compileResults(user_id, food_item:str):
     formatted_results = []
     for business in yelp_results["businesses"]:
         formatted_business = dict()
+        formatted_business["id"] = business["id"]
         formatted_business["name"] = business["name"]
         formatted_business["image_url"] = business["image_url"]
         formatted_business["distance"] = business["distance"]

@@ -102,11 +102,6 @@ def createUser():
     # print(query)
     return firebase.createNewUser(query)
 
-#endregion
-
-#region Outer Region: Firebase Database calls
-#region Inner Region: User info
-
 @app.route("/database/get_location", methods=["POST"])
 def getUserLocation():
 
@@ -219,7 +214,6 @@ def updateHistory():
         abort(400, "Information not provided")
 
     return firebase.updateHistory(query, user_id)
-#endregion Inner Region
 
 @app.route("/database/get_user_profile", methods=["GET"])
 def getUserProfile():
@@ -303,9 +297,6 @@ def deleteUser():
         abort(401, {'error': 'Invalid or expired token'})
 
     return firebase.deleteUserData(user_id)
-#endregion Inner Region
-
-#endregion Outer Region
 
 # Bug Report forms:
 @app.route("/database/submit_bug_report", methods=["POST"])
@@ -379,4 +370,3 @@ if __name__ == "__main__":
         app.run(debug=False)
     except Exception as e:
         print(f"Error: {e}")
-
