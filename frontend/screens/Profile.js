@@ -59,10 +59,13 @@ export default function Profile({ navigation }) {
                 <View style={styles.profile}>
                     <View style={styles.profileTop}>
                         <View style={styles.avatar}>
-                            <Image
-                                source={pfp ? { uri: pfp } : Image.resolveAssetSource(require('../assets/pfp.png'))}
-                                resizeMode='contain'
-                                style={styles.avatarImg} />
+                            <TouchableOpacity
+                                onPress={() => navigation.navigate('Edit Profile')}>
+                                <Image
+                                    source={pfp ? { uri: pfp } : Image.resolveAssetSource(require('../assets/pfp.png'))}
+                                    resizeMode='contain'
+                                    style={styles.avatarImg} />
+                            </TouchableOpacity>  
                         </View>
 
                         {/* name and add taste profile button */}
@@ -164,7 +167,8 @@ const styles = StyleSheet.create({
         width: 110,
         height: 110,
         borderRadius: 9999,
-        borderWidth: 1
+        borderWidth: 5,
+        borderColor: Colors.raisin
     },
     button: {
         alignItems: 'center',
@@ -209,6 +213,7 @@ const styles = StyleSheet.create({
         fontSize: 20, 
         height: '68%', 
         marginLeft: 20 ,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        marginTop: 10
     }
 });

@@ -24,7 +24,7 @@ const AnimatedTabBarButton = ({ label, children, onPress, focused }) => {
     React.useEffect(() => {
         Animated.timing(animation, {
             toValue: focused ? 1 : 0,
-            duration: 450,
+            duration: 300,
             useNativeDriver: false,
         }).start();
     }, [focused]);

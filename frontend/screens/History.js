@@ -234,7 +234,17 @@ export default function History({ navigation }) {
                                 </View>
                             ))
                         )}
+
+                        
                     </ScrollView>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 10, marginVertical: 10}}>
+                            <TouchableOpacity>
+                                <Text style={styles.pageText}>Previous Page</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity>
+                                <Text style={styles.pageText}>Next Page</Text>
+                            </TouchableOpacity>
+                        </View>
                 </View>
             )}
             {isLoading && (
@@ -368,7 +378,8 @@ const styles = StyleSheet.create({
         fontSize: 20,
         height: '68%',
         marginTop: 10,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        marginTop: 10
     },
     loadingOverlay: {
         position: "absolute",       // Full-screen overlay
@@ -391,4 +402,14 @@ const styles = StyleSheet.create({
         color: "#fff",             // White text for visibility
         textAlign: "center",       // Centers text
     },
+    pageText: {
+        borderWidth: 2, 
+        borderColor: Colors.gold, 
+        borderRadius: 10, 
+        padding: 5, 
+        backgroundColor: Colors.champagne, 
+        color: Colors.raisin, 
+        fontSize: 15, 
+        fontWeight: '600',
+    }
 });

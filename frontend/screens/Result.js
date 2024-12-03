@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
     },
     restaurantListContainer: {
         flex: 1,
-        marginTop: -70, 
+        marginTop: '-43%', 
         paddingBottom: 10,
         marginLeft: 0,
     },
@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         backgroundColor: Colors.ghost,
         padding: 10,
-        marginVertical: 15,
+        marginVertical: 10,
         borderRadius: 10,
         borderColor: Colors.gold,
         borderWidth: 2,
