@@ -146,7 +146,6 @@ def getNextQuestion(user_id:str, mode:str):
               },
               "answer_choices": {
                 "type": "array",
-                "maxItems": 4,
                 "items": {
                   "type": "string"
                 }
