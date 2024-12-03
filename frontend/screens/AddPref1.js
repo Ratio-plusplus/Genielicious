@@ -22,12 +22,17 @@ export default function AddPref1 ({ navigation }) {
             // Populate the fields with the profileData and if there are pre-existing data we will display Edit instead of New
             setIsChecked(profileData);
             setDtitle("Edit Preference")
+        } else if (route.params?.savedPreferences) {
+            // If we have saved preferences from AddPref2, use those
+            setIsChecked(route.params.savedPreferences);
+            // Set title based on whether we're editing or creating new
+            setDtitle(route.params?.isEditMode ? "Edit Preference" : "New Preference");
         } else {
             // If we aren't editing a pre-existing data then we go back to default
             resetPreferences();
             setDtitle("New Preference")
         }
-    }, [profileData]);
+    }, [profileData, route.params?.savedPreferences, route.params?.isEditMode]);
 
     return (
     <SafeAreaView style={styles.background}>
@@ -376,11 +381,17 @@ export default function AddPref1 ({ navigation }) {
                     style={styles.continueButton} 
                     onPress={()=>{
                         try{
-                            navigation.navigate('Add Preference 2', { existingProfileData: profileData});           
+                            navigation.navigate('Add Preference 2', { 
+                                existingProfileData: profileData,
+                                savedDistance: route.params?.savedDistance,
+                                savedBudget: route.params?.savedBudget,
+                                savedName: route.params?.savedName,
+                                savedImage: route.params?.savedImage,
+                                isEditMode: profileData ? true : route.params?.isEditMode
+                            });           
                         } catch (error) {
                             console.error("Error during navigation: ", error);
                         }
-                        
                     }}>  
                     <Text style={styles.buttonText}>Continue</Text>
                 </TouchableOpacity>

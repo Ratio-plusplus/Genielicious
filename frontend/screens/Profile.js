@@ -25,7 +25,11 @@ export default function Profile({ navigation }) {
         return (
             <TouchableOpacity
                 style={[styles.profileIconContainer, isActiveProfile]}
-                onPress={() => navigation.navigate('Preference', { profileData: item, activeProfileId })}
+                onPress={() => navigation.navigate('Preference', { 
+                    profileData: item, 
+                    activeProfileId,
+                    isEditMode: true
+                })}
             >
                 <Image
                     source={item.photoURL ? { uri: item.photoURL } : Image.resolveAssetSource(require('../assets/pfp.png'))}
@@ -67,7 +71,9 @@ export default function Profile({ navigation }) {
                             <TouchableOpacity style={styles.button}
                                 onPress={() => {
                                     resetPreferences();
-                                    navigation.navigate('Add Preference 1')
+                                    navigation.navigate('Add Preference 1', {
+                                        isEditMode: false
+                                    })
                                 }}>  
                                 
                                 <Text style={styles.profileSubtitle}>Add Taste Profile</Text>

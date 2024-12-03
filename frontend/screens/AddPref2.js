@@ -113,7 +113,7 @@ export default function AddPref2({ navigation }) {
         navigation.navigate('Profile');
     };
 
-    // set the values after we figure out if we have any pre-existing data
+    // Modify the combined useEffect
     useEffect(() => {
         if (existingProfileData) {
             setSelectedImage(existingProfileData.image)
@@ -122,11 +122,30 @@ export default function AddPref2({ navigation }) {
             setSelectedDistance(existingProfileData.distance)
             setPageTitle("Edit Preference")
             setButtonTitle("Update Taste Profile")
+        } else if (route.params?.isEditMode) {
+            // If we're in edit mode from navigation
+            setPageTitle("Edit Preference")
+            setButtonTitle("Update Taste Profile")
         } else {
             setPageTitle("Add New Preference")
             setButtonTitle("Add Taste Profile")
         }
-    }, [existingProfileData]);
+
+        // Add the saved states logic here
+        if (route.params?.savedDistance) {
+            setSelectedDistance(route.params.savedDistance);
+        }
+        if (route.params?.savedBudget) {
+            setSelectedBudget(route.params.savedBudget);
+        }
+        if (route.params?.savedName) {
+            setName(route.params.savedName);
+        }
+        if (route.params?.savedImage) {
+            setSelectedImage(route.params.savedImage);
+        }
+    }, [existingProfileData, route.params?.savedDistance, route.params?.savedBudget, 
+        route.params?.savedName, route.params?.savedImage, route.params?.isEditMode]);
 
     return (
         <SafeAreaView style={{
@@ -142,7 +161,14 @@ export default function AddPref2({ navigation }) {
                 justifyContent: "center"
             }}>
                 <TouchableOpacity
-                    onPress={() => navigation.navigate('Add Preference 1')}
+                    onPress={() => navigation.navigate('Add Preference 1', {
+                        savedPreferences: isChecked,
+                        savedDistance: selectedDistance,
+                        savedBudget: selectedBudget,
+                        savedName: name,
+                        savedImage: selectedImage,
+                        isEditMode: existingProfileData ? true : route.params?.isEditMode
+                    })}
                     style={{
                         position: "absolute",
                         left: 0
