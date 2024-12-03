@@ -45,53 +45,11 @@ const openMap = (address) => {
     Linking.openURL(url); // Linking API allows user to open URLs
 };
 
-<<<<<<< Updated upstream
-const getResults = async (currentUser) => {
-    const restaurants = [];
-    const idToken = await currentUser.getIdToken();
-    //Call to API to retrieve result cache in Realtime Database
-    const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/get_result_cache', {
-        method: "GET",
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${idToken}`
-        }
-    });
-    //Turns response into a json
-    const json = await response.json();
-    //Gets the string stored in info
-    const results = json["info"];
-    const businessList = JSON.parse(results).businesses;
-    for (i = 0; i < businessList.length; i++) {
-        const restaurantInfo = businessList[i];
-        restaurantInfo.distance = Math.round((restaurantInfo.distance / 1609) * 100) / 100;
-        aliases = [];
-        console.log(restaurantInfo.url);
-        for (x = 0; x < restaurantInfo.categories.length; x++) {
-            //console.log(restaurantInfo.categories[x]);
-            aliases.push(restaurantInfo.categories[x].alias);
-        }
-        const push = { name: restaurantInfo.name, taste: aliases.join(', '), address: restaurantInfo.location.display_address.join(', '), distance: restaurantInfo.distance, image: restaurantInfo.image_url, favorite: false, url: restaurantInfo.url };
-        restaurants.push(push);
-    }
-    const restaurant = JSON.stringify(restaurants);
-    const response1 = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/add_history', { //https://genielicious-1229a.wl.r.appspot.com
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${idToken}`
-        },
-        body: JSON.stringify({ "restaurantsInfo": restaurant })
-    });
-    const json1 = await response1.json();
-    return restaurants;
-};
-=======
 const openYelp = (url) => {
     Linking.openURL(url);
 };
 
->>>>>>> Stashed changes
+
 export default function Result({ navigation }) {
     const { currentUser } = useAuth(); // Access currentUser and loading
     const [modalVisible, setModalVisible] = React.useState(false);
