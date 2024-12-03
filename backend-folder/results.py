@@ -1,4 +1,4 @@
-from firebase import getUserCacheRef, getActiveFoodProfile, getLocation
+from firebase import getUserCacheRef, getActiveFoodProfile, getLocation, addHistory
 # from firebase import getTestUserCacheRef, getTestLocation
 from yelp import getStore
 import json
@@ -42,7 +42,7 @@ def compileResults(user_id, food_item:str):
         budget = int(cache.child("budgetCache").get())
 
     yelp_results = getStore(coords, term = food_item, price=budget, radius=distance)
-    print(yelp_results)
+    # print(yelp_results)
     
     if "businesses" not in yelp_results:
         error = {"error": {"type":500,"message":"Yelp businesses not provided"}}
@@ -76,6 +76,8 @@ def compileResults(user_id, food_item:str):
         formatted_business["url"] = business["url"]
         formatted_business["coordinates"] = business["coordinates"]
         formatted_results.append(formatted_business)
+
+    addHistory({"restaurantsInfo":formatted_results},user_id)
 
     clearCache(user_id)
     cache.update({"resultsCache" : json.dumps({"businesses":formatted_results,

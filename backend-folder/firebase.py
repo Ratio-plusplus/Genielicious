@@ -143,6 +143,7 @@ def addHistory(query, uid):
         restaurantsInfo = query.get("restaurantsInfo")
         loading = json.loads(str(restaurantsInfo))
         categories = db.reference("yelp_data/categorized_aliases").get()
+        # print(type(loading),"\n", loading)
         for restaurant in loading:
             taste = restaurant['taste']
             alias = taste.split(", ")
@@ -156,8 +157,10 @@ def addHistory(query, uid):
                 #     print(i)
             x = ', '.join(map(str, tastes))
             restaurant['taste'] = x
+            # print("restaurantID =",restaurant["id"])
             ref = db.reference(f"users/{uid}/history")
             ref.update({f"{restaurant["id"]}":restaurant})
+        # print("Success?")
         return jsonify({"uid": uid, "message": "User added to history successfully added"}), 200
     except Exception as e:
         print(e)
