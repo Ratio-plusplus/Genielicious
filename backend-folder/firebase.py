@@ -369,5 +369,11 @@ def getActiveProfileId(user_id):
 
 if __name__ == "__main__":
     import json
-    user = getTestUser("3")
-    print(user.child("flavorProfiles/0/title").get())
+    restaurant = {
+        "id" : "3",
+        "some" : "attr"
+    }
+    ref = db.reference(f"test_users/{3}/history")
+    ref.update({f"{restaurant["id"]}":restaurant})
+    # user = getTestUser("3")
+    # print(user.child("flavorProfiles/0/title").get())
