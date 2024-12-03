@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useCallback, useContext, useEffect } from 'react';
-import { StyleSheet, Dimensions, View, Image, SafeAreaView, TouchableOpacity, Text, Modal } from 'react-native';
+import { StyleSheet, Dimensions, View, Image, SafeAreaView, TouchableOpacity, Text, Modal, ActivityIndicator } from 'react-native';
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import {useAuth} from '../contexts/AuthContext';
@@ -24,36 +24,34 @@ export default function Question({ navigation }) {
 
     const [modalVisible, setModalVisible] = React.useState(false);
     const [modalVisibleAd, setModalVisibleAd] = React.useState(false);
-    const {mode} = React.useContext(FlavorPreferencesContext);
+    const { mode } = React.useContext(FlavorPreferencesContext);
     const { currentUser, loading } = useAuth(); // Access currentUser and loading
     const [question, setQuestion] = React.useState("Loading Question...");
     const [isButtonDisabled, setIsButtonDisabled] = React.useState(false);
+    const [answers, setAnswers] = React.useState(["Yes", "No"]);
+    const [isLoading, setIsLoading] = useState(true);
 
     const [selectedAnswer, setSelectedAnswer] = useState(null);
 
     const handleQuestionnaire = async () => {
+        console.log("Questionnaire");
         const idToken = await currentUser.getIdToken();
         const response = await fetch(`https://genielicious-1229a.wl.r.appspot.com/client/questions/${mode}`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${idToken}`
-                }
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${idToken}`
+            }
         });
         if (response.ok) {
             const json = await response.json();
-            setQuestion(json["question"]);
             const answer = json["answer_choices"];
-            setAnswer1(answer[0]);
-            setAnswer2(answer[1]);
-            setAnswer3(answer[2]);
-            setAnswer4(answer[3]);
-            console.log(json);
+            setAnswers(answer);
+            setQuestion(json["question"]);
         }
         else {
             const json = await response.text();
             console.error(json);
-
-        }  
+        }
     }
 
     const handleResults = async (answer) => {
@@ -66,11 +64,11 @@ export default function Question({ navigation }) {
 
         const idToken = await currentUser.getIdToken();
         const response = await fetch(`https://genielicious-1229a.wl.r.appspot.com/client/answer/${mode}`, {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${idToken}`
-                }, body : JSON.stringify({answer: answer})
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${idToken}`
+            }, body: JSON.stringify({ answer: answer })
         });
         if (response.ok) {
             const json = await response.json();
@@ -88,15 +86,15 @@ export default function Question({ navigation }) {
             console.error(json);
         }
     }
-            
-    const clearSession = async() =>{
+
+    const clearSession = async () => {
         const idToken = await currentUser.getIdToken();
         const response = await fetch('https://genielicious-1229a.wl.r.appspot.com/client/clear_session', {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${idToken}`
-                }
-            });
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${idToken}`
+            }
+        });
     }
     useFocusEffect(
         useCallback(() => {
@@ -118,59 +116,61 @@ export default function Question({ navigation }) {
     };
 
     const handleAdPress = () => {
-        setModalVisibleAd(true); 
+        setModalVisibleAd(true);
     };
 
     const handleConfirmYesAd = () => {
-        setModalVisibleAd(false);  
+        setModalVisibleAd(false);
         navigation.navigate('History');  // navigate to ad (change when needed)
     };
 
     const handleConfirmNoAd = () => {
-        setModalVisibleAd(false);  
+        setModalVisibleAd(false);
     };
 
+    const renderQuestions = (item) => (
+        <View
+            style={[{ backgroundColor: selectedAnswer === item ? Colors.gold : Colors.champagne }]}>
+            <Text 
+                style={styles.answerText}
+                numberOfLines={2}
+                adjustsFontSizeToFit>{item}</Text>
+        </View>
+    );
     useEffect(() => {
         if (question === "Loading Question...") {
+            setIsLoading(true);
             setIsButtonDisabled(true);
         } else {
+            setIsLoading(false);
             setIsButtonDisabled(false);
         }
     }, [question]);
+
     return (
         <SafeAreaView style={styles.background}>
-            {/* back arrow that opens the confirmation modal */}
+            {/* Back arrow that opens the confirmation modal */}
             <View style={styles.header}>
-                <TouchableOpacity
-                    onPress={handleBackPress}
-                    style={styles.arrowButton}>
-                    <MaterialIcons
-                        name="keyboard-arrow-left"
-                        size={33}
-                        color={Colors.ghost}
-                    />
+                <TouchableOpacity onPress={handleBackPress} style={styles.arrowButton}>
+                    <MaterialIcons name="keyboard-arrow-left" size={33} color={Colors.ghost} />
                 </TouchableOpacity>
             </View>
 
-            {/* confirmation modal for back arrow */}
+            {/* Confirmation modal for back arrow */}
             <Modal
-                animationType='fade'
+                animationType="fade"
                 transparent={true}
                 visible={modalVisible}
-                onRequestClose={() => setModalVisible(false)} // handle hardware back button
+                onRequestClose={() => setModalVisible(false)}
             >
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContainer}>
                         <Text style={styles.modalText}>Are you sure you want to exit session?</Text>
                         <View style={styles.modalButtons}>
-                            <TouchableOpacity
-                                style={styles.modalYesButton}
-                                onPress={handleConfirmYes}>
+                            <TouchableOpacity style={styles.modalYesButton} onPress={handleConfirmYes}>
                                 <Text style={styles.buttonText}>Yes</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity
-                                style={styles.modalNoButton}
-                                onPress={handleConfirmNo}>
+                            <TouchableOpacity style={styles.modalNoButton} onPress={handleConfirmNo}>
                                 <Text style={styles.buttonText}>No</Text>
                             </TouchableOpacity>
                         </View>
@@ -178,7 +178,7 @@ export default function Question({ navigation }) {
                 </View>
             </Modal>
 
-            {/* images in the background */}
+            {/* Images in the background */}
             <View style={styles.genieContainer}>
                 <Image
                     source={require("../assets/sparkle.png")}
@@ -197,84 +197,72 @@ export default function Question({ navigation }) {
                 />
             </View>
 
-            {/* question section */}
-            <View style={styles.questionContainer}>
-                <View style={styles.questionButton}>
-                    <Text style={styles.questionText}>{question}</Text>
-                </View>
-            </View>
+            {/* Render questions and answers after loading */}
+            {!isLoading && (
+                <>
+                    <View style={styles.questionContainer}>
+                        <View style={styles.questionButton}>
+                            <Text 
+                                style={styles.questionText}
+                                numberOfLines={3}
+                                adjustsFontSizeToFit>{question}</Text>
+                        </View>
+                    </View>
 
-            {/* responses section */}
-            <View style={styles.responsesContainer}>
-                <View style={styles.buttonsContainer}>
-                    <TouchableOpacity
-                        style={[styles.button, { backgroundColor: selectedAnswer === answer1 ? Colors.gold : Colors.champagne }]}
-                        activeOpacity={1}
-                        disabled={isButtonDisabled }
-                        onPress={() => handleResults(answer1)}>
-                        <Text style={styles.answerText}>{answer1}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[styles.button, { backgroundColor: selectedAnswer === answer2 ? Colors.gold : Colors.champagne }]}
-                        activeOpacity={1}
-                        disabled={isButtonDisabled}
-                        onPress={() => handleResults(answer2)}>
-                        <Text style={styles.answerText}>{answer2}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[styles.button, { backgroundColor: selectedAnswer === answer3 ? Colors.gold : Colors.champagne }]}
-                        activeOpacity={1}
-                        disabled={isButtonDisabled}
-                        onPress={() => handleResults(answer3)}>
-                        <Text style={styles.answerText}>{answer3}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[styles.button, { backgroundColor: selectedAnswer === answer4 ? Colors.gold : Colors.champagne }]}
-                        activeOpacity={1}
-                        disabled={isButtonDisabled}
-                        onPress={() => handleResults(answer4)}>
-                        <Text style={styles.answerText}>{answer4}</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
+                    <View style={styles.responsesContainer}>
+                        <View style={styles.buttonsContainer}>
+                            {answers.map((item, index) => (
+                                <TouchableOpacity key={index}
+                                    style={styles.button}
+                                    onPress={() => handleResults(item)}
+                                    disabled={isButtonDisabled}
+>
+                                    {renderQuestions(item)}
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    </View>
+                </>
+            )}
 
-            {/* ad area */}
+            {/* Ad area */}
             <View style={styles.adContainer}>
-                <View>
-                    <BannerAd 
-                    size={`480x100`}
-                    unitId={TestIds.BANNER} />
-                </View>
+                <BannerAd size="480x100" unitId={TestIds.BANNER} />
             </View>
 
-            {/* confirmation modal for ad */}
+            {/* Confirmation modal for ad */}
             <Modal
-                animationType='fade'
+                animationType="fade"
                 transparent={true}
                 visible={modalVisibleAd}
-                onRequestClose={() => setModalVisibleAd(false)} // Handle hardware back button
+                onRequestClose={() => setModalVisibleAd(false)}
             >
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContainer}>
                         <Text style={styles.modalText}>Are you sure you want to exit session?</Text>
                         <View style={styles.modalButtons}>
-                            <TouchableOpacity
-                                style={styles.modalYesButton}
-                                onPress={handleConfirmYesAd}>
+                            <TouchableOpacity style={styles.modalYesButton} onPress={handleConfirmYesAd}>
                                 <Text style={styles.buttonText}>Yes</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity
-                                style={styles.modalNoButton}
-                                onPress={handleConfirmNoAd}>
+                            <TouchableOpacity style={styles.modalNoButton} onPress={handleConfirmNoAd}>
                                 <Text style={styles.buttonText}>No</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
                 </View>
             </Modal>
+            {/* Loading animation */}
+            {isLoading && (
+                <View style={styles.loadingOverlay}>
+                    <View style={styles.loadingContent}>
+                        <ActivityIndicator size="large" color="#007bff" />
+                        <Text style={styles.loadingText}>Loading...</Text>
+                    </View>
+                </View>
+            )}
         </SafeAreaView>
     );
-}
+};
 
 const styles = StyleSheet.create({
     background: {
@@ -322,9 +310,9 @@ const styles = StyleSheet.create({
         flexGrow: 0.2,
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: '-30%',
+        marginTop: '-43%',
         marginHorizontal: 20,
-        marginVertical: '10%'
+        marginVertical: 20
     },
     questionButton: {
         backgroundColor: Colors.champagne,
@@ -334,7 +322,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
     },
     questionText: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: '600',
         color: Colors.raisin,
         textAlign: 'center',
@@ -343,7 +331,7 @@ const styles = StyleSheet.create({
     responsesContainer: {
         flex: 0.3,
         alignItems: 'center',
-        marginTop: -20
+        marginTop: -15
     },
     buttonsContainer: {
         flexDirection: 'column',
@@ -355,7 +343,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: Colors.champagne,
         padding: 10,
-        width: '55%',
+        width: '62%',
         borderRadius: 10,
         borderColor: Colors.raisin,
         borderWidth: 1,
@@ -402,7 +390,7 @@ const styles = StyleSheet.create({
         height: '20%',
         backgroundColor: Colors.blue,
         borderRadius: 10,
-        borderWidth: 1,
+        borderWidth: 2,
         borderColor: Colors.ghost,
         padding: 20,
         marginHorizontal: 0,
@@ -447,7 +435,27 @@ const styles = StyleSheet.create({
     buttonText: {
         color: Colors.raisin,
         fontWeight: '600',
-        marginTop: 3,
         fontSize: 19
+    },
+    loadingOverlay: {
+        position: "absolute",       // Full-screen overlay
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,                 // Covers entire screen
+        justifyContent: "center",  // Centers children vertically
+        alignItems: "center",      // Centers children horizontally
+        backgroundColor: "rgba(0, 0, 0, 0.25)", // Semi-transparent black
+        zIndex: 1000,              // Ensures it appears above everything else
+    },
+    loadingContent: {
+        justifyContent: "center",  // Centers content vertically inside this container
+        alignItems: "center",      // Centers content horizontally
+    },
+    loadingText: {
+        marginTop: 10,             // Adds space between the spinner and the text
+        fontSize: 16,
+        color: "#fff",             // White text for visibility
+        textAlign: "center",       // Centers text
     },
 });

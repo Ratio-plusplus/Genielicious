@@ -1,14 +1,14 @@
 import json
 from firebase import getDataRef, getUserCacheRef, getActiveFoodProfile
 #from firebase import getTestUserCacheRef
-# from dotenv import find_dotenv, load_dotenv
-# from yelp import cacheToJson # used in development
+from dotenv import find_dotenv, load_dotenv
+from yelp import cacheToJson # used in development
 import results
 import google.generativeai as genai
 import os
 
-# dotenv_path = find_dotenv()
-# load_dotenv(dotenv_path)
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path)
 
 API_KEY = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key=API_KEY)
@@ -106,7 +106,7 @@ def getNextQuestion(user_id:str, mode:str):
   budgetCache = cache.child("budgetCache").get()
   
   activeProfile = getActiveFoodProfile(user_id)
-  # print(activeProfile)
+  
   if activeProfile:
       budget = activeProfile["budget"]
       distance = activeProfile["distance"]

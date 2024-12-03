@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
         height: '20%',
         backgroundColor: Colors.blue,
         borderRadius: 10,
-        borderWidth: 1,
+        borderWidth: 2,
         borderColor: Colors.ghost,
         padding: 20,
         marginHorizontal: 0,

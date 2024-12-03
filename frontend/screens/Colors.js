@@ -3,6 +3,7 @@ export const Colors = {
     champagne: "#F4D1AE",
     ghost: "#EBEEFA",
     gold: "#ED9A1C", 
+    darkGold: "#BF7D19",
     yellow: "#F0C016",
     raisin: "#272725"
 };
