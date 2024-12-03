@@ -76,26 +76,36 @@ export default function History({ navigation }) {
 
     // Function to filter restaurants based on selected filters
     const filterRestaurants = (restaurants) => {
-        if (!filters) return restaurants; // If no filters, return all restaurants
+        if (!filters) return restaurants;
 
-        return restaurants.filter(restaurant => {
-            const split = restaurant.taste.split(", ");
-            const tastes = split.map(str =>
-                str
-                    .toLowerCase()                       // Convert the entire string to lowercase
-                    .replace(/[\s,-]+(.)/g, (_, char) => char.toUpperCase())  // Capitalize letters after spaces, commas, and hyphens
-                    .replace(/[^a-zA-Z0-9]+/g, '')  // Remove any non-alphanumeric characters (including spaces, commas, hyphens)
-            );
-            let matchesCuisine;
-            for (const i in tastes) {
-                matchesCuisine = filters.cuisines.length === 0 || filters.cuisines.includes(tastes[i]);
-            }
-            const matchesFavorites = !filters.favorites || restaurant.favorite; // Assuming 'favorite' is a boolean in restaurant data
-            if (filters.sort) {
-                matchesCuisine.sort((a, b) => a.distance - b.distance);
-            }
+        let filteredResults = restaurants.filter(restaurant => {
+            // Split the taste string and trim each taste
+            const restaurantTastes = restaurant.taste.split(",").map(taste => taste.trim());
+            
+            // If no cuisines are selected, don't filter by cuisine
+            const hasCuisineFilters = filters.cuisines && filters.cuisines.length > 0;
+            
+            // Check if any of the restaurant's tastes match any selected cuisines
+            const matchesCuisine = !hasCuisineFilters || 
+                restaurantTastes.some(taste => filters.cuisines.includes(taste));
+
+            // Check favorites
+            const matchesFavorites = !filters.favorites || restaurant.favorite;
+
+            console.log('Restaurant:', restaurant.name);
+            console.log('Tastes:', restaurantTastes);
+            console.log('Selected Cuisines:', filters.cuisines);
+            console.log('Matches Cuisine:', matchesCuisine);
+
             return matchesCuisine && matchesFavorites;
         });
+
+        // Sort by distance if selected
+        if (filters.sort) {
+            filteredResults.sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
+        }
+
+        return filteredResults;
     };
 
     const renderRestaurantItem = (item, index) => (
@@ -161,16 +171,21 @@ export default function History({ navigation }) {
     };
     useFocusEffect(
         useCallback(() => {
-            setIsLoading(true);
             const fetchHistory = async () => {
-                const results = await getHistory(currentUser);
-                const filteredResults = filterRestaurants(results); // Apply filters
-                const distanceAdded = getDistance(results);
-                setRestaurants(distanceAdded);
+                setIsLoading(true);
+                try {
+                    const results = await getHistory(currentUser);
+                    const resultsWithDistance = getDistance(results);
+                    const filteredResults = filterRestaurants(resultsWithDistance);
+                    setRestaurants(filteredResults);
+                } catch (error) {
+                    console.error("Error fetching history:", error);
+                } finally {
+                    setIsLoading(false);
+                }
             };
             fetchHistory();
-            setIsLoading(false);
-        }, [filters]) // Re-fetch when filters change
+        }, [filters, currentUser]) // Add filters to dependencies
     );
 
 
@@ -179,7 +194,13 @@ export default function History({ navigation }) {
             <View style={styles.header}>
                 <TouchableOpacity
                     style={styles.filterButton}
-                    onPress={() => navigation.navigate('Filter')}>
+                    onPress={() => navigation.navigate('Filter', {
+                        currentFilters: filters || {
+                            favorites: false,
+                            cuisines: [],
+                            sort: false
+                        }
+                    })}>
                     <MaterialIcons
                         name="filter-list"
                         size={33}

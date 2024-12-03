@@ -1,27 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
 import CheckBox from 'react-native-check-box';
 import { Colors } from './Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 //import { FlavorPreferencesContext } from '../../backend/contexts/FlavorPreferencesContext';
 
 export default function Filter({ navigation }) {
-    //const { isChecked, setIsChecked, resetPreferences } = useContext(FlavorPreferencesContext);
-    const [isChecked, setIsChecked] = useState({
-        french: false, breakfast: false, comfortFood: false, desserts: false,
-        eastAsian: false, european: false, fingerFood: false, healthConscious: false,
-        latinAmerican: false, lightMeals: false, meatCentric: false, middleEastern: false, northAmerican: false,
-        quickEats: false, southAsian: false, specialty: false, vegan: false
+    const route = useRoute();
+    const { currentFilters } = route.params || {};
+
+    const [isChecked, setIsChecked] = useState(() => {
+        const initialState = {
+            'Middle Eastern': false,
+            'East Asian': false,
+            'South Asian': false,
+            'Latin American': false,
+            'North American': false,
+            'European': false,
+            'Vegan': false,
+            'Health-Conscious': false,
+            'Breakfast': false,
+            'Desserts': false,
+            'Light Meals': false,
+            'Quick Eats': false,
+            'Comfort Food': false,
+            'Specialty': false,
+            'Finger Food': false,
+            'Meat-Centric': false,
+            'French': false
+        };
+
+        if (currentFilters?.cuisines) {
+            currentFilters.cuisines.forEach(cuisine => {
+                initialState[cuisine] = true;
+            });
+        }
+        return initialState;
     });
 
-    const [selectedFavorites, setSelectedFavorites] = useState(false);
+    const [selectedFavorites, setSelectedFavorites] = useState(currentFilters?.favorites || false);
+    const [selectedSort, setSelectedSort] = useState(currentFilters?.sort || false);
 
-    const RadioButton = ({ onPress, label }) => {
+    const RadioButton = ({ onPress, label, isSelected }) => {
         return (
             <TouchableOpacity onPress={onPress} style={styles.radioButtonContainer}>
-                <View style={[styles.circle, selectedFavorites && styles.selectedCircle]} />
+                <View style={[styles.circle, isSelected && styles.selectedCircle]} />
                 <Text style={styles.radioLabel}>{label}</Text>
             </TouchableOpacity>
         );
@@ -37,17 +62,20 @@ export default function Filter({ navigation }) {
             return newState;
         });
         setSelectedFavorites(false);
+        setSelectedSort(false);
     };
 
     // once applied, it'll go back to history with the filters 
     const applyFilter = () => {
-        // Create an object to hold the selected filters
         const selectedFilters = {
             favorites: selectedFavorites,
-            cuisines: Object.keys(isChecked).filter(key => isChecked[key]),
+            // Only include checked cuisines
+            cuisines: Object.entries(isChecked)
+                .filter(([_, value]) => value)
+                .map(([key, _]) => key),
+            sort: selectedSort
         };
-        console.log(selectedFilters);
-        // Navigate back to History and pass the selected filters
+        console.log("Applied filters:", selectedFilters);
         navigation.navigate('History', { filters: selectedFilters });
     };
 
@@ -55,7 +83,13 @@ export default function Filter({ navigation }) {
         <SafeAreaView style={styles.background}>
             <View style={styles.container}>
                 <TouchableOpacity
-                    onPress={() => navigation.navigate('History')}
+                    onPress={() => navigation.navigate('History', { 
+                        filters: currentFilters || {  // Keep the previous filters
+                            favorites: false,
+                            cuisines: [],
+                            sort: false
+                        }
+                    })}
                     style={styles.arrow}>
                     <MaterialIcons
                         name="keyboard-arrow-left"
@@ -66,215 +100,221 @@ export default function Filter({ navigation }) {
                 <Text style={styles.title}>Filter</Text>
             </View>
 
-            {/* <ScrollView> */}
+            <View style={styles.radioButtonsRow}>
                 <RadioButton
                     label="Favorites"
+                    isSelected={selectedFavorites}
                     onPress={() => setSelectedFavorites(!selectedFavorites)} />
 
-                <View style={styles.checkboxContainer}>
-                    <Text style={styles.sectionTitle}>
-                        Cuisine:
-                    </Text>
+                <RadioButton
+                    label="Sort by Distance"
+                    isSelected={selectedSort}
+                    onPress={() => setSelectedSort(!selectedSort)} />
+            </View>
 
-                    {/* Row 1 */}
-                    <View style={styles.checkboxRow}>
-                        <CheckBox
-                            style={styles.checkbox}
-                            isChecked={isChecked.French}
-                            onClick={() => setIsChecked({ ...isChecked, French: !isChecked.French })}
-                            rightText='French'
-                            rightTextStyle={styles.checkboxText}
-                            uncheckedCheckBoxColor={Colors.ghost}
-                            checkedCheckBoxColor={Colors.gold} />
-                        <CheckBox
-                            style={styles.checkbox}
-                            isChecked={isChecked.middleEastern}
-                            onClick={() => setIsChecked({ ...isChecked, middleEastern: !isChecked.middleEastern })}
-                            rightText='Middle Eastern'
-                            rightTextStyle={styles.checkboxText}
-                            uncheckedCheckBoxColor={Colors.ghost}
-                            checkedCheckBoxColor={Colors.gold} />
-                    </View>
+            <View style={styles.checkboxContainer}>
+                <Text style={styles.sectionTitle}>
+                    Cuisine:
+                </Text>
 
-                    {/* Row 2 */}
-                    <View style={styles.checkboxRow}>
-                        <CheckBox
-                            style={styles.checkbox}
-                            isChecked={isChecked.eastAsian}
-                            onClick={() => setIsChecked({ ...isChecked, eastAsian: !isChecked.eastAsian })}
-                            rightText='East Asian'
-                            rightTextStyle={styles.checkboxText}
-                            uncheckedCheckBoxColor={Colors.ghost}
-                            checkedCheckBoxColor={Colors.gold} />
-                        <CheckBox
-                            style={styles.checkbox}
-                            isChecked={isChecked.southAsian}
-                            onClick={() => setIsChecked({ ...isChecked, southAsian: !isChecked.southAsian })}
-                            rightText='South Asian'
-                            rightTextStyle={styles.checkboxText}
-                            uncheckedCheckBoxColor={Colors.ghost}
-                            checkedCheckBoxColor={Colors.gold} />
-                    </View>
-
-                    {/* Row 3 */}
-                    <View style={styles.checkboxRow}>
-                        <CheckBox
-                            style={styles.checkbox}
-                            isChecked={isChecked.latinAmerican}
-                            onClick={() => setIsChecked({ ...isChecked, latinAmerican: !isChecked.latinAmerican })}
-                            rightText='Latin American'
-                            rightTextStyle={styles.checkboxText}
-                            uncheckedCheckBoxColor={Colors.ghost}
-                            checkedCheckBoxColor={Colors.gold} />
-                        <CheckBox
-                            style={styles.checkbox}
-                            isChecked={isChecked.northAmerican}
-                            onClick={() => setIsChecked({ ...isChecked, northAmerican: !isChecked.northAmerican })}
-                            rightText='North American'
-                            rightTextStyle={styles.checkboxText}
-                            uncheckedCheckBoxColor={Colors.ghost}
-                            checkedCheckBoxColor={Colors.gold} />
-                    </View>
-
-                    {/* Row 4 */}
-                    <View style={styles.checkboxRow}>
-                        <CheckBox
-                            style={styles.checkbox}
-                            isChecked={isChecked.european}
-                            onClick={() => setIsChecked({ ...isChecked, european: !isChecked.european })}
-                            rightText='European'
-                            rightTextStyle={styles.checkboxText}
-                            uncheckedCheckBoxColor={Colors.ghost}
-                            checkedCheckBoxColor={Colors.gold} />
-                    </View>
+                {/* Row 1 */}
+                <View style={styles.checkboxRow}>
+                    <CheckBox
+                        style={styles.checkbox}
+                        isChecked={isChecked['Middle Eastern']}
+                        onClick={() => setIsChecked({ ...isChecked, 'Middle Eastern': !isChecked['Middle Eastern'] })}
+                        rightText='Middle Eastern'
+                        rightTextStyle={styles.checkboxText}
+                        uncheckedCheckBoxColor={Colors.ghost}
+                        checkedCheckBoxColor={Colors.gold} />
+                    <CheckBox
+                        style={styles.checkbox}
+                        isChecked={isChecked['East Asian']}
+                        onClick={() => setIsChecked({ ...isChecked, 'East Asian': !isChecked['East Asian'] })}
+                        rightText='East Asian'
+                        rightTextStyle={styles.checkboxText}
+                        uncheckedCheckBoxColor={Colors.ghost}
+                        checkedCheckBoxColor={Colors.gold} />
                 </View>
 
-                <View style={styles.checkboxContainer}>
-                    <Text style={styles.sectionTitle}>
-                        Restrictions:
-                    </Text>
-
-                    {/* Row 1 */}
-                    <View style={styles.checkboxRow}>
-                        <CheckBox
-                            style={styles.checkbox}
-                            isChecked={isChecked.vegan}
-                            onClick={() => setIsChecked({ ...isChecked, vegan: !isChecked.vegan })}
-                            rightText='Vegan'
-                            rightTextStyle={styles.checkboxText}
-                            uncheckedCheckBoxColor={Colors.ghost}
-                            checkedCheckBoxColor={Colors.gold} />
-                        <CheckBox
-                            style={styles.checkbox}
-                            isChecked={isChecked.healthConscious}
-                            onClick={() => setIsChecked({ ...isChecked, healthConscious: !isChecked.healthConscious })}
-                            rightText='Health-Conscious'
-                            rightTextStyle={styles.checkboxText}
-                            uncheckedCheckBoxColor={Colors.ghost}
-                            checkedCheckBoxColor={Colors.gold} />
-                    </View>
+                {/* Row 2 */}
+                <View style={styles.checkboxRow}>
+                    <CheckBox
+                        style={styles.checkbox}
+                        isChecked={isChecked['South Asian']}
+                        onClick={() => setIsChecked({ ...isChecked, 'South Asian': !isChecked['South Asian'] })}
+                        rightText='South Asian'
+                        rightTextStyle={styles.checkboxText}
+                        uncheckedCheckBoxColor={Colors.ghost}
+                        checkedCheckBoxColor={Colors.gold} />
+                    <CheckBox
+                        style={styles.checkbox}
+                        isChecked={isChecked['Latin American']}
+                        onClick={() => setIsChecked({ ...isChecked, 'Latin American': !isChecked['Latin American'] })}
+                        rightText='Latin American'
+                        rightTextStyle={styles.checkboxText}
+                        uncheckedCheckBoxColor={Colors.ghost}
+                        checkedCheckBoxColor={Colors.gold} />
                 </View>
 
-                <View style={styles.checkboxContainer}>
-                    <Text style={styles.sectionTitle}>
-                        Meal Time:
-                    </Text>
-
-                    {/* Row 1 */}
-                    <View style={styles.checkboxRow}>
-                        <CheckBox
-                            style={styles.checkbox}
-                            isChecked={isChecked.breakfast}
-                            onClick={() => setIsChecked({ ...isChecked, breakfast: !isChecked.breakfast })}
-                            rightText='Breakfast'
-                            rightTextStyle={styles.checkboxText}
-                            uncheckedCheckBoxColor={Colors.ghost}
-                            checkedCheckBoxColor={Colors.gold} />
-                        <CheckBox
-                            style={styles.checkbox}
-                            isChecked={isChecked.desserts}
-                            onClick={() => setIsChecked({ ...isChecked, desserts: !isChecked.desserts })}
-                            rightText='Desserts'
-                            rightTextStyle={styles.checkboxText}
-                            uncheckedCheckBoxColor={Colors.ghost}
-                            checkedCheckBoxColor={Colors.gold} />
-                    </View>
-
-                    {/* Row 2 */}
-                    <View style={styles.checkboxRow}>
-                        <CheckBox
-                            style={styles.checkbox}
-                            isChecked={isChecked.lightMeals}
-                            onClick={() => setIsChecked({ ...isChecked, lightMeals: !isChecked.lightMeals })}
-                            rightText='Light Meals'
-                            rightTextStyle={styles.checkboxText}
-                            uncheckedCheckBoxColor={Colors.ghost}
-                            checkedCheckBoxColor={Colors.gold} />
-                        <CheckBox
-                            style={styles.checkbox}
-                            isChecked={isChecked.quickEats}
-                            onClick={() => setIsChecked({ ...isChecked, quickEats: !isChecked.quickEats })}
-                            rightText='Quick Eats'
-                            rightTextStyle={styles.checkboxText}
-                            uncheckedCheckBoxColor={Colors.ghost}
-                            checkedCheckBoxColor={Colors.gold} />
-                    </View>
-
-                    {/* Row 3 */}
-                    <View style={styles.checkboxRow}>
-                        <CheckBox
-                            style={styles.checkbox}
-                            isChecked={isChecked.comfortFood}
-                            onClick={() => setIsChecked({ ...isChecked, comfortFood: !isChecked.comfortFood })}
-                            rightText='Comfort Food'
-                            rightTextStyle={styles.checkboxText}
-                            uncheckedCheckBoxColor={Colors.ghost}
-                            checkedCheckBoxColor={Colors.gold} />
-                        <CheckBox
-                            style={styles.checkbox}
-                            isChecked={isChecked.specialty}
-                            onClick={() => setIsChecked({ ...isChecked, specialty: !isChecked.specialty })}
-                            rightText='Specialty'
-                            rightTextStyle={styles.checkboxText}
-                            uncheckedCheckBoxColor={Colors.ghost}
-                            checkedCheckBoxColor={Colors.gold} />
-                    </View>
-
-                    {/* Row 4 */}
-                    <View style={styles.checkboxRow}>
-                        <CheckBox
-                            style={styles.checkbox}
-                            isChecked={isChecked.fingerFood}
-                            onClick={() => setIsChecked({ ...isChecked, fingerFood: !isChecked.fingerFood })}
-                            rightText='Finger Food'
-                            rightTextStyle={styles.checkboxText}
-                            uncheckedCheckBoxColor={Colors.ghost}
-                            checkedCheckBoxColor={Colors.gold} />
-                        <CheckBox
-                            style={styles.checkbox}
-                            isChecked={isChecked.meatCentric}
-                            onClick={() => setIsChecked({ ...isChecked, meatCentric: !isChecked.meatCentric })}
-                            rightText='Meat-Centric'
-                            rightTextStyle={styles.checkboxText}
-                            uncheckedCheckBoxColor={Colors.ghost}
-                            checkedCheckBoxColor={Colors.gold} />
-                    </View>
+                {/* Row 3 */}
+                <View style={styles.checkboxRow}>
+                    <CheckBox
+                        style={styles.checkbox}
+                        isChecked={isChecked['North American']}
+                        onClick={() => setIsChecked({ ...isChecked, 'North American': !isChecked['North American'] })}
+                        rightText='North American'
+                        rightTextStyle={styles.checkboxText}
+                        uncheckedCheckBoxColor={Colors.ghost}
+                        checkedCheckBoxColor={Colors.gold} />
+                    <CheckBox
+                        style={styles.checkbox}
+                        isChecked={isChecked['European']}
+                        onClick={() => setIsChecked({ ...isChecked, 'European': !isChecked['European'] })}
+                        rightText='European'
+                        rightTextStyle={styles.checkboxText}
+                        uncheckedCheckBoxColor={Colors.ghost}
+                        checkedCheckBoxColor={Colors.gold} />
                 </View>
 
-                {/* Continue Button */}
-                <View style={styles.buttonContainer}>
-                    <TouchableOpacity
-                        style={styles.resetButton}
-                        onPress={resetCheckbox}>
-                        <Text style={styles.buttonText}>Reset</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.applyButton}
-                        onPress={applyFilter}>
-                        <Text style={styles.buttonText}>Apply Filter</Text>
-                    </TouchableOpacity>
+                {/* Row 4 */}
+                <View style={styles.checkboxRow}>
+                    <CheckBox
+                        style={styles.checkbox}
+                        isChecked={isChecked['Vegan']}
+                        onClick={() => setIsChecked({ ...isChecked, 'Vegan': !isChecked['Vegan'] })}
+                        rightText='Vegan'
+                        rightTextStyle={styles.checkboxText}
+                        uncheckedCheckBoxColor={Colors.ghost}
+                        checkedCheckBoxColor={Colors.gold} />
+                    <CheckBox
+                        style={styles.checkbox}
+                        isChecked={isChecked['Health-Conscious']}
+                        onClick={() => setIsChecked({ ...isChecked, 'Health-Conscious': !isChecked['Health-Conscious'] })}
+                        rightText='Health-Conscious'
+                        rightTextStyle={styles.checkboxText}
+                        uncheckedCheckBoxColor={Colors.ghost}
+                        checkedCheckBoxColor={Colors.gold} />
                 </View>
-            {/* </ScrollView> */}
+            </View>
+
+            <View style={styles.checkboxContainer}>
+                <Text style={styles.sectionTitle}>
+                    Restrictions:
+                </Text>
+
+                {/* Row 1 */}
+                <View style={styles.checkboxRow}>
+                    <CheckBox
+                        style={styles.checkbox}
+                        isChecked={isChecked['Breakfast']}
+                        onClick={() => setIsChecked({ ...isChecked, 'Breakfast': !isChecked['Breakfast'] })}
+                        rightText='Breakfast'
+                        rightTextStyle={styles.checkboxText}
+                        uncheckedCheckBoxColor={Colors.ghost}
+                        checkedCheckBoxColor={Colors.gold} />
+                    <CheckBox
+                        style={styles.checkbox}
+                        isChecked={isChecked['Desserts']}
+                        onClick={() => setIsChecked({ ...isChecked, 'Desserts': !isChecked['Desserts'] })}
+                        rightText='Desserts'
+                        rightTextStyle={styles.checkboxText}
+                        uncheckedCheckBoxColor={Colors.ghost}
+                        checkedCheckBoxColor={Colors.gold} />
+                </View>
+            </View>
+
+            <View style={styles.checkboxContainer}>
+                <Text style={styles.sectionTitle}>
+                    Meal Time:
+                </Text>
+
+                {/* Row 1 */}
+                <View style={styles.checkboxRow}>
+                    <CheckBox
+                        style={styles.checkbox}
+                        isChecked={isChecked['Light Meals']}
+                        onClick={() => setIsChecked({ ...isChecked, 'Light Meals': !isChecked['Light Meals'] })}
+                        rightText='Light Meals'
+                        rightTextStyle={styles.checkboxText}
+                        uncheckedCheckBoxColor={Colors.ghost}
+                        checkedCheckBoxColor={Colors.gold} />
+                    <CheckBox
+                        style={styles.checkbox}
+                        isChecked={isChecked['Quick Eats']}
+                        onClick={() => setIsChecked({ ...isChecked, 'Quick Eats': !isChecked['Quick Eats'] })}
+                        rightText='Quick Eats'
+                        rightTextStyle={styles.checkboxText}
+                        uncheckedCheckBoxColor={Colors.ghost}
+                        checkedCheckBoxColor={Colors.gold} />
+                </View>
+
+                {/* Row 2 */}
+                <View style={styles.checkboxRow}>
+                    <CheckBox
+                        style={styles.checkbox}
+                        isChecked={isChecked['Comfort Food']}
+                        onClick={() => setIsChecked({ ...isChecked, 'Comfort Food': !isChecked['Comfort Food'] })}
+                        rightText='Comfort Food'
+                        rightTextStyle={styles.checkboxText}
+                        uncheckedCheckBoxColor={Colors.ghost}
+                        checkedCheckBoxColor={Colors.gold} />
+                    <CheckBox
+                        style={styles.checkbox}
+                        isChecked={isChecked['Specialty']}
+                        onClick={() => setIsChecked({ ...isChecked, 'Specialty': !isChecked['Specialty'] })}
+                        rightText='Specialty'
+                        rightTextStyle={styles.checkboxText}
+                        uncheckedCheckBoxColor={Colors.ghost}
+                        checkedCheckBoxColor={Colors.gold} />
+                </View>
+
+                {/* Row 3 */}
+                <View style={styles.checkboxRow}>
+                    <CheckBox
+                        style={styles.checkbox}
+                        isChecked={isChecked['Finger Food']}
+                        onClick={() => setIsChecked({ ...isChecked, 'Finger Food': !isChecked['Finger Food'] })}
+                        rightText='Finger Food'
+                        rightTextStyle={styles.checkboxText}
+                        uncheckedCheckBoxColor={Colors.ghost}
+                        checkedCheckBoxColor={Colors.gold} />
+                    <CheckBox
+                        style={styles.checkbox}
+                        isChecked={isChecked['Meat-Centric']}
+                        onClick={() => setIsChecked({ ...isChecked, 'Meat-Centric': !isChecked['Meat-Centric'] })}
+                        rightText='Meat-Centric'
+                        rightTextStyle={styles.checkboxText}
+                        uncheckedCheckBoxColor={Colors.ghost}
+                        checkedCheckBoxColor={Colors.gold} />
+                </View>
+
+                {/* Row 4 */}
+                <View style={styles.checkboxRow}>
+                    <CheckBox
+                        style={styles.checkbox}
+                        isChecked={isChecked['French']}
+                        onClick={() => setIsChecked({ ...isChecked, 'French': !isChecked['French'] })}
+                        rightText='French'
+                        rightTextStyle={styles.checkboxText}
+                        uncheckedCheckBoxColor={Colors.ghost}
+                        checkedCheckBoxColor={Colors.gold} />
+                </View>
+            </View>
+
+            {/* Continue Button */}
+            <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                    style={styles.resetButton}
+                    onPress={resetCheckbox}>
+                    <Text style={styles.buttonText}>Reset</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.applyButton}
+                    onPress={applyFilter}>
+                    <Text style={styles.buttonText}>Apply Filter</Text>
+                </TouchableOpacity>
+            </View>
         </SafeAreaView>
     );
 };
@@ -304,9 +344,6 @@ const styles = StyleSheet.create({
     radioButtonContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingLeft: 22,
-        paddingTop: 20,
-        marginBottom: 15
     },
     circle: {
         height: 21,
@@ -375,5 +412,12 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         color: Colors.raisin,
+    },
+    radioButtonsRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingHorizontal: 22,
+        paddingTop: 20,
+        marginBottom: 15
     },
 });
