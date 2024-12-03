@@ -77,8 +77,6 @@ def compileResults(user_id, food_item:str):
         formatted_business["coordinates"] = business["coordinates"]
         formatted_results.append(formatted_business)
 
-    addHistory({"restaurantsInfo":formatted_results},user_id)
-
     clearCache(user_id)
     cache.update({"resultsCache" : json.dumps({"businesses":formatted_results,
                                                "result_status":status})})
