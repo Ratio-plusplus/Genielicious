@@ -142,12 +142,18 @@ def getResultsCache(uid):
         return jsonify(message=f"Error with code: {e}")
 
 
+<<<<<<< Updated upstream:backend/recommender/firebase.py
 def addHistory(query, uid):
     try:
         restaurantsInfo = query.get("restaurantsInfo")
         loading = json.loads(str(restaurantsInfo))
         categories = db.reference("yelp_data/categorized_aliases").get();
         for restaurant in loading:
+=======
+def parseTaste(restaurantsList):
+    categories = db.reference("yelp_data/categorized_aliases").get()
+    for restaurant in restaurantsList:
+>>>>>>> Stashed changes:backend-folder/firebase.py
             taste = restaurant['taste']
             alias = taste.split(", ")
             #x = ""
@@ -162,7 +168,14 @@ def addHistory(query, uid):
             restaurant['taste'] = x
             ref = db.reference(f"users/{uid}/history").push()
             ref.set(restaurant)
-        return jsonify({"uid": uid, "message": "User added to history successfully added"}), 200
+    return restaurantsList
+
+def addHistory(query, uid):
+    try:
+        restaurantsInfo = query.get("restaurantsInfo")
+        restaurantsList = json.loads(str(restaurantsInfo))
+        newRestaurantList = parseTaste(restaurantsList)
+        return jsonify({"info": restaurantsList, "message": "User added to history successfully added"}), 200
     except Exception as e:
         print(e)
         return jsonify(message=f"Error with code: {e}")
