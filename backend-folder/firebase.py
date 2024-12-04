@@ -137,15 +137,9 @@ def getResultsCache(uid):
         print(e)
         return jsonify(message=f"Error with code: {e}")
 
-
-def addHistory(query, uid):
-    try:
-        restaurantsInfo = query.get("restaurantsInfo")
-        loading = json.loads(str(restaurantsInfo))
-        categories = db.reference("yelp_data/categorized_aliases").get()
-        # print(type(loading),"\n", loading)
-        for restaurant in loading:
-            # print(restaurant)
+def parseTaste(restaurantsList, uid):
+    categories = db.reference("yelp_data/categorized_aliases").get()
+    for restaurant in restaurantsList:
             restaurantID = restaurant["id"]
             taste = restaurant['taste']
             alias = taste.split(", ")
@@ -159,14 +153,18 @@ def addHistory(query, uid):
                 #     print(i)
             x = ', '.join(map(str, tastes))
             restaurant['taste'] = x
-            # print("restaurantID =",restaurantID)
             ref = db.reference(f"users/{uid}/history")
             ref.update({restaurantID:restaurant})
-        print("Success?")
-        return jsonify({"uid": uid, "message": "User added to history successfully added"}), 200
+    return restaurantsList
+
+def addHistory(query, uid):
+    try:
+        restaurantsInfo = query.get("restaurantsInfo")
+        restaurantsList = json.loads(str(restaurantsInfo))
+        newRestaurantList = parseTaste(restaurantsList, uid)
+        return jsonify({"info": restaurantsList, "message": "User added to history successfully added"}), 200
     except Exception as e:
-        print("from AddHistory",e)
-        print("from AddHistory",e.with_traceback)
+        print(e)
         return jsonify(message=f"Error with code: {e}")
 
 def getHistory(uid):
@@ -375,11 +373,5 @@ def getActiveProfileId(user_id):
 
 if __name__ == "__main__":
     import json
-    restaurant = {
-        "id" : "3",
-        "some" : "attr"
-    }
-    ref = db.reference(f"test_users/{3}/history")
-    ref.update({f"{restaurant["id"]}":restaurant})
-    # user = getTestUser("3")
-    # print(user.child("flavorProfiles/0/title").get())
+    user = getTestUser("3")
+    print(user.child("flavorProfiles/0/title").get())
