@@ -1,38 +1,66 @@
 import React, { useState, useEffect } from 'react';
 import { Text, StyleSheet, Switch, View, TouchableOpacity, SafeAreaView, ScrollView, StatusBar } from 'react-native';
+import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 
 export default function DevicePermissions({ navigation }) {
-
+        {/* Vars to keep track of permissions*/}
         const [cameraPermission, setCameraPermission] = useState(false);
+        const [locationPermission, setLocationPermission] = useState(false);
 
         useEffect(() => {
           // Check permission state when the component mounts
-          checkPermission();
+          checkCameraPermission();
+          checkLocationPermission();
         }, []);
       
-        const checkPermission = async () => {
+        const checkCameraPermission = async () => {
           // Check camera permission for Android
           const result = await check(PERMISSIONS.ANDROID.CAMERA);
           setCameraPermission(result === RESULTS.GRANTED);
         };
       
-        const requestPermission = async () => {
+        const requestCameraPermission = async () => {
           // Request camera permission for Android
           const result = await request(PERMISSIONS.ANDROID.CAMERA);
           setCameraPermission(result === RESULTS.GRANTED);
         };
       
-        const togglePermission = () => {
-          if (cameraPermission) {
-            // Camera permission already granted
-            console.log('Camera permission already granted.');
-          } else {
-            // Request camera permission
-            requestPermission();
-          }
+        const toggleCameraPermission = () => {
+            if (cameraPermission) {
+                setCameraPermission(false); // Simulate revocation
+              } else {
+                requestCameraPermission();
+              }
         };
+
+        const checkLocationPermission = async () => {
+            const result = await check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+            setLocationPermission(result === RESULTS.GRANTED);
+          };
+        
+          const requestLocationPermission = async () => {
+            const result = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+            if (result === RESULTS.GRANTED) {
+              setLocationPermission(true);
+            } else if (result === RESULTS.BLOCKED) {
+              Alert.alert(
+                'Permission Blocked',
+                'Location permission is blocked. Please enable it from app settings.',
+                [{ text: 'Open Settings', onPress: () => Linking.openSettings() }]
+              );
+            }
+          };
+        
+          const toggleLocationPermission = () => {
+            if (locationPermission) {
+              setLocationPermission(false); // Simulate revocation
+            } else {
+              requestLocationPermission();
+            }
+          };
+
     return (
         <>
         <StatusBar/>
@@ -61,8 +89,8 @@ export default function DevicePermissions({ navigation }) {
                         <Text style={styles.sectionTitle}>Location Permissions</Text>
                         <Switch
                             trackColor={{false: '#767577', true: '#81b0ff'}}
-                            onValueChange={cameraPermission}
-                            value={togglePermission}
+                            onValueChange={toggleLocationPermission}
+                            value={locationPermission}
                         />
                     </View>
                     
@@ -91,8 +119,8 @@ export default function DevicePermissions({ navigation }) {
                         </Text>
                         <Switch
                             trackColor={{false: '#767577', true: '#81b0ff'}}
-                            onValueChange={cameraPermission}
-                            value={togglePermission}
+                            onValueChange={toggleCameraPermission}
+                            value={cameraPermission}
                             />
                     </View>
                     <Text style={styles.descText}>
