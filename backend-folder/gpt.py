@@ -163,10 +163,10 @@ def getNextQuestion(user_id:str, mode:str):
           }
         }
       },
-      temperature=1.2,
-      max_tokens=2048,
+      temperature=1.3,
+      max_tokens=1025,
       top_p=1,
-      frequency_penalty=0.1,
+      frequency_penalty=0,
       presence_penalty=0.2
     )
   
