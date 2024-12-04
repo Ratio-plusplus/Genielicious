@@ -47,7 +47,7 @@ export const ProfileProvider = ({ children }) => {
         // Once permissions are grabbed, get coords but in a tuple
         let { coords } = await Location.getCurrentPositionAsync();
         console.log("Coords:", coords);
-        if (coords) {
+        if (coords && currentUser) {
             const { latitude, longitude } = coords;
             console.log('lat and long: ', latitude, longitude);
             let location = await Location.reverseGeocodeAsync({
@@ -76,7 +76,8 @@ export const ProfileProvider = ({ children }) => {
     useEffect(() => {
         if (!loading) {
             if (userLoggedIn) {
-            fetchData(); // Only fetch data when loading is false
+                fetchData(); // Only fetch data when loading is false
+                getUserLocation();
             }
         }
     }, [loading, currentUser]); // Depend on loading and currentUser
