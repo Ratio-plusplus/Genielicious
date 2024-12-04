@@ -7,6 +7,13 @@ import { auth } from '../firebase/firebase';
 import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
 import { useAuth } from '../contexts/AuthContext';
 
+const getFontSize = (size) => {
+    const { width } = Dimensions.get('window');
+    const guidelineBaseWidth = 375;     // base width for most devices
+    const scale = width / guidelineBaseWidth;
+    return Math.round(PixelRatio.roundToNearestPixel(size * scale));
+};
+
 export default function Preference({ navigation, route }) {
     const { currentUser, loading } = useAuth(); // Access currentUser and loading
     const { profileData } = route.params;
@@ -119,7 +126,7 @@ export default function Preference({ navigation, route }) {
                         color={Colors.ghost}
                     />
                 </TouchableOpacity>
-                <Text style={{ marginTop: 2, fontWeight: '600', fontSize: 22, color: Colors.ghost }}>{tasteProfile.title}</Text>
+                <Text style={{ marginTop: 2, fontWeight: '600', fontSize: getFontSize(22), color: Colors.ghost }}>{tasteProfile.title}</Text>
                 <TouchableOpacity
                     onPress={() => setModalVisible(true)}
                     style={{ position: "absolute", right: 0 }}>
@@ -217,7 +224,7 @@ const styles = StyleSheet.create({
         borderColor: "#000"
     },
     sectionText: {
-        fontSize: 20,
+        fontSize: getFontSize(20),
         fontWeight: "bold",
         marginTop: 5,
         marginLeft: 20,
@@ -249,13 +256,13 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.blue
     },
     boxText: {
-        fontSize: 20,
+        fontSize: getFontSize(20),
         color: "#B3B3B3"
     },
     buttonRow: {
         flexDirection: "row",
         justifyContent: "space-evenly",
-        height: '9%',
+        height: '8%',
         marginTop: -15
     },
     editButton: {
@@ -277,7 +284,7 @@ const styles = StyleSheet.create({
         justifyContent: "center"
     },
     buttonText: {
-        fontSize: 22,
+        fontSize: getFontSize(20),
         fontWeight: "bold",
         color: Colors.raisin
     },
@@ -307,7 +314,7 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     modalText: {
-        fontSize: 22,
+        fontSize: getFontSize(22),
         fontWeight: '600',
         marginBottom: 20,
         color: Colors.ghost,
@@ -337,6 +344,6 @@ const styles = StyleSheet.create({
     modalButtonText: {
         color: Colors.raisin,
         fontWeight: '600',
-        fontSize: 19
+        fontSize: getFontSize(19)
     },
 });

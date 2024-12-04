@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text, ScrollView, Linking, ActivityIndicator } from 'react-native';
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -50,6 +50,32 @@ export default function History({ navigation }) {
     const { filters } = route.params || {}; // Get filters from navigation params
     const [isLoading, setIsLoading] = useState(true);
 
+    const pageSize = 10;    // display 10 restaurants per page
+    const [currentPage, setCurrentPage] = useState(0);     // tracks current page starting at 0
+    const scrollViewRef = useRef(null);
+
+    // page 0: (0, 10) -> items 0 to 9
+    // page 1: (10, 20) -> items 10 to 19
+    const paginatedRestaurants = restaurants.slice(
+        currentPage * pageSize,
+        (currentPage + 1) * pageSize
+    );
+
+    // move to next page if more items are available by incrementing
+    const nextPage = () => {
+        if ((currentPage + 1) * pageSize < restaurants.length) {
+            setCurrentPage((prevPage) => prevPage + 1);
+            scrollViewRef.current?.scrollTo({ y: 0, animated: false }); // scrolls back to top at every page
+        }
+    };
+
+    // move to previous page by decrementing
+    const prevPage = () => {
+        if (currentPage > 0) {
+            setCurrentPage((prevPage) => prevPage - 1);
+            scrollViewRef.current?.scrollTo({ y: 0, animated: false });
+        }
+    };
 
     const saveFavorites = async (index) => {
         const idToken = await currentUser.getIdToken();
@@ -81,12 +107,12 @@ export default function History({ navigation }) {
         let filteredResults = restaurants.filter(restaurant => {
             // Split the taste string and trim each taste
             const restaurantTastes = restaurant.taste.split(",").map(taste => taste.trim());
-            
+
             // If no cuisines are selected, don't filter by cuisine
             const hasCuisineFilters = filters.cuisines && filters.cuisines.length > 0;
-            
+
             // Check if any of the restaurant's tastes match any selected cuisines
-            const matchesCuisine = !hasCuisineFilters || 
+            const matchesCuisine = !hasCuisineFilters ||
                 restaurantTastes.some(taste => filters.cuisines.includes(taste));
 
             // Check favorites
@@ -211,11 +237,13 @@ export default function History({ navigation }) {
             </View>
             {!isLoading && (
                 <View style={styles.restaurantListContainer}>
-                    <ScrollView contentContainerStyle={styles.restaurantList}>
-                        {restaurants.length === 0 ? (
+                    <ScrollView
+                        contentContainerStyle={styles.restaurantList}
+                        ref={scrollViewRef}>
+                        {paginatedRestaurants.length === 0 ? (
                             <Text style={styles.noHistoryText}>No history found. Use our Genie now!</Text>
                         ) : (
-                            restaurants.map((item, index) => (
+                            paginatedRestaurants.map((item, index) => (
                                 <View key={index} style={styles.restaurantItem}>
                                     <View style={styles.imagesContainer}>
                                         <Image
@@ -231,17 +259,44 @@ export default function History({ navigation }) {
                                             />
                                         </TouchableOpacity>
                                     </View>
-                                    {renderRestaurantItem(item, index)}
+                                    {renderRestaurantItem(item, index + currentPage * pageSize)}
                                 </View>
                             ))
                         )}
+
+
                     </ScrollView>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 10, marginVertical: 10 }}>
-                        <TouchableOpacity>
+                    <View style={styles.paginationContainer}>
+                        <TouchableOpacity
+                            onPress={prevPage}
+                            disabled={currentPage === 0}    // disabled if already at first page
+                            style={[
+                                styles.pageButton,
+                                currentPage === 0 && styles.pageButtonDisabled,
+                            ]}
+                        >
+                            <MaterialIcons
+                                name="keyboard-arrow-left"
+                                size={20}
+                                color={Colors.raisin}
+                            />
                             <Text style={styles.pageText}>Previous Page</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={nextPage}
+                            disabled={(currentPage + 1) * pageSize >= restaurants.length}   // disabled if no more items left
+                            style={[
+                                styles.pageButton,
+                                (currentPage + 1) * pageSize >= restaurants.length &&
+                                styles.pageButtonDisabled,
+                            ]}
+                        >
                             <Text style={styles.pageText}>Next Page</Text>
+                            <MaterialIcons
+                                name="keyboard-arrow-right"
+                                size={20}
+                                color={Colors.raisin}
+                            />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -400,14 +455,28 @@ const styles = StyleSheet.create({
         color: "#fff",             // White text for visibility
         textAlign: "center",       // Centers text
     },
-    pageText: {
+    paginationContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginHorizontal: 10,
+        marginTop: 10,
+    },
+    pageButton: {
         borderWidth: 2,
         borderColor: Colors.gold,
         borderRadius: 10,
         padding: 5,
         backgroundColor: Colors.champagne,
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    pageButtonDisabled: {
+        backgroundColor: Colors.ghost,
+        borderColor: Colors.raisin,
+    },
+    pageText: {
         color: Colors.raisin,
         fontSize: 15,
-        fontWeight: '600',
+        fontWeight: '600'
     }
 });
