@@ -59,62 +59,14 @@ const openYelp = (url) => {
     Linking.openURL(url);
 };
 
-const getResults = async (currentUser) => {
-    const restaurants = [];
-    const idToken = await currentUser.getIdToken();
-    //Call to API to retrieve result cache in Realtime Database
-    let response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/get_result_cache', {
-        method: "GET",
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${idToken}`
-        }
-    });
-    //Turns response into a json
-    let json = await response.json();
-    //Gets the string stored in info
-    let info = json["info"];
-    const businessList = JSON.parse(info).businesses;
-    for (i = 0; i < businessList.length; i++) {
-        const restaurantInfo = businessList[i];
-        restaurantInfo.distance = Math.round((restaurantInfo.distance / 1609) * 100) / 100;
-        aliases = [];
-        let length = 2;
-        if (restaurantInfo.categories.length < 2) {
-            length = restaurantInfo.categories.length
-        }
-        for (x = 0; x < length; x++) {
-            console.log(restaurantInfo.categories[x]);
-            aliases.push(restaurantInfo.categories[x].alias);
-        }
-        const push = {
-            name: restaurantInfo.name, taste: aliases.join(', '), address: restaurantInfo.location.display_address.join(', '), distance: restaurantInfo.distance, image: restaurantInfo.image_url, favorite: false, url: restaurantInfo.url, coordinates: { latitude: restaurantInfo.coordinates.latitude, longitude: restaurantInfo.coordinates.longitude }, id: restaurantInfo.id };
-        restaurants.push(push);
-    }
-    const restaurant = JSON.stringify(restaurants);
-    response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/add_history', { //https://genielicious-1229a.wl.r.appspot.com
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${idToken}`
-        },
-        body: JSON.stringify({ "restaurantsInfo": restaurant })
-    });
-    json = await response.json();
-    info = json["info"];
-    const profilesArray = Object.keys(info).map((key) => ({
-        id: key,
-        ...info[key]
-    }));
-    return profilesArray;
-};
-
 export default function Result({ navigation }) {
     const { currentUser } = useAuth(); // Access currentUser and loading
     const [modalVisible, setModalVisible] = React.useState(false);
     const [errorModalVisible, setErrorModalVisible] = React.useState(false);
     const [ready, setReady] = React.useState(false);
-    const [restaurants, setRestaurants] = useState([]);    
+    const [restaurants, setRestaurants] = useState([]);
+    const [title, setTitle] = React.useState("Placeholder");
+
     const handleBackPress = () => {
         setModalVisible(true); //show the modal when pressed
     };
@@ -131,6 +83,77 @@ export default function Result({ navigation }) {
     const handleErrorConfirm = () => {
         setErrorModalVisible(false);
         navigation.navigate('Tab');  // navigate back to the Home page
+    };
+
+    const getResults = async (currentUser) => {
+        const restaurants = [];
+        const idToken = await currentUser.getIdToken();
+        //Call to API to retrieve result cache in Realtime Database
+        let response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/get_result_cache', {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${idToken}`
+            }
+        });
+        //Turns response into a json
+        let json = await response.json();
+        //Gets the string stored in info
+        let info = json["info"];
+        const status = JSON.parse(info).result_status;
+        console.log(status);
+        switch (status) {
+            case 4:
+                console.log("3");
+                setTitle("No restauarants were found in your area. Try again with different answers or at different hours.");
+                break;
+            case 3:
+                console.log("3");
+                setTitle("No restauarants were found in your area. Try again with different answers or at different hours.");
+                break;
+            case 2:
+                console.log("2");
+                setTitle("These restaurants have similar food items to the one you were recommended. Check them out:");
+                break;
+            default:
+                console.log("1");
+                setTitle("Here are your Results: ");
+                break;
+        };
+        const businessList = JSON.parse(info).businesses;
+        for (i = 0; i < businessList.length; i++) {
+            const restaurantInfo = businessList[i];
+            restaurantInfo.distance = Math.round((restaurantInfo.distance / 1609) * 100) / 100;
+            aliases = [];
+            let length = 2;
+            if (restaurantInfo.categories.length < 2) {
+                length = restaurantInfo.categories.length
+            }
+            for (x = 0; x < length; x++) {
+                console.log(restaurantInfo.categories[x]);
+                aliases.push(restaurantInfo.categories[x].alias);
+            }
+            const push = {
+                name: restaurantInfo.name, taste: aliases.join(', '), address: restaurantInfo.location.display_address.join(', '), distance: restaurantInfo.distance, image: restaurantInfo.image_url, favorite: false, url: restaurantInfo.url, coordinates: { latitude: restaurantInfo.coordinates.latitude, longitude: restaurantInfo.coordinates.longitude }, id: restaurantInfo.id
+            };
+            restaurants.push(push);
+        }
+        const restaurant = JSON.stringify(restaurants);
+        response = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/add_history', { //https://genielicious-1229a.wl.r.appspot.com
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${idToken}`
+            },
+            body: JSON.stringify({ "restaurantsInfo": restaurant })
+        });
+        json = await response.json();
+        info = json["info"];
+        const profilesArray = Object.keys(info).map((key) => ({
+            id: key,
+            ...info[key]
+        }));
+        return profilesArray;
     };
 
     useEffect(() => {
@@ -160,7 +183,7 @@ export default function Result({ navigation }) {
                         color={Colors.ghost}
                     />
                 </TouchableOpacity>
-                <Text style={styles.title}>Here are your Results:</Text>
+                <Text style={styles.title}>{title}</Text>
             </View>
 
             {/* confirmation modal for back arrow */}
