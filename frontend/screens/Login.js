@@ -22,13 +22,12 @@ export default function Login({ navigation }) {
     const [isLoading, setIsLoading] = useState(false);
 
 
-  //const { userLoggedIn } = useAuth()
-  //useEffect(() => {
-  //    if (userLoggedIn) {
-  //        setIsLoading(false);
-  //    navigation.navigate('Tab');
-  //  }
-  //}, []);
+  const { userLoggedIn } = useAuth()
+  useEffect(() => {
+      if (userLoggedIn) {
+      navigation.navigate('Tab');
+    }
+  }, []);
 
     const handleLogin = async () => {
         setIsLoading(true);
