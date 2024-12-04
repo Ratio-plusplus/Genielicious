@@ -29,6 +29,8 @@ def compileResults(user_id, food_item:str):
     #   3 : no results could be found for one reason or another 
     #       ex: there are no OPEN businesses that are also on yelp around the user
     #       ex: there are no restaurants around that are similar enough
+    #   4 : a yelp related error has occurred
+    #       ex: "businesses" key was not provided in yelp results
     status = 1
     cache = getUserCacheRef(user_id)
     coords = getLocation(user_id) # user location        
@@ -42,14 +44,6 @@ def compileResults(user_id, food_item:str):
         budget = int(cache.child("budgetCache").get())
 
     yelp_results = getStore(coords, term = food_item, price=budget, radius=distance)
-    # print(yelp_results)
-    
-    if "businesses" not in yelp_results:
-        error = {"error": {"type":500,"message":"Yelp businesses not provided"}}
-        print(error)
-        print("Yelp Results during Error:",yelp_results)
-        cache.update({"resultsCache" : json.dumps(error)})
-        return error
 
     total = len(yelp_results.get("businesses",[]))
 
@@ -64,6 +58,16 @@ def compileResults(user_id, food_item:str):
     if total == 0:
         status = 3
 
+    # handling when 
+    if "businesses" not in yelp_results:
+        error = {"error": {"type":500,"message":"Yelp businesses not provided","status":status}}
+        print(error)
+        print("Yelp Results during Error:",yelp_results)
+        # cache.update({"resultsErrorCache" : json.dumps(error)})
+        cache.update({"resultsCache" : json.dumps({"businesses":[],
+                                               "result_status":4})})
+        return error
+    
     # Parsing Yelp results to not include unnecessary/extra fields
     formatted_results = []
     for business in yelp_results["businesses"]:
