@@ -1,4 +1,4 @@
-    import * as React from 'react';
+import * as React from 'react';
 import { useState, useCallback, useEffect } from 'react';
 import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text, ScrollView, Linking, Modal, ActivityIndicator } from 'react-native';
 import { Colors } from './Colors';
@@ -108,9 +108,11 @@ const getResults = async (currentUser) => {
     }));
     return profilesArray;
 };
+
 export default function Result({ navigation }) {
     const { currentUser } = useAuth(); // Access currentUser and loading
     const [modalVisible, setModalVisible] = React.useState(false);
+    const [errorModalVisible, setErrorModalVisible] = React.useState(false);
     const [ready, setReady] = React.useState(false);
     const [restaurants, setRestaurants] = useState([]);    
     const handleBackPress = () => {
@@ -125,13 +127,19 @@ export default function Result({ navigation }) {
     const handleConfirmNo = () => {
         setModalVisible(false);  // close the modal without navigating
     };
+
+    const handleErrorConfirm = () => {
+        setErrorModalVisible(false);
+        navigation.navigate('Tab');  // navigate back to the Home page
+    };
+
     useEffect(() => {
         if (!ready) {
-            
             const fetchResults = async () => {
-                const results = await getResults(currentUser);
-                setRestaurants(results);
-                setReady(true);
+                    const results = await getResults(currentUser);
+                    setRestaurants(results);
+                    setReady(true);
+    
             }
         fetchResults();
         }
@@ -177,6 +185,24 @@ export default function Result({ navigation }) {
                                 <Text style={styles.buttonText}>No</Text>
                             </TouchableOpacity>
                         </View>
+                    </View>
+                </View>
+            </Modal>
+
+            {/* Error Modal */}
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={errorModalVisible}
+                onRequestClose={() => setErrorModalVisible(false)}>
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContainer}>
+                        <Text style={styles.modalText}>An error has occurred. Please try again later.</Text>
+                        <TouchableOpacity
+                            style={styles.modalYesButton}
+                            onPress={handleErrorConfirm}>
+                            <Text style={styles.buttonText}>Go Home</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
