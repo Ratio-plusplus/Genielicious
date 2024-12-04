@@ -89,7 +89,7 @@ const getResults = async (currentUser) => {
         restaurants.push(push);
     }
     const restaurant = JSON.stringify(restaurants);
-    await fetch('https://genielicious-1229a.wl.r.appspot.com/database/add_history', { //https://genielicious-1229a.wl.r.appspot.com
+    const response1 = await fetch('https://genielicious-1229a.wl.r.appspot.com/database/add_history', { //https://genielicious-1229a.wl.r.appspot.com
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
@@ -97,6 +97,7 @@ const getResults = async (currentUser) => {
         },
         body: JSON.stringify({ "restaurantsInfo": restaurant })
     });
+    console.log(await response1.json());
     return restaurants;
 };
 export default function Result({ navigation }) {

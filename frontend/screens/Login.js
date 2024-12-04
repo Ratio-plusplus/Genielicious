@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import { Feather } from "@expo/vector-icons";
-import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Modal } from "react-native";
+import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Modal, ActivityIndicator } from "react-native";
 import { Colors } from "./Colors";
 import React, { useContext, useEffect, useState } from "react";
 import { useAuth } from '../contexts/AuthContext';
@@ -18,16 +18,20 @@ export default function Login({ navigation }) {
   //Reset Password States
   const [resetEmail, setResetEmail] = useState("");
   const [message, setMessage] = useState("");
-  const [modalVisible, setModalVisible] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
-  const { userLoggedIn } = useAuth()
-  useEffect(() => {
-    if (userLoggedIn) {
-      navigation.navigate('Tab');
-    }
-  }, []);
 
-  const handleLogin = async () => {
+  //const { userLoggedIn } = useAuth()
+  //useEffect(() => {
+  //    if (userLoggedIn) {
+  //        setIsLoading(false);
+  //    navigation.navigate('Tab');
+  //  }
+  //}, []);
+
+    const handleLogin = async () => {
+        setIsLoading(true);
     setErrorMessage('');
     if (!isLoggingIn) {
       setisLoggingIn(true);
@@ -51,8 +55,9 @@ export default function Login({ navigation }) {
       else {
         setErrorMessage(errorMessage.code);
         console.log(errorMessage);
-      }
-      setisLoggingIn(false);
+        }
+        setIsLoading(false);
+        setisLoggingIn(false);
     }
   };
 
@@ -96,143 +101,156 @@ export default function Login({ navigation }) {
   useEffect(() => {
     if (validUser) {
       console.log("checkpoint");
-      setvalidUser(false);
+        setvalidUser(false);
+        setIsLoading(false);
+        setEmail("");
+        setPassword("");
       navigation.navigate('Tab');
     }
   }, [validUser]);
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="auto" />
-      <ScrollView
-        contentContainerStyle={{
-          flex: 1,
-          alignItems: "center",
-          justifyContent: "center",
-        }}>
+          <StatusBar style="auto" />
+          {!isLoading && (
+              <ScrollView
+                  contentContainerStyle={{
+                      flex: 1,
+                      alignItems: "center",
+                      justifyContent: "center",
+                  }}>
 
-        <View style={styles.content}>
-          <View style={{ alignItems: 'center' }}>
-            <Text style={styles.title}>Login</Text>
-          </View>
+                  <View style={styles.content}>
+                      <View style={{ alignItems: 'center' }}>
+                          <Text style={styles.title}>Login</Text>
+                      </View>
 
-          {/* email/username input field */}
-          <View style={styles.inputContainer}>
-            <View style={styles.input}>
-              <View style={styles.icon}>
-                <Feather name="mail" size={22} color={Colors.raisin} />
-              </View>
-              <TextInput
-                style={styles.inputField}
-                placeholder="Email"
-                placeholderTextColor="#555"
-                color={Colors.raisin}
-                onChangeText={setEmail}   //updates email state when user types
-                value={email}   //current email state
-              />
-            </View>
-          </View>
+                      {/* email/username input field */}
+                      <View style={styles.inputContainer}>
+                          <View style={styles.input}>
+                              <View style={styles.icon}>
+                                  <Feather name="mail" size={22} color={Colors.raisin} />
+                              </View>
+                              <TextInput
+                                  style={styles.inputField}
+                                  placeholder="Email"
+                                  placeholderTextColor="#555"
+                                  color={Colors.raisin}
+                                  onChangeText={setEmail}   //updates email state when user types
+                                  value={email}   //current email state
+                              />
+                          </View>
+                      </View>
 
-          {/* password input field */}
-          <View style={styles.inputContainer}>
-            <View style={styles.input}>
-              <View style={styles.icon}>
-                <Feather name="lock" size={22} color={Colors.raisin} />
-              </View>
-              <TextInput
-                style={styles.inputField}
-                placeholder="Password"
-                secureTextEntry={!passwordIsVisible}
-                placeholderTextColor="#555"
-                color={Colors.raisin}
-                onChangeText={setPassword}    //updates password state
-                value={password}    //current password state
-              />
-            </View>
+                      {/* password input field */}
+                      <View style={styles.inputContainer}>
+                          <View style={styles.input}>
+                              <View style={styles.icon}>
+                                  <Feather name="lock" size={22} color={Colors.raisin} />
+                              </View>
+                              <TextInput
+                                  style={styles.inputField}
+                                  placeholder="Password"
+                                  secureTextEntry={!passwordIsVisible}
+                                  placeholderTextColor="#555"
+                                  color={Colors.raisin}
+                                  onChangeText={setPassword}    //updates password state
+                                  value={password}    //current password state
+                              />
+                          </View>
 
-            {/* toggle password visibility */}
-            <TouchableOpacity
-              style={styles.passwordVisibleButton}
-              onPress={() => setPasswordIsVisible(!passwordIsVisible)}>
-              <Feather
-                name={passwordIsVisible ? "eye" : "eye-off"}    //changes icon based on visibility state
-                size={22}
-                color="#555"
-              />
-            </TouchableOpacity>
-          </View>
+                          {/* toggle password visibility */}
+                          <TouchableOpacity
+                              style={styles.passwordVisibleButton}
+                              onPress={() => setPasswordIsVisible(!passwordIsVisible)}>
+                              <Feather
+                                  name={passwordIsVisible ? "eye" : "eye-off"}    //changes icon based on visibility state
+                                  size={22}
+                                  color="#555"
+                              />
+                          </TouchableOpacity>
+                      </View>
 
-          {/* forgot password */}
-          <TouchableOpacity style={styles.forgotPasswordButton} onPress={() => setModalVisible(true)}>
-            <Text style={styles.forgotPasswordButtonText}>
-              Forgot password?
-            </Text>
-          </TouchableOpacity>
-          <Text style={styles.error}>{errorMessage}</Text>
-          <TouchableOpacity style={styles.loginButton} onPress={() => handleLogin()}>
-            <Text style={styles.loginButtonText}>Login</Text>
-          </TouchableOpacity>
+                      {/* forgot password */}
+                      <TouchableOpacity style={styles.forgotPasswordButton} onPress={() => setModalVisible(true)}>
+                          <Text style={styles.forgotPasswordButtonText}>
+                              Forgot password?
+                          </Text>
+                      </TouchableOpacity>
+                      <Text style={styles.error}>{errorMessage}</Text>
+                      <TouchableOpacity style={styles.loginButton} onPress={() => handleLogin()}>
+                          <Text style={styles.loginButtonText}>Login</Text>
+                      </TouchableOpacity>
 
-          {/* separator between login methods */}
-          <View style={styles.orContainer}>
-            <View style={styles.orLine} />
-            <Text style={styles.orText}>OR</Text>
-            <View style={styles.orLine} />
-          </View>
+                      {/* separator between login methods */}
+                      <View style={styles.orContainer}>
+                          <View style={styles.orLine} />
+                          <Text style={styles.orText}>OR</Text>
+                          <View style={styles.orLine} />
+                      </View>
 
-          {/* login with Google button */}
-          <TouchableOpacity style={styles.googleButton} onPress={() => handleGoogleLogin()}>
-            <Image
-              style={styles.googleLogo}
-              source={require("../../frontend/assets/google-logo.png")}
-            />
-            <Text style={styles.googleButtonText}>Login with Google</Text>
-          </TouchableOpacity>
+                      {/* login with Google button */}
+                      <TouchableOpacity style={styles.googleButton} onPress={() => handleGoogleLogin()}>
+                          <Image
+                              style={styles.googleLogo}
+                              source={require("../../frontend/assets/google-logo.png")}
+                          />
+                          <Text style={styles.googleButtonText}>Login with Google</Text>
+                      </TouchableOpacity>
 
-          {/* navigate to the Signup screen */}
-          <TouchableOpacity style={styles.registerButton}>
-            <Text style={styles.registerButtonText}>
-              Don't have an account yet?{" "}
-              <Text style={styles.registerButtonTextHighlight}
-                onPress={() => navigation.navigate('Signup')}>
-                Register now!
-              </Text>
-            </Text>
-          </TouchableOpacity>
-          <Modal
-            animationType="fade"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => setModalVisible(false)}
-          >
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>Reset Password</Text>
-                {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
-                {message ? <Text style={styles.success}>{message}</Text> : null}
-                <TextInput
-                  style={styles.resetField}
-                  placeholder="Enter your email"
-                  placeholderTextColor="#999"
-                  value={resetEmail}
-                  onChangeText={setResetEmail}
-                  color={Colors.ghost}
-                />
-                <TouchableOpacity onPress={handlePasswordReset}>
-                  <View style={styles.resetButton}>
-                      <Text style={{fontSize: 16, textAlign: 'center'}}>Send Reset Email</Text>
+                      {/* navigate to the Signup screen */}
+                      <TouchableOpacity style={styles.registerButton}>
+                          <Text style={styles.registerButtonText}>
+                              Don't have an account yet?{" "}
+                              <Text style={styles.registerButtonTextHighlight}
+                                  onPress={() => navigation.navigate('Signup')}>
+                                  Register now!
+                              </Text>
+                          </Text>
+                      </TouchableOpacity>
+                      <Modal
+                          animationType="fade"
+                          transparent={true}
+                          visible={modalVisible}
+                          onRequestClose={() => setModalVisible(false)}
+                      >
+                          <View style={styles.modalContainer}>
+                              <View style={styles.modalContent}>
+                                  <Text style={styles.modalTitle}>Reset Password</Text>
+                                  {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
+                                  {message ? <Text style={styles.success}>{message}</Text> : null}
+                                  <TextInput
+                                      style={styles.resetField}
+                                      placeholder="Enter your email"
+                                      placeholderTextColor="#999"
+                                      value={resetEmail}
+                                      onChangeText={setResetEmail}
+                                      color={Colors.ghost}
+                                  />
+                                  <TouchableOpacity onPress={handlePasswordReset}>
+                                      <View style={styles.resetButton}>
+                                          <Text style={{ fontSize: 16, textAlign: 'center' }}>Send Reset Email</Text>
+                                      </View>
+                                  </TouchableOpacity>
+                                  <TouchableOpacity onPress={() => setModalVisible(false)}>
+                                      <View style={styles.cancelButton}>
+                                          <Text style={{ fontSize: 16, textAlign: 'center' }}>Cancel</Text>
+                                      </View>
+                                  </TouchableOpacity>
+                              </View>
+                          </View>
+                      </Modal>
                   </View>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => setModalVisible(false)}>
-                  <View style={styles.cancelButton}>
-                      <Text style={{fontSize: 16, textAlign: 'center'}}>Cancel</Text>
+              </ScrollView>
+          )}
+          {isLoading && (
+              <View style={styles.loadingOverlay}>
+                  <View style={styles.loadingContent}>
+                      <ActivityIndicator size="large" color="#007bff" />
+                      <Text style={styles.loadingText}>Loading...</Text>
                   </View>
-                </TouchableOpacity>
               </View>
-            </View>
-          </Modal>
-        </View>
-      </ScrollView>
+          )}
     </SafeAreaView>
   );
 }
@@ -407,13 +425,34 @@ const styles = StyleSheet.create({
     width: 250,
     marginVertical: 10
   },
-  cancelButton: {
-    backgroundColor: Colors.ghost,
-    padding: 10,
-    borderWidth: 2,
-    borderColor: Colors.raisin,
-    borderRadius: 10,
-    width: 250,
-    marginBottom: 5
-  }
+    cancelButton: {
+        backgroundColor: Colors.ghost,
+        padding: 10,
+        borderWidth: 2,
+        borderColor: Colors.raisin,
+        borderRadius: 10,
+        width: 250,
+        marginBottom: 5
+    },
+    loadingOverlay: {
+        position: "absolute",       // Full-screen overlay
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,                 // Covers entire screen
+        justifyContent: "center",  // Centers children vertically
+        alignItems: "center",      // Centers children horizontally
+        backgroundColor: "rgba(0, 0, 0, 0.25)", // Semi-transparent black
+        zIndex: 1000,              // Ensures it appears above everything else
+    },
+    loadingContent: {
+        justifyContent: "center",  // Centers content vertically inside this container
+        alignItems: "center",      // Centers content horizontally
+    },
+    loadingText: {
+        marginTop: 10,             // Adds space between the spinner and the text
+        fontSize: 16,
+        color: "#fff",             // White text for visibility
+        textAlign: "center",       // Centers text
+    },
 });
