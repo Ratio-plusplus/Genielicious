@@ -47,6 +47,7 @@ def compileResults(user_id, food_item:str):
     if "businesses" not in yelp_results:
         error = {"error": {"type":500,"message":"Yelp businesses not provided"}}
         print(error)
+        print("Yelp Results during Error:",yelp_results)
         cache.update({"resultsCache" : json.dumps(error)})
         return error
 
