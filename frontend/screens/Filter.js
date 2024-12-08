@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Text, StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
+import { Text, StyleSheet, View, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import CheckBox from 'react-native-check-box';
 import { Colors } from './Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 //import { FlavorPreferencesContext } from '../../backend/contexts/FlavorPreferencesContext';
+
+const { width, height } = Dimensions.get('window');
 
 export default function Filter({ navigation }) {
     const route = useRoute();
@@ -326,18 +328,18 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.blue
     },
     container: {
-        marginHorizontal: 12,
-        marginTop: 12,
-        marginBottom: 12,
+        marginHorizontal: '5%',
+        marginVertical: 10,
         flexDirection: "row",
-        justifyContent: "center"
+        justifyContent: "center",
+        alignItems: 'center',
     },
     arrow: {
         position: "absolute",
         left: 0
     },
     title: {
-        fontSize: 22,
+        fontSize: width * 0.055,
         fontWeight: 'bold',
         color: Colors.ghost,
         marginTop: 2,
@@ -347,8 +349,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     circle: {
-        height: 21,
-        width: 21,
+        height: width * 0.05,
+        width: width * 0.05,
         borderRadius: 10,
         borderWidth: 2,
         borderColor: Colors.ghost,
@@ -358,15 +360,15 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.gold,
     },
     radioLabel: {
-        fontSize: 20,
+        fontSize: width * 0.045,
         color: Colors.ghost,
     },
     checkboxContainer: {
         paddingLeft: 22,
-        paddingTop: 10,
+        paddingTop: '3%',
     },
     sectionTitle: {
-        fontSize: 22,
+        fontSize: width * 0.05,
         fontWeight: "bold",
         color: Colors.ghost,
         marginBottom: 15,
@@ -374,25 +376,25 @@ const styles = StyleSheet.create({
     checkboxRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 15,
+        marginBottom: '3%',
     },
     checkbox: {
         flex: 1,
-        marginRight: 20,
+        marginRight: '5%',
     },
     checkboxText: {
-        fontSize: 20,
+        fontSize: width * 0.045,
         color: Colors.ghost,
     },
     buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-evenly',
-        marginTop: 20,
+        marginTop: '3%',
     },
     resetButton: {
         backgroundColor: Colors.ghost,
-        width: "40%",
-        height: "38%",
+        width: "35%",
+        paddingVertical: 10,
         borderRadius: 10,
         borderWidth: 1,
         borderColor: Colors.raisin,
@@ -401,8 +403,8 @@ const styles = StyleSheet.create({
     },
     applyButton: {
         backgroundColor: Colors.gold,
-        width: "40%",
-        height: "38%",
+        width: "35%",
+        paddingVertical: 10,
         borderRadius: 10,
         borderWidth: 1,
         borderColor: Colors.raisin,
@@ -410,7 +412,7 @@ const styles = StyleSheet.create({
         justifyContent: "center"
     },
     buttonText: {
-        fontSize: 20,
+        fontSize: width * 0.045,
         fontWeight: 'bold',
         color: Colors.raisin,
     },

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Text, StyleSheet, Switch, View, TouchableOpacity, SafeAreaView, ScrollView, StatusBar } from 'react-native';
+import { Text, StyleSheet, Switch, View, TouchableOpacity, SafeAreaView, ScrollView, StatusBar, Dimensions } from 'react-native';
 import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
+
+const { width, height } = Dimensions.get('window');
 
 export default function DevicePermissions({ navigation }) {
         {/* Vars to keep track of permissions*/}
@@ -141,12 +143,11 @@ const styles = StyleSheet.create({
     container: {
         marginHorizontal: 12,
         marginTop: '8%',
-        marginBottom: 12,
         flexDirection: "row",
         justifyContent: "center"
     },
     title: {
-        fontSize: 24,
+        fontSize: width * 0.06,
         fontWeight: 'bold',
         color: Colors.ghost,
     },
@@ -156,7 +157,7 @@ const styles = StyleSheet.create({
     sectionContainer: {
         backgroundColor: Colors.ghost,
         borderRadius: 10,
-        padding: 20,
+        padding: 15,
         marginBottom: 20,
         borderWidth: 2,
         borderColor: Colors.gold,
@@ -167,18 +168,18 @@ const styles = StyleSheet.create({
         elevation: 2,
     },
     sectionTitle: {
-        fontSize: 22,
+        fontSize: width * 0.05,
         fontWeight: "bold",
         color: Colors.darkGold,
         marginBottom: 5,
     },
     descText: {
-        fontSize: 16,
+        fontSize: width * 0.04,
         color: Colors.raisin,
         marginVertical: 10,
     },
     bulletText: {
-        fontSize: 16,
+        fontSize: width * 0.04,
         color: Colors.gold,
         marginLeft: 10,
         marginVertical: 5,

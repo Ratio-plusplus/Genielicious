@@ -1,9 +1,11 @@
 import React, {useState} from 'react';
-import {Text, StyleSheet, View, ScrollView, TouchableOpacity, TextInput} from 'react-native';
+import {Text, StyleSheet, View, ScrollView, TouchableOpacity, TextInput, Dimensions} from 'react-native';
 import { Colors } from './Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthContext'
+
+const { width, height } = Dimensions.get('window');
 
 // const database = getDatabase(app);
 const handleProblemReport = async (currentUser, title, urgency, description) => {
@@ -173,19 +175,18 @@ export default function ProblemReport({ navigation }) {
 
 const styles = StyleSheet.create({
     sectionText: {
-        fontSize: 22,
+        fontSize: width * 0.05,
         fontWeight: "bold",
         marginLeft: 15,
         marginBottom: 5,
         color: Colors.ghost
     },
     inputContainers: {
-        height: 44,
+        height: height * 0.05,
         width: "92%",
         flexDirection: "row",
         borderWidth: 2,
         borderRadius: 15,
-        marginVertical: 6,
         marginLeft: 15,
         alignItems: "center",
         paddingLeft: 8,
@@ -193,7 +194,7 @@ const styles = StyleSheet.create({
         borderColor: Colors.gold
     },
     descContainers: {
-        height: 300,
+        height: height * 0.33,
         width: "92%",
         flexDirection: "row",
         borderWidth: 2,
@@ -234,9 +235,9 @@ const styles = StyleSheet.create({
     saveButton: {
         backgroundColor: Colors.gold,
         marginLeft: 60,
-        marginTop: 20,
+        marginTop: 15,
         marginBottom: 35,
-        height: 50,
+        height: height * 0.07,
         width: "67%",
         borderRadius: 6,
         alignItems: "center",
@@ -251,7 +252,7 @@ const styles = StyleSheet.create({
         fontSize: 22, 
         fontWeight: "bold", 
         color: Colors.ghost, 
-        marginBottom: 20,
+        marginBottom: 10,
     },
     selectContainer: {
         paddingLeft: 22,

@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, TextInput, Modal, FlatList, } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, TextInput, Modal, FlatList, Dimensions} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -7,6 +7,8 @@ import { Colors } from './Colors';
 import CheckBox from 'react-native-check-box';
 import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
 import { useRoute } from '@react-navigation/native';
+
+const { width, height } = Dimensions.get('window');
 
 export default function AddPref2({ navigation }) {
     const initialpfp = Image.resolveAssetSource(require("../assets/pfp.png")).uri;
@@ -148,18 +150,9 @@ export default function AddPref2({ navigation }) {
         route.params?.savedName, route.params?.savedImage, route.params?.isEditMode]);
 
     return (
-        <SafeAreaView style={{
-            flex: 1,
-            backgroundColor: Colors.blue,
-        }}>
-            {/* Back button to go back to the 1st Preference page */}
-            <View style={{
-                marginHorizontal: 12,
-                marginTop: 12,
-                marginBottom: 12,
-                flexDirection: "row",
-                justifyContent: "center"
-            }}>
+        <SafeAreaView style={styles.container}>
+            {/* Back button */}
+            <View style={styles.header}>
                 <TouchableOpacity
                     onPress={() => navigation.navigate('Add Preference 1', {
                         savedPreferences: isChecked,
@@ -169,90 +162,41 @@ export default function AddPref2({ navigation }) {
                         savedImage: selectedImage,
                         isEditMode: existingProfileData ? true : route.params?.isEditMode
                     })}
-                    style={{
-                        position: "absolute",
-                        left: 0
-                    }}>
+                    style={styles.backButton}>
                     <MaterialIcons
                         name="keyboard-arrow-left"
                         size={33}
                         color={Colors.ghost}
                     />
                 </TouchableOpacity>
-                <Text style={{ marginTop: 2, fontWeight: 600, fontSize: 22, color: Colors.ghost }}>{pageTitle}</Text>
+                <Text style={styles.pageTitle}>{pageTitle}</Text>
             </View>
 
-            {/* Visual changes for the preference profile picture */}
-            {/* <ScrollView> */}
-            <View style={{
-                alignItems: "center",
-                marginTop: 10,
-                marginBottom: 20
-            }}>
-                <TouchableOpacity
-                    onPress={handleProfilePicturePress}>
+            {/* Profile Picture Section */}
+            <View style={styles.profilePictureContainer}>
+                <TouchableOpacity onPress={handleProfilePicturePress}>
                     {selectedImage ? (
-                        <Image
-                            source={{ uri: selectedImage }}
-                            style={{
-                                height: 125,
-                                width: 125,
-                                borderRadius: 85,
-                                borderWidth: 2,
-                                borderColor: "#000"
-                            }}
-                        />
+                        <Image source={{ uri: selectedImage }} style={styles.profileImage} />
                     ) : (
-                        <Image
-                            source={{ uri: initialpfp }} // Fallback image if selectedImage is null
-                            style={{
-                                height: 125,
-                                width: 125,
-                                borderRadius: 85,
-                                borderWidth: 2,
-                                borderColor: "#000",
-                            }}
-                        />
+                        <Image source={{ uri: initialpfp }} style={styles.profileImage} />
                     )}
-
-                    <View style={{
-                        position: "absolute",
-                        bottom: -5,
-                        right: -5,
-                        zIndex: 9999
-                    }}>
-                        <MaterialIcons
-                            name="photo-camera"
-                            size={28}
-                            color={Colors.ghost} />
+                    <View style={styles.cameraIconContainer}>
+                        <MaterialIcons name="photo-camera" size={28} color={Colors.ghost} />
                     </View>
                 </TouchableOpacity>
             </View>
 
-            {/* Main Modal for selecting images */}
-            <Modal
-                animationType="fade"
-                transparent={true}
-                visible={isModalVisible}
-                onRequestClose={() => setModalVisible(false)}
-            >
+            {/* Modals for Image Selection */}
+            <Modal animationType="fade" transparent={true} visible={isModalVisible} onRequestClose={() => setModalVisible(false)}>
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContainer}>
                         <Text style={styles.modalTitle}>Choose an Option</Text>
                         <TouchableOpacity style={styles.modalButton} onPress={handleImageSelection}>
                             <Text style={styles.modalButtonText}>Select from Gallery</Text>
                         </TouchableOpacity>
-
-                        {/* Button to open preset images modal */}
-                        <TouchableOpacity
-                            style={styles.modalButton}
-                            onPress={() => {
-                                setModalVisible(false);
-                                setPresetModalVisible(true)
-                            }}>
+                        <TouchableOpacity style={styles.modalButton} onPress={() => { setModalVisible(false); setPresetModalVisible(true); }}>
                             <Text style={styles.modalButtonText}>Select from Preset Images</Text>
                         </TouchableOpacity>
-
                         <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.cancelButton}>
                             <Text style={styles.cancelButtonText}>Cancel</Text>
                         </TouchableOpacity>
@@ -260,13 +204,7 @@ export default function AddPref2({ navigation }) {
                 </View>
             </Modal>
 
-            {/* Preset Images Modal */}
-            <Modal
-                animationType="fade"
-                transparent={true}
-                visible={isPresetModalVisible}
-                onRequestClose={() => setPresetModalVisible(false)}
-            >
+            <Modal animationType="fade" transparent={true} visible={isPresetModalVisible} onRequestClose={() => setPresetModalVisible(false)}>
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContainer}>
                         <Text style={[styles.modalTitle, { marginBottom: 15 }]}>Preset Images</Text>
@@ -275,15 +213,11 @@ export default function AddPref2({ navigation }) {
                             renderItem={({ item }) => {
                                 const resolvedUri = Image.resolveAssetSource(item).uri;
                                 const isSelected = resolvedUri === selectedImage;
-
                                 return (
                                     <TouchableOpacity onPress={() => selectPresetImage(item)}>
                                         <Image
                                             source={item}
-                                            style={[
-                                                styles.presetImages,
-                                                isSelected && { borderWidth: 6, borderColor: "#0989FF" } // Blue border for selected image
-                                            ]}
+                                            style={[styles.presetImages, isSelected && { borderWidth: 6, borderColor: "#0989FF" }]}
                                         />
                                     </TouchableOpacity>
                                 );
@@ -299,29 +233,20 @@ export default function AddPref2({ navigation }) {
                 </View>
             </Modal>
 
-
-
-            {/* Title box */}
-            <View>
-                <View style={{
-                    flexDirection: "column",
-                    marginBottom: 10
-                }}>
-                    <Text style={styles.sectionText}>Title:</Text>
-                    <View>
-                        <TextInput
-                            style={styles.inputContainers}
-                            placeholder="Title"
-                            placeholderTextColor="#7C808D"
-                            color={Colors.ghost}
-                            onChangeText={setName}
-                            value={name || ''}
-                            editable={true} />
-                    </View>
-                </View>
-
-                {/* Distance checkbox section */}
-                <View style={styles.checkboxContainer}>
+            {/* Title and other form inputs */}
+            <View style={styles.formContainer}>
+                <Text style={styles.sectionText}>Title:</Text>
+                <TextInput
+                    style={styles.inputContainers}
+                    placeholder="Title"
+                    placeholderTextColor="#7C808D"
+                    color={Colors.ghost}
+                    onChangeText={setName}
+                    value={name || ''}
+                    editable={true}
+                />
+                 {/* Distance checkbox section */}
+                 <View style={styles.checkboxContainer}>
                     <Text style={styles.sectionTitle}>Distance:</Text>
                     <RadioButton
                         label="Within 10 miles"
@@ -421,7 +346,9 @@ export default function AddPref2({ navigation }) {
                         }}
                     />
                 </View>
-                <TouchableOpacity style={styles.saveButton}
+
+                <TouchableOpacity 
+                    style={styles.saveButton} 
                     onPress={() => {
                         handleSaveProfile();
                         fetchProfiles();
@@ -429,74 +356,48 @@ export default function AddPref2({ navigation }) {
                     <Text style={styles.saveText}>{buttonTitle}</Text>
                 </TouchableOpacity>
             </View>
-            {/* </ScrollView> */}
         </SafeAreaView>
-    )
+    );
 }
 
-// Styles
 const styles = StyleSheet.create({
-    sectionText: {
-        fontSize: 22,
-        fontWeight: "bold",
-        marginLeft: 15,
-        marginBottom: 5,
-        color: Colors.ghost
-    },
-    inputContainers: {
-        height: 44,
-        width: "92%",
-        flexDirection: "row",
-        borderWidth: 1,
-        borderRadius: 4,
-        marginVertical: 6,
-        marginLeft: 15,
-        alignItems: "center",
-        paddingLeft: 8
-    },
-    checkboxContainer: {
-        paddingLeft: 22,
-    },
-    sectionTitle: {
-        fontSize: 22,
-        fontWeight: "bold",
-        color: Colors.ghost,
-        marginBottom: 15,
-    },
-    checkbox: {
+    container: {
         flex: 1,
-        marginRight: 20,
-        marginBottom: 15,
+        backgroundColor: Colors.blue,
     },
-    checkboxText: {
-        fontSize: 19,
+    header: {
+        marginHorizontal: width * 0.05,
+        marginVertical: height * 0.02,
+        flexDirection: 'row',
+        justifyContent: 'center',
+    },
+    backButton: {
+        position: 'absolute',
+        left: 0,
+    },
+    pageTitle: {
+        marginTop: 2,
+        fontWeight: '600',
+        fontSize: width * 0.055, // Scalable font size
         color: Colors.ghost,
     },
-    saveButton: {
-        backgroundColor: Colors.gold,
-        marginLeft: 60,
+    profilePictureContainer: {
+        alignItems: 'center',
         marginTop: 10,
-        height: '9%',
-        width: "67%",
-        borderRadius: 6,
-        alignItems: "center",
-        justifyContent: "center",
-        textAlign: "center"
+        marginBottom: 20,
     },
-    saveText: {
-        fontSize: 22,
-        fontWeight: "bold",
-        color: Colors.raisin
+    profileImage: {
+        height: width * 0.3,
+        width: width * 0.3,
+        borderRadius: 85,
+        borderWidth: 3,
+        borderColor: Colors.raisin,
     },
-    cameraButton: {
-        backgroundColor: Colors.gold,
-        padding: 10,
-        borderRadius: 6,
-    },
-    cameraButtonText: {
-        color: Colors.raisin,
-        fontSize: 16,
-        fontWeight: 'bold',
+    cameraIconContainer: {
+        position: 'absolute',
+        bottom: -5,
+        right: -5,
+        zIndex: 9999,
     },
     modalOverlay: {
         flex: 1,
@@ -505,26 +406,26 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     modalContainer: {
-        width: '80%',
         backgroundColor: Colors.blue,
-        borderRadius: 10,
         padding: 20,
+        borderRadius: 10,
         alignItems: 'center',
-        borderWidth: 2,
+        width: width * 0.8, // Modal width relative to screen size
+        borderWidth: 3,
         borderColor: Colors.ghost
     },
     modalTitle: {
-        fontSize: 22,
+        fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 7,
         color: Colors.ghost,
+        marginBottom: 10
     },
     modalButton: {
         backgroundColor: Colors.gold,
         padding: 15,
         borderRadius: 8,
         marginTop: 10,
-        marginBottom: 5,
+        marginBottom: 10,
         width: '100%',
         alignItems: 'center',
     },
@@ -534,38 +435,81 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     cancelButton: {
-        marginTop: 15,
+        padding: 10,
+        borderRadius: 10,
+        marginBottom: -10
     },
     cancelButtonText: {
-        color: Colors.ghost,
-        fontSize: 17,
+        color: 'white',
+        fontSize: 16,
     },
-    presetImages: {
-        width: 90,  // Adjust width for 3 images per row
-        height: 90, // Keep height consistent
-        //margin: 5,   // Ensure spacing between images
-        //borderRadius: 15,
-        borderWidth: 2,
-        borderColor: Colors.ghost,
+    formContainer: {
+        marginHorizontal: width * 0.05,
+    },
+    sectionText: {
+        color: Colors.ghost,
+        fontSize: 16,
+        marginBottom: 10,
+    },
+    inputContainers: {
+        borderWidth: 1,
+        borderColor: '#fff',
+        padding: 10,
+        fontSize: 16,
+        marginBottom: 15,
+        color: Colors.ghost,
+        borderRadius: 10
+    },
+    checkboxContainer: {
+        marginBottom: 10,
+    },
+    sectionTitle: {
+        color: Colors.ghost,
+        fontSize: 16,
+        marginBottom: 5,
+    },
+    saveButton: {
+        backgroundColor: Colors.gold,
+        marginLeft: 60,
+        height: '9%',
+        width: "67%",
+        borderRadius: 6,
+        alignItems: "center",
+        justifyContent: "center",
+        textAlign: "center"
+    },
+    saveText: {
+        color: Colors.raisin,
+        fontSize: 16,
+        fontWeight: 'bold'
     },
     radioButtonContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginBottom: 15,
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: 5,
     },
     circle: {
-        height: 20,
-        width: 20,
-        borderRadius: 10,
+        height: 18,
+        width: 18,
+        borderRadius: 9,
         borderWidth: 2,
         borderColor: Colors.ghost,
-        marginRight: 12,
+        marginRight: 10,
     },
     selectedCircle: {
         backgroundColor: Colors.gold,
     },
     radioLabel: {
-        fontSize: 19,
+        fontSize: 16,
         color: Colors.ghost,
     },
+    presetImages: {
+        width: width * 0.22,  // Adjust width for 3 images per row
+        height: width * 0.22, // Keep height consistent
+        //margin: 5,   // Ensure spacing between images
+        //borderRadius: 15,
+        borderWidth: 2,
+        borderColor: Colors.ghost,
+    },
+
 });

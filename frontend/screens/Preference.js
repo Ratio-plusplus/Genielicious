@@ -7,12 +7,15 @@ import { auth } from '../firebase/firebase';
 import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
 import { useAuth } from '../contexts/AuthContext';
 
-const getFontSize = (size) => {
-    const { width } = Dimensions.get('window');
-    const guidelineBaseWidth = 375;     // base width for most devices
-    const scale = width / guidelineBaseWidth;
-    return Math.round(PixelRatio.roundToNearestPixel(size * scale));
-};
+const { width, height } = Dimensions.get('window');
+const guidelineBaseWidth = 375; 
+const guidelineBaseHeight = 667; 
+
+// Utility Functions for Responsiveness
+const scale = (size) => (width / guidelineBaseWidth) * size;
+const verticalScale = (size) => (height / guidelineBaseHeight) * size;
+const moderateScale = (size, factor = 0.5) => size + (scale(size) - size) * factor;
+const getFontSize = (size) => Math.round(PixelRatio.roundToNearestPixel(scale(size)));
 
 export default function Preference({ navigation, route }) {
     const { currentUser, loading } = useAuth(); // Access currentUser and loading
@@ -116,25 +119,24 @@ export default function Preference({ navigation, route }) {
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: Colors.blue }}>
-            <View style={{ marginHorizontal: 12, marginTop: 12, marginBottom: 12, flexDirection: "row", justifyContent: "center" }}>
-                <TouchableOpacity
-                    onPress={() => navigation.navigate('Profile')}
-                    style={{ position: "absolute", left: 0 }}>
+            <View style={styles.header}>
+                <TouchableOpacity 
+                    onPress={() => navigation.navigate('Profile')} 
+                    style={styles.headerIcon}>
                     <MaterialIcons
                         name="keyboard-arrow-left"
-                        size={33}
+                        size={scale(33)}
                         color={Colors.ghost}
                     />
                 </TouchableOpacity>
-                <Text style={{ marginTop: 2, fontWeight: '600', fontSize: getFontSize(22), color: Colors.ghost }}>{tasteProfile.title}</Text>
-                <TouchableOpacity
-                    onPress={() => setModalVisible(true)}
-                    style={{ position: "absolute", right: 0 }}>
-                    <MaterialIcons
-                        name="delete"
-                        size={28}
-                        color={Colors.ghost}
-                    />
+                <Text style={styles.headerText}>{tasteProfile.title}</Text>
+                <TouchableOpacity 
+                    onPress={() => setModalVisible(true)} 
+                    style={styles.headerIcon}>
+                    <MaterialIcons 
+                        name="delete" 
+                        size={scale(28)} 
+                        color={Colors.ghost} />
                 </TouchableOpacity>
             </View>
 
@@ -159,191 +161,163 @@ export default function Preference({ navigation, route }) {
                 </View>
             </Modal>
 
-            {/* <ScrollView contentContainerStyle={{ paddingBottom: 20 }}> */}
-                <View style={{ alignItems: "center", marginTop: 10, marginBottom: 20 }}>
-                    <Image
-                        source={{ uri: tasteProfile.image }}
-                        style={styles.image}
-                    />
-                </View>
+            {/* <ScrollView contentContainerStyle={styles.scrollView}> */}
+            <View style={styles.imageContainer}>
+                <Image 
+                    source={{ uri: tasteProfile.image }} 
+                    style={styles.image} />
+            </View>
 
-                <View style={styles.relativeContainer}>
-                    <View style={[styles.boxSection, styles.absoluteBox, { top: 0 }]}>
-                        <Text style={styles.sectionText}>Taste Preferences:</Text>
-                        <View style={styles.boxContainer}>
-                            <Text style={styles.boxText}>{tastePreferencesString || 'None'}</Text>
-                        </View>
-                    </View>
+            <View style={styles.infoContainer}>
+                <Text style={styles.infoTitle}>Taste Preferences:</Text>
+                <Text style={styles.infoText}>{tastePreferencesString || 'None'}</Text>
 
-                    <View style={[styles.boxSection, styles.absoluteBox, { top: 120 }]}>
-                        <Text style={styles.sectionText}>Dietary Restrictions/Allergies:</Text>
-                        <View style={styles.boxContainer}>
-                            <Text style={styles.boxText}>{allergiesString || 'None'}</Text>
-                        </View>
-                    </View>
+                <Text style={styles.infoTitle}>Dietary Restrictions/Allergies:</Text>
+                <Text style={styles.infoText}>{allergiesString || 'None'}</Text>
 
-                    <View style={[styles.boxSection, styles.absoluteBox, { top: 240 }]}>
-                        <Text style={styles.sectionText}>Distance:</Text>
-                        <View style={styles.boxContainer}>
-                            <Text style={styles.boxText}>
-                                {tasteProfile.distance ? distanceLabels[tasteProfile.distance] : 'Not specified'}
-                            </Text>
-                        </View>
-                    </View>
+                <Text style={styles.infoTitle}>Distance:</Text>
+                <Text style={styles.infoText}>
+                    {tasteProfile.distance ? distanceLabels[tasteProfile.distance] : 'Not specified'}
+                </Text>
 
-                    <View style={[styles.boxSection, styles.absoluteBox, { top: 360 }]}>
-                        <Text style={styles.sectionText}>Budget:</Text>
-                        <View style={styles.boxContainer}>
-                            <Text style={styles.boxText}>
-                                {tasteProfile.budget ? budgetLabels[tasteProfile.budget] : 'Not specified'}
-                            </Text>
-                        </View>
-                    </View>
-                </View>
-            {/* </ScrollView> */}
+                <Text style={styles.infoTitle}>Budget:</Text>
+                <Text style={styles.infoText}>
+                    {tasteProfile.budget ? budgetLabels[tasteProfile.budget] : 'Not specified'}
+                </Text>
+            </View>
 
-            <View style={styles.buttonRow}>
+            <View style={styles.buttonContainer}>
                 <TouchableOpacity style={styles.editButton}
                     onPress={() => navigation.navigate('Add Preference 1', { profileData: {...tasteProfile, id: profileData.id} })}>
                     <Text style={styles.buttonText}>Edit</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.activeButton} onPress={handleSetActiveProfile}>
+                <TouchableOpacity 
+                    onPress={handleSetActiveProfile}
+                    style={styles.activeButton}>
                     <Text style={styles.buttonText}>Set Active</Text>
                 </TouchableOpacity>
             </View>
+            {/* </ScrollView> */}
         </SafeAreaView>
     );
 }
 
+// Styles
 const styles = StyleSheet.create({
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginHorizontal: scale(12),
+        marginVertical: verticalScale(12),
+    },
+    headerIcon: {
+        padding: scale(5)
+    },
+    headerText: {
+        fontSize: getFontSize(22),
+        fontWeight: '600',
+        color: Colors.ghost,
+    },
+    imageContainer: {
+        alignItems: 'center',
+        marginBottom: verticalScale(10)
+    },
     image: {
-        height: 130,
-        width: 130,
-        borderRadius: 85,
+        width: moderateScale(120),
+        height: moderateScale(120),
+        borderRadius: moderateScale(60),
+        borderWidth: 3,
+        borderColor: Colors.raisin
+    },
+    infoContainer: {
+        marginHorizontal: scale(20),
+        marginBottom: verticalScale(20)
+    },
+    infoTitle: {
+        fontSize: getFontSize(18),
+        fontWeight: '600',
+        marginVertical: verticalScale(5),
+        color: Colors.ghost,
+    },
+    infoText: {
+        fontSize: getFontSize(16),
+        color: '#B3B3B3',
+        marginBottom: verticalScale(10),
         borderWidth: 2,
-        borderColor: "#000"
-    },
-    sectionText: {
-        fontSize: getFontSize(20),
-        fontWeight: "bold",
-        marginTop: 5,
-        marginLeft: 20,
-        color: Colors.ghost
-    },
-    relativeContainer: {
-        position: 'relative',
-        height: 500, // Increased height to accommodate larger boxes
-    },
-    boxSection: {
-        marginBottom: 20, // Increased margin for better spacing
-    },
-    absoluteBox: {
-        position: 'absolute',
-        width: '100%',
-    },
-    boxContainer: {
-        flex: 1,
-        width: "90%", // Slightly increased width
-        height: 60, // Increased height for larger boxes
-        flexDirection: "column",
-        borderWidth: 1,
-        borderColor: Colors.ghost,
         borderRadius: 10,
-        marginVertical: 10,
-        marginLeft: 20,
-        paddingLeft: 20,
-        justifyContent: "center",
-        backgroundColor: Colors.blue
+        borderColor: Colors.ghost,
+        padding: 10
     },
-    boxText: {
-        fontSize: getFontSize(20),
-        color: "#B3B3B3"
-    },
-    buttonRow: {
-        flexDirection: "row",
-        justifyContent: "space-evenly",
-        height: '8%',
-        marginTop: -15
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginHorizontal: scale(30),
+        marginTop: verticalScale(-10)
     },
     editButton: {
         backgroundColor: Colors.ghost,
-        width: "40%",
         borderRadius: 10,
-        borderWidth: 1,
-        borderColor: Colors.raisin,
-        alignItems: "center",
-        justifyContent: "center",
+        padding: verticalScale(10),
+        flex: 1,
+        marginRight: scale(10)
     },
     activeButton: {
         backgroundColor: Colors.gold,
-        width: "40%",
         borderRadius: 10,
-        borderWidth: 1,
-        borderColor: Colors.raisin,
-        alignItems: "center",
-        justifyContent: "center"
+        padding: verticalScale(10),
+        flex: 1,
+        marginLeft: scale(10)
     },
     buttonText: {
-        fontSize: getFontSize(20),
-        fontWeight: "bold",
+        fontSize: getFontSize(18),
+        textAlign: 'center',
+        fontWeight: '600',
         color: Colors.raisin
     },
-    modalOverlay: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',  
+    modalOverlay: { 
+        flex: 1, 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        backgroundColor: 'rgba(0, 0, 0, 0.5)' 
     },
-    modalContainer: {
-        width: '80%',
-        height: '20%',
+    modalContainer: { 
+        width: '80%', 
+        padding: scale(20), 
+        borderRadius: 10, 
         backgroundColor: Colors.blue,
-        borderRadius: 10,
-        borderWidth: 2,
-        borderColor: Colors.ghost,
-        padding: 20,
-        marginHorizontal: 0,
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5,
+        borderWidth: 3,
+        borderColor: Colors.ghost
     },
-    modalText: {
-        fontSize: getFontSize(22),
-        fontWeight: '600',
-        marginBottom: 20,
+    modalText: { 
+        fontSize: getFontSize(20), 
+        marginBottom: verticalScale(20), 
+        textAlign: 'center', 
         color: Colors.ghost,
-        alignItems: 'center',
-        textAlign: 'center'
+        fontWeight: '600'
     },
-    modalButtons: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        width: '100%',
-        height: '35%'
+    modalButtons: { 
+        flexDirection: 'row', 
+        justifyContent: 'space-between' 
     },
-    modalYesButton: {
-        padding: 10,
-        borderRadius: 5,
-        minWidth: 100,
-        alignItems: 'center',
-        backgroundColor: Colors.gold
+    modalYesButton: { 
+        flex: 1, 
+        backgroundColor: Colors.gold, 
+        borderRadius: 5, 
+        padding: verticalScale(10), 
+        marginRight: scale(5) 
     },
-    modalNoButton: {
-        padding: 10,
-        borderRadius: 5,
-        minWidth: 100,
-        alignItems: 'center',
-        backgroundColor: Colors.ghost
+    modalNoButton: { 
+        flex: 1, 
+        backgroundColor: Colors.ghost, 
+        borderRadius: 5, 
+        padding: verticalScale(10), 
+        marginLeft: scale(5) 
     },
-    modalButtonText: {
+    modalButtonText: { 
+        textAlign: 'center', 
+        fontSize: getFontSize(19), 
         color: Colors.raisin,
-        fontWeight: '600',
-        fontSize: getFontSize(19)
+        fontWeight: '600'
     },
 });

@@ -1,11 +1,13 @@
 import React, {useState, useContext, useEffect} from 'react';
-import {Text, StyleSheet, View, ScrollView, TouchableOpacity} from 'react-native';
+import {Text, StyleSheet, View, ScrollView, TouchableOpacity, Dimensions} from 'react-native';
 import CheckBox from 'react-native-check-box';
 import { Colors } from './Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
 import { useRoute, route } from '@react-navigation/native';
+
+const { width, height } = Dimensions.get('window');
 
 export default function AddPref1 ({ navigation }) {
     const route = useRoute();
@@ -419,7 +421,7 @@ const styles = StyleSheet.create({
         left: 0
     },
     title: {
-        fontSize: 22,
+        fontSize: width * 0.06,
         fontWeight: 'bold',
         color: Colors.ghost,
         marginTop: 2,
@@ -429,7 +431,7 @@ const styles = StyleSheet.create({
         paddingTop: 10,
     },
     sectionTitle: {
-        fontSize: 22, 
+        fontSize: width * 0.055, 
         fontWeight: "bold", 
         color: Colors.ghost, 
         marginBottom: 20,
@@ -450,7 +452,7 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     checkboxText: {
-        fontSize: 19, 
+        fontSize: width * 0.045, 
         color: Colors.ghost,
     },
     buttonContainer: {
@@ -462,6 +464,7 @@ const styles = StyleSheet.create({
         paddingVertical: 12,
         paddingHorizontal: 40,
         borderRadius: 10,
+        marginTop: -10
     },
     buttonText: {
         fontSize: 18,

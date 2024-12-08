@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useCallback, useContext, useEffect } from 'react';
-import { StyleSheet, Dimensions, View, Image, SafeAreaView, TouchableOpacity, Text, Modal, ActivityIndicator } from 'react-native';
+import { StyleSheet, Dimensions, View, Image, SafeAreaView, TouchableOpacity, Text, Modal, ActivityIndicator} from 'react-native';
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import {useAuth} from '../contexts/AuthContext';
@@ -9,9 +9,12 @@ import { useFocusEffect } from '@react-navigation/native';
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
 import * as Font from 'expo-font';
 
+const { width, height } = Dimensions.get('window');
+const scale = (size) => (width / 375) * size;
+
 export default function Question({ navigation }) {
     // test ad
-    const test_ad_id = "ca-app-pub-8950189603855014/4047050704";
+    const test_ad_id = "ca-app-pub-8950189603855014/2029419113";
 
 
     // load custom font
@@ -398,29 +401,34 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.5)',  
     },
+    modalOverlay: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',  
+    },
     modalContainer: {
         width: '80%',
-        height: '20%',
         backgroundColor: Colors.blue,
-        borderRadius: 10,
-        borderWidth: 2,
+        borderRadius: scale(10),
+        borderWidth: scale(2),
         borderColor: Colors.ghost,
-        padding: 20,
+        padding: scale(20),
         marginHorizontal: 0,
         alignItems: 'center',
         shadowColor: '#000',
         shadowOffset: {
             width: 0,
-            height: 2,
+            height: scale(2),
         },
         shadowOpacity: 0.25,
-        shadowRadius: 4,
+        shadowRadius: scale(4),
         elevation: 5,
     },
     modalText: {
-        fontSize: 22,
+        fontSize: scale(22),
         fontWeight: '600',
-        marginBottom: 20,
+        marginBottom: scale(20),
         color: Colors.ghost,
         alignItems: 'center',
         textAlign: 'center'
@@ -429,26 +437,25 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         width: '100%',
-        height: '35%'
     },
     modalYesButton: {
-        padding: 10,
-        borderRadius: 5,
-        minWidth: 100,
+        padding: scale(10),
+        borderRadius: scale(5),
+        minWidth: scale(100),
         alignItems: 'center',
         backgroundColor: Colors.gold
     },
     modalNoButton: {
-        padding: 10,
-        borderRadius: 5,
-        minWidth: 100,
+        padding: scale(10),
+        borderRadius: scale(5),
+        minWidth: scale(100),
         alignItems: 'center',
         backgroundColor: Colors.champagne
     },
     buttonText: {
         color: Colors.raisin,
         fontWeight: '600',
-        fontSize: 19
+        fontSize: scale(19),
     },
     loadingOverlay: {
         position: "absolute",       // Full-screen overlay

@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Animated, StyleSheet, TouchableOpacity, View, Image } from 'react-native';
+import { Animated, StyleSheet, TouchableOpacity, View, Image, Dimensions, PixelRatio } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Colors } from './screens/Colors';
@@ -66,7 +66,8 @@ const AnimatedTabBarButton = ({ label, children, onPress, focused }) => {
     );
 };
 
-
+const { width, height } = Dimensions.get('window');
+const scale = (size) => (width / 375) * size;
 
 export default function TabContainer() {
     return (
@@ -155,10 +156,10 @@ const styles = StyleSheet.create({
     },
     tabBar: {
         flexDirection: 'row',
-        height: 65,
-        marginHorizontal: 20,
-        marginBottom: 15,
-        marginTop: 7,
+        height: height * 0.075,
+        marginHorizontal: scale(20),
+        marginBottom: scale(15),
+        marginTop: scale(7),
         backgroundColor: Colors.champagne,
         borderRadius: 40,
         justifyContent: 'space-evenly', 
@@ -170,7 +171,7 @@ const styles = StyleSheet.create({
         elevation: 5,
         borderWidth: 3,
         borderColor: Colors.gold,
-        padding: 8
+        padding: scale(8)
     },
     tabButton: {
         flex: 1, 
@@ -184,14 +185,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     label: {
-        marginLeft: 8,
+        marginLeft: scale(8),
         color: Colors.raisin,
-        fontSize: 14,
+        fontSize: scale(14),
         fontWeight: '600',
     },
     icon: {
-        width: 30,
-        height: 30,
+        width: scale(30),
+        height: scale(30),
     },
 });
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from './Colors';
@@ -7,6 +7,8 @@ import { ProfileContext } from '../contexts/ProfileContext';
 import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
 import { useEffect, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
+
+const { width, height } = Dimensions.get('window');
 
 export default function Profile({ navigation }) {
     const { pfp, username, fetchData } = React.useContext(ProfileContext);
@@ -148,7 +150,7 @@ const styles = StyleSheet.create({
         marginTop: 8
     },
     profileSubtitle: {
-        fontSize: 18,
+        fontSize: width * 0.045,
         fontWeight: '600',
     },
     lineContainer: {
@@ -157,7 +159,7 @@ const styles = StyleSheet.create({
     },
     line: {
         backgroundColor: Colors.ghost,
-        height: 2,
+        height: height * 0.005,
         width: '100%',
     },
     avatar: {

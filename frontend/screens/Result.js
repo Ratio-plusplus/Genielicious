@@ -1,10 +1,13 @@
 import * as React from 'react';
 import { useState, useCallback, useEffect } from 'react';
-import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text, ScrollView, Linking, Modal, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text, ScrollView, Linking, Modal, ActivityIndicator, Dimensions, PixelRatio } from 'react-native';
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthContext';
 import { useFocusEffect } from '@react-navigation/native';
+
+const { width, height } = Dimensions.get('window');
+const scale = (size) => (width / 375) * size;
 
 // array for the different restaurant results
 // has the name, taste, address, distance, and image
@@ -105,11 +108,11 @@ export default function Result({ navigation }) {
         switch (status) {
             case 4:
                 console.log("3");
-                setTitle("No restauarants were found in your area. Try again with different answers or at different hours.");
+                setTitle("No restaurants were found in your area. Try again with different answers or at different hours.");
                 break;
             case 3:
                 console.log("3");
-                setTitle("No restauarants were found in your area. Try again with different answers or at different hours.");
+                setTitle("No restaurants were found in your area. Try again with different answers or at different hours.");
                 break;
             case 2:
                 console.log("2");
@@ -183,7 +186,10 @@ export default function Result({ navigation }) {
                         color={Colors.ghost}
                     />
                 </TouchableOpacity>
-                <Text style={styles.title}>{title}</Text>
+                <Text 
+                    style={styles.title}
+                    adjustsFontSizeToFit
+                    numberOfLines={3}>{title}</Text>
             </View>
 
             {/* confirmation modal for back arrow */}
@@ -295,9 +301,9 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.blue,
     },
     header: {
-        marginHorizontal: 12,
-        marginTop: 12,
-        marginBottom: 30,
+        marginHorizontal: scale(12),
+        marginTop: scale(12),
+        marginBottom: scale(30),
         flexDirection: "row",
         justifyContent: "space-between",
         zIndex: 1000
@@ -308,7 +314,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontWeight: "bold",
-        fontSize: 25,
+        fontSize: scale(23),
         color: Colors.champagne,
         textAlign: 'center',
         paddingRight: '13%',
@@ -342,7 +348,7 @@ const styles = StyleSheet.create({
     restaurantListContainer: {
         flex: 1,
         marginTop: '-43%', 
-        paddingBottom: 10,
+        paddingBottom: scale(10),
         marginLeft: 0,
     },
     restaurantList: {
@@ -352,16 +358,16 @@ const styles = StyleSheet.create({
     restaurantItem: {
         flexDirection: 'row',
         backgroundColor: Colors.ghost,
-        padding: 10,
-        marginVertical: 10,
-        borderRadius: 10,
+        padding: scale(10),
+        marginVertical: scale(10),
+        borderRadius: scale(10),
         borderColor: Colors.gold,
         borderWidth: 2,
         alignItems: 'flex-start',
         width: '90%',
-        height: 150,
+        height: scale(150),
         shadowColor: Colors.yellow, // Subtle shadow for depth
-        shadowOffset: { width: 7, height: 7 },
+        shadowOffset: { width: scale(7), height: scale(7) },
         shadowOpacity: 1,
         shadowRadius: 0,
         elevation: 2,
@@ -378,20 +384,20 @@ const styles = StyleSheet.create({
         justifyContent: 'space-evenly'
     },
     restaurantName: {
-        fontSize: 18,
+        fontSize: scale(18),
         fontWeight: 'bold',
         color: Colors.darkGold,
-        marginBottom: 5,
+        marginBottom: scale(5),
     },
     restaurantTaste: {
-        fontSize: 15,
+        fontSize: scale(15),
         color: Colors.blue,
-        marginBottom: 5,
+        marginBottom: scale(5),
     },
     restaurantAddress: {
-        fontSize: 15,
+        fontSize: scale(15),
         color: Colors.darkGold,
-        marginBottom: 5,
+        marginBottom: scale(5),
         textDecorationLine: 'underline',
     },
     distanceContainer: {
@@ -399,10 +405,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     locationIcon: {
-        marginRight: 5,
+        marginRight: scale(5),
     },
     restaurantDistance: {
-        fontSize: 15,
+        fontSize: scale(15),
         color: Colors.blue,
     },
     modalOverlay: {
@@ -413,27 +419,26 @@ const styles = StyleSheet.create({
     },
     modalContainer: {
         width: '80%',
-        height: '20%',
         backgroundColor: Colors.blue,
-        borderRadius: 10,
-        borderWidth: 2,
+        borderRadius: scale(10),
+        borderWidth: scale(2),
         borderColor: Colors.ghost,
-        padding: 20,
+        padding: scale(20),
         marginHorizontal: 0,
         alignItems: 'center',
         shadowColor: '#000',
         shadowOffset: {
             width: 0,
-            height: 2,
+            height: scale(2),
         },
         shadowOpacity: 0.25,
-        shadowRadius: 4,
+        shadowRadius: scale(4),
         elevation: 5,
     },
     modalText: {
-        fontSize: 22,
+        fontSize: scale(22),
         fontWeight: '600',
-        marginBottom: 20,
+        marginBottom: scale(20),
         color: Colors.ghost,
         alignItems: 'center',
         textAlign: 'center'
@@ -442,40 +447,39 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         width: '100%',
-        height: '35%'
     },
     modalYesButton: {
-        padding: 10,
-        borderRadius: 5,
-        minWidth: 100,
+        padding: scale(10),
+        borderRadius: scale(5),
+        minWidth: scale(100),
         alignItems: 'center',
         backgroundColor: Colors.gold
     },
     modalNoButton: {
-        padding: 10,
-        borderRadius: 5,
-        minWidth: 100,
+        padding: scale(10),
+        borderRadius: scale(5),
+        minWidth: scale(100),
         alignItems: 'center',
         backgroundColor: Colors.champagne
     },
     buttonText: {
         color: Colors.raisin,
         fontWeight: '600',
-        fontSize: 19
+        fontSize: scale(19),
     },
     imagesContainer: {
         width: '40%',
         height: '100%',
         position: 'relative',
-        marginRight: 10,
+        marginRight: scale(10),
     },
     yelpLogo: {
         position: 'absolute',
         bottom: 0,
         right: -10,
         top: -70,
-        width: 100,
-        height: 100,
+        width: scale(100),
+        height: scale(100),
     },
     loadingOverlay: {
         position: "absolute",       // Full-screen overlay
@@ -493,8 +497,8 @@ const styles = StyleSheet.create({
         alignItems: "center",      // Centers content horizontally
     },
     loadingText: {
-        marginTop: 10,             // Adds space between the spinner and the text
-        fontSize: 16,
+        marginTop: scale(10),             // Adds space between the spinner and the text
+        fontSize: scale(16),
         color: "#fff",             // White text for visibility
         textAlign: "center",       // Centers text
     },
