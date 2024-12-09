@@ -156,10 +156,10 @@ const styles = StyleSheet.create({
     },
     tabBar: {
         flexDirection: 'row',
-        height: height * 0.075,
+        height: height * 0.08,
         marginHorizontal: scale(20),
-        marginBottom: scale(15),
-        marginTop: scale(7),
+        marginBottom: height * 0.02,
+        marginTop: height * 0.01,
         backgroundColor: Colors.champagne,
         borderRadius: 40,
         justifyContent: 'space-evenly', 
@@ -187,12 +187,12 @@ const styles = StyleSheet.create({
     label: {
         marginLeft: scale(8),
         color: Colors.raisin,
-        fontSize: scale(14),
+        fontSize: width * 0.04,
         fontWeight: '600',
     },
     icon: {
-        width: scale(30),
-        height: scale(30),
+        width: width * 0.075,
+        height: width * 0.075,
     },
 });
 
