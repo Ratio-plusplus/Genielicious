@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { useState, useCallback, useContext, useEffect } from 'react';
+<<<<<<< Updated upstream
 import { StyleSheet, Dimensions, View, Image, SafeAreaView, TouchableOpacity, Text, Modal, ActivityIndicator} from 'react-native';
+=======
+import { Platform, StyleSheet, Dimensions, View, Image, SafeAreaView, TouchableOpacity, Text, Modal, ActivityIndicator } from 'react-native';
+>>>>>>> Stashed changes
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import {useAuth} from '../contexts/AuthContext';
@@ -13,8 +17,13 @@ const { width, height } = Dimensions.get('window');
 const scale = (size) => (width / 375) * size;
 
 export default function Question({ navigation }) {
+<<<<<<< Updated upstream
     // test ad
     const test_ad_id = "ca-app-pub-8950189603855014/2029419113";
+=======
+    // Banner Ad 
+    const properAdID = Platform.OS === "ios" ? PERMISSIONS.IOS.CAMERA : "ca-app-pub-8950189603855014/4047050704";
+>>>>>>> Stashed changes
 
 
     // load custom font
@@ -239,7 +248,7 @@ export default function Question({ navigation }) {
             {/* Ad area */}
             <View style={styles.adContainer}>
                 <BannerAd
-                unitId={test_ad_id}
+                unitId={properAdID}
                 size={BannerAdSize.FULL_BANNER} // Adjust the size dynamically
                 requestOptions={{
                     requestNonPersonalizedAdsOnly: true,

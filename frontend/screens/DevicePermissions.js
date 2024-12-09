@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
+<<<<<<< Updated upstream
 import { Text, StyleSheet, Switch, View, TouchableOpacity, SafeAreaView, ScrollView, StatusBar, Dimensions } from 'react-native';
+=======
+import { Text, Platform, StyleSheet, Switch, View, TouchableOpacity, SafeAreaView, ScrollView, StatusBar } from 'react-native';
+>>>>>>> Stashed changes
 import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -11,6 +15,9 @@ export default function DevicePermissions({ navigation }) {
         const [cameraPermission, setCameraPermission] = useState(false);
         const [locationPermission, setLocationPermission] = useState(false);
 
+        //checks device type perms to ask for 
+        const CamPermsToCheck = Platform.OS === "ios" ? PERMISSIONS.IOS.CAMERA : PERMISSIONS.ANDROID.CAMERA;
+        const LocPermsToCheck = Platform.OS === "ios" ? PERMISSIONS.IOS.LOCATION_ALWAYS : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION;
         useEffect(() => {
           // Check permission state when the component mounts
           checkCameraPermission();
@@ -18,14 +25,14 @@ export default function DevicePermissions({ navigation }) {
         }, []);
       
         const checkCameraPermission = async () => {
-          // Check camera permission for Android
-          const result = await check(PERMISSIONS.ANDROID.CAMERA);
+          // Check camera permission for both devices
+          const result = await check(CamPermsToCheck);
           setCameraPermission(result === RESULTS.GRANTED);
         };
       
         const requestCameraPermission = async () => {
           // Request camera permission for Android
-          const result = await request(PERMISSIONS.ANDROID.CAMERA);
+          const result = await request(CamPermsToCheck);
           setCameraPermission(result === RESULTS.GRANTED);
         };
       
@@ -38,12 +45,12 @@ export default function DevicePermissions({ navigation }) {
         };
 
         const checkLocationPermission = async () => {
-            const result = await check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+            const result = await check(LocPermsToCheck);
             setLocationPermission(result === RESULTS.GRANTED);
           };
         
           const requestLocationPermission = async () => {
-            const result = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+            const result = await request(LocPermsToCheck);
             if (result === RESULTS.GRANTED) {
               setLocationPermission(true);
             } else if (result === RESULTS.BLOCKED) {

@@ -1,13 +1,20 @@
 import * as React from 'react';
 import { useState, useCallback, useEffect } from 'react';
+<<<<<<< Updated upstream
 import { StyleSheet, View, Image, SafeAreaView, TouchableOpacity, Text, ScrollView, Linking, Modal, ActivityIndicator, Dimensions, PixelRatio } from 'react-native';
+=======
+import { StyleSheet, BackHandler, View, Image, SafeAreaView, TouchableOpacity, Text, ScrollView, Linking, Modal, ActivityIndicator } from 'react-native';
+>>>>>>> Stashed changes
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthContext';
 import { useFocusEffect } from '@react-navigation/native';
 
+<<<<<<< Updated upstream
 const { width, height } = Dimensions.get('window');
 const scale = (size) => (width / 375) * size;
+=======
+>>>>>>> Stashed changes
 
 // array for the different restaurant results
 // has the name, taste, address, distance, and image
@@ -169,9 +176,21 @@ export default function Result({ navigation }) {
             }
         fetchResults();
         }
-    }, [ready]);
-    
 
+        const backAction = () => {
+            navigation.navigate('Tab'); // Navigate back to home screen
+            return true; // Prevent default behavior
+        };
+
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+
+        // Cleanup: Remove the back button listener
+        return () => backHandler.remove();
+    }, [ready, currentUser, navigation]);
+    
 
     return (
         <SafeAreaView style={styles.background}>
