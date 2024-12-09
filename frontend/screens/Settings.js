@@ -219,10 +219,9 @@ const styles = StyleSheet.create({
     },
     modalContainer: {
         width: width * 0.80,
-        height: height * 0.24,
         backgroundColor: Colors.blue,
-        borderRadius: scale(10),
-        borderWidth: scale(2),
+        borderRadius: 10,
+        borderWidth: 3,
         borderColor: Colors.ghost,
         padding: scale(20),
         marginVertical: verticalScale(10),
@@ -240,9 +239,9 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.5)',  
     },
     modalText: {
-        fontSize: getFontSize(20),
+        fontSize: width * 0.055,
         fontWeight: '600',
-        marginBottom: verticalScale(20),
+        marginBottom: 20,
         color: Colors.ghost,
         textAlign: 'center',
     },
@@ -251,13 +250,14 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
         width: '90%',
         marginTop: verticalScale(1),
+        marginHorizontal: 5
     },
     modalButton: {
         borderRadius: 5,
         width: '40%',
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: verticalScale(10),
+        paddingVertical: 10,
     },
     buttonText: {
         color: Colors.raisin,

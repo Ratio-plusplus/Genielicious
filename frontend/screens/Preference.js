@@ -282,12 +282,19 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.5)' 
     },
     modalContainer: { 
-        width: '80%', 
-        padding: scale(20), 
-        borderRadius: 10, 
+        width: width * 0.80,
         backgroundColor: Colors.blue,
+        borderRadius: 10,
         borderWidth: 3,
-        borderColor: Colors.ghost
+        borderColor: Colors.ghost,
+        padding: scale(20),
+        marginVertical: verticalScale(10),
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: scale(2) },
+        shadowOpacity: 0.25,
+        shadowRadius: scale(4),
+        elevation: 5,
     },
     modalText: { 
         fontSize: getFontSize(20), 
@@ -298,21 +305,22 @@ const styles = StyleSheet.create({
     },
     modalButtons: { 
         flexDirection: 'row', 
-        justifyContent: 'space-between' 
+        justifyContent: 'space-between',
+        width: '90%'
     },
     modalYesButton: { 
         flex: 1, 
         backgroundColor: Colors.gold, 
         borderRadius: 5, 
         padding: verticalScale(10), 
-        marginRight: scale(5) 
+        marginHorizontal: 10,
     },
     modalNoButton: { 
         flex: 1, 
         backgroundColor: Colors.ghost, 
         borderRadius: 5, 
         padding: verticalScale(10), 
-        marginLeft: scale(5) 
+        marginHorizontal: 10,
     },
     modalButtonText: { 
         textAlign: 'center', 

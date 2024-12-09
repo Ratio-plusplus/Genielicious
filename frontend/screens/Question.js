@@ -401,17 +401,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.5)',  
     },
-    modalOverlay: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',  
-    },
     modalContainer: {
         width: '80%',
         backgroundColor: Colors.blue,
-        borderRadius: scale(10),
-        borderWidth: scale(2),
+        borderRadius: 10,
+        borderWidth: 3,
         borderColor: Colors.ghost,
         padding: scale(20),
         marginHorizontal: 0,
@@ -450,7 +444,7 @@ const styles = StyleSheet.create({
         borderRadius: scale(5),
         minWidth: scale(100),
         alignItems: 'center',
-        backgroundColor: Colors.champagne
+        backgroundColor: Colors.ghost
     },
     buttonText: {
         color: Colors.raisin,

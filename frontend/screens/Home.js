@@ -2,14 +2,14 @@ import * as React from 'react';
 import { useState, useEffect, useCallback,useRef } from 'react';
 import { Colors } from './Colors';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Modal, ActivityIndicator, Animated} from "react-native";
+import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Modal, ActivityIndicator, Animated, Dimensions} from "react-native";
 import { FlavorPreferencesContext } from '../contexts/FlavorPreferencesContext';
 import * as Location from "expo-location";
 import { useFocusEffect } from '@react-navigation/native';
 import { useAuth } from '../contexts/AuthContext'
 import { ProfileContext } from '../contexts/ProfileContext';
 
-
+const { width, height } = Dimensions.get('window');
 
 export default function Home({ navigation }) {
     const { currentUser } = useAuth(); // Access currentUser and loading
@@ -222,55 +222,56 @@ const styles = StyleSheet.create({
         zIndex: 0,
     },
     sparkle: {
-        position: 'relative',
-        width: '200%',
-        height: '200%',
+        // position: 'relative',
+        width: width * 2,
+        height: height * 0.93,
     },
     genieImage: {
         position: 'absolute',
-        width: '100%',
-        height: '100%',
+        width: width * 1,
+        height: height * 0.4,
     },
     crystalBall: {
         position: 'absolute',
-        width: '70%',
-        height: '70%',
-        bottom: '-28%',
-        left: '17%',
+        width: width * 0.7,
+        height: height * 0.28,
+        bottom: height * -0.12,
+        left: width * 0.165,
     },
     food: {
         position: 'absolute',
-        width: '27%',
-        height: '27%',
-        bottom: '10%',
-        left: '38%',
+        width: width * 0.27,
+        height: height * 0.1,
+        bottom: height * 0.035,
+        left: width * 0.38,
     },
     tasteProfilesContainer: {
         flex: 0.1,
-        paddingTop: 100,
+        paddingTop: height * 0.12,
         paddingLeft: 20,
         zIndex: 1000,
     },
     tasteProfilesText: {
-        fontSize: 20,
+        fontSize: width * 0.05,
         fontWeight: 'bold',
         color: Colors.champagne,
     },
     pickerContainer: {
         width: '94%',
-        paddingTop: 10,
+        paddingTop: height * 0.005,
         zIndex: 10000,
     },
     modeContainer: {
         flex: 0.1,
-        paddingTop: 40,
+        paddingTop: height * 0.05,
         paddingLeft: 20,
     },
     modeText: {
-        fontSize: 20,
+        fontSize: width * 0.05,
         fontWeight: 'bold',
         color: Colors.champagne,
-        marginBottom: 10,
+        marginBottom: height * 0.01,
+        marginTop: height * 0.005
     },
     buttonsContainer: {
         flexDirection: 'row',
@@ -281,14 +282,14 @@ const styles = StyleSheet.create({
     button: {
         alignItems: 'center',
         backgroundColor: Colors.gold,
-        padding: 10,
+        padding: height * 0.01,
         width: '30%',
         borderRadius: 15,
         borderColor: Colors.champagne,
         borderWidth: 2
     },
     profileSubtitle: {
-        fontSize: 16,
+        fontSize: width * 0.04,
         color: Colors.raisin,
     },
 });

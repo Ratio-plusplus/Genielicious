@@ -340,6 +340,6 @@ const styles = StyleSheet.create({
   loginButtonTextHighlight: {
     fontSize: 16,
     color: Colors.yellow,
-    fontWeight: "600",
+    fontWeight: 'bold',
   },
 });

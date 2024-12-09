@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
   registerButtonTextHighlight: {
     fontSize: 16,
     color: Colors.yellow,
-    fontWeight: "500",
+    fontWeight: 'bold',
   },
   resetField: {
     backgroundColor: Colors.champagne,
