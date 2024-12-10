@@ -19,7 +19,11 @@
       "infoPlist": {
         "NSCameraUsageDescription": "This app needs access to your camera to take profile pictures.",
         "NSPhotoLibraryUsageDescription": "This app needs access to your photos to select profile pictures."
-      }
+      },
+      "permissions": [
+        "PERMISSIONS.IOS.CAMERA",
+        "PERMISSIONS.IOS.LOCATION_ALWAYS"
+      ]
     },
     "android": {
       "googleServicesFile": "./google-services.json",
@@ -52,7 +56,7 @@
         "react-native-google-mobile-ads",
         {
           "androidAppId": "ca-app-pub-8950189603855014~6583887580",
-          "iosAppId": "ca-app-pub-8950189603855014~9020385210"
+          "iosAppId": "ca-app-pub-8950189603855014~6583887580"
         }
       ],
       [
