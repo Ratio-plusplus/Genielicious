@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from 'react';
-<<<<<<< Updated upstream
-import { Text, StyleSheet, Switch, View, TouchableOpacity, SafeAreaView, ScrollView, StatusBar, Dimensions } from 'react-native';
-=======
-import { Text, Platform, StyleSheet, Switch, View, TouchableOpacity, SafeAreaView, ScrollView, StatusBar } from 'react-native';
->>>>>>> Stashed changes
+import { Text, Platform, StyleSheet, Switch, View, TouchableOpacity, SafeAreaView, ScrollView, StatusBar, Dimensions} from 'react-native';
 import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import { Colors } from './Colors';
 import { MaterialIcons } from '@expo/vector-icons';
