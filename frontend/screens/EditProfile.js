@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, TextInput, Alert } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, TextInput, Alert, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -40,16 +40,42 @@ export default function EditProfile({ navigation }) {
     };
 
     const handleCameraCapture = async () => {
-        let result = await ImagePicker.launchCameraAsync({
-            allowsEditing: true,
-            aspect: [4, 4],
-            quality: 1
-        })
+        try {
+            // Request camera permission
+            const { status } = await ImagePicker.requestCameraPermissionsAsync();
+            
+            if (status !== 'granted') {
+                Alert.alert(
+                    "Permission Denied",
+                    "Please allow camera access in your device settings to take pictures.",
+                    [
+                        { text: "OK" }
+                    ]
+                );
+                return;
+            }
 
-        console.log(result)
+            // Launch camera
+            let result = await ImagePicker.launchCameraAsync({
+                allowsEditing: true,
+                aspect: [4, 4],
+                quality: 1
+            });
 
-        if (!result.canceled) {
-            setSelectedImage(result.assets[0].uri)
+            console.log(result);
+
+            if (!result.canceled) {
+                setSelectedImage(result.assets[0].uri);
+            }
+        } catch (error) {
+            console.error("Error accessing camera:", error);
+            Alert.alert(
+                "Error",
+                "There was a problem accessing your camera. Please try again.",
+                [
+                    { text: "OK" }
+                ]
+            );
         }
     };
 

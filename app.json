@@ -15,7 +15,11 @@
     "ios": {
       "googleServicesFile": "./GoogleService-Info.plist",
       "supportsTablet": true,
-      "bundleIdentifier": "com.ratioplusplus.genielicious"
+      "bundleIdentifier": "com.ratioplusplus.genielicious",
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app needs access to your camera to take profile pictures.",
+        "NSPhotoLibraryUsageDescription": "This app needs access to your photos to select profile pictures."
+      }
     },
     "android": {
       "googleServicesFile": "./google-services.json",
