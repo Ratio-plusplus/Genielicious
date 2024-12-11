@@ -15,7 +15,6 @@ const scale = (size) => (width / 375) * size;
 export default function Question({ navigation }) {
     // Banner Ad 
     const properAdID = Platform.OS === "ios" ? "ca-app-pub-8950189603855014/6486555368" : "ca-app-pub-8950189603855014/4047050704";
-    AdMobBanner.setAdUnitID(properAdID);
 
 
     // load custom font
