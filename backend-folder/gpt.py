@@ -167,7 +167,7 @@ def getNextQuestion(user_id:str, mode:str):
       max_tokens=1025,
       top_p=1,
       frequency_penalty=0,
-      presence_penalty=0.2
+      presence_penalty=0
     )
   
   formatted_question = json.loads(response.choices[0].message.content) # response made into json dictionary
